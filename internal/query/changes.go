@@ -303,9 +303,9 @@ func (g *Graph) cmdChanges(o opts) int {
 		}
 		g.refs = obj{{"input", input}, {"base", base}, {"head", headRef}}
 	} else {
-		ref := o.base
-		if ref == "" {
-			ref = g.defaultBase(head)
+		ref := g.defaultBase(head)
+		if o.base != "" {
+			ref = g.mergeBase(o.base, head)
 		}
 		baseRev = strings.TrimSpace(g.git("rev-parse", ref))
 		args := []string{"diff", "-M", "-U0", baseRev}
@@ -395,6 +395,19 @@ func (g *Graph) defaultBase(head string) string {
 		}
 	}
 	panic(util.UserError("No base: pass --base REF"))
+}
+
+// mergeBase: an explicit --base is a branch the change forked from, as the default is, so what landed
+// on it since does not count as changed; a commit on the change's own history is its own merge-base.
+func (g *Graph) mergeBase(ref, head string) string {
+	if head == "" {
+		head = "HEAD"
+	}
+	out, ok := g.gitOK("merge-base", ref, head)
+	if !ok {
+		panic(util.UserError(fmt.Sprintf("No common commit of %s and %s: pass another --base", ref, head)))
+	}
+	return strings.TrimSpace(out)
 }
 
 func sortedLines(lines lineSet) []int32 {

@@ -218,8 +218,10 @@ previous one, `null` for the first step). Empty `steps` with no error means no p
 codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--nav] [--depth N] [--kind KIND] [--no-paths] [--json]
 ```
 
-- `--base REF` — merge-base ref (default: the first of `changes.base` from config that resolves);
-  with `--diff`/`--files`, the revision old values are read from instead of the changed diff lines.
+- `--base REF` — the branch the change forked from: the diff starts at the merge-base of `REF` and
+  the head, so commits that landed on `REF` since do not count (default: the first of `changes.base`
+  from config that resolves); with `--diff`/`--files`, the revision old values are read from instead
+  of the changed diff lines, as given.
 - `--head REF` — compare against this commit instead of the working tree; the code map **must**
   have been built from exactly this commit, clean (no uncommitted changes), or the command fails.
 - `--diff -|FILE` — read a unified diff from stdin (`-`) or a file instead of running `git diff`.
