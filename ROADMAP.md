@@ -85,6 +85,10 @@ itself.
   changes) now that it's ~7,000 lines all on one `*Graph` type — tech debt, not a feature, but
   it's becoming the main cost of making a precision fix without regressing an unrelated
   command.
+- **Less memory in `build`.** A 34,500-class project builds in 3.2s at 2.4 GB peak RSS for an
+  82 MB map; the profile shows small map and slice churn (map hashing, memmove, GC), no single
+  hotspot. Fine on a developer machine; worth trimming (release per-class structures sooner, fewer
+  string-keyed maps) before CI runners with little memory or several builds at once.
 - **Move config off package-level globals** (`internal/config`'s `applyConfig`-set package
   vars) to a value threaded through `Graph`/`Builder` — needed before two configs (two
   variants, or two projects) could ever be loaded in one process; not needed for anything on
