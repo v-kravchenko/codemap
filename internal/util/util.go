@@ -18,7 +18,9 @@ func Set(xs ...string) map[string]bool {
 	return m
 }
 
-func Dotted(s string) string { return strings.NewReplacer("/", ".", "$", ".").Replace(s) }
+var dotted = strings.NewReplacer("/", ".", "$", ".")
+
+func Dotted(s string) string { return dotted.Replace(s) }
 
 func SortedKeys[K cmp.Ordered, V any](m map[K]V) []K {
 	out := make([]K, 0, len(m))
