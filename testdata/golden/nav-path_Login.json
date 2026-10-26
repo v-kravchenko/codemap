@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.2.0",
+  "schema_version": "3.3.0",
   "command": "nav-path",
   "targets": [
     {
@@ -27,7 +27,7 @@
       "shared": null,
       "hint": "TypedAppKt.TypedApp",
       "via": [
-        "navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0$1$0",
+        "navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0$2$0",
         "route Home"
       ]
     },

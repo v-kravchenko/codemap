@@ -48,3 +48,11 @@ class AboutFragment : Fragment(R.layout.fragment_list) {
 class InfoDialog : DialogFragment()
 
 class LicensesActivity : FragmentActivity()
+
+// A deep link into the same flow: a second way to every screen of ViewsActivity (nav-path --entry, --ways).
+class LinkActivity : FragmentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        startActivity(Intent(this, ViewsActivity::class.java))
+    }
+}

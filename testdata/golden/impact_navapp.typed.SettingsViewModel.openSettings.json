@@ -1,12 +1,12 @@
 {
-  "schema_version": "3.2.0",
+  "schema_version": "3.3.0",
   "command": "impact",
   "changed": [
     {
       "symbol": "navapp.typed.SettingsViewModel.openSettings",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/typed/TypedApp.kt:77"
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:79"
     }
   ],
   "affected": [
@@ -14,7 +14,7 @@
       "symbol": "navapp.typed.SettingsViewModel",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/typed/TypedApp.kt:73",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:75",
       "depth": 1,
       "path": [
         "navapp.typed.SettingsViewModel.openSettings",
@@ -61,7 +61,7 @@
       "symbol": "navapp.typed.SettingsViewModel.openSettings.1.invokeSuspend",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/typed/TypedApp.kt:77",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:79",
       "depth": 3,
       "path": [
         "navapp.typed.SettingsViewModel.openSettings",
@@ -109,7 +109,7 @@
       "symbol": "navapp.typed.SettingsViewModel.openSettings.1",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/typed/TypedApp.kt:77",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:79",
       "depth": 6,
       "path": [
         "navapp.typed.SettingsViewModel.openSettings",

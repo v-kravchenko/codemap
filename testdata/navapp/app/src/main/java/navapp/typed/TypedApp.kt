@@ -36,6 +36,7 @@ fun TypedApp() {
         composable<Home> {
             HomeScreen(
                 onProfile = { nav.navigate(Profile("1")) },
+                onSettings = { nav.navigate(Settings) },
                 onAuth = { nav.navigate(AuthGraph) },
             )
         }
@@ -55,8 +56,9 @@ fun androidx.navigation.NavGraphBuilder.authSection(onConfirm: () -> Unit) {
 }
 
 @Composable
-fun HomeScreen(onProfile: () -> Unit, onAuth: () -> Unit) {
+fun HomeScreen(onProfile: () -> Unit, onSettings: () -> Unit, onAuth: () -> Unit) {
     Button(onClick = onProfile) { Text("profile") }
+    Button(onClick = onSettings) { Text("settings") }
     Button(onClick = onAuth) { Text("auth") }
 }
 

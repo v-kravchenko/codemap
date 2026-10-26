@@ -25,7 +25,7 @@ import (
 
 const (
 	toolVersion   = "0.2.0"
-	schemaVersion = "3.2.0"
+	schemaVersion = "3.3.0"
 	exitOK        = 0
 	exitError     = 2
 )
@@ -37,11 +37,11 @@ var (
 )
 
 type opts struct {
-	db, to, base, head, diff, files          string
-	json, all, noPaths, noSelf, noCheck, nav bool
-	strict, verbose, info                    bool
-	depth, limit                             int
-	kinds, pos                               []string
+	db, to, base, head, diff, files, from, entry string
+	json, all, noPaths, noSelf, noCheck, nav     bool
+	strict, verbose, info, ways                  bool
+	depth, limit                                 int
+	kinds, pos, via, avoid                       []string
 }
 
 func parseOpts(args []string) opts {
@@ -103,12 +103,26 @@ func parseOpts(args []string) opts {
 			o.strict = true
 		case "--nav":
 			o.nav = true
+		case "--via":
+			o.via = append(o.via, value(&i, "via"))
+		case "--avoid":
+			o.avoid = append(o.avoid, value(&i, "avoid"))
+		case "--from":
+			o.from = value(&i, "from")
+		case "--entry":
+			o.entry = value(&i, "entry")
+		case "--ways":
+			o.ways = true
 		default:
 			if strings.HasPrefix(a, "--") {
 				panic(util.UserError("unrecognized arguments: " + a))
 			}
 			o.pos = append(o.pos, a)
 		}
+	}
+	if o.entry != "" && !slices.Contains(entryKinds, o.entry) {
+		panic(util.UserError(fmt.Sprintf("argument --entry: invalid choice: '%s' (choose from %s)", o.entry,
+			strings.Join(entryKinds, ", "))))
 	}
 	for _, k := range o.kinds {
 		if k != "all" && !slices.ContainsFunc(config.ScreenTitles, func(t [2]string) bool { return t[0] == k }) {

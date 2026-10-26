@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.2.0",
+  "schema_version": "3.3.0",
   "command": "graph",
   "roots": [
     "Home"
@@ -24,6 +24,11 @@
       "name": "Profile",
       "kind": "route",
       "module": "app"
+    },
+    {
+      "name": "Settings",
+      "kind": "route",
+      "module": "app"
     }
   ],
   "edges": [
@@ -44,6 +49,13 @@
     {
       "from": "Home: TypedAppKt.TypedApp",
       "to": "Profile",
+      "label": null,
+      "hint": "TypedAppKt.TypedApp",
+      "shared": null
+    },
+    {
+      "from": "Home: TypedAppKt.TypedApp",
+      "to": "Settings",
       "label": null,
       "hint": "TypedAppKt.TypedApp",
       "shared": null

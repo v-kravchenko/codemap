@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.2.0",
+  "schema_version": "3.3.0",
   "command": "screens",
   "screens": [
     {
@@ -46,6 +46,15 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Constants.kt:10"
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "LinkActivity",
+      "target": "navapp.views.LinkActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:53"
     },
     {
       "kind": "activity",

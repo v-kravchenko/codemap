@@ -109,7 +109,11 @@ records its depth, its parent and why (`calls`, `reads`, `extends`, ...), so eve
 from the opener to the screen, the hub it went through (a navigator many screens share), and the
 host it needs. `nav-path` is a Dijkstra walk over states (screen, host) from the target back to entry
 screens (launcher, deep link, intent filter), with step costs: own code, shared code, push or deep
-link handling (`nav_path.costs`). `graph` walks the other way, from a screen to what it opens.
+link handling (`nav_path.costs`). `--from`, `--entry` and `--avoid` change where the walk ends and
+what it keeps off; `--via` chains walks, from the target to the last screen asked for and on to an
+entry; `--ways` runs `--via` once per screen that opens the fork, the first screen back from the
+target that several screens open ([0012](docs/decisions/0012-nav-path-via-and-ways.md)). `graph`
+walks the other way, from a screen to what it opens.
 
 ## Settings
 

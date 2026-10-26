@@ -16,6 +16,10 @@ CODEMAP_TIMES=1 codemap build                      # time of each stage on stder
 CODEMAP_PROFILE=/tmp/cpu.prof codemap impact X     # CPU profile of a build or a query
 ```
 
+`nav-path` shows the cheapest way to a screen; `--via SCREEN` a way through given screens, `--ways`
+one way through each screen that opens it, `--from SCREEN` a way from a screen the user is on,
+`--entry deeplink` a way from one kind of entry, `--avoid 'Debug*'` a way around some screens.
+
 `build` skips a map built by the same binary from the same inputs (`--force` rebuilds it). Queries
 check whether the map is older than the sources (`--strict`: exit with an error when the answer
 touches a changed file). `changes` needs git; nothing else does (`build` records HEAD when there is one).

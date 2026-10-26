@@ -57,6 +57,11 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   Activities); `nav-path` picks the cheapest path to one host, so a screen reachable in several
   different ways through different hosts shows only one of them unless you compare branches
   with `--verbose`.
+- `nav-path --via` joins the cheapest part of the way between each two screens asked for; when a
+  via screen has several hosts, the part from it on keeps the host the part before ended in, which
+  is the cheapest way through that state, not always the cheapest way through the screen.
+- `nav-path --ways` finds the fork on the cheapest way only: openers of a screen past the fork, or on
+  a costlier way, show up only through `--via`.
 - Back-navigation and results (`popBackStack`, `Activity.finish`, `setResult`, a
   `NavResultItem`-style callback) are not modeled at all; `nav-path` only answers how to reach
   a screen going forward, never what a screen returns to.

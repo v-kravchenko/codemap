@@ -1,0 +1,101 @@
+{
+  "schema_version": "3.3.0",
+  "command": "nav-path",
+  "targets": [
+    {
+      "name": "Settings",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": null,
+      "hosts": []
+    }
+  ],
+  "via": [
+    "Profile"
+  ],
+  "screens": [
+    {
+      "name": "Profile",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": null,
+      "hosts": [],
+      "depth": 1,
+      "cost": 1,
+      "hosted_in": null,
+      "opens": "Settings",
+      "way": "own",
+      "shared": null,
+      "hint": "TypedAppKt.TypedApp",
+      "via": [
+        "navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1$0$0",
+        "route Profile"
+      ]
+    },
+    {
+      "name": "Home",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": null,
+      "hosts": [],
+      "depth": 2,
+      "cost": 2,
+      "hosted_in": null,
+      "opens": "Profile",
+      "way": "own",
+      "shared": null,
+      "hint": "TypedAppKt.TypedApp",
+      "via": [
+        "navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0$0$0",
+        "route Home"
+      ]
+    },
+    {
+      "name": "MainActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/MainActivity.kt:13",
+      "host": null,
+      "hosts": [],
+      "depth": 3,
+      "cost": 3,
+      "hosted_in": null,
+      "opens": "Home",
+      "way": "own",
+      "shared": null,
+      "hint": "TypedAppKt.TypedApp",
+      "via": [
+        "navapp.typed.TypedAppKt.TypedApp",
+        "navapp.MainActivity.onCreate$lambda$0"
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "name": "MainActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/MainActivity.kt:13",
+      "host": null,
+      "hosts": [],
+      "entry": [
+        {
+          "kind": "launcher",
+          "detail": null
+        }
+      ]
+    }
+  ],
+  "paths": [
+    [
+      "MainActivity",
+      "Home",
+      "Profile",
+      "Settings"
+    ]
+  ],
+  "branches": []
+}

@@ -49,7 +49,8 @@ func TestViewsNavigation(t *testing.T) {
 		got[name] = srcs
 	}
 	want := map[string][]string{ // the screen it is opened from > the way, from what opens it
-		"ViewsActivity":    {"MainActivity > MainActivity.onCreate{λ}"},
+		"ViewsActivity":    {"LinkActivity > LinkActivity.onCreate()", "MainActivity > MainActivity.onCreate{λ}"},
+		"LinkActivity":     nil, // a deep link, opened by nothing in the app
 		"ListFragment":     {"ViewsActivity > @navigation/views_graph > @layout/activity_views > ViewsActivity.<init>()"},
 		"DetailFragment":   {"ListFragment > @id/action_list_to_detail > ListFragment.onViewCreated{λ}"},
 		"InfoDialog":       {"DetailFragment > @id/infoDialog > DetailFragment.onViewCreated{λ}"},

@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.2.0",
+  "schema_version": "3.3.0",
   "command": "nav-path",
   "targets": [
     {
@@ -116,6 +116,24 @@
       ]
     },
     {
+      "name": "LinkActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:53",
+      "host": null,
+      "hosts": [],
+      "depth": 6,
+      "cost": 6,
+      "hosted_in": null,
+      "opens": "ViewsActivity",
+      "way": "own",
+      "shared": null,
+      "hint": "LinkActivity.onCreate",
+      "via": [
+        "navapp.views.LinkActivity.onCreate"
+      ]
+    },
+    {
       "name": "MainActivity",
       "kind": "activity",
       "module": "app",
@@ -148,11 +166,34 @@
           "detail": null
         }
       ]
+    },
+    {
+      "name": "LinkActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:53",
+      "host": null,
+      "hosts": [],
+      "entry": [
+        {
+          "kind": "deeplink",
+          "detail": "https://navapp.example/views"
+        }
+      ]
     }
   ],
   "paths": [
     [
       "MainActivity",
+      "ViewsActivity",
+      "ListFragment",
+      "DetailFragment",
+      "SettingsFragment",
+      "AboutFragment",
+      "LicensesActivity"
+    ],
+    [
+      "LinkActivity",
       "ViewsActivity",
       "ListFragment",
       "DetailFragment",

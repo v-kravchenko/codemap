@@ -11,7 +11,7 @@ strips it since `meta.run` is never reproducible).
 
 ```json
 {
-  "schema_version": "3.2.0",
+  "schema_version": "3.3.0",
   "command": "impact",
   "meta": {
     "tool_version": "0.2.0",
@@ -30,7 +30,7 @@ strips it since `meta.run` is never reproducible).
 }
 ```
 
-- `schema_version` — the shape of the JSON output (`"3.2.0"`, `internal/query/cli.go`). Independent
+- `schema_version` — the shape of the JSON output (`"3.3.0"`, `internal/query/cli.go`). Independent
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
   `"changes"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
@@ -118,7 +118,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.2.0",
+  "schema_version": "3.3.0",
   "command": "used-by",
   "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
   "items": [
@@ -175,7 +175,7 @@ Result fields (full `impact`, no `--to`):
 
 ```json
 {
-  "schema_version": "3.2.0",
+  "schema_version": "3.3.0",
   "command": "impact",
   "changed": [
     {
@@ -236,7 +236,7 @@ resolved head commit or `"WORKTREE"`.
 
 ```json
 {
-  "schema_version": "3.2.0",
+  "schema_version": "3.3.0",
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
@@ -254,7 +254,8 @@ resolved head commit or `"WORKTREE"`.
 ## nav-path
 
 ```
-codemap nav-path SCREEN [--verbose] [--limit N] [--depth N] [--no-paths] [--all] [--json]
+codemap nav-path SCREEN [--via SCREEN]... [--ways] [--from SCREEN | --entry launcher|deeplink|intent]
+                 [--avoid GLOB]... [--verbose] [--limit N] [--depth N] [--no-paths] [--all] [--json]
 ```
 
 - `SCREEN` (positional, required) — a screen name/target, or (falling back) a symbol whose nearest
@@ -262,6 +263,22 @@ codemap nav-path SCREEN [--verbose] [--limit N] [--depth N] [--no-paths] [--all]
 - `--verbose` — include every way found (`hubs`, `bases`), not just the cheapest ones on the
   reported paths/branches.
 - `--limit N` — cap how many branch ways are reported (text output; default 20).
+- `--via SCREEN` (repeatable, in order) — the cheapest way through these screens: the cheapest part
+  from the targets back to the last of them, from there to the one before, and from the first to an
+  entry. The result has the regular keys for that one way plus `via` (the arguments); no way gives
+  empty `screens`, `entries`, `paths`.
+- `--ways` — the cheapest way through each screen that opens the *fork*: the first screen back from
+  the target, on its cheapest way, that more than one screen opens (FaqActivity for FaqFragment). The
+  last step into the fork is the screen's own. Not with `--via`. Result: `targets`, `fork` (name or
+  `null` when no screen on the way has two openers: then `ways` holds the cheapest way), `ways`
+  (`{through, cost, entry, path}`, `entry` an `entries` item; sorted as the entries: by entry kind,
+  then cost, then `through`), `no_way` (openers of the fork no entry reaches).
+- `--from SCREEN` — ways start at this screen in whatever host instead of at an entry: its `entry`
+  is `[{"kind": "from", "detail": null}]`; no `base`/`outside`/`unknown` entries, no `branches`.
+- `--entry KIND` — ways start only at entries of this kind (`launcher`, `deeplink`, `intent`); no
+  `base`/`outside`/`unknown` entries, no `branches`. Not with `--from`.
+- `--avoid GLOB` (repeatable) — no way goes through a screen whose name or class matches (`*`: any
+  run of characters), e.g. `--avoid 'Debug*'`.
 - `--depth N`, `--all`, `--json` — as above.
 
 Result fields:
@@ -273,7 +290,8 @@ Result fields:
   `shared` is the qualified name of the shared "hub" code when `way` is shared, else `null`;
   `hint` is the step's human label (`stepHint`); `via` is the qualified code path of the step.
 - `entries` — how the target is first reached: screen object plus `entry`, an array of
-  `{kind, detail}` (`kind` one of `launcher`, `deeplink`, `intent`, `base`, `outside`, `unknown`;
+  `{kind, detail}` (`kind` one of `launcher`, `deeplink`, `intent`, `base`, `outside`, `unknown`,
+  `from` with `--from`;
   `detail` extra text or `null`).
 - `paths` — array of arrays of screen names, one per entry point, from the entry to the target.
 - `branches` — other launcher branches within `nav_path.branch_slack`: `{entry, through, cost,
@@ -284,7 +302,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.2.0", "command": "nav-path",
+  "schema_version": "3.3.0", "command": "nav-path",
   "targets": [{ "name": "Login", "kind": "route", "module": "app",
     "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
   "screens": [
@@ -331,7 +349,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.2.0", "command": "graph",
+  "schema_version": "3.3.0", "command": "graph",
   "roots": ["Home"],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
@@ -364,7 +382,7 @@ excluded by `--kind`, by kind.
 
 ```json
 {
-  "schema_version": "3.2.0", "command": "screens",
+  "schema_version": "3.3.0", "command": "screens",
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
@@ -399,7 +417,7 @@ module then location, truncated to `--limit`.
 
 ```json
 {
-  "schema_version": "3.2.0", "command": "find", "pattern": "Activity",
+  "schema_version": "3.3.0", "command": "find", "pattern": "Activity",
   "total": 15, "synthetic": 0,
   "symbols": [
     { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",

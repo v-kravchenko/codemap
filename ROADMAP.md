@@ -10,7 +10,11 @@ itself.
   debug or release build) and get back the affected screens/zones, the same way `impact`
   does for a symbol name. Without `mapping.txt` support, an obfuscated release stack trace
   can't be mapped back to real class/method names at all, so this is useless for the builds
-  that actually crash in production.
+  that actually crash in production. Screens alone are not the answer: a crash in
+  `Application.onCreate`, a `Service`, a `BroadcastReceiver` or a `Worker` has no screen, so the
+  answer leads with where it crashed (deepest own frame, its module and zone) and the entry
+  point (lowest own frame), with screens only when the entry point reaches one. Naming those
+  entry points needs manifest components and worker bases as a kind of node in the map.
 - **Zones, with owners and a sensitive-zone exit code.** Group packages into named zones (e.g.
   "payments", "auth") with an owning team, a `zones check` that fails CI when a package has no
   zone or zones overlap, and a distinct exit code when a change touches a zone marked
@@ -58,6 +62,10 @@ itself.
   singleton** (e.g. `Application.getInstance()` read from a base class's lifecycle callback) —
   today it fans out to every screen reachable from that lifecycle callback, which is correct
   but maximally unhelpful.
+- **Push as a nav-path entry (`--entry push`).** A `Service` whose intent filter takes a push
+  (`com.google.firebase.MESSAGING_EVENT`, in a preset) becomes an entry, and the screens its code
+  opens get `entry: push` instead of `outside`. Needs manifest components in the map, the same gap
+  as the stack trace input.
 - **nav-path through a DI multibinding** (a Hilt `@IntoSet`/map-multibinding of navigation
   destinations, a Navigation-3-style scene registry) — currently reported as "No way" because
   there's no static call edge from the registering code to the host that reads the set/map at

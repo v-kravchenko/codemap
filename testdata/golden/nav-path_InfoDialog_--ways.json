@@ -1,0 +1,70 @@
+{
+  "schema_version": "3.3.0",
+  "command": "nav-path",
+  "targets": [
+    {
+      "name": "InfoDialog",
+      "kind": "dialog",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:48",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ]
+    }
+  ],
+  "fork": "ViewsActivity",
+  "ways": [
+    {
+      "through": "MainActivity",
+      "cost": 4,
+      "entry": {
+        "name": "MainActivity",
+        "kind": "activity",
+        "module": "app",
+        "location": "app/src/main/java/navapp/MainActivity.kt:13",
+        "host": null,
+        "hosts": [],
+        "entry": [
+          {
+            "kind": "launcher",
+            "detail": null
+          }
+        ]
+      },
+      "path": [
+        "MainActivity",
+        "ViewsActivity",
+        "ListFragment",
+        "DetailFragment",
+        "InfoDialog"
+      ]
+    },
+    {
+      "through": "LinkActivity",
+      "cost": 4,
+      "entry": {
+        "name": "LinkActivity",
+        "kind": "activity",
+        "module": "app",
+        "location": "app/src/main/java/navapp/views/ViewsActivity.kt:53",
+        "host": null,
+        "hosts": [],
+        "entry": [
+          {
+            "kind": "deeplink",
+            "detail": "https://navapp.example/views"
+          }
+        ]
+      },
+      "path": [
+        "LinkActivity",
+        "ViewsActivity",
+        "ListFragment",
+        "DetailFragment",
+        "InfoDialog"
+      ]
+    }
+  ],
+  "no_way": []
+}

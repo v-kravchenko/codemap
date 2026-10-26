@@ -1,8 +1,8 @@
 {
-  "schema_version": "3.2.0",
+  "schema_version": "3.3.0",
   "command": "find",
   "pattern": "Activity",
-  "total": 15,
+  "total": 16,
   "synthetic": 0,
   "symbols": [
     {
@@ -16,6 +16,12 @@
       "kind": "resource",
       "module": "app",
       "location": "app/src/main/res/layout/activity_views.xml"
+    },
+    {
+      "symbol": "navapp.views.LinkActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:53"
     },
     {
       "symbol": "navapp.impact.BaseActivity",

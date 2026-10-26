@@ -43,3 +43,4 @@ a stale file path) may be fixed directly in place; a changed decision gets a new
 | [0009](0009-stable-json-contract.md) | A stable, versioned `--json` contract | accepted |
 | [0010](0010-git-optional.md) | Git is optional, used only by `changes` | accepted |
 | [0011](0011-golden-tests.md) | Golden tests on a compiled fixture | accepted |
+| [0012](0012-nav-path-via-and-ways.md) | `nav-path --via` as chained walks, `--ways` by the fork | accepted |

@@ -1,0 +1,21 @@
+{
+  "schema_version": "3.3.0",
+  "command": "nav-path",
+  "targets": [
+    {
+      "name": "Settings",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": null,
+      "hosts": []
+    }
+  ],
+  "via": [
+    "Login"
+  ],
+  "screens": [],
+  "entries": [],
+  "paths": [],
+  "branches": []
+}
