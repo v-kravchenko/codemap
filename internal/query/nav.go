@@ -153,7 +153,13 @@ func sortedInts(s []int32) []int32 {
 // pushWay: whether the code from the opener to the screen goes through push or deep link handling.
 func (g *Graph) pushWay(via []int32) bool {
 	for _, n := range via[:max(len(via)-1, 0)] {
-		if g.kind(n) == "M" && slices.ContainsFunc(config.Cfg.NavPath.PushMarkers, func(s string) bool { return strings.Contains(g.name(n), s) }) {
+		if g.pushes[n] == 0 { // asked on every step of every walk
+			g.pushes[n] = 1
+			if g.kind(n) == "M" && slices.ContainsFunc(config.Cfg.NavPath.PushMarkers, func(s string) bool { return strings.Contains(g.name(n), s) }) {
+				g.pushes[n] = 2
+			}
+		}
+		if g.pushes[n] == 2 {
 			return true
 		}
 	}
@@ -272,6 +278,7 @@ type navResult struct {
 	roots      []navRoot
 	branches   []navBranch // in the order their keys were first met
 	targetsLen int
+	known      *navState // the state in no host of a screen lim.reached has, where the walk stopped
 }
 
 type heapItem struct {
@@ -319,7 +326,9 @@ func (g *Graph) hostStr(h hostKey) string {
 // (nil: the entries of the manifest, of the kind `entry` when set); avoid: screens no way goes through.
 type navLimits struct {
 	maxDepth     int
-	launcherOnly bool // stop at the first launcher reached
+	launcherOnly bool           // stop at the first launcher reached
+	anyEntry     bool           // stop at the first entry or base reached: whether, not how
+	reached      map[int32]bool // with anyEntry: screens known reached, whose state in no host ends the walk too
 	from, avoid  map[int32]bool
 	entry        string
 	direct       bool // the first step reaches `from`
@@ -385,12 +394,17 @@ func (g *Graph) navWalk(starts []navState, lim navLimits) *navResult {
 			continue
 		}
 		done[st] = true
+		if lim.reached[sid] && host.none() {
+			r.known = &st
+			break
+		}
 		if e := g.rootsOf(sid, host, lim); len(e) > 0 {
 			if !roots[sid] {
 				roots[sid] = true
 				r.roots = append(r.roots, navRoot{sid, st, e})
 			}
-			if lim.launcherOnly && e[0].kind == "launcher" {
+			if lim.launcherOnly && e[0].kind == "launcher" ||
+				lim.anyEntry && slices.ContainsFunc(e, func(x navEntry) bool { return slices.Contains(entryKinds, x.kind) }) {
 				break
 			}
 			if r.depth[st] != 0 {
@@ -426,6 +440,9 @@ func (g *Graph) navWalk(starts []navState, lim navLimits) *navResult {
 			}
 			roots[sid] = true
 			r.roots = append(r.roots, navRoot{sid, st, []navEntry{how}})
+			if lim.anyEntry && how.kind == "base" {
+				break
+			}
 		}
 		for _, w := range ways {
 			src, need := w.Src, w.host()
@@ -563,14 +580,28 @@ func (g *Graph) navOfScreen(sid int32) *navOf {
 // screens nothing opens or only code outside the screens opens (none when every way needs a host no
 // way starts in); false when an entry reaches it. A base class counts as reached: every screen
 // extending it opens the screen (a popup BaseActivity shows), and the walk does not go through them.
-func (g *Graph) unreached(sid int32) ([]navRoot, bool) {
-	r := g.navWalk(statesOf([]int32{sid}), navLimits{maxDepth: -1})
+// reached: the screens known reached, filled as the walks find them: every screen on the way from an
+// entry, in no host, starts a walk that finds that entry too.
+func (g *Graph) unreached(sid int32, reached map[int32]bool) ([]navRoot, bool) {
+	if reached[sid] {
+		return nil, false
+	}
+	r := g.navWalk(statesOf([]int32{sid}), navLimits{maxDepth: -1, anyEntry: true, reached: reached})
+	end := r.known
 	for _, root := range r.roots {
-		if k := root.how[0].kind; k == "base" || slices.Contains(entryKinds, k) {
-			return nil, false
+		if k := root.how[0].kind; end == nil && (k == "base" || slices.Contains(entryKinds, k)) {
+			end = &root.st
 		}
 	}
-	return r.roots, true
+	if end == nil {
+		return r.roots, true
+	}
+	for _, st := range r.chain(*end) {
+		if st.host.none() {
+			reached[st.sid] = true
+		}
+	}
+	return nil, false
 }
 
 func (n *navOf) json() any {

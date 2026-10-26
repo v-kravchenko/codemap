@@ -884,6 +884,7 @@ func (g *Graph) cmdScreens(o opts) int {
 	var out []row
 	hidden, shown := map[string]int{}, shownKinds(o)
 	mf, outside := g.moduleFilter(o.modules), 0
+	reached := map[int32]bool{} // by the walks of --unreachable
 	var hostIn map[int32]bool
 	if o.host != "" {
 		hostIn = map[int32]bool{}
@@ -922,7 +923,7 @@ func (g *Graph) cmdScreens(o opts) int {
 				continue // previews and layouts are not opened, so not reached either
 			}
 			var dead bool
-			if ends, dead = g.unreached(n); !dead {
+			if ends, dead = g.unreached(n, reached); !dead {
 				continue
 			}
 		}

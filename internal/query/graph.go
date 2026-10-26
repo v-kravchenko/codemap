@@ -81,6 +81,7 @@ type Graph struct {
 	labels                     []string // per node, "" not made yet (no label is empty: label() never returns "")
 	qualifieds                 []string
 	callers                    []int32 // callerClass per node, -2 not made yet
+	pushes                     []int8  // pushWay per node: 0 not made yet, 1 no, 2 yes
 	opened                     map[int32]openedRows
 	entries                    map[int32][]navEntry
 	refs                       any        // meta.refs of the --json (changes)
@@ -96,6 +97,7 @@ func NewGraph(m *snapshot.Map, root string) *Graph {
 		supCache: map[int32]map[int32]bool{}, viewmodels: map[int32]bool{}}
 	n := m.Nodes()
 	g.labels, g.qualifieds, g.callers = make([]string, n), make([]string, n), make([]int32, n)
+	g.pushes = make([]int8, n)
 	for i := range g.callers {
 		g.callers[i] = -2
 	}
