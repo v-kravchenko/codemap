@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/views_graph"
+    app:startDestination="@id/listFragment">
+
+    <fragment android:id="@+id/listFragment" android:name="navapp.views.ListFragment">
+        <action android:id="@+id/action_list_to_detail" app:destination="@id/detailFragment" />
+    </fragment>
+
+    <fragment android:id="@+id/detailFragment" android:name="navapp.views.DetailFragment" />
+
+    <dialog android:id="@+id/infoDialog" android:name="navapp.views.InfoDialog" />
+
+    <navigation android:id="@+id/settings_graph" app:startDestination="@id/settingsFragment">
+        <fragment android:id="@+id/settingsFragment" android:name="navapp.views.SettingsFragment">
+            <action android:id="@+id/action_settings_to_about" app:destination="@id/aboutFragment" />
+        </fragment>
+        <fragment android:id="@+id/aboutFragment" android:name="navapp.views.AboutFragment" />
+    </navigation>
+</navigation>

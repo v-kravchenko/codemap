@@ -1,0 +1,12 @@
+# A route handed over a Flow or LiveData opens it: the events of a ViewModel the screen collects.
+version: 1
+navigation:
+  open:
+    - kotlinx.coroutines.flow.MutableSharedFlow.emit
+    - kotlinx.coroutines.flow.MutableSharedFlow.tryEmit
+    - kotlinx.coroutines.flow.MutableSharedFlow.setValue
+    - kotlinx.coroutines.flow.MutableStateFlow.emit
+    - kotlinx.coroutines.flow.MutableStateFlow.tryEmit
+    - kotlinx.coroutines.flow.MutableStateFlow.setValue
+    - androidx.lifecycle.MutableLiveData.setValue
+    - androidx.lifecycle.MutableLiveData.postValue

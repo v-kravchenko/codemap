@@ -1,0 +1,32 @@
+# Android screens and the build layout of AGP 8 and 9, with or without built-in Kotlin.
+version: 1
+variant: debug
+build:
+  class_dirs:
+    - build/intermediates/built_in_kotlinc/{variant}/compile{Variant}Kotlin/classes
+    - build/intermediates/javac/{variant}/compile{Variant}JavaWithJavac/classes
+  source_sets: [main, "{variant}"]
+changes:
+  base: [origin/main, main]
+screens:
+  activity_bases:
+    - android.app.Activity
+    - androidx.activity.ComponentActivity
+    - androidx.core.app.ComponentActivity
+    - androidx.fragment.app.FragmentActivity
+    - androidx.appcompat.app.AppCompatActivity
+  fragment_bases:
+    - androidx.fragment.app.Fragment
+  dialog_bases:
+    - androidx.fragment.app.DialogFragment
+    - com.google.android.material.bottomsheet.BottomSheetDialogFragment
+    - androidx.appcompat.app.AppCompatDialogFragment
+  debug_source_sets: [debug]
+nav_path:
+  costs: { own: 1, shared: 3, push: 30 }
+  branch_slack: 4
+  path_limit: 64
+  hub_min: 10
+graph:
+  fanout: 15
+  max_edges: 400

@@ -1,0 +1,13 @@
+# dagger-android: the base classes of its screens live in the library, outside the map.
+version: 1
+screens:
+  activity_bases:
+    - dagger.android.DaggerActivity
+    - dagger.android.support.DaggerAppCompatActivity
+  fragment_bases:
+    - dagger.android.DaggerFragment
+    - dagger.android.support.DaggerFragment
+  dialog_bases:
+    - dagger.android.DaggerDialogFragment
+    - dagger.android.support.DaggerDialogFragment
+    - dagger.android.support.DaggerAppCompatDialogFragment

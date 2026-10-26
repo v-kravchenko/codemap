@@ -1,0 +1,18 @@
+# Navigation Compose with string routes: composable("profile/{id}") registers a route,
+# navigate("profile/$id") opens it; {id} and the parts built at run time match any path segment, the
+# query (?a=b) is left out. A route kept in a variable or handed over an Object parameter is not seen.
+version: 1
+extends: [nav-events]
+navigation:
+  string_routes: true
+  register:
+    - androidx.navigation.compose.NavGraphBuilderKt.composable
+    - androidx.navigation.compose.NavGraphBuilderKt.dialog
+  graph:
+    - androidx.navigation.compose.NavGraphBuilderKt.navigation
+    - androidx.navigation.NavGraphBuilderKt.navigation
+    - androidx.navigation.NavGraphBuilder.<init>
+  open:
+    - androidx.navigation.NavController.navigate
+    - androidx.navigation.NavHostController.navigate
+    - androidx.navigation.compose.NavHostKt.NavHost

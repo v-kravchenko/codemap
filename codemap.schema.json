@@ -1,0 +1,260 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "codemap.schema.json",
+  "title": "codemap.yml",
+  "description": "Settings of the code map. Lists add up from the presets in extends to this file, except build.class_dirs, build.source_sets and changes.base, which replace; a scalar set later wins.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "extends": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "android",
+          "dagger-android",
+          "nav-events",
+          "nav2-compose-strings",
+          "nav2-compose",
+          "nav3"
+        ]
+      },
+      "description": "Built-in presets, merged in order before this file."
+    },
+    "variant": {
+      "type": "string",
+      "description": "Build variant whose classes are read, e.g. debug, googleDebug."
+    },
+    "snapshot": {
+      "type": "string",
+      "description": "Where the map is written, relative to the root."
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "class_dirs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Class directories of a module, relative to it; {variant} and {Variant} are replaced."
+        },
+        "source_sets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Source sets read, in order; {variant} is replaced."
+        }
+      }
+    },
+    "changes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Refs tried in order for the merge base of `codemap changes` without --base."
+        }
+      }
+    },
+    "screens": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "activity_bases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Classes whose subclasses are activities."
+        },
+        "fragment_bases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Classes whose subclasses are fragments."
+        },
+        "dialog_bases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Classes whose subclasses are dialog fragments (fragments too)."
+        },
+        "preview_annotations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Simple names of annotations that mark a screen preview function."
+        },
+        "preview_note": {
+          "type": "string",
+          "description": "Shown after the title of screen previews."
+        },
+        "layout_pattern": {
+          "type": "string",
+          "format": "regex",
+          "description": "Regexp over type/name of a resource that is a screen layout."
+        },
+        "debug_source_sets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Source sets whose screens are debug only."
+        }
+      }
+    },
+    "navigation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "route_bases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Classes whose subclasses (Kotlin objects) are routes."
+        },
+        "child_bases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Classes whose subclasses are nested navigation graphs."
+        },
+        "route_interfaces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Interfaces of route types."
+        },
+        "register": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Class.member globs of the calls that register a destination."
+        },
+        "open": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Class.member globs of the calls that open a route handed to them: by name, or (typed_routes, string_routes) the route itself."
+        },
+        "graph": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Class.member globs of the calls that register a nested graph from its start route and its own route; opening the graph opens the start route."
+        },
+        "not_opening": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Member name globs of route types that read a route without opening it."
+        },
+        "start_destination": {
+          "type": "string",
+          "description": "The method of a graph that returns its start route."
+        },
+        "typed_routes": {
+          "type": "boolean",
+          "description": "Routes are classes: registered by a class literal (composable<T>, entry<T>), opened as an object or a constructor call handed to an open call."
+        },
+        "string_routes": {
+          "type": "boolean",
+          "description": "Routes are strings: registered by a string constant, opened by a constant or a string template; {arg} and template parts match any path segment."
+        },
+        "hint_skip": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Method names never shown as the step hint of nav-path."
+        }
+      }
+    },
+    "nav_path": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "push_markers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Parts of method names that mark push or deep link handling."
+        },
+        "costs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "own": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "A step through the screen's own code."
+            },
+            "shared": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "A step through shared code."
+            },
+            "push": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Added for a step through push handling."
+            }
+          }
+        },
+        "branch_slack": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Other launcher branches shown when at most this much dearer."
+        },
+        "path_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Shortest ways tried for one pair."
+        },
+        "hub_min": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Screens below a node that make it a hub."
+        }
+      }
+    },
+    "graph": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fanout": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Screens opened by one before a +N node."
+        },
+        "max_edges": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Edges drawn."
+        }
+      }
+    }
+  },
+  "required": [
+    "version"
+  ]
+}

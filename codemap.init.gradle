@@ -1,0 +1,98 @@
+// codemap init: the modules of the build, and for each variant where its classes, sources, resources
+// and manifests are, written as JSON to -Pcodemap.out. Only reads the configured build: nothing is
+// compiled (run it with `help --no-configuration-cache`). Groovy, so the Android Gradle plugin is
+// reached without its classes on the script's classpath.
+import groovy.json.JsonOutput
+
+def modules = [:].asSynchronized() // Gradle path -> module
+
+def rel = { Project p, File f -> p.rootDir.toPath().relativize(f.toPath()).toString().replace('\\', '/') }
+
+// the directories of a source directory set: AGP 9 has `directories` (strings), older `srcDirs`
+def dirsOf = { Project p, ds ->
+    ds.hasProperty('directories') ? ds.directories.collect { p.file(it) } : ds.srcDirs as List
+}
+
+def capital = { String s -> s ? s[0].toUpperCase() + s.substring(1) : s }
+
+// the source sets of a variant, the general first: main, flavors, flavor combination, build type, variant
+def sourceSetNames = { variant ->
+    def flavors = variant.productFlavors.collect { it.second }
+    def names = ['main'] + flavors
+    if (flavors.size() > 1) {
+        names << flavors[0] + flavors.drop(1).collect { capital(it) }.join('')
+    }
+    if (variant.buildType) {
+        names << variant.buildType
+    }
+    names << variant.name
+    names.unique()
+}
+
+allprojects { Project p ->
+    ['com.android.application': 'application', 'com.android.library': 'library',
+     'com.android.dynamic-feature': 'dynamic-feature', 'com.android.test': 'test'].each { id, type ->
+        p.plugins.withId(id) {
+            def module = [path: p.path, dir: rel(p, p.projectDir), type: type, variants: [:]]
+            modules[p.path] = module
+            p.androidComponents.onVariants(p.androidComponents.selector().all()) { variant ->
+                module.variants[variant.name] = [source_sets: sourceSetNames(variant)]
+            }
+        }
+    }
+    p.plugins.withId('java') {
+        if (!modules.containsKey(p.path)) {
+            modules[p.path] = [path: p.path, dir: rel(p, p.projectDir), type: 'jvm', variants: [main: [source_sets: ['main']]]]
+        }
+    }
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def variants = new TreeSet<String>()
+    modules.values().each { module ->
+        def p = root.project(module.path)
+        module.variants.each { name, v ->
+            variants << name
+            def V = capital(name)
+            def classes = []
+            def tasks = module.type == 'jvm' ? ['compileKotlin', 'compileJava'] :
+                    ["compile${V}Kotlin", "compile${V}JavaWithJavac"]
+            tasks.each { t ->
+                def task = p.tasks.findByName(t)
+                if (task != null && task.hasProperty('destinationDirectory')) {
+                    classes << rel(p, task.destinationDirectory.get().asFile)
+                }
+            }
+            v.classes = classes
+            v.compile_tasks = tasks.findAll { p.tasks.findByName(it) != null }.collect { p.path == ':' ? ":$it" : "$p.path:$it" }
+            def sources = [], res = [], manifests = []
+            v.source_sets.each { s ->
+                def set = module.type == 'jvm' ? p.sourceSets.findByName(s) : p.android.sourceSets.findByName(s)
+                if (set == null) {
+                    return
+                }
+                if (module.type == 'jvm') {
+                    set.allSource.srcDirs.each { sources << rel(p, it) }
+                    set.resources.srcDirs.each { res << rel(p, it) }
+                } else {
+                    (dirsOf(p, set.kotlin) + dirsOf(p, set.java)).each { sources << rel(p, it) }
+                    dirsOf(p, set.res).each { res << rel(p, it) }
+                    manifests << rel(p, p.file(set.manifest.srcFile))
+                }
+            }
+            v.sources = sources.unique()
+            v.res = res.unique()
+            v.manifests = manifests.unique()
+        }
+    }
+    def out = root.findProperty('codemap.out')
+    if (out == null) {
+        throw new GradleException('codemap: pass -Pcodemap.out=FILE')
+    }
+    def model = [version: 1,
+                 generated: [gradle: gradle.gradleVersion],
+                 variants: variants as List,
+                 modules: modules.values().sort { it.dir }]
+    new File(out.toString()).text = JsonOutput.prettyPrint(JsonOutput.toJson(model)) + '\n'
+}

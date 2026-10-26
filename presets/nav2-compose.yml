@@ -1,0 +1,20 @@
+# Navigation Compose with type-safe routes (2.8+): composable<T> and dialog<T> register the class T,
+# navigation<T>(startDestination = S) a nested graph that opens S; navigate(Route) and NavHost's
+# startDestination open a route.
+version: 1
+extends: [nav-events]
+navigation:
+  typed_routes: true
+  register:
+    - androidx.navigation.compose.NavGraphBuilderKt.composable
+    - androidx.navigation.compose.NavGraphBuilderKt.dialog
+    - androidx.navigation.compose.ComposeNavigatorDestinationBuilder.<init>
+    - androidx.navigation.compose.DialogNavigatorDestinationBuilder.<init>
+  graph:
+    - androidx.navigation.compose.NavGraphBuilderKt.navigation
+    - androidx.navigation.NavGraphBuilderKt.navigation
+    - androidx.navigation.NavGraphBuilder.<init>
+  open:
+    - androidx.navigation.NavController.navigate
+    - androidx.navigation.NavHostController.navigate
+    - androidx.navigation.compose.NavHostKt.NavHost

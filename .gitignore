@@ -1,0 +1,10 @@
+# The binary of `go build -o codemap .`
+/codemap
+
+# Gradle output of the fixture (update.sh); only classes.zip is kept
+testdata/**/build/
+testdata/**/.gradle/
+testdata/**/.kotlin/
+testdata/**/.idea/
+testdata/**/local.properties
+testdata/**/gradle/gradle-daemon-jvm.properties

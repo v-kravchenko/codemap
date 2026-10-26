@@ -1,0 +1,17 @@
+# Navigation 3: entry<T> registers the class T, so does `is T -> NavEntry(key)` in an entryProvider
+# lambda; adding a key to the back stack opens it, so does a call taking a NavKey (a navigator's push).
+version: 1
+extends: [nav-events]
+navigation:
+  typed_routes: true
+  route_interfaces: [androidx.navigation3.runtime.NavKey]
+  register:
+    - androidx.navigation3.runtime.EntryProviderScope.addEntryProvider
+    - androidx.navigation3.runtime.NavEntry.<init>
+  open:
+    - androidx.navigation3.runtime.NavBackStack.add
+    - androidx.navigation3.runtime.NavBackStack.set
+    - androidx.compose.runtime.snapshots.SnapshotStateList.add
+    - androidx.compose.runtime.snapshots.SnapshotStateList.set
+    - java.util.List.add
+    - java.util.List.set
