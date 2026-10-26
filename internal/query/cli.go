@@ -32,16 +32,17 @@ const (
 
 var (
 	kindNames      = map[string]string{"C": "class", "M": "method", "F": "field", "R": "resource", "ROUTE": "route"}
+	findTypes      = []string{"class", "method", "field", "resource"} // find --type: find lists no routes
 	syntheticClass = regexp.MustCompile(`\$(\d|\$|DefaultImpls$|WhenMappings$)|_HiltModules_\w+$`)
 	started        = time.Now()
 )
 
 type opts struct {
-	db, to, base, head, diff, files, from, entry, direction string
-	json, all, noPaths, noSelf, noCheck, nav                bool
-	strict, verbose, info, ways, in                         bool
-	depth, limit                                            int
-	kinds, pos, via, avoid, modules                         []string
+	db, to, base, head, diff, files, from, entry, direction, host string
+	json, all, noPaths, noSelf, noDI, noCheck, nav                bool
+	strict, verbose, info, ways, in, unreachable                  bool
+	depth, limit                                                  int
+	kinds, pos, via, avoid, modules, types                        []string
 }
 
 func parseOpts(cmd string, args []string) opts {
@@ -104,6 +105,14 @@ func parseOpts(cmd string, args []string) opts {
 			o.noPaths = true
 		case "--no-self":
 			o.noSelf = true
+		case "--no-di":
+			o.noDI = true
+		case "--host":
+			o.host = value(&i, "host")
+		case "--unreachable":
+			o.unreachable = true
+		case "--type":
+			o.types = append(o.types, value(&i, "type"))
 		case "--no-check":
 			o.noCheck = true
 		case "--strict":
@@ -143,6 +152,12 @@ func parseOpts(cmd string, args []string) opts {
 	if o.entry != "" && !slices.Contains(entryKinds, o.entry) {
 		panic(util.UserError(fmt.Sprintf("argument --entry: invalid choice: '%s' (choose from %s)", o.entry,
 			strings.Join(entryKinds, ", "))))
+	}
+	for _, t := range o.types {
+		if !slices.Contains(findTypes, t) {
+			panic(util.UserError(fmt.Sprintf("argument --type: invalid choice: '%s' (choose from %s)", t,
+				strings.Join(findTypes, ", "))))
+		}
 	}
 	for _, k := range o.kinds {
 		if k != "all" && !slices.ContainsFunc(config.ScreenTitles, func(t [2]string) bool { return t[0] == k }) {
@@ -403,21 +418,28 @@ func (g *Graph) cmdEdges(cmd string, o opts) int {
 		rows, outside = kept, len(hidden)
 	}
 	title := map[string]string{"used-by": "Used by", "uses": "Uses"}[cmd]
-	return g.printEdges(found, rows, title, o.json, cmd, outside)
+	return g.printEdges(found, rows, title, o.json, cmd, outside, o.noDI)
 }
 
-// printEdges: outside, the symbols --module left out (-1 without it).
-func (g *Graph) printEdges(found []Seed, rows []EdgeRow, title string, asJSON bool, command string, outside int) int {
+// printEdges: outside, the symbols --module left out (-1 without it); noDI leaves out generated DI code,
+// still counted in generated_di.
+func (g *Graph) printEdges(found []Seed, rows []EdgeRow, title string, asJSON bool, command string, outside int, noDI bool) int {
 	isFound := map[int32]bool{}
 	for _, s := range found {
 		isFound[s.N] = true
 	}
 	generated := map[int32]bool{}
+	kept := rows[:0]
 	for _, r := range rows {
 		if g.diGlue[g.topOf(r.Other)] {
 			generated[r.Other] = true
+			if noDI {
+				continue
+			}
 		}
+		kept = append(kept, r)
 	}
+	rows = kept
 	groups := map[string]map[int32]map[string]bool{}
 	var modOrder []string               // first-seen order: ties of the sort below keep it
 	othersOrder := map[string][]int32{} // first-seen order
@@ -487,8 +509,10 @@ func (g *Graph) printEdges(found []Seed, rows []EdgeRow, title string, asJSON bo
 		total += len(v)
 	}
 	gen := ""
-	if len(generated) > 0 {
-		gen = fmt.Sprintf(", %d of them generated DI code", len(generated))
+	if len(generated) > 0 && noDI {
+		gen = fmt.Sprintf("; %d generated DI code not shown", len(generated))
+	} else if len(generated) > 0 {
+		gen = fmt.Sprintf(", %d of them generated DI code (--no-di leaves them out)", len(generated))
 	}
 	fmt.Printf("%s: %d in %d modules%s\n", title, total, len(groups), gen)
 	for _, mod := range util.SortedKeys(groups) {
@@ -848,10 +872,18 @@ func (g *Graph) cmdScreens(o opts) int {
 	type row struct {
 		kind, module, label, target, host, loc string
 		hosts                                  []int32
+		ends                                   []navRoot
 	}
 	var out []row
 	hidden, shown := map[string]int{}, shownKinds(o)
 	mf, outside := g.moduleFilter(o.modules), 0
+	var hostIn map[int32]bool
+	if o.host != "" {
+		hostIn = map[int32]bool{}
+		for _, h := range g.screensOf(o.host, o.all) {
+			hostIn[h] = true
+		}
+	}
 	s := &g.m.Screen
 	for i := range s.Node {
 		n := g.m.Index(s.Node[i])
@@ -870,11 +902,24 @@ func (g *Graph) cmdScreens(o opts) int {
 			outside++
 			continue
 		}
+		if hostIn != nil && !slices.ContainsFunc(hosts, func(h int32) bool { return hostIn[h] }) {
+			continue
+		}
 		if !shown[kind] {
 			hidden[kind]++
 			continue
 		}
-		out = append(out, row{kind, module, label, target, host, g.location(n), hosts})
+		var ends []navRoot
+		if o.unreachable {
+			if !screenKinds[kind] {
+				continue // previews and layouts are not opened, so not reached either
+			}
+			var dead bool
+			if ends, dead = g.unreached(n); !dead {
+				continue
+			}
+		}
+		out = append(out, row{kind, module, label, target, host, g.location(n), hosts, ends})
 	}
 	sort.SliceStable(out, func(i, j int) bool {
 		a, b := out[i], out[j]
@@ -889,8 +934,16 @@ func (g *Graph) cmdScreens(o opts) int {
 	if o.json {
 		items := make([]any, len(out))
 		for i, r := range out {
-			items[i] = append(append(obj{{"kind", r.kind}, {"module", r.module}, {"name", r.label}, {"target", r.target}},
+			item := append(append(obj{{"kind", r.kind}, {"module", r.module}, {"name", r.label}, {"target", r.target}},
 				g.hostsJSON(r.hosts)...), kv{"location", r.loc})
+			if o.unreachable {
+				var ends []any
+				for _, e := range r.ends {
+					ends = append(ends, g.entryJSON(e.sid, e.how))
+				}
+				item = append(item, kv{"entries", list(ends)})
+			}
+			items[i] = item
 		}
 		result := obj{{"screens", items}, {"hidden", countsObj(hidden)}}
 		if mf != nil {
@@ -920,6 +973,9 @@ func (g *Graph) cmdScreens(o opts) int {
 				host = "  host " + r.host
 			}
 			fmt.Printf("  %-50s %-28s %s%s\n", name, r.module, r.loc, host)
+			for _, e := range r.ends {
+				fmt.Printf("      ends at %s: %s\n", g.screenName(e.sid), deadEnd(e.how[0]))
+			}
 		}
 	}
 	if len(hidden) > 0 {
@@ -928,7 +984,23 @@ func (g *Graph) cmdScreens(o opts) int {
 	if outside > 0 {
 		fmt.Println("\n" + outsideLine(fmt.Sprintf("%d screens", outside)))
 	}
+	if o.unreachable {
+		fmt.Printf("\n(%d screens no entry of the manifest reaches, as far as the code map sees)\n", len(out))
+	}
 	return exitOK
+}
+
+// deadEnd: how a way back from an unreachable screen ends, for reading.
+func deadEnd(e navEntry) string {
+	switch e.kind {
+	case "unknown":
+		return "nothing opens it"
+	case "outside":
+		return "opened only from code outside the screens"
+	case "base":
+		return "opened only through the base class " + e.detail
+	}
+	return entryText(e)
 }
 
 func (g *Graph) cmdBuildInfo(o opts) int {
@@ -1181,6 +1253,9 @@ func (g *Graph) cmdFind(o opts) int {
 		}
 		q := g.qualified(n)
 		if !(rx.MatchString(q) || rx.MatchString(g.sname(n))) {
+			continue
+		}
+		if len(o.types) > 0 && !slices.Contains(o.types, kindName(k)) {
 			continue
 		}
 		cls := n

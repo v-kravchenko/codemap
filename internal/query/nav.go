@@ -559,6 +559,19 @@ func (g *Graph) navOfScreen(sid int32) *navOf {
 	return &navOf{root.how[0].kind, root.how[0].detail, g.navArrows(r, root.st), r.cost[root.st], g.chainNames(r, root.st)}
 }
 
+// unreached: where the walk back from the screen ends when no entry of the manifest reaches it: the
+// screens nothing opens, opened from outside the screens, or through a base class (none when every way
+// needs a host no way starts in); false when an entry reaches it.
+func (g *Graph) unreached(sid int32) ([]navRoot, bool) {
+	r := g.navWalk(statesOf([]int32{sid}), navLimits{maxDepth: -1})
+	for _, root := range r.roots {
+		if slices.Contains(entryKinds, root.how[0].kind) {
+			return nil, false
+		}
+	}
+	return r.roots, true
+}
+
 func (n *navOf) json() any {
 	if n == nil {
 		return nil

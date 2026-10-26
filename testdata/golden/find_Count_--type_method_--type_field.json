@@ -1,0 +1,33 @@
+{
+  "schema_version": "3.4.0",
+  "command": "find",
+  "pattern": "Count",
+  "total": 4,
+  "synthetic": 0,
+  "symbols": [
+    {
+      "symbol": "navapp.impact.CounterActivity.count",
+      "kind": "field",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt"
+    },
+    {
+      "symbol": "navapp.impact.OrdersViewModel.count",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/GenericDi.kt:26"
+    },
+    {
+      "symbol": "navapp.impact.CounterActivity.getCount",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:9"
+    },
+    {
+      "symbol": "navapp.impact.CounterActivity.setCount",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:9"
+    }
+  ]
+}

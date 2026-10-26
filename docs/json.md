@@ -116,7 +116,7 @@ reaches a screen in `feature/cards` through `core/domain`. What it left out is c
 ## used-by / uses
 
 ```
-codemap used-by|uses SYMBOL [--all] [--no-self] [--module GLOB]... [--json]
+codemap used-by|uses SYMBOL [--all] [--no-self] [--no-di] [--module GLOB]... [--json]
 ```
 
 - `SYMBOL` (positional, required) — a class, method or field name; dotted, may be unqualified
@@ -124,6 +124,8 @@ codemap used-by|uses SYMBOL [--all] [--no-self] [--module GLOB]... [--json]
 - `--all` — do not fail on an ambiguous match across unrelated top-level classes; return/report all
   of them.
 - `--no-self` (`used-by` only) — drop edges from the same top-level class as the match itself.
+- `--no-di` (`used-by` only) — drop items that are generated DI glue (Hilt/Dagger factories,
+  components, modules); `generated_di` still counts them.
 - `--module GLOB` — only items in a matching module (see Module globs).
 - `--json`
 
@@ -134,7 +136,7 @@ Result fields:
   through (e.g. `["call"]`, or `"<kind> <via-member>"` when the edge passes through a member other
   than the resolved symbol, with `" (generated DI)"` appended when the user is Hilt/Dagger-generated
   glue).
-- `generated_di` — count of items that are generated DI glue.
+- `generated_di` — count of items that are generated DI glue (left out of `items` with `--no-di`).
 - `hidden_by_module` — with `--module` only: `{items}`, the items left out.
 
 ```json
@@ -414,17 +416,25 @@ Result fields:
 ## screens
 
 ```
-codemap screens [FILTER] [--kind KIND] [--module GLOB]... [--json]
+codemap screens [FILTER] [--kind KIND] [--module GLOB]... [--host SCREEN] [--unreachable] [--json]
 ```
 
 - `FILTER` (optional positional) — case-insensitive substring match against name/target/module/host.
 - `--module GLOB` — only screens in a matching module (see Module globs).
+- `--host SCREEN` — only screens whose `hosts` hold this screen (an Activity hosting fragments and
+  dialogs, the screen hosting routes); the direct host, not the host of the host.
+- `--unreachable` — only screens (activity, fragment, dialog, route) that no entry of the manifest
+  reaches: the `nav-path` walk back from the screen ends only where nothing opens a screen
+  (`unknown`), where only code outside the screens opens it (`outside`) or where only a base class
+  does (`base`). A dead-screen audit, as far as the code map sees.
 - `--kind KIND`, `--json`.
 
 Result fields: `screens` — every matching screen, `{kind, module, name, target, host, hosts,
 location}`, sorted by kind, module, name, target, host, location; `hidden` — counts of screens
 excluded by `--kind`, by kind (of those in the modules); `hidden_by_module` — with `--module` only:
-`{screens}`, the screens outside the modules.
+`{screens}`, the screens outside the modules. With `--unreachable` each screen also has `entries`:
+where the walk back ends, as in `nav-path` (`{name, kind, module, location, host, hosts, entry}`,
+`entry` an array of `{kind, detail}`).
 
 ```json
 {
@@ -444,7 +454,7 @@ excluded by `--kind`, by kind (of those in the modules); `hidden_by_module` — 
 ## find
 
 ```
-codemap find PATTERN [--all] [--limit N] [--module GLOB]... [--json]
+codemap find PATTERN [--all] [--limit N] [--type TYPE]... [--module GLOB]... [--json]
 ```
 
 - `PATTERN` (positional, required) — a regexp (falls back to a literal substring if invalid)
@@ -455,6 +465,7 @@ codemap find PATTERN [--all] [--limit N] [--module GLOB]... [--json]
   normally hidden.
 - `--limit N` — cap the number of symbols shown (default: unlimited; `--limit` only affects the
   text/JSON `symbols` list, not `total`).
+- `--type TYPE` (repeatable) — only symbols of this `kind`: `class`, `method`, `field`, `resource`.
 - `--module GLOB` — only symbols in a matching module (see Module globs).
 
 Result fields: `pattern` (as given), `total` (count of all matches before `--limit`), `synthetic`

@@ -1,0 +1,282 @@
+{
+  "schema_version": "3.4.0",
+  "command": "screens",
+  "screens": [
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "AvatarActivity",
+      "target": "navapp.impact.AvatarActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/impact/DataClasses.kt:18",
+      "entries": [
+        {
+          "name": "AvatarActivity",
+          "kind": "activity",
+          "module": "app",
+          "location": "app/src/main/java/navapp/impact/DataClasses.kt:18",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FirstActivity",
+      "target": "navapp.impact.FirstActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
+      "entries": [
+        {
+          "name": "FirstActivity",
+          "kind": "activity",
+          "module": "app",
+          "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "LabelledCopyActivity",
+      "target": "navapp.impact.LabelledCopyActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/impact/Defaults.kt:23",
+      "entries": [
+        {
+          "name": "LabelledCopyActivity",
+          "kind": "activity",
+          "module": "app",
+          "location": "app/src/main/java/navapp/impact/Defaults.kt:23",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "LimitActivity",
+      "target": "navapp.impact.LimitActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/impact/Constants.kt:10",
+      "entries": [
+        {
+          "name": "LimitActivity",
+          "kind": "activity",
+          "module": "app",
+          "location": "app/src/main/java/navapp/impact/Constants.kt:10",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "LoudActivity",
+      "target": "navapp.impact.LoudActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
+      "entries": [
+        {
+          "name": "LoudActivity",
+          "kind": "activity",
+          "module": "app",
+          "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "NicknameActivity",
+      "target": "navapp.impact.NicknameActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/impact/DataClasses.kt:11",
+      "entries": [
+        {
+          "name": "NicknameActivity",
+          "kind": "activity",
+          "module": "app",
+          "location": "app/src/main/java/navapp/impact/DataClasses.kt:11",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "PlainCopyActivity",
+      "target": "navapp.impact.PlainCopyActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/impact/Defaults.kt:16",
+      "entries": [
+        {
+          "name": "PlainCopyActivity",
+          "kind": "activity",
+          "module": "app",
+          "location": "app/src/main/java/navapp/impact/Defaults.kt:16",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "QuietActivity",
+      "target": "navapp.impact.QuietActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:22",
+      "entries": [
+        {
+          "name": "QuietActivity",
+          "kind": "activity",
+          "module": "app",
+          "location": "app/src/main/java/navapp/impact/Overrides.kt:22",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "SecondActivity",
+      "target": "navapp.impact.SecondActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:18",
+      "entries": [
+        {
+          "name": "SecondActivity",
+          "kind": "activity",
+          "module": "app",
+          "location": "app/src/main/java/navapp/impact/Constructors.kt:18",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "fragment",
+      "module": "app",
+      "name": "CartFragment",
+      "target": "navapp.impact.CartFragment",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/impact/GenericDi.kt:29",
+      "entries": [
+        {
+          "name": "CartFragment",
+          "kind": "fragment",
+          "module": "app",
+          "location": "app/src/main/java/navapp/impact/GenericDi.kt:29",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "fragment",
+      "module": "app",
+      "name": "OrdersFragment",
+      "target": "navapp.impact.OrdersFragment",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/impact/GenericDi.kt:38",
+      "entries": [
+        {
+          "name": "OrdersFragment",
+          "kind": "fragment",
+          "module": "app",
+          "location": "app/src/main/java/navapp/impact/GenericDi.kt:38",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "hidden": {}
+}

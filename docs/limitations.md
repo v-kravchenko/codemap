@@ -90,6 +90,9 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
 - The "known modules/hosts" heuristic that labels a step "in <module>" (so an impossible
   cross-host jump isn't shown as a direct arrow) takes a screen's host from whichever single
   path first reached it during the walk, not from every possible host of that screen.
+- `screens --unreachable` runs one `nav-path` walk back from each screen (about 3 s for 1,600
+  screens); a screen opened only by reflection, a library or a framework callback the map does not
+  see is listed as unreachable, with the end of its way (`outside`, `base`) saying why.
 
 ## Build & config
 

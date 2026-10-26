@@ -21,7 +21,7 @@ func parseErr(cmd string, args ...string) (msg string) {
 // TestCommandsCoverOptions: every option the table gives a query command is one parseOpts takes, so
 // the help never offers an option the parser rejects.
 func TestCommandsCoverOptions(t *testing.T) {
-	values := map[string]string{"direction": "LR", "entry": "deeplink", "kind": "all"}
+	values := map[string]string{"direction": "LR", "entry": "deeplink", "kind": "all", "type": "class"}
 	for _, c := range commands {
 		if !c.query && c.name != "build --info" {
 			continue
@@ -48,6 +48,9 @@ func TestOptionsOfOtherCommands(t *testing.T) {
 		{"impact X --ways", "argument --ways: not an option of impact (codemap impact --help)"},
 		{"used-by X --in", "argument --in: not an option of used-by (codemap used-by --help)"},
 		{"uses X --no-self", "argument --no-self: not an option of uses (codemap uses --help)"},
+		{"uses X --no-di", "argument --no-di: not an option of uses (codemap uses --help)"},
+		{"find X --type route", "argument --type: invalid choice: 'route' (choose from class, method, field, resource)"},
+		{"impact X --unreachable", "argument --unreachable: not an option of impact (codemap impact --help)"},
 		{"build --info --force", "argument --force: not an option of build --info (codemap build --help)"},
 		{"graph X --bogus", "unrecognized arguments: --bogus"},
 		{"graph X Y", "unrecognized arguments: Y"},

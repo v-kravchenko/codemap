@@ -1,0 +1,62 @@
+{
+  "schema_version": "3.4.0",
+  "command": "screens",
+  "screens": [
+    {
+      "kind": "dialog",
+      "module": "app",
+      "name": "InfoDialog",
+      "target": "navapp.views.InfoDialog",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:48"
+    },
+    {
+      "kind": "fragment",
+      "module": "app",
+      "name": "AboutFragment",
+      "target": "navapp.views.AboutFragment",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:40"
+    },
+    {
+      "kind": "fragment",
+      "module": "app",
+      "name": "DetailFragment",
+      "target": "navapp.views.DetailFragment",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:24"
+    },
+    {
+      "kind": "fragment",
+      "module": "app",
+      "name": "ListFragment",
+      "target": "navapp.views.ListFragment",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:18"
+    },
+    {
+      "kind": "fragment",
+      "module": "app",
+      "name": "SettingsFragment",
+      "target": "navapp.views.SettingsFragment",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:34"
+    }
+  ],
+  "hidden": {}
+}
