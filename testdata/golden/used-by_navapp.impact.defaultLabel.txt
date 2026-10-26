@@ -1,0 +1,5 @@
+DefaultsKt.defaultLabel()  app  app/src/main/java/navapp/impact/Defaults.kt:14
+Used by: 1 in 1 modules
+
+app
+  DefaultsKt.copyText()                                   call                   app/src/main/java/navapp/impact/Defaults.kt:10

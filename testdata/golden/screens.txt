@@ -1,0 +1,43 @@
+
+Activities (14)
+  AvatarActivity                                     app                          app/src/main/java/navapp/impact/DataClasses.kt:18
+  FirstActivity                                      app                          app/src/main/java/navapp/impact/Constructors.kt:12
+  LabelledCopyActivity                               app                          app/src/main/java/navapp/impact/Defaults.kt:23
+  LicensesActivity                                   app                          app/src/main/java/navapp/views/ViewsActivity.kt:56
+  LimitActivity                                      app                          app/src/main/java/navapp/impact/Constants.kt:10
+  LinkActivity                                       app                          app/src/main/java/navapp/views/ViewsActivity.kt:59
+  LoudActivity                                       app                          app/src/main/java/navapp/impact/Overrides.kt:20
+  MainActivity                                       app                          app/src/main/java/navapp/MainActivity.kt:13
+  NicknameActivity                                   app                          app/src/main/java/navapp/impact/DataClasses.kt:11
+  PickActivity                                       app                          app/src/main/java/navapp/views/Contracts.kt:16
+  PlainCopyActivity                                  app                          app/src/main/java/navapp/impact/Defaults.kt:16
+  QuietActivity                                      app                          app/src/main/java/navapp/impact/Overrides.kt:22
+  SecondActivity                                     app                          app/src/main/java/navapp/impact/Constructors.kt:18
+  ViewsActivity                                      app                          app/src/main/java/navapp/views/ViewsActivity.kt:16
+
+Fragments (6)
+  AboutFragment                                      app                          app/src/main/java/navapp/views/ViewsActivity.kt:46  host ViewsActivity
+  CartFragment                                       app                          app/src/main/java/navapp/impact/GenericDi.kt:29
+  DetailFragment                                     app                          app/src/main/java/navapp/views/ViewsActivity.kt:24  host ViewsActivity
+  ListFragment                                       app                          app/src/main/java/navapp/views/ViewsActivity.kt:18  host ViewsActivity
+  OrdersFragment                                     app                          app/src/main/java/navapp/impact/GenericDi.kt:38
+  SettingsFragment                                   app                          app/src/main/java/navapp/views/ViewsActivity.kt:34  host ViewsActivity
+
+Dialog fragments (1)
+  InfoDialog                                         app                          app/src/main/java/navapp/views/ViewsActivity.kt:54  host ViewsActivity
+
+Compose routes (14)
+  Catalog                                            app                          app/src/main/java/navapp/nav3when/Nav3WhenApp.kt
+  Compose                                            app                          app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt  host MainActivity
+  Confirm                                            app                          app/src/main/java/navapp/typed/TypedApp.kt
+  Home                                               app                          app/src/main/java/navapp/typed/TypedApp.kt
+  Inbox                                              app                          app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt  host MainActivity
+  Item                                               app                          app/src/main/java/navapp/nav3when/Nav3WhenApp.kt
+  Login                                              app                          app/src/main/java/navapp/typed/TypedApp.kt
+  Message                                            app                          app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt  host MainActivity
+  Profile                                            app                          app/src/main/java/navapp/typed/TypedApp.kt
+  Settings                                           app                          app/src/main/java/navapp/typed/TypedApp.kt
+  comments/{postId}                                  app                          app/src/main/java/navapp/strings/StringApp.kt
+  feed                                               app                          app/src/main/java/navapp/strings/StringApp.kt
+  post/{id}                                          app                          app/src/main/java/navapp/strings/StringApp.kt
+  signin                                             app                          app/src/main/java/navapp/strings/StringApp.kt

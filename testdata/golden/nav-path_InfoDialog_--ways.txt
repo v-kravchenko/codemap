@@ -1,0 +1,4 @@
+Ways to InfoDialog, the cheapest through each screen that opens ViewsActivity:
+  4   [launcher] MainActivity -> ViewsActivity -> ListFragment -> DetailFragment -> InfoDialog
+  4   [deeplink https://navapp.example/views] LinkActivity -> ViewsActivity -> ListFragment -> DetailFragment -> InfoDialog
+(N.Ns; the code of each step: --via SCREEN)

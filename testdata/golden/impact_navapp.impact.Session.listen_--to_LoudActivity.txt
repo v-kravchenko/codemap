@@ -1,0 +1,6 @@
+LoudActivity depends on navapp.impact.Session.listen in 4 steps:
+  LoudActivity                                       app/src/main/java/navapp/impact/Overrides.kt:20
+  <-[extends]- BaseActivity                                       app/src/main/java/navapp/impact/Overrides.kt:9
+  <-[framework callback]- BaseActivity.onCreate()                            app/src/main/java/navapp/impact/Overrides.kt:11
+  <-[call]- BaseActivity.observeLogout()                       app/src/main/java/navapp/impact/Overrides.kt:16
+  <-[call]- Session.listen()                                   app/src/main/java/navapp/impact/Overrides.kt:27

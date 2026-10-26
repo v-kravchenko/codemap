@@ -1,0 +1,10 @@
+flowchart LR
+  n1(["MainActivity"])
+  n2["ViewsActivity"]
+  n3["ListFragment"]
+  n4["DetailFragment"]
+  n5["InfoDialog"]
+  n1 -->|"onCreate"| n2
+  n2 -->|"@navigation/views_graph"| n3
+  n3 -->|"onViewCreated"| n4
+  n4 -->|"onViewCreated"| n5

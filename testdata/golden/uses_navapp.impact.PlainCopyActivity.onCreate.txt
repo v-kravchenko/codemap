@@ -1,0 +1,5 @@
+PlainCopyActivity.onCreate()  app  app/src/main/java/navapp/impact/Defaults.kt:18
+Uses: 1 in 1 modules
+
+app
+  DefaultsKt.copyText()                                   call                   app/src/main/java/navapp/impact/Defaults.kt:10

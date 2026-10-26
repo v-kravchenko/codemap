@@ -1,0 +1,6 @@
+Cheapest way to Settings via Profile (launcher):
+  MainActivity            TypedAppKt.TypedApp
+  -> Home                 TypedAppKt.TypedApp
+  -> Profile              TypedAppKt.TypedApp
+  -> Settings
+(N.Ns; cost 3; ~push~>: only for a notification or a deep link)

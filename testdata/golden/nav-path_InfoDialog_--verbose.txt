@@ -1,0 +1,27 @@
+InfoDialog  dialog  app
+
+Screens on the way: 5, entry screens: 2
+
+Ways from entry screens, cheapest first:
+  [launcher] MainActivity -> ViewsActivity -> ListFragment -> DetailFragment -> InfoDialog
+  [deeplink https://navapp.example/views] LinkActivity -> ViewsActivity -> ListFragment -> DetailFragment -> InfoDialog
+  entry kinds: launcher, deeplink, intent (manifest); base: only a base class of many screens
+  opens it; outside: opened from code that is not a screen (a service, push); unknown: the map
+  sees nothing that opens it. ~push~>: the step goes through push or deep link handling; (in M): a shared
+  screen, this way only when a screen of module M hosts it
+
+The cheapest way through each branch of the launcher (cost, way):
+  4   MainActivity -> ViewsActivity -> ListFragment -> DetailFragment -> InfoDialog
+
+Opened from (cost, screen -> what it opens: own code, shared code or push handling):
+  1   DetailFragment                                -> InfoDialog  [own]
+        @id/infoDialog <- DetailFragment.onViewCreated{λ}
+  2   ListFragment                                  -> DetailFragment  [own]
+        @id/action_list_to_detail <- ListFragment.onViewCreated{λ}
+  3   ViewsActivity                                 -> ListFragment  [own]
+        @navigation/views_graph <- @layout/activity_views <- ViewsActivity.<init>()
+  4   LinkActivity                                  -> ViewsActivity  [own]
+        LinkActivity.onCreate()
+  4   MainActivity                                  -> ViewsActivity  [own]
+        MainActivity.onCreate{λ}
+(N.Ns)

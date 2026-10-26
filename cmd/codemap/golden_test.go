@@ -73,6 +73,25 @@ var goldenCalls = [][]string{
 	{"changes", "--files", "changed.txt"},
 }
 
+// goldenText: the queries whose text is kept too, one per way of printing an answer.
+var goldenText = [][]string{
+	{"impact", "navapp.impact.BaseActivity.observeLogout"},
+	{"impact", "navapp.impact.CartViewModel.total", "--nav"},
+	{"impact", "navapp.impact.Session.listen", "--to", "LoudActivity"},
+	{"used-by", "navapp.impact.defaultLabel"},
+	{"uses", "navapp.impact.PlainCopyActivity.onCreate"},
+	{"find", "Activity"},
+	{"screens"},
+	{"screens", "--unreachable"},
+	{"screens", "--module", "!app"},
+	{"nav-path", "InfoDialog"},
+	{"nav-path", "InfoDialog", "--ways"},
+	{"nav-path", "InfoDialog", "--verbose"},
+	{"nav-path", "Settings", "--via", "Profile"},
+	{"graph", "MainActivity", "--to", "InfoDialog"},
+	{"changes", "--files", "changed.txt"},
+}
+
 // TestGolden: the --json of goldenCalls on the fixture, without the run's meta, against
 // testdata/golden (go test -run TestGolden -update rewrites them).
 func TestGolden(t *testing.T) {
@@ -95,14 +114,31 @@ func TestGolden(t *testing.T) {
 		return out
 	}
 	run("build")
+	type golden struct {
+		call []string
+		text bool
+	}
+	var calls []golden
+	for _, c := range goldenCalls {
+		calls = append(calls, golden{c, false})
+	}
+	for _, c := range goldenText {
+		calls = append(calls, golden{c, true})
+	}
 	seen := map[string]bool{}
-	for _, call := range goldenCalls {
-		name := goldenName(call)
+	for _, gc := range calls {
+		call, name := gc.call, goldenName(gc.call)+".json"
+		var got []byte
+		if gc.text {
+			name = goldenName(call) + ".txt"
+			got = seconds.ReplaceAll(run(call...), []byte("N.Ns"))
+		} else {
+			got = withoutMeta(run(append(call, "--json")...))
+		}
 		if seen[name] {
 			t.Fatalf("two calls write %s", name)
 		}
 		seen[name] = true
-		got := withoutMeta(run(append(call, "--json")...))
 		path := filepath.Join(fixture.TestdataDir(), "golden", name)
 		if *update {
 			os.MkdirAll(filepath.Dir(path), 0o755)
@@ -115,16 +151,19 @@ func TestGolden(t *testing.T) {
 		if err != nil {
 			t.Errorf("%s: %v (go test -run TestGolden -update writes it)", name, err)
 		} else if !bytes.Equal(got, want) {
-			t.Errorf("codemap %s --json differs from %s at %s (go test -run TestGolden -update rewrites it; check the diff)",
+			t.Errorf("codemap %s differs from %s at %s (go test -run TestGolden -update rewrites it; check the diff)",
 				strings.Join(call, " "), path, firstDiff(got, want))
 		}
 	}
 }
 
-var unsafeName = regexp.MustCompile(`[^A-Za-z0-9._-]+`)
+var (
+	unsafeName = regexp.MustCompile(`[^A-Za-z0-9._-]+`)
+	seconds    = regexp.MustCompile(`\b\d+\.\d+s\b`) // the time a text answer took
+)
 
 func goldenName(call []string) string {
-	return strings.Trim(unsafeName.ReplaceAllString(strings.Join(call, "_"), "-"), "-") + ".json"
+	return strings.Trim(unsafeName.ReplaceAllString(strings.Join(call, "_"), "-"), "-")
 }
 
 // withoutMeta drops the top-level "meta" object: times, hashes and the git state of the run.

@@ -1,0 +1,12 @@
+Changed:
+  CartViewModel.total()  app  app/src/main/java/navapp/impact/GenericDi.kt:22
+
+Screens: 1  (fragment 1)
+
+Fragments
+  CartFragment                                       app
+      nav (unknown): CartFragment
+      CartViewModel.total() -> CartFragment.onViewCreated()
+
+Modules (affected symbols): app 2
+(2 symbols affected, N.Ns, nav N.Ns)

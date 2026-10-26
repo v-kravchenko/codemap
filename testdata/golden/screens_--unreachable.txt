@@ -1,0 +1,28 @@
+
+Activities (9)
+  AvatarActivity                                     app                          app/src/main/java/navapp/impact/DataClasses.kt:18
+      ends at AvatarActivity: nothing opens it
+  FirstActivity                                      app                          app/src/main/java/navapp/impact/Constructors.kt:12
+      ends at FirstActivity: nothing opens it
+  LabelledCopyActivity                               app                          app/src/main/java/navapp/impact/Defaults.kt:23
+      ends at LabelledCopyActivity: nothing opens it
+  LimitActivity                                      app                          app/src/main/java/navapp/impact/Constants.kt:10
+      ends at LimitActivity: nothing opens it
+  LoudActivity                                       app                          app/src/main/java/navapp/impact/Overrides.kt:20
+      ends at LoudActivity: nothing opens it
+  NicknameActivity                                   app                          app/src/main/java/navapp/impact/DataClasses.kt:11
+      ends at NicknameActivity: nothing opens it
+  PlainCopyActivity                                  app                          app/src/main/java/navapp/impact/Defaults.kt:16
+      ends at PlainCopyActivity: nothing opens it
+  QuietActivity                                      app                          app/src/main/java/navapp/impact/Overrides.kt:22
+      ends at QuietActivity: nothing opens it
+  SecondActivity                                     app                          app/src/main/java/navapp/impact/Constructors.kt:18
+      ends at SecondActivity: nothing opens it
+
+Fragments (2)
+  CartFragment                                       app                          app/src/main/java/navapp/impact/GenericDi.kt:29
+      ends at CartFragment: nothing opens it
+  OrdersFragment                                     app                          app/src/main/java/navapp/impact/GenericDi.kt:38
+      ends at OrdersFragment: nothing opens it
+
+(11 screens no entry of the manifest reaches, as far as the code map sees)

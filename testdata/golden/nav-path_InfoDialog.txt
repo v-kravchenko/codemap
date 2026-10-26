@@ -1,0 +1,8 @@
+Cheapest way to InfoDialog (launcher):
+  MainActivity              MainActivity.onCreate
+  -> ViewsActivity          @navigation/views_graph
+  -> ListFragment           ListFragment.onViewCreated
+  -> DetailFragment         DetailFragment.onViewCreated
+  -> InfoDialog
+  ViewsActivity also from deeplink https://navapp.example/views: LinkActivity -> ViewsActivity
+(N.Ns; ~push~>: only for a notification or a deep link; every way and the code of each step: --verbose)

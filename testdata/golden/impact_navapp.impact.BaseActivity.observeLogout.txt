@@ -1,0 +1,11 @@
+Changed:
+  BaseActivity.observeLogout()  app  app/src/main/java/navapp/impact/Overrides.kt:16
+
+Screens: 1  (activity 1)
+
+Activities
+  LoudActivity                                       app
+      BaseActivity.observeLogout() -> .onCreate() -> BaseActivity -> LoudActivity
+
+Modules (affected symbols): app 4
+(4 symbols affected, N.Ns)

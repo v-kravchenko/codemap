@@ -1,0 +1,19 @@
+Changed:
+  Session  app  app/src/main/java/navapp/impact/Overrides.kt:26  (whole class)
+  QuietActivity  app  app/src/main/java/navapp/impact/Overrides.kt:22  (whole class)
+  @navigation/views_graph  app  app/src/main/res/navigation/views_graph.xml
+  LoudActivity  app  app/src/main/java/navapp/impact/Overrides.kt:20  (whole class)
+  BaseActivity  app  app/src/main/java/navapp/impact/Overrides.kt:9  (whole class)
+
+Screens: 3  (activity 3)
+
+Activities
+  LoudActivity                                       app
+      LoudActivity
+  QuietActivity                                      app
+      QuietActivity
+  ViewsActivity                                      app
+      @navigation/views_graph -> @layout/activity_views -> ViewsActivity.<init>()
+
+Modules (affected symbols): app 26
+(26 symbols affected, N.Ns)
