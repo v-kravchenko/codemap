@@ -3,7 +3,16 @@
 codemap is a Go CLI that builds the code map of any Android project from its compiled classes and
 resources and answers queries over it (README.md). It must not know any particular project: what
 differs between projects (base classes, navigation calls, variant, class directories) lives in the
-project's `codemap.yml` and in the built-in presets (`presets/*.yml`), never in the code.
+project's `codemap.yml` and in the built-in presets (`internal/config/presets/*.yml`), never in the code.
+
+## Layout
+
+`cmd/codemap` is the CLI; `internal/` holds the packages, each importing only those above it:
+`util` (helpers), `classfile` (the class file parser), `config` (codemap.yml, presets, settings),
+`project` (modules, `codemap init` and its Gradle model), `android` (resources, manifests,
+navigation XML), `snapshot` (the map's format), `build` (classes and resources into a map),
+`query` (the walks and the commands over a map). `internal/fixture` gives tests a copy of
+`testdata/navapp`.
 
 ## Checks
 
@@ -28,7 +37,7 @@ gofmt -l . && go vet ./... && go test ./...
   needs it.
 - Output is deterministic: the same inputs give byte-identical `--json`. Sort, never rely on map
   order. A change to the `--json` shape is a deliberate, documented change.
-- A setting a project may need goes into the config schema (`config.go`, `codemap.schema.json`;
+- A setting a project may need goes into the config schema (`internal/config`: `config.go`, `codemap.schema.json`;
   `TestSchemaCoversConfig` checks they agree) with a default in a preset.
 - Comments say why, in the terse style of the surrounding code.
 - Commit messages: one sentence on what changed and why it matters; no prefixes.

@@ -8,7 +8,7 @@ affects (`impact`, `changes`), who uses a symbol (`used-by`, `uses`), how a user
 who opens every screen. A full build of a large app (~35k classes) takes ~3 s.
 
 ```
-go install github.com/v-kravchenko/codemap@latest    # or: go build -o codemap .
+go install github.com/v-kravchenko/codemap/cmd/codemap@latest  # or: go build ./cmd/codemap
 codemap init [--gradle CMD]                        # once, and after build files change
 codemap build [--out SNAPSHOT] [--jobs N] [--force]  # default: snapshot in codemap.yml
 codemap used-by|uses|impact|changes|nav-path|graph|screens|find|build --info ... [--json]
@@ -35,16 +35,16 @@ walking the tree for `build.class_dirs`.
 
 `codemap.yml` at the root (next to `settings.gradle`) holds what is particular to the project: the
 variant, the class directories, the screen base classes, the navigation calls, the nav-path costs.
-`extends` merges built-in presets first (`presets/*.yml`); lists add up
+`extends` merges built-in presets first (`internal/config/presets/*.yml`); lists add up
 from the presets to the file, except `build.class_dirs`, `build.source_sets` and `changes.base`,
 which replace; a scalar set later wins. Unknown keys are errors. Without the file the tool runs on
 `extends: [android, nav2-compose]`. The map keeps the settings it was built with: `build` rebuilds
 when they change, the queries read them from the map.
 
 ```
-/tmp/codemap config check    # the file and its presets load, patterns compile
-/tmp/codemap config print    # the settings after the presets
-/tmp/codemap config schema   # codemap.schema.json (editors: yaml-language-server)
+codemap config check    # the file and its presets load, patterns compile
+codemap config print    # the settings after the presets
+codemap config schema   # codemap.schema.json (editors: yaml-language-server)
 ```
 
 Class names are dotted (`com.example.Base`, `Outer$Inner`); `navigation.register`,
@@ -76,11 +76,11 @@ graph from its start route and its own route; opening the graph opens the start 
 go vet ./... && go test ./...
 ```
 
-`navigation_test.go` builds the map of `testdata/navapp`, an app with one screen set per navigation
+`internal/build/navigation_test.go` builds the map of `testdata/navapp`, an app with one screen set per navigation
 preset and one of fragments in an XML navigation graph (an `<action>`, a nested graph, a dialog, an
 Activity started with an Intent); `testdata/navapp/update.sh` compiles it into `classes.zip` (Android SDK, Gradle).
 
-`golden_test.go` runs the CLI on the fixture and compares the `--json` of each call in `goldenCalls`
+`cmd/codemap/golden_test.go` runs the CLI on the fixture and compares the `--json` of each call in `goldenCalls`
 (without `meta`) with `testdata/golden`. The impact calls are the precision rules of the walk, one
 scenario each in `testdata/navapp/app/src/main/java/navapp/impact`. A change that means to change
 an answer rewrites the files with `go test -run TestGolden -update`; the diff is part of the review.
