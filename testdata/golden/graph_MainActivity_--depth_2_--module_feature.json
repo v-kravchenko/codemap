@@ -1,0 +1,106 @@
+{
+  "schema_version": "3.3.0",
+  "command": "graph",
+  "roots": [
+    "MainActivity"
+  ],
+  "direction": "out",
+  "to": [],
+  "nodes": [
+    {
+      "name": "MainActivity",
+      "kind": "activity",
+      "module": "app"
+    },
+    {
+      "name": "Catalog",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "MainActivity: TypedAppKt.TypedApp",
+      "kind": "action",
+      "module": "app"
+    },
+    {
+      "name": "Confirm",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "Home",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "Inbox",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "ViewsActivity",
+      "kind": "activity",
+      "module": "app"
+    },
+    {
+      "name": "feed",
+      "kind": "route",
+      "module": "app"
+    }
+  ],
+  "edges": [
+    {
+      "from": "MainActivity",
+      "to": "Catalog",
+      "label": "Nav3WhenApp",
+      "hint": "Nav3WhenAppKt.Nav3WhenApp",
+      "shared": null
+    },
+    {
+      "from": "MainActivity",
+      "to": "MainActivity: TypedAppKt.TypedApp",
+      "label": null,
+      "hint": "TypedAppKt.TypedApp",
+      "shared": null
+    },
+    {
+      "from": "MainActivity: TypedAppKt.TypedApp",
+      "to": "Confirm",
+      "label": null,
+      "hint": "TypedAppKt.TypedApp",
+      "shared": null
+    },
+    {
+      "from": "MainActivity: TypedAppKt.TypedApp",
+      "to": "Home",
+      "label": null,
+      "hint": "TypedAppKt.TypedApp",
+      "shared": null
+    },
+    {
+      "from": "MainActivity",
+      "to": "Inbox",
+      "label": "Nav3DslApp",
+      "hint": "Nav3DslAppKt.Nav3DslApp",
+      "shared": null
+    },
+    {
+      "from": "MainActivity",
+      "to": "ViewsActivity",
+      "label": "onCreate",
+      "hint": "MainActivity.onCreate",
+      "shared": null
+    },
+    {
+      "from": "MainActivity",
+      "to": "feed",
+      "label": "StringApp",
+      "hint": "StringAppKt.StringApp",
+      "shared": null
+    }
+  ],
+  "more": {},
+  "edges_left_out": 0,
+  "ways_of_other_hosts": 0,
+  "debug_left_out": 0
+}

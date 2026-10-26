@@ -1,0 +1,197 @@
+{
+  "schema_version": "3.3.0",
+  "command": "graph",
+  "roots": [
+    "MainActivity"
+  ],
+  "direction": "out",
+  "to": [],
+  "nodes": [
+    {
+      "name": "MainActivity",
+      "kind": "activity",
+      "module": "app"
+    },
+    {
+      "name": "Catalog",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "Confirm",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "Inbox",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "ViewsActivity",
+      "kind": "activity",
+      "module": "app"
+    },
+    {
+      "name": "feed",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "Item",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "Message",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "ListFragment",
+      "kind": "fragment",
+      "module": "app"
+    },
+    {
+      "name": "feed: StringAppKt.StringApp",
+      "kind": "action",
+      "module": "app"
+    },
+    {
+      "name": "post/{id}",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "signin",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "Compose",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "DetailFragment",
+      "kind": "fragment",
+      "module": "app"
+    },
+    {
+      "name": "comments/{postId}",
+      "kind": "route",
+      "module": "app"
+    }
+  ],
+  "edges": [
+    {
+      "from": "MainActivity",
+      "to": "Catalog",
+      "label": "Nav3WhenApp",
+      "hint": "Nav3WhenAppKt.Nav3WhenApp",
+      "shared": null
+    },
+    {
+      "from": "MainActivity",
+      "to": "Confirm",
+      "label": "TypedApp",
+      "hint": "TypedAppKt.TypedApp",
+      "shared": null
+    },
+    {
+      "from": "MainActivity",
+      "to": "Inbox",
+      "label": "Nav3DslApp",
+      "hint": "Nav3DslAppKt.Nav3DslApp",
+      "shared": null
+    },
+    {
+      "from": "MainActivity",
+      "to": "ViewsActivity",
+      "label": "onCreate",
+      "hint": "MainActivity.onCreate",
+      "shared": null
+    },
+    {
+      "from": "MainActivity",
+      "to": "feed",
+      "label": "StringApp",
+      "hint": "StringAppKt.StringApp",
+      "shared": null
+    },
+    {
+      "from": "Catalog",
+      "to": "Item",
+      "label": "Nav3WhenApp",
+      "hint": "Nav3WhenAppKt.Nav3WhenApp",
+      "shared": null
+    },
+    {
+      "from": "Inbox",
+      "to": "Message",
+      "label": "Nav3DslApp",
+      "hint": "Nav3DslAppKt.Nav3DslApp",
+      "shared": null
+    },
+    {
+      "from": "ViewsActivity",
+      "to": "ListFragment",
+      "label": "@navigation/views_graph",
+      "hint": "@navigation/views_graph",
+      "shared": null
+    },
+    {
+      "from": "feed",
+      "to": "feed: StringAppKt.StringApp",
+      "label": null,
+      "hint": "StringAppKt.StringApp",
+      "shared": null
+    },
+    {
+      "from": "feed: StringAppKt.StringApp",
+      "to": "post/{id}",
+      "label": null,
+      "hint": "StringAppKt.StringApp",
+      "shared": null
+    },
+    {
+      "from": "feed: StringAppKt.StringApp",
+      "to": "signin",
+      "label": null,
+      "hint": "StringAppKt.StringApp",
+      "shared": null
+    },
+    {
+      "from": "Message",
+      "to": "Compose",
+      "label": "Nav3DslApp",
+      "hint": "Nav3DslAppKt.Nav3DslApp",
+      "shared": null
+    },
+    {
+      "from": "ListFragment",
+      "to": "DetailFragment",
+      "label": "onViewCreated",
+      "hint": "ListFragment.onViewCreated",
+      "shared": null
+    },
+    {
+      "from": "post/{id}",
+      "to": "comments/{postId}",
+      "label": "StringApp",
+      "hint": "StringAppKt.StringApp",
+      "shared": null
+    },
+    {
+      "from": "signin",
+      "to": "feed",
+      "label": "StringApp",
+      "hint": "StringAppKt.StringApp",
+      "shared": null
+    }
+  ],
+  "more": {},
+  "edges_left_out": 0,
+  "ways_of_other_hosts": 0,
+  "debug_left_out": 0
+}

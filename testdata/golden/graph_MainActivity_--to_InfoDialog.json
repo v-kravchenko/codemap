@@ -1,0 +1,72 @@
+{
+  "schema_version": "3.3.0",
+  "command": "graph",
+  "roots": [
+    "MainActivity"
+  ],
+  "direction": "out",
+  "to": [
+    "InfoDialog"
+  ],
+  "nodes": [
+    {
+      "name": "MainActivity",
+      "kind": "activity",
+      "module": "app"
+    },
+    {
+      "name": "ViewsActivity",
+      "kind": "activity",
+      "module": "app"
+    },
+    {
+      "name": "ListFragment",
+      "kind": "fragment",
+      "module": "app"
+    },
+    {
+      "name": "DetailFragment",
+      "kind": "fragment",
+      "module": "app"
+    },
+    {
+      "name": "InfoDialog",
+      "kind": "dialog",
+      "module": "app"
+    }
+  ],
+  "edges": [
+    {
+      "from": "MainActivity",
+      "to": "ViewsActivity",
+      "label": "onCreate",
+      "hint": "MainActivity.onCreate",
+      "shared": null
+    },
+    {
+      "from": "ViewsActivity",
+      "to": "ListFragment",
+      "label": "@navigation/views_graph",
+      "hint": "@navigation/views_graph",
+      "shared": null
+    },
+    {
+      "from": "ListFragment",
+      "to": "DetailFragment",
+      "label": "onViewCreated",
+      "hint": "ListFragment.onViewCreated",
+      "shared": null
+    },
+    {
+      "from": "DetailFragment",
+      "to": "InfoDialog",
+      "label": "onViewCreated",
+      "hint": "DetailFragment.onViewCreated",
+      "shared": null
+    }
+  ],
+  "more": {},
+  "edges_left_out": 0,
+  "ways_of_other_hosts": 0,
+  "debug_left_out": 0
+}

@@ -71,8 +71,11 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
 
 ## Graph
 
-- `graph` only walks forward (what a screen opens); there is no "who can reach this screen"
-  direction — use `nav-path`/`impact --nav` for that instead.
+- `graph --in` does not follow hosts: it draws every way that opens a screen, also one that runs
+  only in a host the way it is drawn from never goes through (the forward `graph` leaves those out
+  and counts them in `ways_of_other_hosts`).
+- `graph --to` keeps an edge when its screen reaches the target in the steps left, by the fewest
+  steps over all ways; a host check further on can still end that way before the target.
 - A navigator method that opens two or more screens depending on runtime state (a `when` over
   an app state) is shown as a single node with multiple outgoing edges; `graph` does not know
   which state picks which screen, and it does not separate the branches by which UI button

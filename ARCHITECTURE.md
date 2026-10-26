@@ -113,7 +113,8 @@ link handling (`nav_path.costs`). `--from`, `--entry` and `--avoid` change where
 what it keeps off; `--via` chains walks, from the target to the last screen asked for and on to an
 entry; `--ways` runs `--via` once per screen that opens the fork, the first screen back from the
 target that several screens open ([0012](docs/decisions/0012-nav-path-via-and-ways.md)). `graph`
-walks the other way, from a screen to what it opens.
+walks the other way, from a screen to what it opens (`--in`: back, to what opens it); `--to` keeps
+the ways that reach a screen in time, by the fewest steps from each screen to it.
 
 ## Settings
 

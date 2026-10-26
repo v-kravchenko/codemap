@@ -58,6 +58,11 @@ var goldenCalls = [][]string{
 	{"nav-path", "InfoDialog", "--avoid", "Main*"},
 	{"graph", "ViewsActivity"},
 	{"graph", "Home"},
+	{"graph", "MainActivity", "--to", "InfoDialog"},
+	{"graph", "MainActivity", "--to", "Settings", "--depth", "1"},
+	{"graph", "MainActivity", "--depth", "3", "--avoid", "Home"},
+	{"graph", "MainActivity", "--depth", "2", "--module", "feature/*"},
+	{"graph", "InfoDialog", "--in", "--depth", "5"},
 	{"changes", "--files", "changed.txt"},
 }
 

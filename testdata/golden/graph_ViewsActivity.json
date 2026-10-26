@@ -4,6 +4,8 @@
   "roots": [
     "ViewsActivity"
   ],
+  "direction": "out",
+  "to": [],
   "nodes": [
     {
       "name": "ViewsActivity",

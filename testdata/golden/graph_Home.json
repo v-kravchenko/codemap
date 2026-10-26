@@ -4,6 +4,8 @@
   "roots": [
     "Home"
   ],
+  "direction": "out",
+  "to": [],
   "nodes": [
     {
       "name": "Home",

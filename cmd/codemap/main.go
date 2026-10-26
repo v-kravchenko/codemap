@@ -59,7 +59,7 @@ const usage = `usage:
   codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--nav] [--depth N] [--kind KIND] [--json]
   codemap nav-path SCREEN [--via SCREEN]... [--ways] [--from SCREEN | --entry launcher|deeplink|intent]
                    [--avoid GLOB]... [--verbose] [--limit N] [--depth N] [--no-paths] [--all] [--json]
-  codemap graph SCREEN [--depth N] [--all] [--json]
+  codemap graph SCREEN [--to SCREEN | --in] [--avoid GLOB]... [--module GLOB]... [--depth N] [--all] [--json]
   codemap screens [FILTER] [--kind KIND] [--json]
   codemap find PATTERN [--all] [--limit N] [--json]
   codemap build --info [--json]

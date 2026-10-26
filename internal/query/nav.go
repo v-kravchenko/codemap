@@ -602,8 +602,8 @@ func (g *Graph) cmdNavPath(o opts) int {
 	return exitOK
 }
 
-// screensMatching: the screens whose name or class matches one of the globs (`*`: any run of characters).
-func (g *Graph) screensMatching(globs []string) map[int32]bool {
+// globRe: globs as one regexp (`*`: any run of characters); nil for none.
+func globRe(globs []string) *regexp.Regexp {
 	if len(globs) == 0 {
 		return nil
 	}
@@ -611,7 +611,49 @@ func (g *Graph) screensMatching(globs []string) map[int32]bool {
 	for _, p := range globs {
 		parts = append(parts, strings.ReplaceAll(regexp.QuoteMeta(p), `\*`, ".*"))
 	}
-	re := regexp.MustCompile("^(" + strings.Join(parts, "|") + ")$")
+	return regexp.MustCompile("^(" + strings.Join(parts, "|") + ")$")
+}
+
+// inModules: whether a screen is in a module of the globs (all are without globs).
+func (g *Graph) inModules(globs []string) func(int32) bool {
+	re := globRe(globs)
+	return func(n int32) bool { return re == nil || re.MatchString(g.module(n)) }
+}
+
+// stepsTo: the fewest steps from each screen to one of the targets over the forward ways.
+func (g *Graph) stepsTo(forward map[int32][]fwdWay, targets []int32) map[int32]int {
+	back := map[int32][]int32{}
+	for _, src := range util.SortedKeys(forward) {
+		for _, w := range forward[src] {
+			back[w.t] = append(back[w.t], src)
+		}
+	}
+	dist := map[int32]int{}
+	level := targets
+	for _, t := range targets {
+		dist[t] = 0
+	}
+	for d := 1; len(level) > 0; d++ {
+		var nxt []int32
+		for _, t := range level {
+			for _, src := range back[t] {
+				if _, ok := dist[src]; !ok {
+					dist[src] = d
+					nxt = append(nxt, src)
+				}
+			}
+		}
+		level = nxt
+	}
+	return dist
+}
+
+// screensMatching: the screens whose name or class matches one of the globs (`*`: any run of characters).
+func (g *Graph) screensMatching(globs []string) map[int32]bool {
+	re := globRe(globs)
+	if re == nil {
+		return nil
+	}
 	out := map[int32]bool{}
 	for n, rows := range g.screens {
 		if re.MatchString(rows[0].Label) || re.MatchString(rows[0].Target) {
@@ -1344,6 +1386,13 @@ func shortAction(method string) string {
 // graphFanout screens ends in a "+N screens" node.
 func (g *Graph) cmdGraph(o opts) int {
 	roots := g.screensOf(o.pos[0], o.all)
+	if o.in {
+		if o.to != "" {
+			panic(util.UserError("argument --to: not allowed with argument --in"))
+		}
+		return g.graphIn(o, roots)
+	}
+	avoid, inside := g.screensMatching(o.avoid), g.inModules(o.modules)
 	debug := true
 	for _, r := range roots {
 		debug = debug && g.isDebug(r)
@@ -1355,10 +1404,35 @@ func (g *Graph) cmdGraph(o opts) int {
 			hiddenDebug++
 			continue
 		}
+		if avoid[t] && !slices.Contains(roots, t) {
+			continue
+		}
 		ways, _ := g.openedBy(t)
 		for _, w := range ways {
 			forward[w.Src] = append(forward[w.Src], fwdWay{t, w.Hub, w.Via, w.host()})
 		}
+	}
+	depth := o.depth
+	// --to: the fewest steps from each screen to a target; a way is drawn only when it gets there in time
+	var to []int32
+	var toDist map[int32]int
+	noWay := false
+	if o.to != "" {
+		to = g.screensOf(o.to, o.all)
+		toDist = g.stepsTo(forward, to)
+		fewest := -1
+		for _, r := range roots {
+			if d, ok := toDist[r]; ok && (fewest < 0 || d < fewest) {
+				fewest = d
+			}
+		}
+		if depth <= 0 && fewest >= 0 {
+			depth = fewest + 2 // the shortest ways and a detour or two
+		}
+		noWay = fewest < 0 || depth > 0 && fewest > depth
+	}
+	if depth <= 0 {
+		depth = 1
 	}
 	rootModules := map[string]bool{}
 	isRoot := map[int32]bool{}
@@ -1425,27 +1499,14 @@ func (g *Graph) cmdGraph(o opts) int {
 		order = append(order, n)
 		return id
 	}
-	action := func(hint string, hub int32) string {
-		parts := []string{""}
-		if hint != "" {
-			parts = strings.Split(hint, " > ")
-		}
-		if hub >= 0 && len(parts) > 1 && strings.HasSuffix(strings.TrimRight(g.label(hub), "()"), parts[len(parts)-1]) {
-			return parts[len(parts)-2]
-		}
-		return parts[len(parts)-1]
-	}
+	action := g.stepAction
 	level := append([]int32(nil), roots...)
 	seen, fanned := map[int32]bool{}, map[int32]bool{}
 	for _, r := range roots {
 		seen[r] = true
 		node(gnode{n: r})
 	}
-	depth := o.depth
-	if depth <= 0 {
-		depth = 1
-	}
-	for range depth {
+	for step := range depth {
 		var nxt []int32
 		for _, src := range level {
 			type tv struct {
@@ -1458,6 +1519,9 @@ func (g *Graph) cmdGraph(o opts) int {
 			fw := append([]fwdWay(nil), forward[src]...)
 			sort.SliceStable(fw, func(i, j int) bool { return g.screenName(fw[i].t) < g.screenName(fw[j].t) })
 			for _, w := range fw {
+				if d, ok := toDist[w.t]; toDist != nil && (!ok || d > depth-step-1 || isRoot[w.t]) { // back to the start: a loop
+					continue
+				}
 				if ok, cond := runs(src, w.need); ok {
 					if _, has := byHub[w.hub]; !has {
 						hubs = append(hubs, w.hub)
@@ -1544,7 +1608,7 @@ func (g *Graph) cmdGraph(o opts) int {
 						continue
 					}
 					reach(src, w.t)
-					if !seen[w.t] {
+					if !seen[w.t] && inside(w.t) {
 						nxt = append(nxt, w.t)
 					}
 					seen[w.t] = true
@@ -1564,7 +1628,7 @@ func (g *Graph) cmdGraph(o opts) int {
 					reach(src, x.t)
 				}
 				for _, x := range f.opened {
-					if !seen[x.t] {
+					if !seen[x.t] && inside(x.t) {
 						nxt = append(nxt, x.t)
 					}
 				}
@@ -1575,6 +1639,151 @@ func (g *Graph) cmdGraph(o opts) int {
 		}
 		level = nxt
 	}
+	g.printGraph(o, &gdraw{roots: roots, isRoot: isRoot, order: order, ids: ids, edges: edges, more: more,
+		dropped: dropped, hiddenDebug: hiddenDebug, to: to, noWay: noWay, depth: depth})
+	return exitOK
+}
+
+// stepAction: the method on the screen a step starts from, from its hint; for a step through shared
+// code, the one calling that code.
+func (g *Graph) stepAction(hint string, hub int32) string {
+	parts := []string{""}
+	if hint != "" {
+		parts = strings.Split(hint, " > ")
+	}
+	if hub >= 0 && len(parts) > 1 && strings.HasSuffix(strings.TrimRight(g.label(hub), "()"), parts[len(parts)-1]) {
+		return parts[len(parts)-2]
+	}
+	return parts[len(parts)-1]
+}
+
+// graphIn: graph --in: what opens the roots, and what opens those, up to --depth (1): back over the
+// opened_by rows. Shared code stands between the screens calling it and the screen it opens; with
+// more than graphFanout callers it starts at a "+N screens" node. Hosts are not followed: every
+// way that opens a screen is drawn.
+func (g *Graph) graphIn(o opts, roots []int32) int {
+	avoid, inside := g.screensMatching(o.avoid), g.inModules(o.modules)
+	debug := true
+	for _, r := range roots {
+		debug = debug && g.isDebug(r)
+	}
+	ids := map[gnode]string{}
+	var order []gnode
+	var edges []gedge
+	more := map[int32][]int32{}
+	node := func(n gnode) string {
+		if id, ok := ids[n]; ok {
+			return id
+		}
+		id := "n" + strconv.Itoa(len(ids)+1)
+		ids[n] = id
+		order = append(order, n)
+		return id
+	}
+	isRoot, seen := map[int32]bool{}, map[int32]bool{}
+	for _, r := range roots {
+		isRoot[r], seen[r] = true, true
+		node(gnode{n: r})
+	}
+	depth := max(o.depth, 1)
+	hiddenDebug := 0
+	drawn := map[[2]int32]bool{} // from, to
+	edge := func(from, to int32, label, hint, style string) {
+		if !drawn[[2]int32{from, to}] {
+			drawn[[2]int32{from, to}] = true
+			edges = append(edges, gedge{node(gnode{n: from}), node(gnode{n: to}), label, hint, style})
+		}
+	}
+	level := append([]int32(nil), roots...)
+	for range depth {
+		var nxt []int32
+		reach := func(src int32) {
+			if !seen[src] && inside(src) {
+				nxt = append(nxt, src)
+			}
+			seen[src] = true
+		}
+		for _, t := range level {
+			ways, _ := g.openedBy(t)
+			ways = append([]srcWay(nil), ways...)
+			sort.SliceStable(ways, func(i, j int) bool { return g.screenName(ways[i].Src) < g.screenName(ways[j].Src) })
+			byHub := map[int32][]srcWay{}
+			var hubs []int32
+			for _, w := range ways {
+				if avoid[w.Src] {
+					continue
+				}
+				if g.isDebug(w.Src) && !debug {
+					hiddenDebug++
+					continue
+				}
+				if w.Hub >= 0 {
+					if _, ok := byHub[w.Hub]; !ok {
+						hubs = append(hubs, w.Hub)
+					}
+					byHub[w.Hub] = append(byHub[w.Hub], w)
+					continue
+				}
+				hint := g.stepHint(w.Via)
+				label := ""
+				if act := g.stepAction(hint, -1); act != "" {
+					label = shortAction(act)
+				}
+				edge(w.Src, t, label, hint, "own")
+				reach(w.Src)
+			}
+			sort.SliceStable(hubs, func(i, j int) bool { return g.label(hubs[i]) < g.label(hubs[j]) })
+			for _, hub := range hubs {
+				edge(hub, t, "", "", "fan")
+				var srcs []int32
+				for _, w := range byHub[hub] {
+					if !containsInt(srcs, w.Src) {
+						srcs = append(srcs, w.Src)
+					}
+				}
+				if len(srcs) > config.GraphFanout {
+					for _, src := range srcs {
+						if !containsInt(more[hub], src) {
+							more[hub] = append(more[hub], src)
+						}
+					}
+					continue
+				}
+				for _, w := range byHub[hub] {
+					hint := g.stepHint(w.Via)
+					label := ""
+					if act := g.stepAction(hint, hub); act != "" {
+						label = shortAction(act)
+					}
+					edge(w.Src, hub, label, hint, "shared")
+					reach(w.Src)
+				}
+			}
+		}
+		level = nxt
+	}
+	g.printGraph(o, &gdraw{roots: roots, isRoot: isRoot, order: order, ids: ids, edges: edges, more: more,
+		hiddenDebug: hiddenDebug, in: true, depth: depth})
+	return exitOK
+}
+
+// gdraw: a diagram of graph: its nodes in the order met, edges, the screens behind collapsed shared
+// code, and what was left out.
+type gdraw struct {
+	roots, to            []int32
+	isRoot               map[int32]bool
+	order                []gnode
+	ids                  map[gnode]string
+	edges                []gedge
+	more                 map[int32][]int32
+	dropped, hiddenDebug int
+	in, noWay            bool // in: who opens the roots, not what they open
+	depth                int
+}
+
+func (g *Graph) printGraph(o opts, d *gdraw) {
+	roots, isRoot, order, ids, edges, more, dropped, hiddenDebug := d.roots, d.isRoot, d.order, d.ids, d.edges, d.more,
+		d.dropped, d.hiddenDebug
 	cut := 0
 	if len(edges) > config.GraphEdges {
 		cut = len(edges) - config.GraphEdges
@@ -1638,9 +1847,18 @@ func (g *Graph) cmdGraph(o opts) int {
 		for i, r := range roots {
 			rootNames[i] = g.screenName(r)
 		}
-		g.printJSON("graph", obj{{"roots", strs(rootNames)}, {"nodes", list(nodes)}, {"edges", list(es)},
-			{"more", moreObj}, {"edges_left_out", cut}, {"ways_of_other_hosts", dropped}, {"debug_left_out", hiddenDebug}})
-		return exitOK
+		direction := "out"
+		if d.in {
+			direction = "in"
+		}
+		toNames := make([]string, len(d.to))
+		for i, t := range d.to {
+			toNames[i] = g.screenName(t)
+		}
+		g.printJSON("graph", obj{{"roots", strs(rootNames)}, {"direction", direction}, {"to", strs(toNames)},
+			{"nodes", list(nodes)}, {"edges", list(es)}, {"more", moreObj}, {"edges_left_out", cut},
+			{"ways_of_other_hosts", dropped}, {"debug_left_out", hiddenDebug}})
+		return
 	}
 	used := map[string]bool{}
 	for _, e := range edges {
@@ -1680,7 +1898,11 @@ func (g *Graph) cmdGraph(o opts) int {
 	sort.SliceStable(hubs, func(i, j int) bool { return ids[gnode{n: hubs[i]}] < ids[gnode{n: hubs[j]}] })
 	for _, h := range hubs {
 		id := ids[gnode{n: h}]
-		fmt.Printf("  %s --> %s_more[\"+%d screens\"]\n", id, id, len(more[h]))
+		if d.in {
+			fmt.Printf("  %s_more[\"+%d screens\"] -.-> %s\n", id, len(more[h]), id)
+		} else {
+			fmt.Printf("  %s --> %s_more[\"+%d screens\"]\n", id, id, len(more[h]))
+		}
 	}
 	if cut > 0 {
 		fmt.Printf("  %%%% %d more edges left out (Mermaid draws up to %d)\n", cut, config.GraphEdges)
@@ -1688,5 +1910,15 @@ func (g *Graph) cmdGraph(o opts) int {
 	if dropped > 0 {
 		fmt.Printf("  %%%% %d ways left out: they run only in a host the way here does not go through\n", dropped)
 	}
-	return exitOK
+	if d.noWay {
+		names := make([]string, len(d.to))
+		for i, t := range d.to {
+			names[i] = g.screenName(t)
+		}
+		steps := "steps"
+		if d.depth == 1 {
+			steps = "step"
+		}
+		fmt.Printf("  %%%% no way to %s within %d %s\n", strings.Join(names, ", "), d.depth, steps)
+	}
 }

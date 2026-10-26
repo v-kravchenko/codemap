@@ -325,16 +325,29 @@ Result fields:
 ## graph
 
 ```
-codemap graph SCREEN [--depth N] [--all] [--json]
+codemap graph SCREEN [--to SCREEN | --in] [--avoid GLOB]... [--module GLOB]... [--depth N] [--all] [--json]
 ```
 
 - `SCREEN` (positional, required) — same resolution as `nav-path`'s `SCREEN`; can match more than
   one screen (multiple roots).
 - `--depth N` — how many hops out from the root(s) to draw (default 1).
+- `--to SCREEN` — draw only the ways that reach this screen within `--depth` (default: the fewest
+  steps from the root plus 2, so a detour or two shows); a way back into a root is a loop and is left
+  out. When none gets there in time, the text ends with a `%% no way to ...` comment and `edges` is
+  empty. Not with `--in`.
+- `--in` — the other direction: what opens the root(s), and what opens those, up to `--depth`.
+  Shared code stands between its callers and the screen; with more than `graph.fanout` callers they
+  go into `more`. Hosts are not followed: every way that opens a screen is drawn.
+- `--avoid GLOB` (repeatable) — leave out screens whose name or class matches (`*`: any run of
+  characters), and what is reached only through them.
+- `--module GLOB` (repeatable) — walk on only from screens in a matching module; a screen elsewhere
+  is drawn but not walked from (a feature's map: `--module 'feature/cards*'`).
 - `--all`, `--json`.
 
 Result fields:
 - `roots` — the root screen name(s).
+- `direction` — `"out"` (what the roots open) or `"in"` (what opens them, `--in`).
+- `to` — the `--to` screen name(s), `[]` without it.
 - `nodes` — `{name, kind, module}`; `kind` is a screen kind, `"action"` (one method opening several
   screens, drawn as its own node), or `"shared"` (hub code).
 - `edges` — `{from, to, label, hint, shared}`; `label` is the short action name shown on the edge
@@ -350,7 +363,7 @@ Result fields:
 ```json
 {
   "schema_version": "3.3.0", "command": "graph",
-  "roots": ["Home"],
+  "roots": ["Home"], "direction": "out", "to": [],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
     { "name": "Home: TypedAppKt.TypedApp", "kind": "action", "module": "app" },

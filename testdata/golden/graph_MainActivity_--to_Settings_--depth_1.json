@@ -1,0 +1,23 @@
+{
+  "schema_version": "3.3.0",
+  "command": "graph",
+  "roots": [
+    "MainActivity"
+  ],
+  "direction": "out",
+  "to": [
+    "Settings"
+  ],
+  "nodes": [
+    {
+      "name": "MainActivity",
+      "kind": "activity",
+      "module": "app"
+    }
+  ],
+  "edges": [],
+  "more": {},
+  "edges_left_out": 0,
+  "ways_of_other_hosts": 0,
+  "debug_left_out": 0
+}

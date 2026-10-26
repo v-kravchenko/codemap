@@ -39,9 +39,9 @@ var (
 type opts struct {
 	db, to, base, head, diff, files, from, entry string
 	json, all, noPaths, noSelf, noCheck, nav     bool
-	strict, verbose, info, ways                  bool
+	strict, verbose, info, ways, in              bool
 	depth, limit                                 int
-	kinds, pos, via, avoid                       []string
+	kinds, pos, via, avoid, modules              []string
 }
 
 func parseOpts(args []string) opts {
@@ -113,6 +113,10 @@ func parseOpts(args []string) opts {
 			o.entry = value(&i, "entry")
 		case "--ways":
 			o.ways = true
+		case "--in":
+			o.in = true
+		case "--module":
+			o.modules = append(o.modules, value(&i, "module"))
 		default:
 			if strings.HasPrefix(a, "--") {
 				panic(util.UserError("unrecognized arguments: " + a))
