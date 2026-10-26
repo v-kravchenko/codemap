@@ -1,5 +1,7 @@
 package android
 
+// Android resources of a module: what each resource is and what its XML references (resources.py).
+
 import (
 	"bytes"
 	"encoding/xml"
@@ -9,7 +11,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
-	"strings" // Android resources of a module: what each resource is and what its XML references (resources.py).
+	"strings"
 
 	"github.com/v-kravchenko/codemap/internal/config"
 	"github.com/v-kravchenko/codemap/internal/project"

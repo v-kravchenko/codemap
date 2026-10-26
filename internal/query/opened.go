@@ -1,12 +1,14 @@
 package query
 
+// Who opens each screen: the walk from its openers to the screens they run in (port of graph.py
+// openers, _walk_opened_by), done once by `build` for every screen a user sees.
+
 import (
 	"slices"
 	"sort"
 	"strings"
 	"sync"
-	"sync/atomic" // Who opens each screen: the walk from its openers to the screens they run in (port of graph.py
-	// openers, _walk_opened_by), done once by `build` for every screen a user sees.
+	"sync/atomic"
 
 	"github.com/v-kravchenko/codemap/internal/config"
 	"github.com/v-kravchenko/codemap/internal/snapshot"

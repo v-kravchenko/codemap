@@ -1,11 +1,13 @@
 package query
 
+// JSON in the bytes of Python's json.dump(indent=1, ensure_ascii=False): objects keep key order.
+
 import (
 	"bufio"
 	"fmt"
 	"sort"
 	"strconv"
-	"strings" // JSON in the bytes of Python's json.dump(indent=1, ensure_ascii=False): objects keep key order.
+	"strings"
 
 	"github.com/v-kravchenko/codemap/internal/util"
 )

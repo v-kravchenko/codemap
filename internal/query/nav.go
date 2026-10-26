@@ -1,5 +1,8 @@
 package query
 
+// How the user gets to a screen (nav-path, impact --nav) and what a screen opens (graph): walks over
+// the opened_by rows build wrote (codemap.py cmd_nav_path, _nav_walk, cmd_graph).
+
 import (
 	"container/heap"
 	"fmt"
@@ -8,8 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode/utf8" // How the user gets to a screen (nav-path, impact --nav) and what a screen opens (graph): walks over
-	// the opened_by rows build wrote (codemap.py cmd_nav_path, _nav_walk, cmd_graph).
+	"unicode/utf8"
 
 	"github.com/v-kravchenko/codemap/internal/config"
 	"github.com/v-kravchenko/codemap/internal/util"

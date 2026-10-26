@@ -1,5 +1,7 @@
 package query
 
+// The query commands of codemap.py: used-by, uses, impact, find; the same --json.
+
 import (
 	"bufio"
 	"encoding/json"
@@ -14,7 +16,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode/utf8" // The query commands of codemap.py: used-by, uses, impact, find; the same --json.
+	"unicode/utf8"
 
 	"github.com/v-kravchenko/codemap/internal/config"
 	"github.com/v-kravchenko/codemap/internal/snapshot"

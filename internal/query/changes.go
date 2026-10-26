@@ -1,5 +1,7 @@
 package query
 
+// changes: the impact of base..head, a unified diff or a list of files (codemap.py cmd_changes).
+
 import (
 	"bufio"
 	"bytes"
@@ -11,7 +13,7 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
-	"strings" // changes: the impact of base..head, a unified diff or a list of files (codemap.py cmd_changes).
+	"strings"
 
 	"github.com/v-kravchenko/codemap/internal/android"
 	"github.com/v-kravchenko/codemap/internal/config"

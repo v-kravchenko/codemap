@@ -1,5 +1,7 @@
 package build
 
+// Builds the code map from compiled debug classes and module resources (builder.py).
+
 import (
 	"bytes"
 	"crypto/sha1"
@@ -23,7 +25,7 @@ import (
 	"github.com/v-kravchenko/codemap/internal/snapshot"
 	"github.com/v-kravchenko/codemap/internal/util"
 	"golang.org/x/crypto/blake2b"
-) // Builds the code map from compiled debug classes and module resources (builder.py).
+)
 
 var (
 	routeNamePass = regexp.MustCompile(`^(kotlin/coroutines/jvm/internal/|kotlin/jvm/internal/Intrinsics\.` +

@@ -1,12 +1,14 @@
 package query
 
+// impact: the walk from changed nodes to everything that may change (port of graph.py impact, _impact).
+
 import (
 	"encoding/binary"
 	"fmt"
 	"slices"
 	"sort"
 	"strconv"
-	"strings" // impact: the walk from changed nodes to everything that may change (port of graph.py impact, _impact).
+	"strings"
 
 	"github.com/v-kravchenko/codemap/internal/config"
 	"github.com/v-kravchenko/codemap/internal/snapshot"

@@ -1,5 +1,8 @@
 package query
 
+// Queries over the code map snapshot: symbol lookup, direct users, labels (port of graph.py).
+// Nodes are node indexes (int32, -1: none); ids only where graph.py compares them.
+
 import (
 	"os"
 	"path/filepath"
@@ -7,8 +10,7 @@ import (
 	"slices"
 	"sort"
 	"strconv"
-	"strings" // Queries over the code map snapshot: symbol lookup, direct users, labels (port of graph.py).
-	// Nodes are node indexes (int32, -1: none); ids only where graph.py compares them.
+	"strings"
 
 	"github.com/v-kravchenko/codemap/internal/config"
 	"github.com/v-kravchenko/codemap/internal/snapshot"
