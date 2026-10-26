@@ -1,6 +1,8 @@
 package snapshot
 
 import (
+	"encoding/binary"
+	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -29,7 +31,9 @@ func TestSnapshotRoundTrip(t *testing.T) {
 	}
 
 	path := filepath.Join(t.TempDir(), "map.snap")
-	m.WriteSnapshot(path)
+	if err := m.WriteSnapshot(path); err != nil {
+		t.Fatal(err)
+	}
 	got, err := LoadSnapshot(path)
 	if err != nil {
 		t.Fatal(err)
@@ -39,5 +43,37 @@ func TestSnapshotRoundTrip(t *testing.T) {
 	}
 	if got.Node.Name.At(2) != "nf" || got.Node.Desc.At(1) != "" || got.MetaValue("nodes") != "3" {
 		t.Fatal("strings do not round-trip")
+	}
+}
+
+// A corrupt or truncated file is an error, never a panic: the column sizes reach unsafe.Slice.
+func TestSnapshotCorrupt(t *testing.T) {
+	m := &Map{}
+	m.Node.ID = []int64{1, 2}
+	m.Meta.Key.Add("nodes")
+	m.Meta.Value.Add("2")
+	path := filepath.Join(t.TempDir(), "map.snap")
+	if err := m.WriteSnapshot(path); err != nil {
+		t.Fatal(err)
+	}
+	good, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for name, corrupt := range map[string]func([]byte) []byte{
+		"negative size": func(b []byte) []byte { binary.LittleEndian.PutUint64(b[16:], 1<<63|8); return b },
+		"huge size":     func(b []byte) []byte { binary.LittleEndian.PutUint64(b[16:], 1<<40); return b },
+		"odd size":      func(b []byte) []byte { binary.LittleEndian.PutUint64(b[16:], 3); return b },
+		"truncated":     func(b []byte) []byte { return b[:len(b)-5] },
+		"no columns":    func(b []byte) []byte { return b[:16] },
+	} {
+		bad := corrupt(append([]byte(nil), good...))
+		p := filepath.Join(t.TempDir(), "bad.snap")
+		if err := os.WriteFile(p, bad, 0o644); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := LoadSnapshot(p); err == nil {
+			t.Errorf("%s: loaded without an error", name)
+		}
 	}
 }

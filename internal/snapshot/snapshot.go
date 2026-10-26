@@ -331,22 +331,37 @@ func (w *snapWriter) strs(s *Strs) {
 	w.raw(unsafe.Pointer(unsafe.SliceData(s.Blob)), len(s.Blob))
 }
 
-func (m *Map) WriteSnapshot(path string) {
+// WriteSnapshot writes to a temp file renamed over path, so a failed write (disk full) leaves the
+// old map in place and no temp file behind.
+func (m *Map) WriteSnapshot(path string) (err error) {
 	tmp := path + ".tmp"
 	f, err := os.Create(tmp)
-	check(err)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			f.Close()
+			os.Remove(tmp)
+		}
+	}()
 	w := &snapWriter{w: bufio.NewWriterSize(f, 1<<20)}
 	head := make([]byte, 16)
 	w.w.Write(head)
 	m.columns(w)
-	check(w.w.Flush())
+	if err = w.w.Flush(); err != nil {
+		return err
+	}
 	copy(head, snapMagic)
 	binary.LittleEndian.PutUint32(head[8:], snapVersion)
 	binary.LittleEndian.PutUint32(head[12:], w.count)
-	_, err = f.WriteAt(head, 0)
-	check(err)
-	check(f.Close())
-	check(os.Rename(tmp, path))
+	if _, err = f.WriteAt(head, 0); err != nil {
+		return err
+	}
+	if err = f.Close(); err != nil {
+		return err
+	}
+	return os.Rename(tmp, path)
 }
 
 type snapReader struct {
@@ -364,12 +379,14 @@ func (r *snapReader) raw(elem int) (unsafe.Pointer, int) {
 		r.err = fmt.Errorf("truncated at column %d", r.count)
 		return nil, 0
 	}
-	size := int(binary.LittleEndian.Uint64(r.buf[r.pos:]))
+	// compared unsigned: a corrupt size past int's range would turn negative and reach unsafe.Slice
+	usize := binary.LittleEndian.Uint64(r.buf[r.pos:])
 	r.pos += 8
-	if size%elem != 0 || size > len(r.buf)-r.pos {
+	if usize%uint64(elem) != 0 || usize > uint64(len(r.buf)-r.pos) {
 		r.err = fmt.Errorf("bad column %d", r.count)
 		return nil, 0
 	}
+	size := int(usize)
 	p := unsafe.Pointer(unsafe.SliceData(r.buf[r.pos:]))
 	r.pos += (size + 7) &^ 7
 	r.count++
@@ -418,12 +435,6 @@ func LoadSnapshot(path string) (*Map, error) {
 		return nil, fmt.Errorf("%s: %v", path, r.err)
 	}
 	return m, nil
-}
-
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
 
 const (

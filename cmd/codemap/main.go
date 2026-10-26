@@ -154,7 +154,9 @@ func buildCmd(args []string) {
 	}
 	t = time.Now()
 	os.MkdirAll(filepath.Dir(*out), 0o755)
-	m.WriteSnapshot(*out)
+	if err := m.WriteSnapshot(*out); err != nil {
+		util.Fail("write %s: %v", *out, err)
+	}
 	b.Timed("write snapshot", t)
 	r, _ := filepath.Rel(abs, *out)
 	fmt.Fprintf(os.Stderr, "code map: %d modules, %s classes, %d nodes, %d edges, %d screens, %.1fs -> %s\n",
