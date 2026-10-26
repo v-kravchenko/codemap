@@ -5,6 +5,7 @@ package build
 import (
 	"bytes"
 	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
@@ -24,7 +25,6 @@ import (
 	"github.com/v-kravchenko/codemap/internal/project"
 	"github.com/v-kravchenko/codemap/internal/snapshot"
 	"github.com/v-kravchenko/codemap/internal/util"
-	"golang.org/x/crypto/blake2b"
 )
 
 var (
@@ -106,9 +106,8 @@ func indexFrom(s string, c byte, from int) int {
 }
 
 func nodeID(kind, owner, name, desc string) int64 {
-	h, _ := blake2b.New(8, nil)
-	h.Write([]byte(kind + "\x00" + owner + "\x00" + name + "\x00" + desc))
-	v := int64(binary.BigEndian.Uint64(h.Sum(nil)) >> 1)
+	sum := sha256.Sum256([]byte(kind + "\x00" + owner + "\x00" + name + "\x00" + desc))
+	v := int64(binary.BigEndian.Uint64(sum[:]) >> 1)
 	if v == 0 {
 		return 1
 	}
