@@ -115,10 +115,10 @@ func withoutMeta(out []byte) []byte {
 	skip := false
 	for _, line := range strings.SplitAfter(string(out), "\n") {
 		switch {
-		case strings.HasPrefix(line, ` "meta": {`):
+		case strings.HasPrefix(line, `  "meta": {`):
 			skip = true
 		case skip:
-			skip = !strings.HasPrefix(line, " }")
+			skip = !strings.HasPrefix(line, "  }")
 		default:
 			kept = append(kept, line)
 		}

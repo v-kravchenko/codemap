@@ -1,7 +1,6 @@
 package query
 
-// Who opens each screen: the walk from its openers to the screens they run in (port of graph.py
-// openers, _walk_opened_by), done once by `build` for every screen a user sees.
+// Who opens each screen: the walk from its openers to the screens they run in, done once by `build` for every screen a user sees.
 
 import (
 	"slices"
@@ -25,7 +24,7 @@ type Way struct {
 	HostModule string
 }
 
-// openers: methods that open the screen `sid` (graph.py openers).
+// openers: methods that open the screen `sid`.
 func (g *Graph) openers(sid int32) []int32 {
 	kind := ""
 	if rows, ok := g.screens[sid]; ok {
@@ -92,7 +91,7 @@ func (g *Graph) openers(sid int32) []int32 {
 	return out
 }
 
-// walkOpenedBy: graph.py _walk_opened_by: ways = {screen: way}, bases = {class: [screens]}; capped:
+// walkOpenedBy: ways = {screen: way}, bases = {class: [screens]}; capped:
 // the pairs left out after pathLimit shortest ways.
 func (g *Graph) walkOpenedBy(sid int32) (ways map[int32]Way, bases map[int32][]int32, capped int) {
 	ways = map[int32]Way{}
@@ -267,7 +266,7 @@ func (g *Graph) implementations(m int32) int {
 	return n
 }
 
-// hostModule: graph.py _host_module: ok false when the way cannot run in `sid` (a ViewModel's body
+// hostModule: ok false when the way cannot run in `sid` (a ViewModel's body
 // of a method with several, and `sid` does not name the ViewModel); else the module whose screens
 // must host `sid`, "" for none.
 func (g *Graph) hostModule(path []Step, sid int32) (string, bool) {

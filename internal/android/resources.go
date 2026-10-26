@@ -1,6 +1,6 @@
 package android
 
-// Android resources of a module: what each resource is and what its XML references (resources.py).
+// Android resources of a module: what each resource is and what its XML references.
 
 import (
 	"bytes"

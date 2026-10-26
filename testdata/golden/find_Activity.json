@@ -1,99 +1,99 @@
 {
- "schema_version": "3.2.0",
- "command": "find",
- "pattern": "Activity",
- "total": 15,
- "synthetic": 0,
- "symbols": [
-  {
-   "symbol": "navapp.MainActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/MainActivity.kt:13"
-  },
-  {
-   "symbol": "@layout/activity_views",
-   "kind": "resource",
-   "module": "app",
-   "location": "app/src/main/res/layout/activity_views.xml"
-  },
-  {
-   "symbol": "navapp.impact.BaseActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:9"
-  },
-  {
-   "symbol": "navapp.impact.LoudActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:20"
-  },
-  {
-   "symbol": "navapp.views.ViewsActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16"
-  },
-  {
-   "symbol": "navapp.impact.FirstActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Constructors.kt:12"
-  },
-  {
-   "symbol": "navapp.impact.LimitActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Constants.kt:10"
-  },
-  {
-   "symbol": "navapp.impact.QuietActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:22"
-  },
-  {
-   "symbol": "navapp.impact.AvatarActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/DataClasses.kt:18"
-  },
-  {
-   "symbol": "navapp.impact.SecondActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Constructors.kt:18"
-  },
-  {
-   "symbol": "navapp.impact.CounterActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Constructors.kt:8"
-  },
-  {
-   "symbol": "navapp.views.LicensesActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:50"
-  },
-  {
-   "symbol": "navapp.impact.NicknameActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/DataClasses.kt:11"
-  },
-  {
-   "symbol": "navapp.impact.PlainCopyActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Defaults.kt:16"
-  },
-  {
-   "symbol": "navapp.impact.LabelledCopyActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Defaults.kt:23"
-  }
- ]
+  "schema_version": "3.2.0",
+  "command": "find",
+  "pattern": "Activity",
+  "total": 15,
+  "synthetic": 0,
+  "symbols": [
+    {
+      "symbol": "navapp.MainActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/MainActivity.kt:13"
+    },
+    {
+      "symbol": "@layout/activity_views",
+      "kind": "resource",
+      "module": "app",
+      "location": "app/src/main/res/layout/activity_views.xml"
+    },
+    {
+      "symbol": "navapp.impact.BaseActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:9"
+    },
+    {
+      "symbol": "navapp.impact.LoudActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:20"
+    },
+    {
+      "symbol": "navapp.views.ViewsActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16"
+    },
+    {
+      "symbol": "navapp.impact.FirstActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:12"
+    },
+    {
+      "symbol": "navapp.impact.LimitActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constants.kt:10"
+    },
+    {
+      "symbol": "navapp.impact.QuietActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:22"
+    },
+    {
+      "symbol": "navapp.impact.AvatarActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/DataClasses.kt:18"
+    },
+    {
+      "symbol": "navapp.impact.SecondActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:18"
+    },
+    {
+      "symbol": "navapp.impact.CounterActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:8"
+    },
+    {
+      "symbol": "navapp.views.LicensesActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:50"
+    },
+    {
+      "symbol": "navapp.impact.NicknameActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/DataClasses.kt:11"
+    },
+    {
+      "symbol": "navapp.impact.PlainCopyActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Defaults.kt:16"
+    },
+    {
+      "symbol": "navapp.impact.LabelledCopyActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Defaults.kt:23"
+    }
+  ]
 }

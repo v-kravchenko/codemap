@@ -1,6 +1,6 @@
 package query
 
-// changes: the impact of base..head, a unified diff or a list of files (codemap.py cmd_changes).
+// changes: the impact of base..head, a unified diff or a list of files.
 
 import (
 	"bufio"
@@ -87,7 +87,7 @@ func splitLines(text string) []string {
 }
 
 // parseDiff: ({path: new-side lines, nil for a new file}, deleted paths, {moved path: old path}) of a
-// unified diff (codemap.py parse_diff).
+// unified diff.
 func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map[string]string) {
 	out, deleted, moved := map[string]lineSet{}, map[string]bool{}, map[string]string{}
 	var path, oldPath string

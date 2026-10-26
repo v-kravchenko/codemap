@@ -58,7 +58,7 @@ func (m *Map) ClassIndex() map[string]int32 {
 // SuperRows: the hierarchy rows of each class, in row order.
 func (m *Map) SuperRows() CSR { return groupCSR(m.Nodes(), m.Hierarchy.ClsIx) }
 
-// Supertypes: repo supertypes of class c, transitively, in the order of graph.py supertypes().
+// Supertypes: repo supertypes of class c, transitively, nearest first.
 func (m *Map) Supertypes(rows CSR, c int32) []int32 {
 	var out []int32
 	var stack []int32
@@ -83,7 +83,7 @@ func (m *Map) Supertypes(rows CSR, c int32) []int32 {
 }
 
 // overriders: for a method m, the classes o with a method of the same name and descriptor, o != the
-// class of m, the class of m among the supertypes of o (graph.py _overriders).
+// class of m, the class of m among the supertypes of o.
 func (m *Map) overriders() CSR {
 	type sig struct{ name, desc string }
 	groups := map[sig][]int32{}

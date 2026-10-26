@@ -1,92 +1,92 @@
 {
- "schema_version": "3.2.0",
- "command": "impact",
- "changed": [
-  {
-   "symbol": "navapp.impact.CounterActivity.getCount",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Constructors.kt:9"
-  }
- ],
- "affected": [
-  {
-   "symbol": "navapp.impact.CounterActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Constructors.kt:8",
-   "depth": 1,
-   "path": [
-    "navapp.impact.CounterActivity.getCount",
-    "navapp.impact.CounterActivity"
-   ]
+  "schema_version": "3.2.0",
+  "command": "impact",
+  "changed": [
+    {
+      "symbol": "navapp.impact.CounterActivity.getCount",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:9"
+    }
+  ],
+  "affected": [
+    {
+      "symbol": "navapp.impact.CounterActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:8",
+      "depth": 1,
+      "path": [
+        "navapp.impact.CounterActivity.getCount",
+        "navapp.impact.CounterActivity"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.FirstActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
+      "depth": 2,
+      "path": [
+        "navapp.impact.CounterActivity.getCount",
+        "navapp.impact.CounterActivity",
+        "navapp.impact.FirstActivity"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.SecondActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:18",
+      "depth": 2,
+      "path": [
+        "navapp.impact.CounterActivity.getCount",
+        "navapp.impact.CounterActivity",
+        "navapp.impact.SecondActivity"
+      ]
+    }
+  ],
+  "screens": [
+    {
+      "kind": "activity",
+      "name": "FirstActivity",
+      "target": "navapp.impact.FirstActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
+      "host": null,
+      "hosts": [],
+      "depth": 2,
+      "opened_from": [],
+      "path": [
+        "navapp.impact.CounterActivity.getCount",
+        "navapp.impact.CounterActivity",
+        "navapp.impact.FirstActivity"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "SecondActivity",
+      "target": "navapp.impact.SecondActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:18",
+      "host": null,
+      "hosts": [],
+      "depth": 2,
+      "opened_from": [],
+      "path": [
+        "navapp.impact.CounterActivity.getCount",
+        "navapp.impact.CounterActivity",
+        "navapp.impact.SecondActivity"
+      ]
+    }
+  ],
+  "hidden": {},
+  "modules": {
+    "app": 4
   },
-  {
-   "symbol": "navapp.impact.FirstActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
-   "depth": 2,
-   "path": [
-    "navapp.impact.CounterActivity.getCount",
-    "navapp.impact.CounterActivity",
-    "navapp.impact.FirstActivity"
-   ]
+  "packages": {
+    "navapp.impact": 4
   },
-  {
-   "symbol": "navapp.impact.SecondActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Constructors.kt:18",
-   "depth": 2,
-   "path": [
-    "navapp.impact.CounterActivity.getCount",
-    "navapp.impact.CounterActivity",
-    "navapp.impact.SecondActivity"
-   ]
-  }
- ],
- "screens": [
-  {
-   "kind": "activity",
-   "name": "FirstActivity",
-   "target": "navapp.impact.FirstActivity",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
-   "host": null,
-   "hosts": [],
-   "depth": 2,
-   "opened_from": [],
-   "path": [
-    "navapp.impact.CounterActivity.getCount",
-    "navapp.impact.CounterActivity",
-    "navapp.impact.FirstActivity"
-   ]
-  },
-  {
-   "kind": "activity",
-   "name": "SecondActivity",
-   "target": "navapp.impact.SecondActivity",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Constructors.kt:18",
-   "host": null,
-   "hosts": [],
-   "depth": 2,
-   "opened_from": [],
-   "path": [
-    "navapp.impact.CounterActivity.getCount",
-    "navapp.impact.CounterActivity",
-    "navapp.impact.SecondActivity"
-   ]
-  }
- ],
- "hidden": {},
- "modules": {
-  "app": 4
- },
- "packages": {
-  "navapp.impact": 4
- },
- "not_covered": [],
- "warnings": []
+  "not_covered": [],
+  "warnings": []
 }

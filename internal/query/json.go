@@ -1,6 +1,7 @@
 package query
 
-// JSON in the bytes of Python's json.dump(indent=1, ensure_ascii=False): objects keep key order.
+// JSON written as it goes (impact --json can be tens of MB), indented by two spaces; objects keep
+// their key order.
 
 import (
 	"bufio"
@@ -82,7 +83,7 @@ func sortObjs(s []obj, keys ...string) {
 }
 
 func writeJSON(b *bufio.Writer, v any, indent int) {
-	pad := strings.Repeat(" ", indent+1)
+	pad := strings.Repeat("  ", indent+1)
 	switch x := v.(type) {
 	case nil:
 		b.WriteString("null")
@@ -91,11 +92,7 @@ func writeJSON(b *bufio.Writer, v any, indent int) {
 	case int:
 		b.WriteString(strconv.Itoa(x))
 	case float64:
-		s := strconv.FormatFloat(x, 'f', -1, 64)
-		if !strings.Contains(s, ".") {
-			s += ".0"
-		}
-		b.WriteString(s)
+		b.WriteString(strconv.FormatFloat(x, 'f', -1, 64))
 	case string:
 		writeString(b, x)
 	case []string:
@@ -115,7 +112,7 @@ func writeJSON(b *bufio.Writer, v any, indent int) {
 			b.WriteString(": ")
 			writeJSON(b, e.v, indent+1)
 		}
-		b.WriteString("\n" + pad[1:] + "}")
+		b.WriteString("\n" + pad[2:] + "}")
 	case []any:
 		if len(x) == 0 {
 			b.WriteString("[]")
@@ -129,7 +126,7 @@ func writeJSON(b *bufio.Writer, v any, indent int) {
 			b.WriteString(pad)
 			writeJSON(b, e, indent+1)
 		}
-		b.WriteString("\n" + pad[1:] + "]")
+		b.WriteString("\n" + pad[2:] + "]")
 	default:
 		panic(fmt.Sprintf("json: %T", v))
 	}

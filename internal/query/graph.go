@@ -1,7 +1,7 @@
 package query
 
-// Queries over the code map snapshot: symbol lookup, direct users, labels (port of graph.py).
-// Nodes are node indexes (int32, -1: none); ids only where graph.py compares them.
+// Queries over the code map snapshot: symbol lookup, direct users, labels.
+// Nodes are node indexes (int32, -1: none); ids where the output or an order needs a stable number.
 
 import (
 	"os"
@@ -409,7 +409,7 @@ func (g *Graph) supSet(c int32) map[int32]bool {
 	return s
 }
 
-// isSubtype: whether `sup` is among the repo supertypes of `c` (graph.py `c in _subtypes_of(sup)`).
+// isSubtype: whether `sup` is among the repo supertypes of `c`.
 func (g *Graph) isSubtype(c, sup int32) bool { return c >= 0 && g.supSet(c)[sup] }
 
 func (g *Graph) kin(a, b int32) bool { return a == b || g.supSet(b)[a] || g.supSet(a)[b] }

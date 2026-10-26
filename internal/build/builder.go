@@ -1,6 +1,6 @@
 package build
 
-// Builds the code map from compiled debug classes and module resources (builder.py).
+// Builds the code map from the compiled classes and the resources of the modules.
 
 import (
 	"bytes"
@@ -1391,7 +1391,7 @@ func (b *Builder) resources() {
 	for _, name := range b.classOrder {
 		d := util.Dotted(name)
 		if byDotted[d] != name {
-			continue // a later class took this dotted name; Python keeps one entry per key
+			continue // a later class took this dotted name: one entry per name
 		}
 		parts := strings.Split(d, ".")
 		for i := 1; i < len(parts); i++ {
@@ -2009,7 +2009,7 @@ func genericSupers(sig string) []string {
 	return out
 }
 
-// Map: the built map in sorted columns, in the row order of the Python map.
+// Map: the built map in sorted columns.
 func (b *Builder) Map(meta map[string]string) *snapshot.Map {
 	m := &snapshot.Map{}
 	for _, md := range b.modules {

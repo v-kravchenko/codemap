@@ -33,7 +33,7 @@ func Fail(format string, a ...any) {
 	os.Exit(2)
 }
 
-// userError: a message for the user (exit 2), as codemap.py's SystemExit.
+// userError: a message for the user, not a bug (exit 2).
 type UserError string
 
 func RelPath(root, p string) (string, error) { return filepath.Rel(root, p) }

@@ -1,38 +1,38 @@
 {
- "schema_version": "3.2.0",
- "command": "impact",
- "changed": [
-  {
-   "symbol": "navapp.impact.FirstActivity.<init>",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Constructors.kt:12"
-  }
- ],
- "affected": [],
- "screens": [
-  {
-   "kind": "activity",
-   "name": "FirstActivity",
-   "target": "navapp.impact.FirstActivity",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
-   "host": null,
-   "hosts": [],
-   "depth": 0,
-   "opened_from": [],
-   "path": [
-    "navapp.impact.FirstActivity.<init>"
-   ]
-  }
- ],
- "hidden": {},
- "modules": {
-  "app": 1
- },
- "packages": {
-  "navapp.impact": 1
- },
- "not_covered": [],
- "warnings": []
+  "schema_version": "3.2.0",
+  "command": "impact",
+  "changed": [
+    {
+      "symbol": "navapp.impact.FirstActivity.<init>",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:12"
+    }
+  ],
+  "affected": [],
+  "screens": [
+    {
+      "kind": "activity",
+      "name": "FirstActivity",
+      "target": "navapp.impact.FirstActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
+      "host": null,
+      "hosts": [],
+      "depth": 0,
+      "opened_from": [],
+      "path": [
+        "navapp.impact.FirstActivity.<init>"
+      ]
+    }
+  ],
+  "hidden": {},
+  "modules": {
+    "app": 1
+  },
+  "packages": {
+    "navapp.impact": 1
+  },
+  "not_covered": [],
+  "warnings": []
 }

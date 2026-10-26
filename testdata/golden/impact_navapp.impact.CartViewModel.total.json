@@ -1,51 +1,51 @@
 {
- "schema_version": "3.2.0",
- "command": "impact",
- "changed": [
-  {
-   "symbol": "navapp.impact.CartViewModel.total",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/GenericDi.kt:22"
-  }
- ],
- "affected": [
-  {
-   "symbol": "navapp.impact.CartFragment.onViewCreated",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/GenericDi.kt:33",
-   "depth": 1,
-   "path": [
-    "navapp.impact.CartViewModel.total",
-    "navapp.impact.CartFragment.onViewCreated"
-   ]
-  }
- ],
- "screens": [
-  {
-   "kind": "fragment",
-   "name": "CartFragment",
-   "target": "navapp.impact.CartFragment",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/GenericDi.kt:29",
-   "host": null,
-   "hosts": [],
-   "depth": 1,
-   "opened_from": [],
-   "path": [
-    "navapp.impact.CartViewModel.total",
-    "navapp.impact.CartFragment.onViewCreated"
-   ]
-  }
- ],
- "hidden": {},
- "modules": {
-  "app": 2
- },
- "packages": {
-  "navapp.impact": 2
- },
- "not_covered": [],
- "warnings": []
+  "schema_version": "3.2.0",
+  "command": "impact",
+  "changed": [
+    {
+      "symbol": "navapp.impact.CartViewModel.total",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/GenericDi.kt:22"
+    }
+  ],
+  "affected": [
+    {
+      "symbol": "navapp.impact.CartFragment.onViewCreated",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/GenericDi.kt:33",
+      "depth": 1,
+      "path": [
+        "navapp.impact.CartViewModel.total",
+        "navapp.impact.CartFragment.onViewCreated"
+      ]
+    }
+  ],
+  "screens": [
+    {
+      "kind": "fragment",
+      "name": "CartFragment",
+      "target": "navapp.impact.CartFragment",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/GenericDi.kt:29",
+      "host": null,
+      "hosts": [],
+      "depth": 1,
+      "opened_from": [],
+      "path": [
+        "navapp.impact.CartViewModel.total",
+        "navapp.impact.CartFragment.onViewCreated"
+      ]
+    }
+  ],
+  "hidden": {},
+  "modules": {
+    "app": 2
+  },
+  "packages": {
+    "navapp.impact": 2
+  },
+  "not_covered": [],
+  "warnings": []
 }

@@ -1,90 +1,90 @@
 {
- "schema_version": "3.2.0",
- "command": "nav-path",
- "targets": [
-  {
-   "name": "Login",
-   "kind": "route",
-   "module": "app",
-   "location": "app/src/main/java/navapp/typed/TypedApp.kt",
-   "host": null,
-   "hosts": []
-  }
- ],
- "screens": [
-  {
-   "name": "Home",
-   "kind": "route",
-   "module": "app",
-   "location": "app/src/main/java/navapp/typed/TypedApp.kt",
-   "host": null,
-   "hosts": [],
-   "depth": 1,
-   "cost": 1,
-   "hosted_in": null,
-   "opens": "Login",
-   "way": "own",
-   "shared": null,
-   "hint": "TypedAppKt.TypedApp",
-   "via": [
-    "navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0$1$0",
-    "route Home"
-   ]
-  },
-  {
-   "name": "MainActivity",
-   "kind": "activity",
-   "module": "app",
-   "location": "app/src/main/java/navapp/MainActivity.kt:13",
-   "host": null,
-   "hosts": [],
-   "depth": 2,
-   "cost": 2,
-   "hosted_in": null,
-   "opens": "Home",
-   "way": "own",
-   "shared": null,
-   "hint": "TypedAppKt.TypedApp",
-   "via": [
-    "navapp.typed.TypedAppKt.TypedApp",
-    "navapp.MainActivity.onCreate$lambda$0"
-   ]
-  }
- ],
- "entries": [
-  {
-   "name": "MainActivity",
-   "kind": "activity",
-   "module": "app",
-   "location": "app/src/main/java/navapp/MainActivity.kt:13",
-   "host": null,
-   "hosts": [],
-   "entry": [
+  "schema_version": "3.2.0",
+  "command": "nav-path",
+  "targets": [
     {
-     "kind": "launcher",
-     "detail": null
+      "name": "Login",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": null,
+      "hosts": []
     }
-   ]
-  }
- ],
- "paths": [
-  [
-   "MainActivity",
-   "Home",
-   "Login"
+  ],
+  "screens": [
+    {
+      "name": "Home",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": null,
+      "hosts": [],
+      "depth": 1,
+      "cost": 1,
+      "hosted_in": null,
+      "opens": "Login",
+      "way": "own",
+      "shared": null,
+      "hint": "TypedAppKt.TypedApp",
+      "via": [
+        "navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0$1$0",
+        "route Home"
+      ]
+    },
+    {
+      "name": "MainActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/MainActivity.kt:13",
+      "host": null,
+      "hosts": [],
+      "depth": 2,
+      "cost": 2,
+      "hosted_in": null,
+      "opens": "Home",
+      "way": "own",
+      "shared": null,
+      "hint": "TypedAppKt.TypedApp",
+      "via": [
+        "navapp.typed.TypedAppKt.TypedApp",
+        "navapp.MainActivity.onCreate$lambda$0"
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "name": "MainActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/MainActivity.kt:13",
+      "host": null,
+      "hosts": [],
+      "entry": [
+        {
+          "kind": "launcher",
+          "detail": null
+        }
+      ]
+    }
+  ],
+  "paths": [
+    [
+      "MainActivity",
+      "Home",
+      "Login"
+    ]
+  ],
+  "branches": [
+    {
+      "entry": "MainActivity",
+      "through": "Home",
+      "cost": 2,
+      "shared": null,
+      "path": [
+        "MainActivity",
+        "Home",
+        "Login"
+      ]
+    }
   ]
- ],
- "branches": [
-  {
-   "entry": "MainActivity",
-   "through": "Home",
-   "cost": 2,
-   "shared": null,
-   "path": [
-    "MainActivity",
-    "Home",
-    "Login"
-   ]
-  }
- ]
 }

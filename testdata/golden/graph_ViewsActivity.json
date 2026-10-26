@@ -1,32 +1,32 @@
 {
- "schema_version": "3.2.0",
- "command": "graph",
- "roots": [
-  "ViewsActivity"
- ],
- "nodes": [
-  {
-   "name": "ViewsActivity",
-   "kind": "activity",
-   "module": "app"
-  },
-  {
-   "name": "ListFragment",
-   "kind": "fragment",
-   "module": "app"
-  }
- ],
- "edges": [
-  {
-   "from": "ViewsActivity",
-   "to": "ListFragment",
-   "label": "@navigation/views_graph",
-   "hint": "@navigation/views_graph",
-   "shared": null
-  }
- ],
- "more": {},
- "edges_left_out": 0,
- "ways_of_other_hosts": 0,
- "debug_left_out": 0
+  "schema_version": "3.2.0",
+  "command": "graph",
+  "roots": [
+    "ViewsActivity"
+  ],
+  "nodes": [
+    {
+      "name": "ViewsActivity",
+      "kind": "activity",
+      "module": "app"
+    },
+    {
+      "name": "ListFragment",
+      "kind": "fragment",
+      "module": "app"
+    }
+  ],
+  "edges": [
+    {
+      "from": "ViewsActivity",
+      "to": "ListFragment",
+      "label": "@navigation/views_graph",
+      "hint": "@navigation/views_graph",
+      "shared": null
+    }
+  ],
+  "more": {},
+  "edges_left_out": 0,
+  "ways_of_other_hosts": 0,
+  "debug_left_out": 0
 }

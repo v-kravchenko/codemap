@@ -1,7 +1,7 @@
 package query
 
 // How the user gets to a screen (nav-path, impact --nav) and what a screen opens (graph): walks over
-// the opened_by rows build wrote (codemap.py cmd_nav_path, _nav_walk, cmd_graph).
+// the opened_by rows build wrote.
 
 import (
 	"container/heap"
@@ -46,7 +46,7 @@ type openedRows struct {
 	bases []baseBelow
 }
 
-// openedBy: graph.py opened_by: the rows build wrote for the screens a user sees, a walk for others.
+// openedBy: the rows build wrote for the screens a user sees, a walk for others.
 func (g *Graph) openedBy(sid int32) ([]srcWay, []baseBelow) {
 	if g.opened == nil {
 		g.opened = map[int32]openedRows{}
@@ -218,7 +218,7 @@ func joined(main, other []string) ([]string, string) {
 	for k < min(len(main), len(other)) && main[len(main)-1-k] == other[len(other)-1-k] {
 		k++
 	}
-	if k == 0 { // ponytail: codemap.py fails here (IndexError); ways to different targets do not join
+	if k == 0 { // ways to different targets do not join
 		return other, ""
 	}
 	return other[:len(other)-k], other[len(other)-k]
@@ -300,7 +300,7 @@ func (h *navHeap) Pop() any {
 	return x
 }
 
-// hostStr: str(need or "") of codemap.py: a node by its id.
+// hostStr: the host a way needs as text: a node by its id, a module by name, "" for none.
 func (g *Graph) hostStr(h hostKey) string {
 	if h.node >= 0 {
 		return strconv.FormatInt(g.id(h.node), 10)

@@ -24,7 +24,7 @@ const (
 )
 
 // Strs: strings of a column, s[i] = blob[off[i]:off[i+1]].
-// ponytail: no dedup, ~41 of 75 MB are repeated descs/paths; a shared string pool if load time matters.
+// No dedup: ~41 of 75 MB are repeated descs/paths; a shared string pool if load time matters.
 type Strs struct {
 	Off  []uint32
 	Blob []byte
@@ -113,7 +113,7 @@ type Map struct {
 	}
 }
 
-// OpenedRows: the ways each screen is opened (graph.py's opened_by table); Hub, HostNode -1: none.
+// OpenedRows: the ways each screen is opened (precomputed by build); Hub, HostNode -1: none.
 type OpenedRows struct {
 	Screen, Src, Hub, HostNode []int32
 	HostModule                 Strs

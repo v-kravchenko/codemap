@@ -1,251 +1,251 @@
 {
- "schema_version": "3.2.0",
- "command": "changes",
- "changed": [
-  {
-   "symbol": "@navigation/views_graph",
-   "kind": "resource",
-   "module": "app",
-   "location": "app/src/main/res/navigation/views_graph.xml"
+  "schema_version": "3.2.0",
+  "command": "changes",
+  "changed": [
+    {
+      "symbol": "@navigation/views_graph",
+      "kind": "resource",
+      "module": "app",
+      "location": "app/src/main/res/navigation/views_graph.xml"
+    },
+    {
+      "symbol": "navapp.impact.BaseActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:9"
+    },
+    {
+      "symbol": "navapp.impact.LoudActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:20"
+    },
+    {
+      "symbol": "navapp.impact.QuietActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:22"
+    },
+    {
+      "symbol": "navapp.impact.Session",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:26"
+    }
+  ],
+  "affected": [
+    {
+      "symbol": "navapp.impact.BaseActivity.$stable",
+      "kind": "field",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt",
+      "depth": 0,
+      "path": [
+        "navapp.impact.BaseActivity",
+        "navapp.impact.BaseActivity.$stable"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.BaseActivity.<clinit>",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt",
+      "depth": 0,
+      "path": [
+        "navapp.impact.BaseActivity",
+        "navapp.impact.BaseActivity.<clinit>"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.BaseActivity.<init>",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:9",
+      "depth": 0,
+      "path": [
+        "navapp.impact.BaseActivity",
+        "navapp.impact.BaseActivity.<init>"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.BaseActivity.observeLogout",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:16",
+      "depth": 0,
+      "path": [
+        "navapp.impact.BaseActivity",
+        "navapp.impact.BaseActivity.observeLogout"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.BaseActivity.onCreate",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:11",
+      "depth": 0,
+      "path": [
+        "navapp.impact.BaseActivity",
+        "navapp.impact.BaseActivity.onCreate"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.Session.$stable",
+      "kind": "field",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt",
+      "depth": 0,
+      "path": [
+        "navapp.impact.Session",
+        "navapp.impact.Session.$stable"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.Session.<clinit>",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt",
+      "depth": 0,
+      "path": [
+        "navapp.impact.Session",
+        "navapp.impact.Session.<clinit>"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.Session.<init>",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:26",
+      "depth": 0,
+      "path": [
+        "navapp.impact.Session",
+        "navapp.impact.Session.<init>"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.Session.INSTANCE",
+      "kind": "field",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt",
+      "depth": 0,
+      "path": [
+        "navapp.impact.Session",
+        "navapp.impact.Session.INSTANCE"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.Session.listen",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:27",
+      "depth": 0,
+      "path": [
+        "navapp.impact.Session",
+        "navapp.impact.Session.listen"
+      ]
+    },
+    {
+      "symbol": "@layout/activity_views",
+      "kind": "resource",
+      "module": "app",
+      "location": "app/src/main/res/layout/activity_views.xml",
+      "depth": 1,
+      "path": [
+        "@navigation/views_graph",
+        "@layout/activity_views"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.LoudActivity.<init>",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
+      "depth": 1,
+      "path": [
+        "navapp.impact.BaseActivity",
+        "navapp.impact.BaseActivity.<init>",
+        "navapp.impact.LoudActivity.<init>"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.QuietActivity.<init>",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:22",
+      "depth": 1,
+      "path": [
+        "navapp.impact.BaseActivity",
+        "navapp.impact.BaseActivity.<init>",
+        "navapp.impact.QuietActivity.<init>"
+      ]
+    },
+    {
+      "symbol": "navapp.views.ViewsActivity.<init>",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
+      "depth": 2,
+      "path": [
+        "@navigation/views_graph",
+        "@layout/activity_views",
+        "navapp.views.ViewsActivity.<init>"
+      ]
+    }
+  ],
+  "screens": [
+    {
+      "kind": "activity",
+      "name": "LoudActivity",
+      "target": "navapp.impact.LoudActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
+      "host": null,
+      "hosts": [],
+      "depth": 0,
+      "opened_from": [],
+      "path": [
+        "navapp.impact.LoudActivity"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "QuietActivity",
+      "target": "navapp.impact.QuietActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:22",
+      "host": null,
+      "hosts": [],
+      "depth": 0,
+      "opened_from": [],
+      "path": [
+        "navapp.impact.QuietActivity"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "ViewsActivity",
+      "target": "navapp.views.ViewsActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
+      "host": null,
+      "hosts": [],
+      "depth": 2,
+      "opened_from": [],
+      "path": [
+        "@navigation/views_graph",
+        "@layout/activity_views",
+        "navapp.views.ViewsActivity.<init>"
+      ]
+    }
+  ],
+  "hidden": {},
+  "modules": {
+    "app": 26
   },
-  {
-   "symbol": "navapp.impact.BaseActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:9"
+  "packages": {
+    "navapp.impact": 23,
+    "navapp.views": 1
   },
-  {
-   "symbol": "navapp.impact.LoudActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:20"
-  },
-  {
-   "symbol": "navapp.impact.QuietActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:22"
-  },
-  {
-   "symbol": "navapp.impact.Session",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:26"
-  }
- ],
- "affected": [
-  {
-   "symbol": "navapp.impact.BaseActivity.$stable",
-   "kind": "field",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt",
-   "depth": 0,
-   "path": [
-    "navapp.impact.BaseActivity",
-    "navapp.impact.BaseActivity.$stable"
-   ]
-  },
-  {
-   "symbol": "navapp.impact.BaseActivity.<clinit>",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt",
-   "depth": 0,
-   "path": [
-    "navapp.impact.BaseActivity",
-    "navapp.impact.BaseActivity.<clinit>"
-   ]
-  },
-  {
-   "symbol": "navapp.impact.BaseActivity.<init>",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:9",
-   "depth": 0,
-   "path": [
-    "navapp.impact.BaseActivity",
-    "navapp.impact.BaseActivity.<init>"
-   ]
-  },
-  {
-   "symbol": "navapp.impact.BaseActivity.observeLogout",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:16",
-   "depth": 0,
-   "path": [
-    "navapp.impact.BaseActivity",
-    "navapp.impact.BaseActivity.observeLogout"
-   ]
-  },
-  {
-   "symbol": "navapp.impact.BaseActivity.onCreate",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:11",
-   "depth": 0,
-   "path": [
-    "navapp.impact.BaseActivity",
-    "navapp.impact.BaseActivity.onCreate"
-   ]
-  },
-  {
-   "symbol": "navapp.impact.Session.$stable",
-   "kind": "field",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt",
-   "depth": 0,
-   "path": [
-    "navapp.impact.Session",
-    "navapp.impact.Session.$stable"
-   ]
-  },
-  {
-   "symbol": "navapp.impact.Session.<clinit>",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt",
-   "depth": 0,
-   "path": [
-    "navapp.impact.Session",
-    "navapp.impact.Session.<clinit>"
-   ]
-  },
-  {
-   "symbol": "navapp.impact.Session.<init>",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:26",
-   "depth": 0,
-   "path": [
-    "navapp.impact.Session",
-    "navapp.impact.Session.<init>"
-   ]
-  },
-  {
-   "symbol": "navapp.impact.Session.INSTANCE",
-   "kind": "field",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt",
-   "depth": 0,
-   "path": [
-    "navapp.impact.Session",
-    "navapp.impact.Session.INSTANCE"
-   ]
-  },
-  {
-   "symbol": "navapp.impact.Session.listen",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:27",
-   "depth": 0,
-   "path": [
-    "navapp.impact.Session",
-    "navapp.impact.Session.listen"
-   ]
-  },
-  {
-   "symbol": "@layout/activity_views",
-   "kind": "resource",
-   "module": "app",
-   "location": "app/src/main/res/layout/activity_views.xml",
-   "depth": 1,
-   "path": [
-    "@navigation/views_graph",
-    "@layout/activity_views"
-   ]
-  },
-  {
-   "symbol": "navapp.impact.LoudActivity.<init>",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
-   "depth": 1,
-   "path": [
-    "navapp.impact.BaseActivity",
-    "navapp.impact.BaseActivity.<init>",
-    "navapp.impact.LoudActivity.<init>"
-   ]
-  },
-  {
-   "symbol": "navapp.impact.QuietActivity.<init>",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:22",
-   "depth": 1,
-   "path": [
-    "navapp.impact.BaseActivity",
-    "navapp.impact.BaseActivity.<init>",
-    "navapp.impact.QuietActivity.<init>"
-   ]
-  },
-  {
-   "symbol": "navapp.views.ViewsActivity.<init>",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
-   "depth": 2,
-   "path": [
-    "@navigation/views_graph",
-    "@layout/activity_views",
-    "navapp.views.ViewsActivity.<init>"
-   ]
-  }
- ],
- "screens": [
-  {
-   "kind": "activity",
-   "name": "LoudActivity",
-   "target": "navapp.impact.LoudActivity",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
-   "host": null,
-   "hosts": [],
-   "depth": 0,
-   "opened_from": [],
-   "path": [
-    "navapp.impact.LoudActivity"
-   ]
-  },
-  {
-   "kind": "activity",
-   "name": "QuietActivity",
-   "target": "navapp.impact.QuietActivity",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:22",
-   "host": null,
-   "hosts": [],
-   "depth": 0,
-   "opened_from": [],
-   "path": [
-    "navapp.impact.QuietActivity"
-   ]
-  },
-  {
-   "kind": "activity",
-   "name": "ViewsActivity",
-   "target": "navapp.views.ViewsActivity",
-   "module": "app",
-   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
-   "host": null,
-   "hosts": [],
-   "depth": 2,
-   "opened_from": [],
-   "path": [
-    "@navigation/views_graph",
-    "@layout/activity_views",
-    "navapp.views.ViewsActivity.<init>"
-   ]
-  }
- ],
- "hidden": {},
- "modules": {
-  "app": 26
- },
- "packages": {
-  "navapp.impact": 23,
-  "navapp.views": 1
- },
- "not_covered": [],
- "warnings": []
+  "not_covered": [],
+  "warnings": []
 }

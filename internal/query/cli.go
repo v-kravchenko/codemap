@@ -1,6 +1,6 @@
 package query
 
-// The query commands of codemap.py: used-by, uses, impact, find; the same --json.
+// The query commands: used-by, uses, impact, find, screens, build --info; text or --json.
 
 import (
 	"bufio"
@@ -373,7 +373,7 @@ func (g *Graph) printEdges(found []Seed, rows []EdgeRow, title string, asJSON bo
 	}
 	groups := map[string]map[int32]map[string]bool{}
 	var modOrder []string               // first-seen order: ties of the sort below keep it
-	othersOrder := map[string][]int32{} // as codemap.py's dicts
+	othersOrder := map[string][]int32{} // first-seen order
 	for _, r := range rows {
 		name := r.Kind
 		if !isFound[r.Via] {
@@ -493,7 +493,7 @@ type screenItem struct {
 	n                  int32
 }
 
-// openedFromNames: the screens opening a dialog, by name (codemap.py lists them for dialogs only).
+// openedFromNames: the screens opening a dialog, by name (listed for dialogs only).
 func (g *Graph) openedFromNames(n int32) []string {
 	names := []string{}
 	if g.screens[n][0].Kind != "dialog" {
@@ -906,7 +906,7 @@ func (g *Graph) sourceLabel(n int32) string {
 	return l
 }
 
-// formatPath: a walk path for reading (codemap.py _format_path).
+// formatPath: a walk path for reading.
 func (g *Graph) formatPath(path []Step) string {
 	type st struct{ text, full string }
 	var steps []st

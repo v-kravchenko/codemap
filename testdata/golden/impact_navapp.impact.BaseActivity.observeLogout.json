@@ -1,78 +1,78 @@
 {
- "schema_version": "3.2.0",
- "command": "impact",
- "changed": [
-  {
-   "symbol": "navapp.impact.BaseActivity.observeLogout",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:16"
-  }
- ],
- "affected": [
-  {
-   "symbol": "navapp.impact.BaseActivity.onCreate",
-   "kind": "method",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:11",
-   "depth": 1,
-   "path": [
-    "navapp.impact.BaseActivity.observeLogout",
-    "navapp.impact.BaseActivity.onCreate"
-   ]
+  "schema_version": "3.2.0",
+  "command": "impact",
+  "changed": [
+    {
+      "symbol": "navapp.impact.BaseActivity.observeLogout",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:16"
+    }
+  ],
+  "affected": [
+    {
+      "symbol": "navapp.impact.BaseActivity.onCreate",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:11",
+      "depth": 1,
+      "path": [
+        "navapp.impact.BaseActivity.observeLogout",
+        "navapp.impact.BaseActivity.onCreate"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.BaseActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:9",
+      "depth": 2,
+      "path": [
+        "navapp.impact.BaseActivity.observeLogout",
+        "navapp.impact.BaseActivity.onCreate",
+        "navapp.impact.BaseActivity"
+      ]
+    },
+    {
+      "symbol": "navapp.impact.LoudActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
+      "depth": 3,
+      "path": [
+        "navapp.impact.BaseActivity.observeLogout",
+        "navapp.impact.BaseActivity.onCreate",
+        "navapp.impact.BaseActivity",
+        "navapp.impact.LoudActivity"
+      ]
+    }
+  ],
+  "screens": [
+    {
+      "kind": "activity",
+      "name": "LoudActivity",
+      "target": "navapp.impact.LoudActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
+      "host": null,
+      "hosts": [],
+      "depth": 3,
+      "opened_from": [],
+      "path": [
+        "navapp.impact.BaseActivity.observeLogout",
+        "navapp.impact.BaseActivity.onCreate",
+        "navapp.impact.BaseActivity",
+        "navapp.impact.LoudActivity"
+      ]
+    }
+  ],
+  "hidden": {},
+  "modules": {
+    "app": 4
   },
-  {
-   "symbol": "navapp.impact.BaseActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:9",
-   "depth": 2,
-   "path": [
-    "navapp.impact.BaseActivity.observeLogout",
-    "navapp.impact.BaseActivity.onCreate",
-    "navapp.impact.BaseActivity"
-   ]
+  "packages": {
+    "navapp.impact": 4
   },
-  {
-   "symbol": "navapp.impact.LoudActivity",
-   "kind": "class",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
-   "depth": 3,
-   "path": [
-    "navapp.impact.BaseActivity.observeLogout",
-    "navapp.impact.BaseActivity.onCreate",
-    "navapp.impact.BaseActivity",
-    "navapp.impact.LoudActivity"
-   ]
-  }
- ],
- "screens": [
-  {
-   "kind": "activity",
-   "name": "LoudActivity",
-   "target": "navapp.impact.LoudActivity",
-   "module": "app",
-   "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
-   "host": null,
-   "hosts": [],
-   "depth": 3,
-   "opened_from": [],
-   "path": [
-    "navapp.impact.BaseActivity.observeLogout",
-    "navapp.impact.BaseActivity.onCreate",
-    "navapp.impact.BaseActivity",
-    "navapp.impact.LoudActivity"
-   ]
-  }
- ],
- "hidden": {},
- "modules": {
-  "app": 4
- },
- "packages": {
-  "navapp.impact": 4
- },
- "not_covered": [],
- "warnings": []
+  "not_covered": [],
+  "warnings": []
 }

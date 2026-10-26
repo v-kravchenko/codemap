@@ -1,7 +1,6 @@
 package query
 
-// Whether the map is older than its inputs (codemap.py _stale, _report_stale; builder.py stale_inputs,
-// map_changes): a query warns, or with --strict fails (exit 3) when its answer uses a changed file;
+// Whether the map is older than its inputs: a query warns, or with --strict fails (exit 3) when its answer uses a changed file;
 // build does nothing when the map is up to date.
 
 import (

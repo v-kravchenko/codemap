@@ -1,13 +1,10 @@
 package query
 
-// impact: the walk from changed nodes to everything that may change (port of graph.py impact, _impact).
+// impact: the walk from changed nodes to everything that may change.
 
 import (
 	"encoding/binary"
-	"fmt"
 	"slices"
-	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/v-kravchenko/codemap/internal/config"
@@ -23,7 +20,7 @@ const (
 var modeName = map[byte]string{modeMember: "member", modeWhole: "whole", modeState: "state"}
 
 // Ctx: the receiver class known for `this` calls (-1: none), with the overridable methods the walk
-// came up through (Runs, encoded by encodeRuns; "": none): graph.py's ctx, ("runs", runs, receiver).
+// came up through (Runs, encoded by encodeRuns; "": none).
 type Ctx struct {
 	Recv int32
 	Runs string
@@ -33,7 +30,7 @@ var noCtx = Ctx{-1, ""}
 
 func (c Ctx) set() bool { return c.Recv >= 0 || c.Runs != "" }
 
-// Key: a node of the walk with its mode; a context makes graph.py's (node, (mode, ctx)).
+// Key: a node of the walk with its mode and context.
 type Key struct {
 	N    int32
 	Mode byte
@@ -88,48 +85,6 @@ func (w *Walk) screen(n int32, k Key) {
 		w.Screens[n] = k
 		w.ScreenOrder = append(w.ScreenOrder, n)
 	}
-}
-
-// repr: the Python repr of the key, the tie-break between keys of one node and depth.
-func (g *Graph) repr(k Key) string {
-	mode := "'" + modeName[k.Mode] + "'"
-	if !k.Ctx.set() {
-		return fmt.Sprintf("(%d, %s)", g.id(k.N), mode)
-	}
-	recv := "None"
-	if k.Recv >= 0 {
-		recv = strconv.FormatInt(g.id(k.Recv), 10)
-	}
-	if k.Runs == "" {
-		return fmt.Sprintf("(%d, (%s, %s))", g.id(k.N), mode, recv)
-	}
-	return fmt.Sprintf("(%d, (%s, ('runs', frozenset({%s}), %s)))", g.id(k.N), mode, g.frozenset(k.Runs), recv)
-}
-
-// ponytail: CPython's order of a small int frozenset (slot hash & 7, no collisions), exact for up to
-// 4 ids without slot collisions; emulate the probing if ties between such keys ever differ.
-func (g *Graph) frozenset(runs string) string {
-	ids := []int64{}
-	for _, m := range decodeRuns(runs) {
-		ids = append(ids, g.id(m))
-	}
-	mask := int64(7)
-	for n := int64(len(ids)); n*5 >= mask*3; {
-		mask = mask*2 + 1
-	}
-	hash := func(v int64) int64 { return v % (1<<61 - 1) }
-	sort.Slice(ids, func(i, j int) bool {
-		a, b := hash(ids[i])&mask, hash(ids[j])&mask
-		if a != b {
-			return a < b
-		}
-		return ids[i] < ids[j]
-	})
-	parts := make([]string, len(ids))
-	for i, v := range ids {
-		parts[i] = strconv.FormatInt(v, 10)
-	}
-	return strings.Join(parts, ", ")
 }
 
 func (g *Graph) isEnumEntry(n int32) bool {
@@ -530,7 +485,7 @@ func (g *Graph) key(n int32, ctx Ctx) Key {
 	return plainKey(n, modeMember)
 }
 
-// walk: graph.py _impact. maxDepth < 0: no limit; nil maps: graph.py None. alt: the other parents of
+// walk: maxDepth < 0: no limit; nil maps: none. alt: the other parents of
 // a key at the depth of its first one.
 func (g *Graph) walk(seeds []Seed, maxDepth int, stopAt map[int32]bool, blocked map[[3]int32]bool,
 	skip map[int32]bool, bases map[int32]bool, alt map[Key][]Parent) *Walk {
@@ -796,13 +751,38 @@ func (g *Graph) merged(steps []Step) []Step {
 	return out
 }
 
-// before: graph.py's (depth, repr(key)) order.
+// before: the order of keys met by a walk: by depth, then node id, mode, receiver id and the ids of
+// the overridable methods the walk came up through.
 func (g *Graph) before(w *Walk, a, b Key) bool {
-	da, db := w.Aff[a].Depth, w.Aff[b].Depth
-	if da != db {
+	if da, db := w.Aff[a].Depth, w.Aff[b].Depth; da != db {
 		return da < db
 	}
-	return g.repr(a) < g.repr(b)
+	if a.N != b.N {
+		return g.id(a.N) < g.id(b.N)
+	}
+	if a.Mode != b.Mode {
+		return modeName[a.Mode] < modeName[b.Mode]
+	}
+	if a.Recv != b.Recv {
+		return g.idOrNone(a.Recv) < g.idOrNone(b.Recv)
+	}
+	return slices.Compare(g.runIDs(a.Runs), g.runIDs(b.Runs)) < 0
+}
+
+func (g *Graph) idOrNone(n int32) int64 {
+	if n < 0 {
+		return -1
+	}
+	return g.id(n)
+}
+
+func (g *Graph) runIDs(runs string) []int64 {
+	var ids []int64
+	for _, m := range decodeRuns(runs) {
+		ids = append(ids, g.id(m))
+	}
+	slices.Sort(ids)
+	return ids
 }
 
 // holdersIn: the receivers a call through a supertype in class `caller` runs on, when the instance
