@@ -25,7 +25,7 @@ var staleKinds = [][2]string{{"sources", "source files"}, {"resources", "resourc
 // staleInputs: the inputs that differ from the ones the map was built from, as (changed, added,
 // removed) relative paths, sorted. A file counts as changed when its size or mtime moved and its
 // content hash differs too.
-func (m *Map) staleInputs(root string) (changed, added, removed []string) {
+func staleInputs(m *Map, root string) (changed, added, removed []string) {
 	known := map[string]int{}
 	for i := range m.Input.Path.Len() {
 		known[m.Input.Path.At(i)] = i
@@ -70,7 +70,7 @@ func (m *Map) staleInputs(root string) (changed, added, removed []string) {
 				for j := i; j < min(i+256, len(all)); j++ {
 					k, ok := known[all[j]]
 					if ok {
-						differs[j] = m.inputDiffers(filepath.Join(root, all[j]), k)
+						differs[j] = inputDiffers(m, filepath.Join(root, all[j]), k)
 					}
 				}
 			}
@@ -96,7 +96,7 @@ func (m *Map) staleInputs(root string) (changed, added, removed []string) {
 	return changed, added, removed
 }
 
-func (m *Map) inputDiffers(path string, k int) bool {
+func inputDiffers(m *Map, path string, k int) bool {
 	st, err := os.Stat(path)
 	if err != nil {
 		return true
@@ -131,7 +131,7 @@ func upToDate(snap, root string, modules []Module) bool {
 			return false
 		}
 	}
-	c, a, r := m.staleInputs(root)
+	c, a, r := staleInputs(m, root)
 	return len(c)+len(a)+len(r) == 0
 }
 
@@ -143,7 +143,7 @@ type staleInfo struct {
 }
 
 func (g *Graph) findStale() *staleInfo {
-	changed, added, removed := g.m.staleInputs(g.root)
+	changed, added, removed := staleInputs(g.m, g.root)
 	if len(changed)+len(added)+len(removed) == 0 {
 		return nil
 	}

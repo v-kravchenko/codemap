@@ -385,7 +385,7 @@ func (g *Graph) openedTargets() []int32 {
 
 // precomputeOpenedBy walks opened_by for every target screen, a Graph per worker (its caches are not
 // shared), into the map's OpenedBy and OpenedBase columns. Returns (screens, capped pairs).
-func (m *Map) precomputeOpenedBy(root string, jobs int) (int, int) {
+func precomputeOpenedBy(m *Map, root string, jobs int) (int, int) {
 	targets := NewGraph(m, root).openedTargets()
 	type result struct {
 		ways   map[int32]Way

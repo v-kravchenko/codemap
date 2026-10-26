@@ -4,7 +4,6 @@ package main
 
 import (
 	"bytes"
-	"cmp"
 	"crypto/sha1"
 	"encoding/binary"
 	"encoding/hex"
@@ -21,55 +20,6 @@ import (
 
 	"golang.org/x/crypto/blake2b"
 )
-
-const (
-	CALL = iota + 1
-	READ
-	WRITE
-	TYPE
-	EXTENDS
-	IMPLEMENTS
-	LAMBDA
-	INLINE
-	RES
-	XML_RES
-	XML_CLASS
-	ROUTE_CONTENT
-	ROUTE_HOST
-	OPENS
-	INJECT // a field whose generic type a class implements: it can hold an instance from DI
-)
-
-const (
-	accEnum      = 0x4000
-	accAbstract  = 0x0400
-	accInterface = 0x0200
-	constantFlag = 0x10000
-)
-
-// Set by applyConfig from codemap.yml.
-var (
-	cfg                                       *Config
-	classDirs, sourceSets, manifests          []string
-	activityBases, dialogBases, fragmentBases map[string]bool
-	previewMarkers                            map[string]bool
-	screenLayout                              *regexp.Regexp
-	routeRegistration, routeByName            *regexp.Regexp
-	routeGraph                                *regexp.Regexp
-	routeBases, childBases, routeInterfaces   map[string]bool
-	routeReadOnly                             *regexp.Regexp
-	startDestination                          string
-	typedRoutes, stringRoutes                 bool
-	keepStrings                               bool // classfile keeps string constants (stringRoutes)
-)
-
-func set(xs ...string) map[string]bool {
-	m := map[string]bool{}
-	for _, x := range xs {
-		m[x] = true
-	}
-	return m
-}
 
 var (
 	routeNamePass = regexp.MustCompile(`^(kotlin/coroutines/jvm/internal/|kotlin/jvm/internal/Intrinsics\.` +
@@ -113,8 +63,6 @@ func inlinedLambdaOfSameFile(t, name string) bool {
 	n0, _, _ := strings.Cut(name, "$")
 	return t0 == n0 && strings.Contains(t, "$") && (strings.Contains(t, "$inlined$") || strings.Contains(t, "$lambda"))
 }
-
-func dotted(s string) string { return strings.NewReplacer("/", ".", "$", ".").Replace(s) }
 
 func shortName(s string) string { return s[strings.LastIndexByte(s, '/')+1:] }
 
@@ -162,15 +110,6 @@ func nodeID(kind, owner, name, desc string) int64 {
 }
 
 // ---------------------------------------------------------------- modules
-
-type Module struct {
-	Name, Dir string
-	ClassDirs []string // absolute
-	// relative to root, in lookup order
-	Sources   []string `json:"sources"`
-	Res       []string `json:"res"`
-	Manifests []string `json:"manifests"`
-}
 
 // templateModule: the module at rel with the paths of the source sets in the settings.
 func templateModule(root, rel string, classes []string) Module {
@@ -241,11 +180,6 @@ type Node struct {
 	File, Module     int // 0: none
 	LMin, LMax       int // 0: none
 	Sname            string
-}
-
-type Edge struct {
-	Src, Dst int64
-	Kind     int
 }
 
 type Stamp struct {
@@ -392,6 +326,7 @@ func NewBuilder(root string, modules []Module, jobs int, log func(string)) *Buil
 	if jobs <= 0 {
 		jobs = max(1, runtime.NumCPU()-1)
 	}
+	keepStrings = stringRoutes
 	return &Builder{root: root, modules: modules, jobs: jobs, log: log,
 		nodes: make(map[int64]*Node, 1<<19), edges: make(map[Edge]struct{}, 1<<20), callVia: map[CallVia]struct{}{},
 		classID: make(map[string]int64, 1<<16), memberID: make(map[[3]string]int64, 1<<19), resID: map[string]int64{},
@@ -1509,15 +1444,6 @@ func (b *Builder) resources() {
 	b.stats["resources"] = fmt.Sprint(n)
 }
 
-func sortedKeys[K cmp.Ordered, V any](m map[K]V) []K {
-	out := make([]K, 0, len(m))
-	for k := range m {
-		out = append(out, k)
-	}
-	slices.Sort(out)
-	return out
-}
-
 // -- screens
 
 func (b *Builder) screensAll() {
@@ -2037,11 +1963,6 @@ func watchedFiles(root string, modules []Module) []string {
 	return out
 }
 
-func fail(format string, a ...any) {
-	fmt.Fprintf(os.Stderr, format+"\n", a...)
-	os.Exit(2)
-}
-
 // genericSupers: the supertypes with type arguments in a class Signature attribute, `Lp/S<Lp/A;>;`,
 // those with type variables or wildcards left out (they match no field type exactly).
 func genericSupers(sig string) []string {
@@ -2080,4 +2001,209 @@ func genericSupers(sig string) []string {
 		}
 	}
 	return out
+}
+
+// Map: the built map in sorted columns, in the row order of the Python map.
+func (b *Builder) Map(meta map[string]string) *Map {
+	m := &Map{}
+	for _, md := range b.modules {
+		m.Module.Name.Add(md.Name)
+		m.Module.Dir.Add(md.Dir)
+	}
+	for _, p := range b.fileOrder {
+		f := b.files[p]
+		m.File.ID = append(m.File.ID, int32(f.ID))
+		m.File.Module = append(m.File.Module, int32(f.Module))
+		m.File.Lines = append(m.File.Lines, int32(f.Lines))
+		m.File.Path.Add(p)
+	}
+
+	ids := make([]int64, 0, len(b.nodes))
+	for id := range b.nodes {
+		ids = append(ids, id)
+	}
+	slices.Sort(ids)
+	var wg sync.WaitGroup
+	wg.Go(func() { m.Out, m.In = edgeCSR(b.edges, ids) })
+	wg.Go(func() { b.otherColumns(m) })
+	n := &m.Node
+	k := len(ids)
+	n.ID, n.Owner, n.Top = ids, make([]int64, k), make([]int64, k)
+	n.Flags, n.File, n.Module, n.LMin, n.LMax = make([]int32, k), make([]int32, k), make([]int32, k), make([]int32, k), make([]int32, k)
+	for _, s := range []*Strs{&n.Kind, &n.Name, &n.Desc, &n.Sname} {
+		s.off = make([]uint32, 1, k+1)
+	}
+	n.Name.blob, n.Desc.blob, n.Sname.blob = make([]byte, 0, 8<<20), make([]byte, 0, 16<<20), make([]byte, 0, 8<<20)
+	for i, id := range ids {
+		v := b.nodes[id]
+		n.Owner[i], n.Top[i] = v.Owner, v.Top
+		n.Kind.Add(v.Kind)
+		n.Name.Add(v.Name)
+		n.Desc.Add(v.Desc)
+		n.Sname.Add(v.Sname)
+		n.Flags[i], n.File[i], n.Module[i], n.LMin[i], n.LMax[i] = int32(v.Flags), int32(v.File), int32(v.Module), int32(v.LMin), int32(v.LMax)
+	}
+	wg.Wait()
+	m.derive()
+
+	mt := map[string]string{}
+	for k, v := range meta {
+		mt[k] = v
+	}
+	for k, v := range b.stats {
+		mt[k] = v
+	}
+	mt["nodes"], mt["edges"], mt["screens"] = fmt.Sprint(len(b.nodes)), fmt.Sprint(len(b.edges)), fmt.Sprint(len(b.screens))
+	for _, k := range sortedKeys(mt) {
+		m.Meta.Key.Add(k)
+		m.Meta.Value.Add(mt[k])
+	}
+	return m
+}
+
+// otherColumns: the columns of every table but node and edge.
+func (b *Builder) otherColumns(m *Map) {
+	via := make([]CallVia, 0, len(b.callVia))
+	for v := range b.callVia {
+		via = append(via, v)
+	}
+	sort.Slice(via, func(i, j int) bool {
+		a, c := via[i], via[j]
+		if a.Src != c.Src {
+			return a.Src < c.Src
+		}
+		if a.Dst != c.Dst {
+			return a.Dst < c.Dst
+		}
+		return a.Via < c.Via
+	})
+	for _, v := range via {
+		m.CallVia.Src = append(m.CallVia.Src, v.Src)
+		m.CallVia.Dst = append(m.CallVia.Dst, v.Dst)
+		m.CallVia.Via.Add(v.Via)
+	}
+	for _, s := range b.supers {
+		m.Hierarchy.Cls = append(m.Hierarchy.Cls, s.Cls)
+		m.Hierarchy.Sup.Add(s.Sup)
+		m.Hierarchy.Kind = append(m.Hierarchy.Kind, int32(s.Kind))
+	}
+	for _, a := range b.annots {
+		m.Annotation.Node = append(m.Annotation.Node, a.Node)
+		m.Annotation.Name.Add(a.Name)
+	}
+	for _, r := range b.resDefs {
+		m.ResDef.Node = append(m.ResDef.Node, r.Node)
+		m.ResDef.File = append(m.ResDef.File, int32(r.File))
+		m.ResDef.Line = append(m.ResDef.Line, int32(r.Line))
+	}
+	cs := &m.CallSite
+	for _, c := range b.callSites {
+		cs.Src = append(cs.Src, c.Src)
+		cs.Dst = append(cs.Dst, c.Dst)
+		cs.Arg = append(cs.Arg, c.Arg)
+		cs.Site = append(cs.Site, int32(c.Site))
+		cs.Pos = append(cs.Pos, int32(c.Pos))
+		cs.Kind.Add(c.Kind)
+	}
+	ps := make([]Triple, 0, len(b.paramSwitches))
+	for t := range b.paramSwitches {
+		ps = append(ps, t)
+	}
+	sort.Slice(ps, func(i, j int) bool { return lessTriple(ps[i], ps[j]) })
+	for _, t := range ps {
+		m.ParamSwitch.Method = append(m.ParamSwitch.Method, t.A)
+		m.ParamSwitch.Entry = append(m.ParamSwitch.Entry, t.B)
+		m.ParamSwitch.Pos = append(m.ParamSwitch.Pos, t.C)
+	}
+	for _, p := range sortedPairs(b.directReads) {
+		m.DirectRead.Method = append(m.DirectRead.Method, p[0])
+		m.DirectRead.Entry = append(m.DirectRead.Entry, p[1])
+	}
+	dg := append([]Guarded(nil), b.defaultGuards...)
+	sort.Slice(dg, func(i, j int) bool {
+		a, c := dg[i], dg[j]
+		if a.Method != c.Method {
+			return a.Method < c.Method
+		}
+		if a.Dst != c.Dst {
+			return a.Dst < c.Dst
+		}
+		if a.Kind != c.Kind {
+			return a.Kind < c.Kind
+		}
+		if a.Pos != c.Pos {
+			return a.Pos < c.Pos
+		}
+		return a.Bit < c.Bit
+	})
+	g := &m.DefaultGuard
+	for _, d := range dg {
+		g.Method = append(g.Method, d.Method)
+		g.Dst = append(g.Dst, d.Dst)
+		g.Kind = append(g.Kind, int32(d.Kind))
+		g.Pos = append(g.Pos, int32(d.Pos))
+		g.Bit = append(g.Bit, int32(d.Bit))
+	}
+	all := map[string]Stamp{}
+	for k, v := range b.inputs {
+		all[k] = v
+	}
+	for k, v := range b.sources {
+		all[k] = v
+	}
+	for _, p := range sortedKeys(all) {
+		s := all[p]
+		m.Input.Path.Add(p)
+		m.Input.Sha1.Add(s.Sha1)
+		m.Input.Size = append(m.Input.Size, s.Size)
+		m.Input.Mtime = append(m.Input.Mtime, s.Mtime)
+	}
+	for _, s := range b.screens {
+		m.Screen.Node = append(m.Screen.Node, s.Node)
+		m.Screen.Host = append(m.Screen.Host, s.Host)
+		m.Screen.Kind.Add(s.Kind)
+		m.Screen.Label.Add(s.Label)
+		m.Screen.Target.Add(s.Target)
+	}
+	for _, p := range sortedPairs(b.related) {
+		m.ScreenRelated.Screen = append(m.ScreenRelated.Screen, p[0])
+		m.ScreenRelated.Related = append(m.ScreenRelated.Related, p[1])
+	}
+	ent := make([]EntryRow, 0, len(b.entries))
+	for e := range b.entries {
+		ent = append(ent, e)
+	}
+	sort.Slice(ent, func(i, j int) bool {
+		a, c := ent[i], ent[j]
+		if a.Node != c.Node {
+			return a.Node < c.Node
+		}
+		if a.Kind != c.Kind {
+			return a.Kind < c.Kind
+		}
+		if a.Detail != c.Detail {
+			return a.Detail < c.Detail
+		}
+		if a.File != c.File {
+			return a.File < c.File
+		}
+		return a.Line < c.Line
+	})
+	for _, e := range ent {
+		m.Entry.Node = append(m.Entry.Node, e.Node)
+		m.Entry.Kind.Add(e.Kind)
+		m.Entry.Detail.Add(e.Detail)
+		m.Entry.File = append(m.Entry.File, int32(e.File))
+		m.Entry.Line = append(m.Entry.Line, int32(e.Line))
+	}
+}
+
+func lessTriple(a, c Triple) bool {
+	if a.A != c.A {
+		return a.A < c.A
+	}
+	if a.B != c.B {
+		return a.B < c.B
+	}
+	return a.C < c.C
 }

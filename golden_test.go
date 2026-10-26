@@ -83,7 +83,7 @@ func TestGolden(t *testing.T) {
 		}
 		seen[name] = true
 		got := withoutMeta(run(append(call, "--json")...))
-		path := filepath.Join("testdata", "golden", name)
+		path := filepath.Join(testdataDir(), "golden", name)
 		if *update {
 			os.MkdirAll(filepath.Dir(path), 0o755)
 			if err := os.WriteFile(path, got, 0o644); err != nil {

@@ -5,6 +5,7 @@ package main
 import (
 	"bytes"
 	"encoding/xml"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -265,18 +266,6 @@ func resourceTypeOfDir(dir string) string {
 	return ""
 }
 
-func listDir(dir string) []string {
-	ents, err := os.ReadDir(dir)
-	if err != nil {
-		return nil
-	}
-	out := make([]string, len(ents))
-	for i, e := range ents {
-		out[i] = e.Name()
-	}
-	return out // os.ReadDir sorts by name
-}
-
 func scanModule(m *Module, root string) []*Resource {
 	var out []*Resource
 	for _, rdir := range m.Res {
@@ -457,12 +446,16 @@ func parseNavigation(text []byte) *NavGraph {
 	return g
 }
 
-func isDir(p string) bool {
-	st, err := os.Stat(p)
-	return err == nil && st.IsDir()
-}
-
-func isFile(p string) bool {
-	st, err := os.Stat(p)
-	return err == nil && st.Mode().IsRegular()
+// write: the element with its attributes, text, children and their tails (ET.tostring, for equality).
+func (e *El) write(b *strings.Builder) {
+	fmt.Fprintf(b, "<%q", e.Tag)
+	for _, a := range e.Attrs {
+		fmt.Fprintf(b, " %q=%q", a[0], a[1])
+	}
+	fmt.Fprintf(b, ">%q", e.Text)
+	for _, c := range e.Children {
+		c.write(b)
+		fmt.Fprintf(b, "%q", c.Tail)
+	}
+	b.WriteString("</>")
 }

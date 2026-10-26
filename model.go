@@ -232,3 +232,47 @@ func initCmd(args []string) int {
 		strings.Join(m.Variants, ", "), time.Since(t0).Seconds(), modelFile)
 	return 0
 }
+
+type Module struct {
+	Name, Dir string
+	ClassDirs []string // absolute
+	// relative to root, in lookup order
+	Sources   []string `json:"sources"`
+	Res       []string `json:"res"`
+	Manifests []string `json:"manifests"`
+}
+
+// modulePathsJSON: the sources, resources and manifests of each module, for the stale check.
+func modulePathsJSON(modules []Module) string {
+	type paths struct {
+		Sources   []string `json:"sources"`
+		Res       []string `json:"res"`
+		Manifests []string `json:"manifests"`
+	}
+	out := make([]paths, len(modules))
+	for i, m := range modules {
+		out[i] = paths{m.Sources, m.Res, m.Manifests}
+	}
+	data, _ := json.Marshal(out)
+	return string(data)
+}
+
+func classDirsJSON(root string, modules []Module) string {
+	set := map[string]bool{}
+	for _, m := range modules {
+		for _, d := range m.ClassDirs {
+			if isDir(d) {
+				r, _ := relPath(root, d)
+				set[r] = true
+			}
+		}
+	}
+	out := sortedKeys(set)
+	// json.dumps formatting: ", " between items
+	parts := make([]string, len(out))
+	for i, s := range out {
+		bs, _ := json.Marshal(s)
+		parts[i] = string(bs)
+	}
+	return "[" + strings.Join(parts, ", ") + "]"
+}

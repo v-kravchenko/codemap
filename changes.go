@@ -507,20 +507,6 @@ func valuesSignature(text string) map[string]string {
 	return out
 }
 
-// write: the element with its attributes, text, children and their tails (ET.tostring, for equality).
-func (e *El) write(b *strings.Builder) {
-	fmt.Fprintf(b, "<%q", e.Tag)
-	for _, a := range e.Attrs {
-		fmt.Fprintf(b, " %q=%q", a[0], a[1])
-	}
-	fmt.Fprintf(b, ">%q", e.Text)
-	for _, c := range e.Children {
-		c.write(b)
-		fmt.Fprintf(b, "%q", c.Tail)
-	}
-	b.WriteString("</>")
-}
-
 // valuesKeysAtLines: the resource keys of the elements a values file has at these lines (an element
 // runs from its start tag to the next one); every resource of the file for nil lines.
 func valuesKeysAtLines(text string, lines lineSet) []string {

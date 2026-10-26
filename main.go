@@ -17,29 +17,12 @@ import (
 	"time"
 )
 
-const indexVersion = "8"
-
-func relPath(root, p string) (string, error) { return filepath.Rel(root, p) }
-
 func gitOut(root string, args ...string) (string, bool) {
 	out, err := exec.Command("git", append([]string{"-C", root}, args...)...).Output()
 	if err != nil {
 		return "", false
 	}
 	return strings.TrimSpace(string(out)), true
-}
-
-func toolSha1() string {
-	exe, err := os.Executable()
-	if err != nil {
-		return ""
-	}
-	data, err := os.ReadFile(exe)
-	if err != nil {
-		return ""
-	}
-	s := sha1.Sum(data)
-	return hex.EncodeToString(s[:])
 }
 
 func inputsSha1(b *Builder) string {
@@ -62,18 +45,6 @@ func inputsSha1(b *Builder) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func findRoot() string {
-	d, _ := os.Getwd()
-	for p := d; ; p = filepath.Dir(p) {
-		if isFile(filepath.Join(p, "settings.gradle")) || isFile(filepath.Join(p, "settings.gradle.kts")) {
-			return p
-		}
-		if filepath.Dir(p) == p {
-			return d
-		}
-	}
-}
-
 const usage = `usage:
   codemap build [--root DIR] [--out SNAPSHOT] [--jobs N] [--force]
   codemap used-by|uses SYMBOL [--all] [--no-self] [--json]
@@ -86,8 +57,6 @@ const usage = `usage:
   codemap build --info [--json]
   codemap init [--gradle CMD]
   codemap config check|print|schema`
-
-func defaultSnapshot(root string) string { return snapshotPath(root) }
 
 func main() {
 	if len(os.Args) < 2 {
@@ -167,7 +136,7 @@ func build(args []string) {
 		"module_paths": modulePathsJSON(modules)})
 	b.timed("columns", t)
 	t = time.Now()
-	_, capped := m.precomputeOpenedBy(abs, b.jobs)
+	_, capped := precomputeOpenedBy(m, abs, b.jobs)
 	b.timed("opened by", t)
 	if capped > 0 {
 		fmt.Fprintf(os.Stderr, "nav: %d pairs left out: none of their first %d shortest ways passed the host checks\n", capped, pathLimit)

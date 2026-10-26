@@ -74,6 +74,9 @@ type cpe struct {
 
 var opLen [256]int8
 
+// keepStrings: whether Parse keeps string constants (string routes need them); set by NewBuilder.
+var keepStrings bool
+
 func init() {
 	for _, o := range []int{0x10, 0x12, 0x15, 0x16, 0x17, 0x18, 0x19, 0x36, 0x37, 0x38, 0x39, 0x3A, 0xA9, 0xBC} {
 		opLen[o] = 1

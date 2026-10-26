@@ -1,64 +1,11 @@
 package main
 
 import (
-	"archive/zip"
-	"io"
-	"os"
-	"path/filepath"
 	"reflect"
 	"slices"
 	"strings"
 	"testing"
-	"time"
 )
-
-// fixtureRoot: testdata/navapp with its classes (classes.zip, made by update.sh) under app/classes.
-func fixtureRoot(t *testing.T) string {
-	t.Helper()
-	src := filepath.Join("testdata", "navapp")
-	root := t.TempDir()
-	err := filepath.WalkDir(src, func(path string, d os.DirEntry, err error) error {
-		rel, _ := filepath.Rel(src, path)
-		if err != nil || d.IsDir() || !(rel == "settings.gradle.kts" || rel == "codemap.yml" ||
-			strings.HasPrefix(rel, filepath.Join("app", "src")+string(filepath.Separator))) {
-			return err
-		}
-		data, err := os.ReadFile(path)
-		if err == nil {
-			os.MkdirAll(filepath.Join(root, filepath.Dir(rel)), 0o755)
-			err = os.WriteFile(filepath.Join(root, rel), data, 0o644)
-		}
-		return err
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	zr, err := zip.OpenReader(filepath.Join(src, "classes.zip"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer zr.Close()
-	for _, f := range zr.File {
-		path := filepath.Join(root, "app", "classes", f.Name)
-		os.MkdirAll(filepath.Dir(path), 0o755)
-		r, err := f.Open()
-		if err != nil {
-			t.Fatal(err)
-		}
-		data, _ := io.ReadAll(r)
-		r.Close()
-		os.WriteFile(path, data, 0o644)
-	}
-	// an old mtime: a map built right after the copy must not see its inputs as edited since
-	old := time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-	filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
-		if err == nil {
-			os.Chtimes(path, old, old)
-		}
-		return nil
-	})
-	return root
-}
 
 // TestNavigationPresets: the routes of nav2-compose, nav2-compose-strings and nav3 in the fixture,
 // and the methods that open each.
@@ -125,57 +72,6 @@ func TestNavigationPresets(t *testing.T) {
 				t.Errorf("unexpected route %s opened by %q", k, v)
 			}
 		}
-	}
-}
-
-// TestViewsNavigation: who opens the fragments of an XML navigation graph (its start through the
-// host's layout, an <action>, a nested graph, a dialog) and an Activity started with an Intent.
-func TestViewsNavigation(t *testing.T) {
-	root := fixtureRoot(t)
-	c, err := loadConfig(root)
-	if err != nil {
-		t.Fatal(err)
-	}
-	applyConfig(c)
-	t.Cleanup(func() {
-		d, _ := loadConfig(t.TempDir())
-		applyConfig(d)
-	})
-	b := NewBuilder(root, discoverModules(root), 2, func(string) {})
-	b.Build()
-	m := b.Map(map[string]string{"root": root})
-	m.precomputeOpenedBy(root, 2)
-	g := NewGraph(m, root)
-
-	got := map[string][]string{}
-	for sid := range g.screens {
-		name := g.screenName(sid)
-		if !strings.HasPrefix(g.qualified(sid), "navapp.views.") {
-			continue
-		}
-		ways, _ := g.openedBy(sid)
-		var srcs []string
-		for _, w := range ways {
-			via := []string{g.screenName(w.Src)}
-			for _, n := range w.Via {
-				via = append(via, g.label(n))
-			}
-			srcs = append(srcs, strings.Join(via, " > "))
-		}
-		slices.Sort(srcs)
-		got[name] = srcs
-	}
-	want := map[string][]string{ // the screen it is opened from > the way, from what opens it
-		"ViewsActivity":    {"MainActivity > MainActivity.onCreate{λ}"},
-		"ListFragment":     {"ViewsActivity > @navigation/views_graph > @layout/activity_views > ViewsActivity.<init>()"},
-		"DetailFragment":   {"ListFragment > @id/action_list_to_detail > ListFragment.onViewCreated{λ}"},
-		"InfoDialog":       {"DetailFragment > @id/infoDialog > DetailFragment.onViewCreated{λ}"},
-		"SettingsFragment": {"DetailFragment > @id/settings_graph > DetailFragment.onViewCreated{λ}"},
-		"AboutFragment":    {"SettingsFragment > @id/action_settings_to_about > SettingsFragment.onViewCreated{λ}"},
-		"LicensesActivity": {"AboutFragment > AboutFragment.onViewCreated{λ}"},
-	}
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("opened by\n got %q\nwant %q", got, want)
 	}
 }
 

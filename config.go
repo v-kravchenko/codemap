@@ -339,7 +339,6 @@ func applyConfig(c *Config) {
 	routeBases, childBases, routeInterfaces = k.routeBases, k.childBases, k.routeInterfaces
 	startDestination = c.Navigation.StartDestination
 	typedRoutes, stringRoutes = c.Navigation.TypedRoutes, c.Navigation.StringRoutes
-	keepStrings = stringRoutes
 	for i, t := range screenTitles {
 		if t[0] == "preview" {
 			screenTitles[i][1] = "Screen previews"
@@ -410,3 +409,35 @@ func configCmd(args []string) int {
 	fmt.Printf("ok: %s, presets %s, variant %s\n", src, strings.Join(c.Extends, ", "), c.Variant)
 	return 0
 }
+
+// Set by applyConfig from codemap.yml.
+var (
+	cfg                                       *Config
+	classDirs, sourceSets, manifests          []string
+	activityBases, dialogBases, fragmentBases map[string]bool
+	previewMarkers                            map[string]bool
+	screenLayout                              *regexp.Regexp
+	routeRegistration, routeByName            *regexp.Regexp
+	routeGraph                                *regexp.Regexp
+	routeBases, childBases, routeInterfaces   map[string]bool
+	routeReadOnly                             *regexp.Regexp
+	startDestination                          string
+	typedRoutes, stringRoutes                 bool
+)
+
+// Set by applyConfig. nav-path step costs: a screen opens the next one through code of its own,
+// through shared code (a navigator many screens call), or through push or deep link handling (only
+// for a notification or a link); branchSlack: the other branches of the launcher shown, up to this
+// much dearer.
+var (
+	stepOwn, stepShared, stepPush int
+	branchSlack                   int
+	graphFanout, graphEdges       int
+	pathLimit                     int // the shortest ways opened_by tries for one pair
+	hubMin                        int // screens below a node that make it a hub
+)
+
+// screenTitles: the screen kinds in the order of the output, with their headings (a preview note set by applyConfig).
+var screenTitles = [][2]string{{"activity", "Activities"}, {"fragment", "Fragments"}, {"dialog", "Dialog fragments"}, {"route", "Compose routes"}, {"preview", "Screen previews"}, {"layout", "Screen layouts"}}
+
+func defaultSnapshot(root string) string { return snapshotPath(root) }

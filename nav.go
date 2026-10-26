@@ -14,18 +14,6 @@ import (
 	"unicode/utf8"
 )
 
-// Set by applyConfig. nav-path step costs: a screen opens the next one through code of its own,
-// through shared code (a navigator many screens call), or through push or deep link handling (only
-// for a notification or a link); branchSlack: the other branches of the launcher shown, up to this
-// much dearer.
-var (
-	stepOwn, stepShared, stepPush int
-	branchSlack                   int
-	graphFanout, graphEdges       int
-	pathLimit                     int // the shortest ways opened_by tries for one pair
-	hubMin                        int // screens below a node that make it a hub
-)
-
 var entryOrder = map[string]int{"launcher": 0, "deeplink": 1, "intent": 2, "base": 3, "outside": 4, "unknown": 5}
 
 // hostKey: the host a way needs: a node (an Activity hosting a route), a module, or neither.

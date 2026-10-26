@@ -28,13 +28,9 @@ const (
 
 var (
 	kindNames      = map[string]string{"C": "class", "M": "method", "F": "field", "R": "resource", "ROUTE": "route"}
-	screenTitles   = [][2]string{{"activity", "Activities"}, {"fragment", "Fragments"}, {"dialog", "Dialog fragments"}, {"route", "Compose routes"}, {"preview", "Screen previews"}, {"layout", "Screen layouts"}}
 	syntheticClass = regexp.MustCompile(`\$(\d|\$|DefaultImpls$|WhenMappings$)|_HiltModules_\w+$`)
 	started        = time.Now()
 )
-
-// userError: a message for the user (exit 2), as codemap.py's SystemExit.
-type userError string
 
 type opts struct {
 	db, to, base, head, diff, files          string
