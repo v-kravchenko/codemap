@@ -378,11 +378,18 @@ func ParamDescs(desc string) []string {
 	end := strings.IndexByte(desc, ')')
 	for i := 1; i < end; {
 		j := i
-		for desc[j] == '[' {
+		for j < end && desc[j] == '[' {
 			j++
 		}
+		if j == end { // malformed descriptors end the list: an unchecked one looped forever
+			break
+		}
 		if desc[j] == 'L' {
-			j += strings.IndexByte(desc[j:], ';')
+			semi := strings.IndexByte(desc[j:end], ';')
+			if semi < 0 {
+				break
+			}
+			j += semi
 		}
 		out = append(out, desc[i:j+1])
 		i = j + 1
@@ -419,6 +426,9 @@ func (p *parser) code(pos int, bootstrap [][][3]string, m *Method) {
 	d := p.d
 	codeLen := p.u32(pos + 4)
 	c0 := pos + 8
+	if codeLen > len(d)-c0 { // checked before it sizes targets: a forged length would allocate gigabytes
+		panic(errBad)
+	}
 	end := c0 + codeLen
 	slots := map[int]int{}
 	slot := 0
