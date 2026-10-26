@@ -1,0 +1,51 @@
+{
+ "schema_version": "3.2.0",
+ "command": "impact",
+ "changed": [
+  {
+   "symbol": "navapp.impact.Profile.getNickname",
+   "kind": "method",
+   "module": "app",
+   "location": "app/src/main/java/navapp/impact/DataClasses.kt:9"
+  }
+ ],
+ "affected": [
+  {
+   "symbol": "navapp.impact.NicknameActivity.onCreate",
+   "kind": "method",
+   "module": "app",
+   "location": "app/src/main/java/navapp/impact/DataClasses.kt:13",
+   "depth": 1,
+   "path": [
+    "navapp.impact.Profile.getNickname",
+    "navapp.impact.NicknameActivity.onCreate"
+   ]
+  }
+ ],
+ "screens": [
+  {
+   "kind": "activity",
+   "name": "NicknameActivity",
+   "target": "navapp.impact.NicknameActivity",
+   "module": "app",
+   "location": "app/src/main/java/navapp/impact/DataClasses.kt:11",
+   "host": null,
+   "hosts": [],
+   "depth": 1,
+   "opened_from": [],
+   "path": [
+    "navapp.impact.Profile.getNickname",
+    "navapp.impact.NicknameActivity.onCreate"
+   ]
+  }
+ ],
+ "hidden": {},
+ "modules": {
+  "app": 2
+ },
+ "packages": {
+  "navapp.impact": 2
+ },
+ "not_covered": [],
+ "warnings": []
+}

@@ -1,0 +1,138 @@
+{
+ "schema_version": "3.2.0",
+ "command": "nav-path",
+ "targets": [
+  {
+   "name": "InfoDialog",
+   "kind": "dialog",
+   "module": "app",
+   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:48",
+   "host": "ViewsActivity",
+   "hosts": [
+    "ViewsActivity"
+   ]
+  }
+ ],
+ "screens": [
+  {
+   "name": "DetailFragment",
+   "kind": "fragment",
+   "module": "app",
+   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:24",
+   "host": "ViewsActivity",
+   "hosts": [
+    "ViewsActivity"
+   ],
+   "depth": 1,
+   "cost": 1,
+   "hosted_in": null,
+   "opens": "InfoDialog",
+   "way": "own",
+   "shared": null,
+   "hint": "DetailFragment.onViewCreated",
+   "via": [
+    "@id/infoDialog",
+    "navapp.views.DetailFragment.onViewCreated$lambda$1"
+   ]
+  },
+  {
+   "name": "ListFragment",
+   "kind": "fragment",
+   "module": "app",
+   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:18",
+   "host": "ViewsActivity",
+   "hosts": [
+    "ViewsActivity"
+   ],
+   "depth": 2,
+   "cost": 2,
+   "hosted_in": null,
+   "opens": "DetailFragment",
+   "way": "own",
+   "shared": null,
+   "hint": "ListFragment.onViewCreated",
+   "via": [
+    "@id/action_list_to_detail",
+    "navapp.views.ListFragment.onViewCreated$lambda$0"
+   ]
+  },
+  {
+   "name": "ViewsActivity",
+   "kind": "activity",
+   "module": "app",
+   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
+   "host": null,
+   "hosts": [],
+   "depth": 3,
+   "cost": 3,
+   "hosted_in": null,
+   "opens": "ListFragment",
+   "way": "own",
+   "shared": null,
+   "hint": "@navigation/views_graph",
+   "via": [
+    "@navigation/views_graph",
+    "@layout/activity_views",
+    "navapp.views.ViewsActivity.<init>"
+   ]
+  },
+  {
+   "name": "MainActivity",
+   "kind": "activity",
+   "module": "app",
+   "location": "app/src/main/java/navapp/MainActivity.kt:13",
+   "host": null,
+   "hosts": [],
+   "depth": 4,
+   "cost": 4,
+   "hosted_in": null,
+   "opens": "ViewsActivity",
+   "way": "own",
+   "shared": null,
+   "hint": "MainActivity.onCreate",
+   "via": [
+    "navapp.MainActivity.onCreate$lambda$0"
+   ]
+  }
+ ],
+ "entries": [
+  {
+   "name": "MainActivity",
+   "kind": "activity",
+   "module": "app",
+   "location": "app/src/main/java/navapp/MainActivity.kt:13",
+   "host": null,
+   "hosts": [],
+   "entry": [
+    {
+     "kind": "launcher",
+     "detail": null
+    }
+   ]
+  }
+ ],
+ "paths": [
+  [
+   "MainActivity",
+   "ViewsActivity",
+   "ListFragment",
+   "DetailFragment",
+   "InfoDialog"
+  ]
+ ],
+ "branches": [
+  {
+   "entry": "MainActivity",
+   "through": "ViewsActivity",
+   "cost": 4,
+   "shared": null,
+   "path": [
+    "MainActivity",
+    "ViewsActivity",
+    "ListFragment",
+    "DetailFragment",
+    "InfoDialog"
+   ]
+  }
+ ]
+}

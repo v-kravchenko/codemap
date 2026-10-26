@@ -1,0 +1,51 @@
+{
+ "schema_version": "3.2.0",
+ "command": "impact",
+ "changed": [
+  {
+   "symbol": "navapp.impact.ConstantsKt.MAX_ITEMS",
+   "kind": "field",
+   "module": "app",
+   "location": "app/src/main/java/navapp/impact/Constants.kt"
+  }
+ ],
+ "affected": [
+  {
+   "symbol": "navapp.impact.LimitActivity.onCreate",
+   "kind": "method",
+   "module": "app",
+   "location": "app/src/main/java/navapp/impact/Constants.kt:12",
+   "depth": 1,
+   "path": [
+    "navapp.impact.ConstantsKt.MAX_ITEMS",
+    "navapp.impact.LimitActivity.onCreate"
+   ]
+  }
+ ],
+ "screens": [
+  {
+   "kind": "activity",
+   "name": "LimitActivity",
+   "target": "navapp.impact.LimitActivity",
+   "module": "app",
+   "location": "app/src/main/java/navapp/impact/Constants.kt:10",
+   "host": null,
+   "hosts": [],
+   "depth": 1,
+   "opened_from": [],
+   "path": [
+    "navapp.impact.ConstantsKt.MAX_ITEMS",
+    "navapp.impact.LimitActivity.onCreate"
+   ]
+  }
+ ],
+ "hidden": {},
+ "modules": {
+  "app": 2
+ },
+ "packages": {
+  "navapp.impact": 2
+ },
+ "not_covered": [],
+ "warnings": []
+}

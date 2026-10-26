@@ -79,3 +79,8 @@ go vet ./... && go test ./...
 `navigation_test.go` builds the map of `testdata/navapp`, an app with one screen set per navigation
 preset and one of fragments in an XML navigation graph (an `<action>`, a nested graph, a dialog, an
 Activity started with an Intent); `testdata/navapp/update.sh` compiles it into `classes.zip` (Android SDK, Gradle).
+
+`golden_test.go` runs the CLI on the fixture and compares the `--json` of each call in `goldenCalls`
+(without `meta`) with `testdata/golden`. The impact calls are the precision rules of the walk, one
+scenario each in `testdata/navapp/app/src/main/java/navapp/impact`. A change that means to change
+an answer rewrites the files with `go test -run TestGolden -update`; the diff is part of the review.

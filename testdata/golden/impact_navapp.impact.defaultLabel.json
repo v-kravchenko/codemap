@@ -1,0 +1,64 @@
+{
+ "schema_version": "3.2.0",
+ "command": "impact",
+ "changed": [
+  {
+   "symbol": "navapp.impact.DefaultsKt.defaultLabel",
+   "kind": "method",
+   "module": "app",
+   "location": "app/src/main/java/navapp/impact/Defaults.kt:14"
+  }
+ ],
+ "affected": [
+  {
+   "symbol": "navapp.impact.DefaultsKt.copyText",
+   "kind": "method",
+   "module": "app",
+   "location": "app/src/main/java/navapp/impact/Defaults.kt:10",
+   "depth": 1,
+   "path": [
+    "navapp.impact.DefaultsKt.defaultLabel",
+    "navapp.impact.DefaultsKt.copyText"
+   ]
+  },
+  {
+   "symbol": "navapp.impact.PlainCopyActivity.onCreate",
+   "kind": "method",
+   "module": "app",
+   "location": "app/src/main/java/navapp/impact/Defaults.kt:18",
+   "depth": 2,
+   "path": [
+    "navapp.impact.DefaultsKt.defaultLabel",
+    "navapp.impact.DefaultsKt.copyText",
+    "navapp.impact.PlainCopyActivity.onCreate"
+   ]
+  }
+ ],
+ "screens": [
+  {
+   "kind": "activity",
+   "name": "PlainCopyActivity",
+   "target": "navapp.impact.PlainCopyActivity",
+   "module": "app",
+   "location": "app/src/main/java/navapp/impact/Defaults.kt:16",
+   "host": null,
+   "hosts": [],
+   "depth": 2,
+   "opened_from": [],
+   "path": [
+    "navapp.impact.DefaultsKt.defaultLabel",
+    "navapp.impact.DefaultsKt.copyText",
+    "navapp.impact.PlainCopyActivity.onCreate"
+   ]
+  }
+ ],
+ "hidden": {},
+ "modules": {
+  "app": 3
+ },
+ "packages": {
+  "navapp.impact": 3
+ },
+ "not_covered": [],
+ "warnings": []
+}

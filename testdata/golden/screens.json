@@ -1,0 +1,320 @@
+{
+ "schema_version": "3.2.0",
+ "command": "screens",
+ "screens": [
+  {
+   "kind": "activity",
+   "module": "app",
+   "name": "AvatarActivity",
+   "target": "navapp.impact.AvatarActivity",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/impact/DataClasses.kt:18"
+  },
+  {
+   "kind": "activity",
+   "module": "app",
+   "name": "FirstActivity",
+   "target": "navapp.impact.FirstActivity",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/impact/Constructors.kt:12"
+  },
+  {
+   "kind": "activity",
+   "module": "app",
+   "name": "LabelledCopyActivity",
+   "target": "navapp.impact.LabelledCopyActivity",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/impact/Defaults.kt:23"
+  },
+  {
+   "kind": "activity",
+   "module": "app",
+   "name": "LicensesActivity",
+   "target": "navapp.views.LicensesActivity",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:50"
+  },
+  {
+   "kind": "activity",
+   "module": "app",
+   "name": "LimitActivity",
+   "target": "navapp.impact.LimitActivity",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/impact/Constants.kt:10"
+  },
+  {
+   "kind": "activity",
+   "module": "app",
+   "name": "LoudActivity",
+   "target": "navapp.impact.LoudActivity",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/impact/Overrides.kt:20"
+  },
+  {
+   "kind": "activity",
+   "module": "app",
+   "name": "MainActivity",
+   "target": "navapp.MainActivity",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/MainActivity.kt:13"
+  },
+  {
+   "kind": "activity",
+   "module": "app",
+   "name": "NicknameActivity",
+   "target": "navapp.impact.NicknameActivity",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/impact/DataClasses.kt:11"
+  },
+  {
+   "kind": "activity",
+   "module": "app",
+   "name": "PlainCopyActivity",
+   "target": "navapp.impact.PlainCopyActivity",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/impact/Defaults.kt:16"
+  },
+  {
+   "kind": "activity",
+   "module": "app",
+   "name": "QuietActivity",
+   "target": "navapp.impact.QuietActivity",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/impact/Overrides.kt:22"
+  },
+  {
+   "kind": "activity",
+   "module": "app",
+   "name": "SecondActivity",
+   "target": "navapp.impact.SecondActivity",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/impact/Constructors.kt:18"
+  },
+  {
+   "kind": "activity",
+   "module": "app",
+   "name": "ViewsActivity",
+   "target": "navapp.views.ViewsActivity",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16"
+  },
+  {
+   "kind": "dialog",
+   "module": "app",
+   "name": "InfoDialog",
+   "target": "navapp.views.InfoDialog",
+   "host": "ViewsActivity",
+   "hosts": [
+    "ViewsActivity"
+   ],
+   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:48"
+  },
+  {
+   "kind": "fragment",
+   "module": "app",
+   "name": "AboutFragment",
+   "target": "navapp.views.AboutFragment",
+   "host": "ViewsActivity",
+   "hosts": [
+    "ViewsActivity"
+   ],
+   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:40"
+  },
+  {
+   "kind": "fragment",
+   "module": "app",
+   "name": "CartFragment",
+   "target": "navapp.impact.CartFragment",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/impact/GenericDi.kt:29"
+  },
+  {
+   "kind": "fragment",
+   "module": "app",
+   "name": "DetailFragment",
+   "target": "navapp.views.DetailFragment",
+   "host": "ViewsActivity",
+   "hosts": [
+    "ViewsActivity"
+   ],
+   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:24"
+  },
+  {
+   "kind": "fragment",
+   "module": "app",
+   "name": "ListFragment",
+   "target": "navapp.views.ListFragment",
+   "host": "ViewsActivity",
+   "hosts": [
+    "ViewsActivity"
+   ],
+   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:18"
+  },
+  {
+   "kind": "fragment",
+   "module": "app",
+   "name": "OrdersFragment",
+   "target": "navapp.impact.OrdersFragment",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/impact/GenericDi.kt:38"
+  },
+  {
+   "kind": "fragment",
+   "module": "app",
+   "name": "SettingsFragment",
+   "target": "navapp.views.SettingsFragment",
+   "host": "ViewsActivity",
+   "hosts": [
+    "ViewsActivity"
+   ],
+   "location": "app/src/main/java/navapp/views/ViewsActivity.kt:34"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "Catalog",
+   "target": "navapp.nav3when.Catalog",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/nav3when/Nav3WhenApp.kt"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "Compose",
+   "target": "navapp.nav3dsl.Compose",
+   "host": "MainActivity",
+   "hosts": [
+    "MainActivity"
+   ],
+   "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "Confirm",
+   "target": "navapp.typed.Confirm",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "Home",
+   "target": "navapp.typed.Home",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "Inbox",
+   "target": "navapp.nav3dsl.Inbox",
+   "host": "MainActivity",
+   "hosts": [
+    "MainActivity"
+   ],
+   "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "Item",
+   "target": "navapp.nav3when.Item",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/nav3when/Nav3WhenApp.kt"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "Login",
+   "target": "navapp.typed.Login",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "Message",
+   "target": "navapp.nav3dsl.Message",
+   "host": "MainActivity",
+   "hosts": [
+    "MainActivity"
+   ],
+   "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "Profile",
+   "target": "navapp.typed.Profile",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "Settings",
+   "target": "navapp.typed.Settings",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "comments/{postId}",
+   "target": "comments/{postId}",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/strings/StringApp.kt"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "feed",
+   "target": "feed",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/strings/StringApp.kt"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "post/{id}",
+   "target": "post/{id}",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/strings/StringApp.kt"
+  },
+  {
+   "kind": "route",
+   "module": "app",
+   "name": "signin",
+   "target": "signin",
+   "host": null,
+   "hosts": [],
+   "location": "app/src/main/java/navapp/strings/StringApp.kt"
+  }
+ ],
+ "hidden": {}
+}

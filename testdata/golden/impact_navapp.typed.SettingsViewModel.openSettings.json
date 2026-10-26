@@ -1,0 +1,131 @@
+{
+ "schema_version": "3.2.0",
+ "command": "impact",
+ "changed": [
+  {
+   "symbol": "navapp.typed.SettingsViewModel.openSettings",
+   "kind": "method",
+   "module": "app",
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt:77"
+  }
+ ],
+ "affected": [
+  {
+   "symbol": "navapp.typed.SettingsViewModel",
+   "kind": "class",
+   "module": "app",
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt:73",
+   "depth": 1,
+   "path": [
+    "navapp.typed.SettingsViewModel.openSettings",
+    "navapp.typed.SettingsViewModel"
+   ]
+  },
+  {
+   "symbol": "navapp.typed.SettingsViewModel.openSettings.1.<init>",
+   "kind": "method",
+   "module": "app",
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+   "depth": 2,
+   "path": [
+    "navapp.typed.SettingsViewModel.openSettings",
+    "navapp.typed.SettingsViewModel",
+    "navapp.typed.SettingsViewModel.openSettings.1.<init>"
+   ]
+  },
+  {
+   "symbol": "navapp.typed.SettingsViewModel.openSettings.1.this$0",
+   "kind": "field",
+   "module": "app",
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+   "depth": 2,
+   "path": [
+    "navapp.typed.SettingsViewModel.openSettings",
+    "navapp.typed.SettingsViewModel",
+    "navapp.typed.SettingsViewModel.openSettings.1.this$0"
+   ]
+  },
+  {
+   "symbol": "navapp.typed.SettingsViewModel.openSettings.1.create",
+   "kind": "method",
+   "module": "app",
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+   "depth": 3,
+   "path": [
+    "navapp.typed.SettingsViewModel.openSettings",
+    "navapp.typed.SettingsViewModel",
+    "navapp.typed.SettingsViewModel.openSettings.1.<init>"
+   ]
+  },
+  {
+   "symbol": "navapp.typed.SettingsViewModel.openSettings.1.invokeSuspend",
+   "kind": "method",
+   "module": "app",
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt:77",
+   "depth": 3,
+   "path": [
+    "navapp.typed.SettingsViewModel.openSettings",
+    "navapp.typed.SettingsViewModel",
+    "navapp.typed.SettingsViewModel.openSettings.1.this$0"
+   ]
+  },
+  {
+   "symbol": "navapp.typed.SettingsViewModel.openSettings.1.invoke",
+   "kind": "method",
+   "module": "app",
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+   "depth": 4,
+   "path": [
+    "navapp.typed.SettingsViewModel.openSettings",
+    "navapp.typed.SettingsViewModel",
+    "navapp.typed.SettingsViewModel.openSettings.1.<init>"
+   ]
+  },
+  {
+   "symbol": "navapp.typed.SettingsViewModel.openSettings.1.label",
+   "kind": "field",
+   "module": "app",
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+   "depth": 4,
+   "path": [
+    "navapp.typed.SettingsViewModel.openSettings",
+    "navapp.typed.SettingsViewModel",
+    "navapp.typed.SettingsViewModel.openSettings.1.this$0"
+   ]
+  },
+  {
+   "symbol": "navapp.typed.SettingsViewModel.openSettings.1.invoke",
+   "kind": "method",
+   "module": "app",
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+   "depth": 5,
+   "path": [
+    "navapp.typed.SettingsViewModel.openSettings",
+    "navapp.typed.SettingsViewModel",
+    "navapp.typed.SettingsViewModel.openSettings.1.<init>"
+   ]
+  },
+  {
+   "symbol": "navapp.typed.SettingsViewModel.openSettings.1",
+   "kind": "class",
+   "module": "app",
+   "location": "app/src/main/java/navapp/typed/TypedApp.kt:77",
+   "depth": 6,
+   "path": [
+    "navapp.typed.SettingsViewModel.openSettings",
+    "navapp.typed.SettingsViewModel",
+    "navapp.typed.SettingsViewModel.openSettings.1.<init>"
+   ]
+  }
+ ],
+ "screens": [],
+ "hidden": {},
+ "modules": {
+  "app": 10
+ },
+ "packages": {
+  "navapp.typed": 10
+ },
+ "not_covered": [],
+ "warnings": []
+}

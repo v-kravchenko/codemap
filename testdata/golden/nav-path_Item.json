@@ -1,0 +1,90 @@
+{
+ "schema_version": "3.2.0",
+ "command": "nav-path",
+ "targets": [
+  {
+   "name": "Item",
+   "kind": "route",
+   "module": "app",
+   "location": "app/src/main/java/navapp/nav3when/Nav3WhenApp.kt",
+   "host": null,
+   "hosts": []
+  }
+ ],
+ "screens": [
+  {
+   "name": "Catalog",
+   "kind": "route",
+   "module": "app",
+   "location": "app/src/main/java/navapp/nav3when/Nav3WhenApp.kt",
+   "host": null,
+   "hosts": [],
+   "depth": 1,
+   "cost": 1,
+   "hosted_in": null,
+   "opens": "Item",
+   "way": "own",
+   "shared": null,
+   "hint": "Nav3WhenAppKt.Nav3WhenApp",
+   "via": [
+    "navapp.nav3when.Nav3WhenAppKt.Nav3WhenApp$lambda$2$0$0$0$0",
+    "route Catalog"
+   ]
+  },
+  {
+   "name": "MainActivity",
+   "kind": "activity",
+   "module": "app",
+   "location": "app/src/main/java/navapp/MainActivity.kt:13",
+   "host": null,
+   "hosts": [],
+   "depth": 2,
+   "cost": 2,
+   "hosted_in": null,
+   "opens": "Catalog",
+   "way": "own",
+   "shared": null,
+   "hint": "Nav3WhenAppKt.Nav3WhenApp",
+   "via": [
+    "navapp.nav3when.Nav3WhenAppKt.Nav3WhenApp",
+    "navapp.MainActivity.onCreate$lambda$0"
+   ]
+  }
+ ],
+ "entries": [
+  {
+   "name": "MainActivity",
+   "kind": "activity",
+   "module": "app",
+   "location": "app/src/main/java/navapp/MainActivity.kt:13",
+   "host": null,
+   "hosts": [],
+   "entry": [
+    {
+     "kind": "launcher",
+     "detail": null
+    }
+   ]
+  }
+ ],
+ "paths": [
+  [
+   "MainActivity",
+   "Catalog",
+   "Item"
+  ]
+ ],
+ "branches": [
+  {
+   "entry": "MainActivity",
+   "through": "Catalog",
+   "cost": 2,
+   "shared": null,
+   "path": [
+    "MainActivity",
+    "Catalog",
+    "Item"
+   ]
+  }
+ ]
+}

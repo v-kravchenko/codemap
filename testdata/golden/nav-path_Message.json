@@ -1,0 +1,94 @@
+{
+ "schema_version": "3.2.0",
+ "command": "nav-path",
+ "targets": [
+  {
+   "name": "Message",
+   "kind": "route",
+   "module": "app",
+   "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt",
+   "host": "MainActivity",
+   "hosts": [
+    "MainActivity"
+   ]
+  }
+ ],
+ "screens": [
+  {
+   "name": "Inbox",
+   "kind": "route",
+   "module": "app",
+   "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt",
+   "host": "MainActivity",
+   "hosts": [
+    "MainActivity"
+   ],
+   "depth": 1,
+   "cost": 1,
+   "hosted_in": null,
+   "opens": "Message",
+   "way": "own",
+   "shared": null,
+   "hint": "Nav3DslAppKt.Nav3DslApp",
+   "via": [
+    "navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$0$0$0",
+    "route Inbox"
+   ]
+  },
+  {
+   "name": "MainActivity",
+   "kind": "activity",
+   "module": "app",
+   "location": "app/src/main/java/navapp/MainActivity.kt:13",
+   "host": null,
+   "hosts": [],
+   "depth": 2,
+   "cost": 2,
+   "hosted_in": null,
+   "opens": "Inbox",
+   "way": "own",
+   "shared": null,
+   "hint": "Nav3DslAppKt.Nav3DslApp",
+   "via": [
+    "navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp",
+    "navapp.MainActivity.onCreate$lambda$0"
+   ]
+  }
+ ],
+ "entries": [
+  {
+   "name": "MainActivity",
+   "kind": "activity",
+   "module": "app",
+   "location": "app/src/main/java/navapp/MainActivity.kt:13",
+   "host": null,
+   "hosts": [],
+   "entry": [
+    {
+     "kind": "launcher",
+     "detail": null
+    }
+   ]
+  }
+ ],
+ "paths": [
+  [
+   "MainActivity",
+   "Inbox",
+   "Message"
+  ]
+ ],
+ "branches": [
+  {
+   "entry": "MainActivity",
+   "through": "Inbox",
+   "cost": 2,
+   "shared": null,
+   "path": [
+    "MainActivity",
+    "Inbox",
+    "Message"
+   ]
+  }
+ ]
+}

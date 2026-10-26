@@ -16,6 +16,9 @@ gofmt -l . && go vet ./... && go test ./...
 - `testdata/navapp` is an Android app compiled into `classes.zip`; the tests read the zip, not the
   sources. After changing its sources, run `testdata/navapp/update.sh` (Android SDK in
   `local.properties` or `ANDROID_HOME`) and commit the new `classes.zip` with them.
+- `testdata/golden` holds the expected `--json` of the CLI on the fixture. When a change means to
+  change an answer, rewrite them with `go test -run TestGolden -update` and read the diff before
+  committing; an unexpected diff is a regression.
 - Check a change on a real project too: `codemap build` there, then the queries it touches.
 
 ## Rules

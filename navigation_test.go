@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"time"
 )
 
 // fixtureRoot: testdata/navapp with its classes (classes.zip, made by update.sh) under app/classes.
@@ -48,6 +49,14 @@ func fixtureRoot(t *testing.T) string {
 		r.Close()
 		os.WriteFile(path, data, 0o644)
 	}
+	// an old mtime: a map built right after the copy must not see its inputs as edited since
+	old := time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
+	filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+		if err == nil {
+			os.Chtimes(path, old, old)
+		}
+		return nil
+	})
 	return root
 }
 
@@ -141,8 +150,7 @@ func TestViewsNavigation(t *testing.T) {
 	got := map[string][]string{}
 	for sid := range g.screens {
 		name := g.screenName(sid)
-		if !strings.HasSuffix(name, "Fragment") && !strings.HasSuffix(name, "Activity") && name != "InfoDialog" ||
-			name == "MainActivity" {
+		if !strings.HasPrefix(g.qualified(sid), "navapp.views.") {
 			continue
 		}
 		ways, _ := g.openedBy(sid)
