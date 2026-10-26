@@ -48,7 +48,13 @@ type opts struct {
 func parseOpts(cmd string, args []string) opts {
 	o := opts{depth: -1, limit: -1}
 	spec := commandSpec(cmd)
+	// inline: the value of `--flag=value`, taken by the flag instead of the next argument
+	inline, hasInline := "", false
 	value := func(i *int, name string) string {
+		if hasInline {
+			hasInline = false
+			return inline
+		}
 		if *i+1 >= len(args) {
 			panic(util.UserError("argument --" + name + ": expected one argument"))
 		}
@@ -60,13 +66,16 @@ func parseOpts(cmd string, args []string) opts {
 		if err != nil {
 			panic(util.UserError("argument --" + name + ": invalid int value"))
 		}
+		if v < 0 {
+			panic(util.UserError("argument --" + name + ": expected N >= 0"))
+		}
 		return v
 	}
 	for i := 0; i < len(args); i++ {
 		a := args[i]
+		hasInline = false
 		if name, v, ok := strings.Cut(a, "="); ok && strings.HasPrefix(a, "--") {
-			args = append(args[:i+1], append([]string{v}, args[i+1:]...)...)
-			a = name
+			a, inline, hasInline = name, v, true
 		}
 		if strings.HasPrefix(a, "--") && !spec.hasFlag(a[2:]) {
 			if knownFlag(a[2:]) {
@@ -140,6 +149,9 @@ func parseOpts(cmd string, args []string) opts {
 				panic(util.UserError("unrecognized arguments: " + a))
 			}
 			o.pos = append(o.pos, a)
+		}
+		if hasInline {
+			panic(util.UserError(fmt.Sprintf("argument %s: takes no value, got '%s'", a, inline)))
 		}
 	}
 	if n := spec.maxArgs(); n >= 0 && len(o.pos) > n {

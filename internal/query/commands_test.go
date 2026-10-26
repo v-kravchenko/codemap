@@ -57,6 +57,10 @@ func TestOptionsOfOtherCommands(t *testing.T) {
 		{"changes X", "unrecognized arguments: X"},
 		{"impact X Y --nav --kind=all", ""},
 		{"nav-path X --via=A --via B --json", ""},
+		{"find X --all=true", "argument --all: takes no value, got 'true'"},
+		{"impact X --json=", "argument --json: takes no value, got ''"},
+		{"impact X --depth=-5", "argument --depth: expected N >= 0"},
+		{"impact X --depth=0", ""},
 	} {
 		args := strings.Fields(tc.args)
 		if got := parseErr(args[0], args[1:]...); got != tc.want {
