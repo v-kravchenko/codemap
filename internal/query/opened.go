@@ -106,7 +106,7 @@ func (g *Graph) walkOpenedBy(sid int32) (ways map[int32]Way, bases map[int32][]i
 	baseSet, skip := map[int32]bool{}, map[int32]bool{}
 	for range hubRounds {
 		alt := map[Key][]Parent{}
-		w := g.walk(seeds, -1, nil, nil, skip, baseSet, alt)
+		w := g.walk(seeds, -1, nil, skip, baseSet, alt)
 		var screens []int32
 		inScreens := map[int32]bool{}
 		for _, s := range w.ScreenOrder {

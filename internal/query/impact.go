@@ -114,7 +114,7 @@ func (g *Graph) impact(seeds []Seed, maxDepth int) *Walk {
 	}
 	out := newWalk()
 	for _, group := range groups {
-		plain := g.walk(group, maxDepth, nil, nil, nil, nil, nil)
+		plain := g.walk(group, maxDepth, nil, nil, nil, nil)
 		blocked := g.blockedDefaults(group, plain)
 		if slices.Contains(entries, group[0]) {
 			for k := range g.blockedCalls(group[0].N, plain) {
@@ -123,7 +123,7 @@ func (g *Graph) impact(seeds []Seed, maxDepth int) *Walk {
 		}
 		res := plain
 		if len(blocked) > 0 {
-			res = g.walk(group, maxDepth, nil, blocked, nil, nil, nil)
+			res = g.walk(group, maxDepth, blocked, nil, nil, nil)
 		}
 		for _, k := range res.Keys {
 			if _, ok := out.Aff[k]; !ok {
@@ -487,7 +487,7 @@ func (g *Graph) key(n int32, ctx Ctx) Key {
 
 // walk: maxDepth < 0: no limit; nil maps: none. alt: the other parents of
 // a key at the depth of its first one.
-func (g *Graph) walk(seeds []Seed, maxDepth int, stopAt map[int32]bool, blocked map[[3]int32]bool,
+func (g *Graph) walk(seeds []Seed, maxDepth int, blocked map[[3]int32]bool,
 	skip map[int32]bool, bases map[int32]bool, alt map[Key][]Parent) *Walk {
 	w := newWalk()
 	queue := []Key{}
@@ -523,9 +523,6 @@ func (g *Graph) walk(seeds []Seed, maxDepth int, stopAt map[int32]bool, blocked 
 		depth := aff.Depth
 		kind := g.kind(nid)
 		top := g.topOf(nid)
-		if stopAt != nil && stopAt[nid] {
-			break
-		}
 		if skip[nid] {
 			continue
 		}
