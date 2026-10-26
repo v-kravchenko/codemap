@@ -20,6 +20,9 @@ import (
 
 var entryOrder = map[string]int{"launcher": 0, "deeplink": 1, "intent": 2, "base": 3, "outside": 4, "unknown": 5}
 
+// mermaidDirections: how a Mermaid flowchart runs, what graph --direction takes (TD is TB).
+var mermaidDirections = []string{"LR", "RL", "TB", "TD", "BT"}
+
 // entryKinds: the entries of the manifest, what nav-path --entry takes.
 var entryKinds = []string{"launcher", "deeplink", "intent"}
 
@@ -1847,15 +1850,15 @@ func (g *Graph) printGraph(o opts, d *gdraw) {
 		for i, r := range roots {
 			rootNames[i] = g.screenName(r)
 		}
-		direction := "out"
+		walk := "out"
 		if d.in {
-			direction = "in"
+			walk = "in"
 		}
 		toNames := make([]string, len(d.to))
 		for i, t := range d.to {
 			toNames[i] = g.screenName(t)
 		}
-		g.printJSON("graph", obj{{"roots", strs(rootNames)}, {"direction", direction}, {"to", strs(toNames)},
+		g.printJSON("graph", obj{{"roots", strs(rootNames)}, {"walk", walk}, {"to", strs(toNames)},
 			{"nodes", list(nodes)}, {"edges", list(es)}, {"more", moreObj}, {"edges_left_out", cut},
 			{"ways_of_other_hosts", dropped}, {"debug_left_out", hiddenDebug}})
 		return
@@ -1864,7 +1867,11 @@ func (g *Graph) printGraph(o opts, d *gdraw) {
 	for _, e := range edges {
 		used[e.from], used[e.to] = true, true
 	}
-	fmt.Println("flowchart LR")
+	direction := o.direction
+	if direction == "" {
+		direction = "LR"
+	}
+	fmt.Println("flowchart " + direction)
 	for _, n := range order {
 		id := ids[n]
 		if !used[id] && !(!n.isAct && isRoot[n.n]) {

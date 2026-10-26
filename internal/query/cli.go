@@ -37,11 +37,11 @@ var (
 )
 
 type opts struct {
-	db, to, base, head, diff, files, from, entry string
-	json, all, noPaths, noSelf, noCheck, nav     bool
-	strict, verbose, info, ways, in              bool
-	depth, limit                                 int
-	kinds, pos, via, avoid, modules              []string
+	db, to, base, head, diff, files, from, entry, direction string
+	json, all, noPaths, noSelf, noCheck, nav                bool
+	strict, verbose, info, ways, in                         bool
+	depth, limit                                            int
+	kinds, pos, via, avoid, modules                         []string
 }
 
 func parseOpts(args []string) opts {
@@ -115,6 +115,8 @@ func parseOpts(args []string) opts {
 			o.ways = true
 		case "--in":
 			o.in = true
+		case "--direction":
+			o.direction = strings.ToUpper(value(&i, "direction"))
 		case "--module":
 			o.modules = append(o.modules, value(&i, "module"))
 		default:
@@ -123,6 +125,10 @@ func parseOpts(args []string) opts {
 			}
 			o.pos = append(o.pos, a)
 		}
+	}
+	if o.direction != "" && !slices.Contains(mermaidDirections, o.direction) {
+		panic(util.UserError(fmt.Sprintf("argument --direction: invalid choice: '%s' (choose from %s)", o.direction,
+			strings.Join(mermaidDirections, ", "))))
 	}
 	if o.entry != "" && !slices.Contains(entryKinds, o.entry) {
 		panic(util.UserError(fmt.Sprintf("argument --entry: invalid choice: '%s' (choose from %s)", o.entry,

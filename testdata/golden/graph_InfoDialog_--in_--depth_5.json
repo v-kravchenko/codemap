@@ -4,7 +4,7 @@
   "roots": [
     "InfoDialog"
   ],
-  "direction": "in",
+  "walk": "in",
   "to": [],
   "nodes": [
     {

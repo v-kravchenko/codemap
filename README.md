@@ -21,7 +21,8 @@ one way through each screen that opens it, `--from SCREEN` a way from a screen t
 `--entry deeplink` a way from one kind of entry, `--avoid 'Debug*'` a way around some screens.
 
 `graph` draws what a screen opens as a Mermaid flowchart; `--to SCREEN` only the ways to a screen,
-`--in` what opens it, `--module 'feature/cards*'` one feature's map, `--avoid GLOB` without some screens.
+`--in` what opens it, `--module 'feature/cards*'` one feature's map, `--avoid GLOB` without some screens;
+`--direction TB` draws it top to bottom (`LR`, `RL`, `TB`/`TD`, `BT`).
 
 `build` skips a map built by the same binary from the same inputs (`--force` rebuilds it). Queries
 check whether the map is older than the sources (`--strict`: exit with an error when the answer

@@ -4,7 +4,7 @@
   "roots": [
     "ViewsActivity"
   ],
-  "direction": "out",
+  "walk": "out",
   "to": [],
   "nodes": [
     {

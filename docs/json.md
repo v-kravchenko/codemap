@@ -325,7 +325,8 @@ Result fields:
 ## graph
 
 ```
-codemap graph SCREEN [--to SCREEN | --in] [--avoid GLOB]... [--module GLOB]... [--depth N] [--all] [--json]
+codemap graph SCREEN [--to SCREEN | --in] [--avoid GLOB]... [--module GLOB]... [--depth N]
+              [--direction LR|RL|TB|TD|BT] [--all] [--json]
 ```
 
 - `SCREEN` (positional, required) — same resolution as `nav-path`'s `SCREEN`; can match more than
@@ -342,11 +343,13 @@ codemap graph SCREEN [--to SCREEN | --in] [--avoid GLOB]... [--module GLOB]... [
   characters), and what is reached only through them.
 - `--module GLOB` (repeatable) — walk on only from screens in a matching module; a screen elsewhere
   is drawn but not walked from (a feature's map: `--module 'feature/cards*'`).
+- `--direction` — how the Mermaid flowchart runs (text output only): `LR` (default), `RL`, `TB`
+  (or `TD`), `BT`.
 - `--all`, `--json`.
 
 Result fields:
 - `roots` — the root screen name(s).
-- `direction` — `"out"` (what the roots open) or `"in"` (what opens them, `--in`).
+- `walk` — `"out"` (what the roots open) or `"in"` (what opens them, `--in`).
 - `to` — the `--to` screen name(s), `[]` without it.
 - `nodes` — `{name, kind, module}`; `kind` is a screen kind, `"action"` (one method opening several
   screens, drawn as its own node), or `"shared"` (hub code).
@@ -363,7 +366,7 @@ Result fields:
 ```json
 {
   "schema_version": "3.3.0", "command": "graph",
-  "roots": ["Home"], "direction": "out", "to": [],
+  "roots": ["Home"], "walk": "out", "to": [],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
     { "name": "Home: TypedAppKt.TypedApp", "kind": "action", "module": "app" },
