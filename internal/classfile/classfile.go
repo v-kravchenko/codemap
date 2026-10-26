@@ -410,6 +410,15 @@ type recentV struct {
 	o, n, d string
 }
 
+// cases: the count of a switch's entries, `width` bytes each from `at`; a count past the code (or
+// negative, which moved the scan back and never ended it) is a bad class file.
+func (p *parser) cases(n, at, width, end int) int {
+	if n < 0 || n > (end-at)/width {
+		panic(errBad)
+	}
+	return n
+}
+
 func (p *parser) intPush(c, op int) (int, bool) {
 	switch {
 	case op >= 0x02 && op <= 0x08:
@@ -471,12 +480,13 @@ func (p *parser) code(pos int, bootstrap [][][3]string, m *Method) {
 			mark(c + p.i32(b))
 			if op == 0xAA {
 				lo, hi := p.i32(b+4), p.i32(b+8)
-				for k := 0; k < hi-lo+1; k++ {
+				n := p.cases(hi-lo+1, b+12, 4, end)
+				for k := 0; k < n; k++ {
 					mark(c + p.i32(b+12+4*k))
 				}
-				c = b + 12 + 4*(hi-lo+1)
+				c = b + 12 + 4*n
 			} else {
-				pairs := p.i32(b + 4)
+				pairs := p.cases(p.i32(b+4), b+8, 8, end)
 				for k := 0; k < pairs; k++ {
 					mark(c + p.i32(b+8+8*k+4))
 				}
@@ -616,14 +626,15 @@ func (p *parser) code(pos int, bootstrap [][][3]string, m *Method) {
 			var cases []int32
 			if op == 0xAA {
 				lo, hi := p.i32(b+4), p.i32(b+8)
-				for k := 0; k < hi-lo+1; k++ {
+				n := p.cases(hi-lo+1, b+12, 4, end)
+				for k := 0; k < n; k++ {
 					if p.i32(b+12+4*k) != def {
 						cases = append(cases, int32(lo+k))
 					}
 				}
-				c = b + 12 + 4*(hi-lo+1)
+				c = b + 12 + 4*n
 			} else {
-				pairs := p.i32(b + 4)
+				pairs := p.cases(p.i32(b+4), b+8, 8, end)
 				for k := 0; k < pairs; k++ {
 					if p.i32(b+8+8*k+4) != def {
 						cases = append(cases, int32(p.i32(b+8+8*k)))
