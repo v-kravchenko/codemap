@@ -997,8 +997,6 @@ func deadEnd(e navEntry) string {
 		return "nothing opens it"
 	case "outside":
 		return "opened only from code outside the screens"
-	case "base":
-		return "opened only through the base class " + e.detail
 	}
 	return entryText(e)
 }

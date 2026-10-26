@@ -560,12 +560,13 @@ func (g *Graph) navOfScreen(sid int32) *navOf {
 }
 
 // unreached: where the walk back from the screen ends when no entry of the manifest reaches it: the
-// screens nothing opens, opened from outside the screens, or through a base class (none when every way
-// needs a host no way starts in); false when an entry reaches it.
+// screens nothing opens or only code outside the screens opens (none when every way needs a host no
+// way starts in); false when an entry reaches it. A base class counts as reached: every screen
+// extending it opens the screen (a popup BaseActivity shows), and the walk does not go through them.
 func (g *Graph) unreached(sid int32) ([]navRoot, bool) {
 	r := g.navWalk(statesOf([]int32{sid}), navLimits{maxDepth: -1})
 	for _, root := range r.roots {
-		if slices.Contains(entryKinds, root.how[0].kind) {
+		if k := root.how[0].kind; k == "base" || slices.Contains(entryKinds, k) {
 			return nil, false
 		}
 	}

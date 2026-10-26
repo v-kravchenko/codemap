@@ -425,8 +425,9 @@ codemap screens [FILTER] [--kind KIND] [--module GLOB]... [--host SCREEN] [--unr
   dialogs, the screen hosting routes); the direct host, not the host of the host.
 - `--unreachable` — only screens (activity, fragment, dialog, route) that no entry of the manifest
   reaches: the `nav-path` walk back from the screen ends only where nothing opens a screen
-  (`unknown`), where only code outside the screens opens it (`outside`) or where only a base class
-  does (`base`). A dead-screen audit, as far as the code map sees.
+  (`unknown`) or where only code outside the screens opens it (`outside`). A way ending at a base
+  class (`base`: every screen extending it opens the screen, such as a popup `BaseActivity` shows)
+  counts as reached. A dead-screen audit, as far as the code map sees.
 - `--kind KIND`, `--json`.
 
 Result fields: `screens` — every matching screen, `{kind, module, name, target, host, hosts,

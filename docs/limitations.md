@@ -92,7 +92,8 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   path first reached it during the walk, not from every possible host of that screen.
 - `screens --unreachable` runs one `nav-path` walk back from each screen (about 3 s for 1,600
   screens); a screen opened only by reflection, a library or a framework callback the map does not
-  see is listed as unreachable, with the end of its way (`outside`, `base`) saying why.
+  see is listed as unreachable, with the end of its way (`unknown`, `outside`) saying why; one
+  opened through a base class counts as reached even when no screen extending it is.
 
 ## Build & config
 
