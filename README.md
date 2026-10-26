@@ -70,6 +70,16 @@ a URI at run time do not count. `navigation.string_routes`: a route is the strin
 left out; a route kept in a variable or passed as `Any` is not seen. `navigation.graph`: a nested
 graph from its start route and its own route; opening the graph opens the start route.
 
+## Documentation
+
+- [ARCHITECTURE.md](ARCHITECTURE.md): the parts, the data flow, the rules of the walks, invariants
+- [docs/config.md](docs/config.md): every setting of `codemap.yml` and the presets
+- [docs/json.md](docs/json.md): the `--json` contract of each command, exit codes
+- [docs/limitations.md](docs/limitations.md): what the map does not see or gets wrong
+- [docs/decisions](docs/decisions): why it is built this way (ADRs)
+- [ROADMAP.md](ROADMAP.md): what is planned
+- [AGENTS.md](AGENTS.md): how to work on the code
+
 ## Checks
 
 ```

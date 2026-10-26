@@ -1,0 +1,438 @@
+# --json contract
+
+Every query command (`used-by`, `uses`, `impact`, `changes`, `nav-path`, `graph`, `screens`,
+`find`, `build --info`) accepts `--json` and writes one JSON object to stdout, indented two spaces,
+with keys in a fixed order (`internal/query/json.go`: `writeJSON`, object keys keep insertion
+order, never alphabetized by a generic marshaler). The examples below are trimmed from
+`testdata/golden/*.json`, which hold the exact output **without** the `meta` block (the golden test
+strips it since `meta.run` is never reproducible).
+
+## Envelope
+
+```json
+{
+  "schema_version": "3.2.0",
+  "command": "impact",
+  "meta": {
+    "tool_version": "0.2.0",
+    "index": {
+      "version": "...",
+      "commit": "a1b2c3d...",
+      "dirty": false,
+      "inputs_sha1": "...",
+      "stale": false,
+      "stale_inputs": null
+    },
+    "refs": null,
+    "run": { "started_at": "2024-01-01T00:00:00Z", "duration_s": 0.42 }
+  },
+  "...command-specific fields...": "..."
+}
+```
+
+- `schema_version` — the shape of the JSON output (`"3.2.0"`, `internal/query/cli.go`). Independent
+  of `tool_version`.
+- `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
+  `"changes"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
+- `meta.tool_version` — the codemap binary's own version (`"0.2.0"`).
+- `meta.index.version` — the snapshot format version the map was built with (`index_version`);
+  queries refuse to run against a map from a different one (see Exit codes).
+- `meta.index.commit` — the git HEAD the map was built from, or `null` when the project has no git
+  repo or HEAD could not be read.
+- `meta.index.dirty` — `true` when the working tree had uncommitted changes at build time (`git
+  status --porcelain` was non-empty).
+- `meta.index.inputs_sha1` — hash of every input (class files + watched source/resource files) the
+  map was built from.
+- `meta.index.stale` — `true`/`false` once the stale check ran (always runs unless `--no-check` or
+  the command is `build`), `null` when the check did not run.
+- `meta.index.stale_inputs` — `null` when not stale; otherwise an object: `sources`, `resources`,
+  `classes` (counts of changed/added/removed inputs of each kind), `compile` (modules with changed
+  sources but no changed class files — not yet recompiled), `affects_answer` (bool: a changed file
+  is actually used by this answer), `changed_files` (the changed files this answer uses).
+- `meta.refs` — `null` for most commands; for `changes`, the resolved input/base/head (see
+  `changes` below).
+- `meta.run.started_at` — UTC timestamp the process started, `started_at` format
+  `2006-01-02T15:04:05Z`.
+- `meta.run.duration_s` — wall time since process start, seconds, rounded to 2 decimals.
+
+## Determinism
+
+The same inputs (code map + arguments) give byte-identical `--json`, apart from
+`meta.run.started_at`/`duration_s` which are always wall-clock. Every list is explicitly sorted
+(module, then symbol, then location, or the command's own documented order) — nothing relies on Go
+map iteration order. A change to the shape of the output (new/removed/renamed field, reordered
+array semantics) is a deliberate, documented change and bumps `schema_version`
+(`internal/query/cli.go`, `AGENTS.md`: "a change to the --json shape is a deliberate, documented
+change").
+
+## Exit codes
+
+| Code | Meaning |
+|---|---|
+| `0` | OK |
+| `2` | A user error: bad arguments, symbol not found, ambiguous symbol, no code map at the given path, map from a different tool version (`index_version` mismatch), Gradle/git failures, etc. (`util.UserError`, caught in `Query`'s deferred recover) |
+| `3` | `--strict` only: the code map is stale (older than its inputs) **and** this particular answer actually uses a changed file (`exitStale`, `internal/query/stale.go`). Without `--strict`, staleness is a warning on stderr and the exit code is whatever the command would otherwise return. |
+
+With `--strict`, stdout is buffered and only flushed if the final code is not `3` — a strict,
+stale run that would exit 3 prints nothing to stdout, only the warning/error to stderr.
+
+## Staleness and --strict
+
+Every query (not `build` without `--info`, and not with `--no-check`) compares the map's recorded
+inputs against the filesystem: changed/added/removed `.class` files under the map's class
+directories, and changed/added/removed watched source/resource files. If anything differs:
+
+- Without `--strict`: a warning goes to stderr (which files changed, by kind, and the fix — compile
+  the affected modules then `codemap build`, or just `codemap build` if no source needs
+  recompiling); the command's answer is still printed, and `meta.index.stale`/`stale_inputs`
+  reflect it.
+- With `--strict`: if the stale files are actually walked into this particular answer
+  (`stale_inputs.affects_answer`), the command exits `3` and prints nothing but the error. If the
+  stale files are unrelated to this answer, it behaves like the non-strict case (warning only,
+  normal exit code).
+
+`codemap build` itself does nothing (no-op, logged to stderr) when `UpToDate` finds no stale
+inputs and `--force` was not given.
+
+## used-by / uses
+
+```
+codemap used-by|uses SYMBOL [--all] [--no-self] [--json]
+```
+
+- `SYMBOL` (positional, required) — a class, method or field name; dotted, may be unqualified
+  (`"DefaultsKt.defaultLabel"` or just `"defaultLabel"` if unambiguous).
+- `--all` — do not fail on an ambiguous match across unrelated top-level classes; return/report all
+  of them.
+- `--no-self` (`used-by` only) — drop edges from the same top-level class as the match itself.
+- `--json`
+
+Result fields:
+- `symbols` — the resolved symbol(s) matched, qualified, sorted.
+- `items` — array of `{symbol, kind, module, location, edges}`: `kind` is one of `class`, `method`,
+  `field`, `resource`, `route`; `edges` is the sorted set of edge-kind labels this item is connected
+  through (e.g. `["call"]`, or `"<kind> <via-member>"` when the edge passes through a member other
+  than the resolved symbol, with `" (generated DI)"` appended when the user is Hilt/Dagger-generated
+  glue).
+- `generated_di` — count of items that are generated DI glue.
+
+```json
+{
+  "schema_version": "3.2.0",
+  "command": "used-by",
+  "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
+  "items": [
+    {
+      "symbol": "navapp.impact.DefaultsKt.copyText",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Defaults.kt:10",
+      "edges": ["call"]
+    }
+  ],
+  "generated_di": 0
+}
+```
+
+## impact
+
+```
+codemap impact SYMBOL... [--depth N] [--kind KIND] [--no-paths] [--to TARGET] [--nav] [--all] [--json]
+```
+
+- `SYMBOL...` (one or more, required) — the changed symbol(s); each resolved the same way as
+  `used-by`'s `SYMBOL`.
+- `--depth N` — cap the walk depth (default: unlimited).
+- `--kind KIND` — restrict which screen kinds are listed (repeatable; `all` lists every kind;
+  valid kinds come from the screen titles: `activity`, `fragment`, `dialog`, `route`, `preview`,
+  `layout`). Default: a fixed subset of "real" screen kinds (`screenKinds`).
+- `--no-paths` — omit the dependency path in the text output (ignored for `--json`, which always
+  includes `path`).
+- `--to TARGET` — instead of the full affected set, report only the shortest path from the changed
+  symbol(s) to a named screen or symbol (see "impact --to" below).
+- `--nav` — for each affected screen, also add how the user reaches it (same computation as
+  `nav-path`'s cheapest way), as a `nav` sub-object.
+- `--all` — as in `used-by`.
+
+Result fields (full `impact`, no `--to`):
+- `changed` — the resolved seed symbols, as `{symbol, kind, module, location}`, sorted.
+- `affected` — every affected symbol **except** the seeds and screens already listed in `screens`,
+  as `{symbol, kind, module, location, depth, path}`; `depth` is the walk distance, `path` the
+  qualified names from a changed symbol down to this one.
+- `screens` — affected screens, as `{kind, name, target, module, location, host, hosts, depth,
+  opened_from, path[, nav]}`. `host`/`hosts`: the Activity/parent hosting a fragment/dialog (`host`
+  is `hosts[0]` or `null`). `opened_from`: for a dialog, the screens observed to open it (by name);
+  empty if none found. `nav`: present only with `--nav`, `{entry, detail, cost, path}` (see
+  `nav-path`) or `null` if no way was found.
+- `hidden` — counts of screens hidden by `--kind`, by kind.
+- `modules` — count of affected symbols by module.
+- `packages` — count of affected symbols by package.
+- `not_covered` — (only non-empty for `changes`, always present for `impact`) list of
+  `{path, reason}` for inputs that could not be analysed; `reason` is one of `deleted`,
+  `test_source`, `release_only`, `not_in_map`, `not_analysed`.
+- `warnings` — free-text warnings (e.g. a changed-but-unbuilt source edited after the map, from
+  `changes`).
+
+```json
+{
+  "schema_version": "3.2.0",
+  "command": "impact",
+  "changed": [
+    {
+      "symbol": "navapp.impact.CounterActivity.getCount",
+      "kind": "method", "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:9"
+    }
+  ],
+  "affected": [
+    {
+      "symbol": "navapp.impact.CounterActivity", "kind": "class", "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:8",
+      "depth": 1,
+      "path": ["navapp.impact.CounterActivity.getCount", "navapp.impact.CounterActivity"]
+    }
+  ],
+  "screens": [
+    {
+      "kind": "activity", "name": "FirstActivity", "target": "navapp.impact.FirstActivity",
+      "module": "app", "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
+      "host": null, "hosts": [], "depth": 2, "opened_from": [],
+      "path": ["navapp.impact.CounterActivity.getCount", "navapp.impact.CounterActivity", "navapp.impact.FirstActivity"]
+    }
+  ],
+  "hidden": {}, "modules": { "app": 4 }, "packages": { "navapp.impact": 4 },
+  "not_covered": [], "warnings": []
+}
+```
+
+### impact --to
+
+Result fields: `to` (the target argument, as given), `changed` (sorted qualified names of the
+seeds), `steps` — the dependency path from a changed seed to the target, each step
+`{symbol, kind, module, location, edge}` (`edge` is the edge-kind label into this step from the
+previous one, `null` for the first step). Empty `steps` with no error means no path was found.
+
+## changes
+
+```
+codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--nav] [--depth N] [--kind KIND] [--json]
+```
+
+- `--base REF` — merge-base ref (default: the first of `changes.base` from config that resolves);
+  with `--diff`/`--files`, the revision old values are read from instead of the changed diff lines.
+- `--head REF` — compare against this commit instead of the working tree; the code map **must**
+  have been built from exactly this commit, clean (no uncommitted changes), or the command fails.
+- `--diff -|FILE` — read a unified diff from stdin (`-`) or a file instead of running `git diff`.
+- `--files -|FILE` — read a list of `path`, `path:N` or `path:N-M` lines instead of a diff.
+- `--depth`, `--kind`, `--nav`, `--all`, `--json` — as in `impact`.
+
+`--diff` and `--files` are mutually exclusive. Without either, `changes` runs `git diff` itself
+between the resolved base and `--head` (or the working tree).
+
+Result: identical shape to `impact` (it calls the same `reportImpactWith`), plus
+`meta.refs: {input, base, head}` where `input` is `"git"`, `"diff"` or `"files"`, `base` is the
+resolved base ref/commit (or `null` without `--diff`/`--files` and no `--base`), `head` is the
+resolved head commit or `"WORKTREE"`.
+
+```json
+{
+  "schema_version": "3.2.0",
+  "command": "changes",
+  "changed": [
+    { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
+      "location": "app/src/main/res/navigation/views_graph.xml" },
+    { "symbol": "navapp.impact.Session", "kind": "class", "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:26" }
+  ],
+  "affected": ["... same shape as impact ..."],
+  "screens": ["..."],
+  "hidden": {}, "modules": { "app": 26 }, "packages": { "navapp.impact": 23, "navapp.views": 1 },
+  "not_covered": [], "warnings": []
+}
+```
+
+## nav-path
+
+```
+codemap nav-path SCREEN [--verbose] [--limit N] [--depth N] [--no-paths] [--all] [--json]
+```
+
+- `SCREEN` (positional, required) — a screen name/target, or (falling back) a symbol whose nearest
+  enclosing screen(s) are used as the target(s).
+- `--verbose` — include every way found (`hubs`, `bases`), not just the cheapest ones on the
+  reported paths/branches.
+- `--limit N` — cap how many branch ways are reported (text output; default 20).
+- `--depth N`, `--all`, `--json` — as above.
+
+Result fields:
+- `targets` — the resolved target screen(s), `{name, kind, module, location, host, hosts}`.
+- `screens` — every screen on a reported way (the cheapest paths, plus the kept branch ways; all of
+  them with `--verbose`), each `{name, kind, module, location, host, hosts, depth, cost, hosted_in,
+  opens, way, shared, hint, via}`. `cost` is the walk cost in `nav_path.costs` units; `way` is
+  `"own"`/`"shared"`, prefixed `"push "` when the step goes through push/deep-link handling;
+  `shared` is the qualified name of the shared "hub" code when `way` is shared, else `null`;
+  `hint` is the step's human label (`stepHint`); `via` is the qualified code path of the step.
+- `entries` — how the target is first reached: screen object plus `entry`, an array of
+  `{kind, detail}` (`kind` one of `launcher`, `deeplink`, `intent`, `base`, `outside`, `unknown`;
+  `detail` extra text or `null`).
+- `paths` — array of arrays of screen names, one per entry point, from the entry to the target.
+- `branches` — other launcher branches within `nav_path.branch_slack`: `{entry, through, cost,
+  shared, path}`.
+- With `--verbose` only: `hubs` — `{opens, via, from}` (shared code and what screens reach it
+  through it); `bases` — `{opens, base, subclasses, screens}` (a common base-class way: how many
+  subclasses, how many screens behind it).
+
+```json
+{
+  "schema_version": "3.2.0", "command": "nav-path",
+  "targets": [{ "name": "Login", "kind": "route", "module": "app",
+    "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
+  "screens": [
+    { "name": "Home", "kind": "route", "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": null, "hosts": [], "depth": 1, "cost": 1, "hosted_in": null,
+      "opens": "Login", "way": "own", "shared": null,
+      "hint": "TypedAppKt.TypedApp",
+      "via": ["navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0$1$0", "route Home"] }
+  ],
+  "entries": [{ "name": "MainActivity", "kind": "activity", "module": "app",
+    "location": "app/src/main/java/navapp/MainActivity.kt:13", "host": null, "hosts": [],
+    "entry": [{ "kind": "launcher", "detail": null }] }],
+  "paths": [["MainActivity", "Home", "Login"]],
+  "branches": [{ "entry": "MainActivity", "through": "Home", "cost": 2, "shared": null,
+    "path": ["MainActivity", "Home", "Login"] }]
+}
+```
+
+## graph
+
+```
+codemap graph SCREEN [--depth N] [--all] [--json]
+```
+
+- `SCREEN` (positional, required) — same resolution as `nav-path`'s `SCREEN`; can match more than
+  one screen (multiple roots).
+- `--depth N` — how many hops out from the root(s) to draw (default 1).
+- `--all`, `--json`.
+
+Result fields:
+- `roots` — the root screen name(s).
+- `nodes` — `{name, kind, module}`; `kind` is a screen kind, `"action"` (one method opening several
+  screens, drawn as its own node), or `"shared"` (hub code).
+- `edges` — `{from, to, label, hint, shared}`; `label` is the short action name shown on the edge
+  (`null` if none), `hint` the full step hint, `shared` the target node's name again when the edge
+  goes through shared/hub code (else `null`).
+- `more` — object keyed by hub node name, each value the (alphabetized) list of screen names folded
+  into that hub's `+N` node because they exceeded `graph.fanout`.
+- `edges_left_out` — edges dropped once `graph.max_edges` was exceeded.
+- `ways_of_other_hosts` — ways not drawn because they need a host (Activity/module) not reachable
+  from the root in this context.
+- `debug_left_out` — debug-only screens hidden because the root itself is not debug-only.
+
+```json
+{
+  "schema_version": "3.2.0", "command": "graph",
+  "roots": ["Home"],
+  "nodes": [
+    { "name": "Home", "kind": "route", "module": "app" },
+    { "name": "Home: TypedAppKt.TypedApp", "kind": "action", "module": "app" },
+    { "name": "Login", "kind": "route", "module": "app" },
+    { "name": "Profile", "kind": "route", "module": "app" }
+  ],
+  "edges": [
+    { "from": "Home", "to": "Home: TypedAppKt.TypedApp", "label": null,
+      "hint": "TypedAppKt.TypedApp", "shared": null },
+    { "from": "Home: TypedAppKt.TypedApp", "to": "Login", "label": null,
+      "hint": "TypedAppKt.TypedApp", "shared": null }
+  ],
+  "more": {}, "edges_left_out": 0, "ways_of_other_hosts": 0, "debug_left_out": 0
+}
+```
+
+## screens
+
+```
+codemap screens [FILTER] [--kind KIND] [--json]
+```
+
+- `FILTER` (optional positional) — case-insensitive substring match against name/target/module/host.
+- `--kind KIND`, `--json`.
+
+Result fields: `screens` — every matching screen, `{kind, module, name, target, host, hosts,
+location}`, sorted by kind, module, name, target, host, location; `hidden` — counts of screens
+excluded by `--kind`, by kind.
+
+```json
+{
+  "schema_version": "3.2.0", "command": "screens",
+  "screens": [
+    { "kind": "activity", "module": "app", "name": "AvatarActivity",
+      "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
+      "location": "app/src/main/java/navapp/impact/DataClasses.kt:18" },
+    { "kind": "dialog", "module": "app", "name": "InfoDialog",
+      "target": "navapp.views.InfoDialog", "host": "ViewsActivity", "hosts": ["ViewsActivity"],
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:48" }
+  ],
+  "hidden": {}
+}
+```
+
+## find
+
+```
+codemap find PATTERN [--all] [--limit N] [--json]
+```
+
+- `PATTERN` (positional, required) — a regexp (falls back to a literal substring if invalid)
+  matched against the qualified name or simple name; additionally must match as a
+  SQLite-`LIKE`-style ordered-segment match against the symbol's simple/qualified name (letters
+  split on non-word characters).
+- `--all` — also include synthetic/generated symbols (Hilt/Dagger glue, lambdas, `$DefaultImpls`)
+  normally hidden.
+- `--limit N` — cap the number of symbols shown (default: unlimited; `--limit` only affects the
+  text/JSON `symbols` list, not `total`).
+
+Result fields: `pattern` (as given), `total` (count of all matches before `--limit`), `synthetic`
+(count of matches hidden because they are synthetic, when `--all` is not given), `symbols` — array
+of `{symbol, kind, module, location}`, sorted by qualified-name length then kind then name then
+module then location, truncated to `--limit`.
+
+```json
+{
+  "schema_version": "3.2.0", "command": "find", "pattern": "Activity",
+  "total": 15, "synthetic": 0,
+  "symbols": [
+    { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",
+      "location": "app/src/main/java/navapp/MainActivity.kt:13" },
+    { "symbol": "@layout/activity_views", "kind": "resource", "module": "app",
+      "location": "app/src/main/res/layout/activity_views.xml" }
+  ]
+}
+```
+
+## build --info
+
+```
+codemap build --info [--json]
+```
+
+No positional arguments. Reports the metadata of the current snapshot without touching it.
+
+Result fields: `index` — every key/value of the snapshot's meta table, sorted by key:
+`build_s`, `built_at`, `class_dirs`, `class_files`, `config` (the settings the map was built with,
+as a JSON string), `dirty`, `edges`, `git_head`, `index_version`, `inputs_sha1`, `module_paths`,
+`nodes`, `parse_errors`, `parse_s`, `resources`, `root`, `screens`, `source_files`, `tool_sha1`;
+`screens` — counts of screens by kind.
+
+## Versioning policy
+
+`schema_version` is semver, set by hand in `internal/query/cli.go` (`schemaVersion`):
+
+- **Major**: a field is removed or renamed, its type changes, or its meaning changes in a way that
+  breaks a consumer of today's shape.
+- **Minor**: a field is added to an object, a command is added, or a field gets a new value (a new
+  screen kind, a new entry kind).
+- **Patch**: a fix that keeps the shape, such as a field that held a wrong value.
+
+Formatting (indentation, key spacing) is not part of the contract; parse the JSON.
+

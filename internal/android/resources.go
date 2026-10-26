@@ -52,7 +52,7 @@ func newResource(key, file string, line int) *Resource {
 	return &Resource{Key: key, File: file, Line: line, Refs: map[string]bool{}, Classes: map[string]bool{}}
 }
 
-// El is an XML element as ElementTree gives it: tag and attribute names `{namespace}local`, the text
+// El is an XML element: tag and attribute names `{namespace}local`, the text
 // before the first child, comments left out.
 type El struct {
 	Tag      string
@@ -450,7 +450,7 @@ func ParseNavigation(text []byte) *NavGraph {
 	return g
 }
 
-// write: the element with its attributes, text, children and their tails (ET.tostring, for equality).
+// write: the element with its attributes, text, children and their tails (to compare two versions of a resource).
 func (e *El) Write(b *strings.Builder) {
 	fmt.Fprintf(b, "<%q", e.Tag)
 	for _, a := range e.Attrs {

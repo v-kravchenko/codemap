@@ -1,6 +1,6 @@
 package snapshot
 
-// The map as flat sorted columns, and their binary snapshot: what the CLI loads instead of SQLite.
+// The map as flat sorted columns, and their binary snapshot: what the CLI loads.
 //
 // Snapshot: magic, format version, column count (u32 each), then each column as a u64 byte length
 // and its bytes padded to 8. Numbers are little-endian (every target: amd64, arm64). Loading maps
@@ -48,7 +48,7 @@ func (s *Strs) Len() int { return max(len(s.Off)-1, 0) }
 // CSR: edges of node i are Node[Start[i]:Start[i+1]] (node indexes), with their Kind.
 type CSR struct{ Start, Node, Kind []int32 }
 
-// Map: the tables of the SQLite map; ids are node ids, node rows are sorted by id. Edges are kept
+// Map: the tables of the map; ids are node ids, node rows are sorted by id. Edges are kept
 // as CSR over node indexes: Out (by src, then dst, kind) and In (by dst, then src, kind).
 type Map struct {
 	Meta   struct{ Key, Value Strs }

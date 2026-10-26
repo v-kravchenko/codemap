@@ -39,5 +39,8 @@ gofmt -l . && go vet ./... && go test ./...
   order. A change to the `--json` shape is a deliberate, documented change.
 - A setting a project may need goes into the config schema (`internal/config`: `config.go`, `codemap.schema.json`;
   `TestSchemaCoversConfig` checks they agree) with a default in a preset.
+- A change to the `--json` shape updates `docs/json.md` and `schema_version`; a new setting updates
+  `docs/config.md`; a decision with real alternatives gets an ADR in `docs/decisions`; a gap found
+  and not fixed goes into `docs/limitations.md` or `ROADMAP.md`.
 - Comments say why, in the terse style of the surrounding code.
 - Commit messages: one sentence on what changed and why it matters; no prefixes.
