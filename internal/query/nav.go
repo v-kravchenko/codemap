@@ -617,10 +617,10 @@ func globRe(globs []string) *regexp.Regexp {
 	return regexp.MustCompile("^(" + strings.Join(parts, "|") + ")$")
 }
 
-// inModules: whether a screen is in a module of the globs (all are without globs).
+// inModules: whether a screen is in a module the globs keep (all are without globs).
 func (g *Graph) inModules(globs []string) func(int32) bool {
-	re := globRe(globs)
-	return func(n int32) bool { return re == nil || re.MatchString(g.module(n)) }
+	f := g.moduleFilter(globs)
+	return func(n int32) bool { return f.keeps(g.module(n)) }
 }
 
 // stepsTo: the fewest steps from each screen to one of the targets over the forward ways.

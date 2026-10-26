@@ -1,0 +1,12 @@
+{
+  "schema_version": "3.4.0",
+  "command": "used-by",
+  "symbols": [
+    "navapp.impact.DefaultsKt.defaultLabel"
+  ],
+  "items": [],
+  "generated_di": 0,
+  "hidden_by_module": {
+    "items": 1
+  }
+}

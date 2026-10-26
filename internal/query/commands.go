@@ -29,6 +29,7 @@ var (
 	optNoPaths  = flagSpec{name: "no-paths", help: "leave out the way to each screen (text only; --json always has it)"}
 	optNav      = flagSpec{name: "nav", help: "add how the user reaches each affected screen"}
 	optAvoid    = flagSpec{name: "avoid", arg: "GLOB", many: true, help: "no way through a screen whose name or class matches (*: any run of characters)"}
+	optModule   = flagSpec{name: "module", arg: "GLOB", many: true, help: "show only what is in a matching module: the module and those under it (*: one level, **: any, !GLOB: not)"}
 	optJSON     = flagSpec{name: "json", help: "the answer as JSON (docs/json.md)"}
 	optDB       = flagSpec{name: "db", arg: "FILE", help: "the code map (default: snapshot in codemap.yml)"}
 	commonFlags = []flagSpec{
@@ -49,20 +50,20 @@ var commands = []command{
 	{name: "build --info", about: "What the code map holds and what it was built from.",
 		flags: []flagSpec{optJSON, optDB}},
 	{name: "used-by", args: "SYMBOL", query: true, about: "What uses a class, method or field directly.",
-		flags: []flagSpec{optAll, {name: "no-self", help: "leave out uses from the symbol's own top-level class"}}},
+		flags: []flagSpec{optAll, {name: "no-self", help: "leave out uses from the symbol's own top-level class"}, optModule}},
 	{name: "uses", args: "SYMBOL", query: true, about: "What a class, method or field uses directly.",
-		flags: []flagSpec{optAll}},
+		flags: []flagSpec{optAll, optModule}},
 	{name: "impact", args: "SYMBOL...", query: true, about: "What a change to the symbols reaches, up to the screens.",
 		flags: []flagSpec{optDepth, optKind, optNoPaths,
 			{name: "to", arg: "TARGET", help: "only the shortest way to this screen or symbol"},
-			optNav, optAll}},
+			optNav, optModule, optAll}},
 	{name: "changes", query: true, about: "The impact of a change: git against the base branch, a diff or a list of files.",
 		flags: []flagSpec{
 			{name: "base", arg: "REF", help: "the base to compare with (default: the first of changes.base in codemap.yml that resolves)"},
 			{name: "head", arg: "REF", help: "the commit to compare instead of the working tree; the map must be built from it"},
 			{name: "diff", arg: "-|FILE", help: "a unified diff from stdin or a file instead of git diff"},
 			{name: "files", arg: "-|FILE", help: "lines of path, path:N or path:N-M instead of a diff"},
-			optNav, optDepth, optKind, optNoPaths}},
+			optNav, optDepth, optKind, optNoPaths, optModule}},
 	{name: "nav-path", args: "SCREEN", query: true, about: "How a user gets to a screen: the cheapest way from an entry, and the branches.",
 		flags: []flagSpec{
 			{name: "via", arg: "SCREEN", many: true, help: "the cheapest way through these screens, in order"},
@@ -79,16 +80,17 @@ var commands = []command{
 			{name: "to", arg: "SCREEN", help: "only the ways that reach this screen (not with --in)"},
 			{name: "in", help: "the other way: what opens the screen, and what opens those"},
 			{name: "avoid", arg: "GLOB", many: true, help: "leave out screens whose name or class matches, and what only they reach"},
-			{name: "module", arg: "GLOB", many: true, help: "walk on only from screens in a matching module"},
+			{name: "module", arg: "GLOB", many: true, help: "walk on only from screens in a matching module (globs as in impact --module)"},
 			{name: "depth", arg: "N", help: "how many steps to draw (default 1; with --to the fewest steps plus 2)"},
 			{name: "direction", arg: "LR|RL|TB|TD|BT", help: "the way the flowchart runs (default LR)"},
 			optAll}},
 	{name: "screens", args: "[FILTER]", query: true, about: "The screens by kind; FILTER keeps those whose name contains it.",
-		flags: []flagSpec{optKind}},
+		flags: []flagSpec{optKind, optModule}},
 	{name: "find", args: "PATTERN", query: true, about: "Classes, members, resources and routes whose name matches a regexp (any case).",
 		flags: []flagSpec{
 			{name: "all", help: "also generated DI and synthetic classes"},
-			{name: "limit", arg: "N", help: "how many matches to show"}}},
+			{name: "limit", arg: "N", help: "how many matches to show"},
+			optModule}},
 	{name: "init", about: "Run Gradle once (configuration only) and write the project model, codemap.model.json.",
 		flags: []flagSpec{
 			{name: "root", arg: "DIR", help: "project root (default: found from the working directory)"},

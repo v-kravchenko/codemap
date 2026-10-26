@@ -39,10 +39,13 @@ var goldenCalls = [][]string{
 	{"impact", "navapp.impact.Profile.getNickname"}, // generated copy/equals do not spread it
 	{"impact", "navapp.impact.Session.listen"},
 	{"impact", "navapp.typed.SettingsViewModel.openSettings"},
+	{"impact", "navapp.impact.Session.listen", "--module", "!app"}, // the fixture's one module: all outside
 	{"used-by", "navapp.impact.defaultLabel"},
+	{"used-by", "navapp.impact.defaultLabel", "--module", "!app"},
 	{"uses", "navapp.impact.PlainCopyActivity.onCreate"},
 	{"find", "Activity"},
 	{"screens"},
+	{"screens", "--module", ":app"},
 	{"nav-path", "AboutFragment"},
 	{"nav-path", "LicensesActivity"},
 	{"nav-path", "InfoDialog"},
@@ -61,7 +64,7 @@ var goldenCalls = [][]string{
 	{"graph", "MainActivity", "--to", "InfoDialog"},
 	{"graph", "MainActivity", "--to", "Settings", "--depth", "1"},
 	{"graph", "MainActivity", "--depth", "3", "--avoid", "Home"},
-	{"graph", "MainActivity", "--depth", "2", "--module", "feature/*"},
+	{"graph", "MainActivity", "--depth", "2", "--module", "!app"},
 	{"graph", "InfoDialog", "--in", "--depth", "5"},
 	{"changes", "--files", "changed.txt"},
 }

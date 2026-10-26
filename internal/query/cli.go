@@ -25,7 +25,7 @@ import (
 
 const (
 	toolVersion   = "0.2.0"
-	schemaVersion = "3.3.0"
+	schemaVersion = "3.4.0"
 	exitOK        = 0
 	exitError     = 2
 )
@@ -390,11 +390,24 @@ func (g *Graph) cmdEdges(cmd string, o opts) int {
 		}
 		rows = kept
 	}
+	outside := -1
+	if mf := g.moduleFilter(o.modules); mf != nil {
+		kept, hidden := rows[:0], map[int32]bool{}
+		for _, r := range rows {
+			if mf.keeps(g.module(r.Other)) {
+				kept = append(kept, r)
+			} else {
+				hidden[r.Other] = true
+			}
+		}
+		rows, outside = kept, len(hidden)
+	}
 	title := map[string]string{"used-by": "Used by", "uses": "Uses"}[cmd]
-	return g.printEdges(found, rows, title, o.json, cmd)
+	return g.printEdges(found, rows, title, o.json, cmd, outside)
 }
 
-func (g *Graph) printEdges(found []Seed, rows []EdgeRow, title string, asJSON bool, command string) int {
+// printEdges: outside, the symbols --module left out (-1 without it).
+func (g *Graph) printEdges(found []Seed, rows []EdgeRow, title string, asJSON bool, command string, outside int) int {
 	isFound := map[int32]bool{}
 	for _, s := range found {
 		isFound[s.N] = true
@@ -459,7 +472,11 @@ func (g *Graph) printEdges(found []Seed, rows []EdgeRow, title string, asJSON bo
 		for i, it := range items {
 			out[i] = it.o
 		}
-		g.printJSON(command, obj{{"symbols", strs(symbols)}, {"items", out}, {"generated_di", len(generated)}})
+		result := obj{{"symbols", strs(symbols)}, {"items", out}, {"generated_di", len(generated)}}
+		if outside >= 0 {
+			result = append(result, kv{"hidden_by_module", obj{{"items", outside}}})
+		}
+		g.printJSON(command, result)
 		return exitOK
 	}
 	for _, s := range found {
@@ -488,6 +505,9 @@ func (g *Graph) printEdges(found []Seed, rows []EdgeRow, title string, asJSON bo
 			fmt.Printf("  %-55s %-22s %s\n", g.label(o), strings.Join(util.SortedKeys(groups[mod][o]), ", "), g.location(o))
 		}
 	}
+	if outside > 0 {
+		fmt.Println("\n" + outsideLine(fmt.Sprintf("%d symbols", outside)))
+	}
 	return exitOK
 }
 
@@ -515,6 +535,9 @@ func (g *Graph) cmdImpact(o opts) int {
 		seeds = append(seeds, g.resolveOne(s, o.all)...)
 	}
 	if o.to != "" {
+		if len(o.modules) > 0 {
+			panic(util.UserError("argument --module: not allowed with argument --to"))
+		}
 		return g.impactTo(seeds, o)
 	}
 	return g.reportImpact(seeds, o, "impact")
@@ -554,6 +577,7 @@ func (g *Graph) reportImpact(seeds []Seed, o opts, command string) int {
 
 // reportImpactWith: nc, the changes left out; warnings, what may make the result wrong.
 func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notCovered, warnings []string) int {
+	mf := g.moduleFilter(o.modules) // the answer, not the walk: a screen elsewhere is reached through any module
 	t := time.Now()
 	w := newWalk()
 	if len(seeds) > 0 {
@@ -561,9 +585,12 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 	}
 	elapsed := time.Since(t)
 	byKind, hidden, shown := map[string][]screenItem{}, map[string]int{}, shownKinds(o)
+	outScreens, outSymbols := 0, map[int32]bool{}
 	for _, n := range w.ScreenOrder {
 		r := g.screens[n][0]
-		if shown[r.Kind] {
+		if !mf.keeps(g.module(n)) {
+			outScreens++
+		} else if shown[r.Kind] {
 			byKind[r.Kind] = append(byKind[r.Kind], screenItem{w.Aff[w.Screens[n]].Depth, r.Label, r.Target, g.module(n), g.hosts(n), n})
 		} else {
 			hidden[r.Kind]++
@@ -609,10 +636,20 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 		}
 		return notCov[i].reason < notCov[j].reason
 	})
+	seedIDs := map[int32]bool{}
+	for _, s := range seeds {
+		seedIDs[s.N] = true
+	}
 	modules, packages := map[string]int{}, map[string]int{}
 	nearest := map[int32]Key{}
 	var nearestOrder []int32
 	for _, k := range w.Keys {
+		if !mf.keeps(g.module(k.N)) {
+			if !seedIDs[k.N] {
+				outSymbols[k.N] = true
+			}
+			continue
+		}
 		modules[g.module(k.N)]++
 		if p, ok := g.pkg(k.N); ok {
 			packages[p]++
@@ -626,11 +663,11 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 		}
 	}
 	if o.json {
-		seedIDs := map[int32]bool{}
+		listed := map[int32]bool{}
 		var changed []obj
 		for _, s := range seeds {
-			if !seedIDs[s.N] {
-				seedIDs[s.N] = true
+			if !listed[s.N] {
+				listed[s.N] = true
 				changed = append(changed, g.symbol(s.N))
 			}
 		}
@@ -678,7 +715,7 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 		for _, x := range notCov {
 			ncJSON = append(ncJSON, obj{{"path", x.path}, {"reason", x.reason}})
 		}
-		g.printJSON(command, obj{
+		result := obj{
 			{"changed", objs(changed)},
 			{"affected", objs(affected)},
 			{"screens", list(screens)},
@@ -687,7 +724,11 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 			{"packages", countsObj(packages)},
 			{"not_covered", list(ncJSON)},
 			{"warnings", strs(warnings)},
-		})
+		}
+		if mf != nil {
+			result = append(result, kv{"hidden_by_module", obj{{"screens", outScreens}, {"affected", len(outSymbols)}}})
+		}
+		g.printJSON(command, result)
 		return exitOK
 	}
 	if len(seeds) > 0 {
@@ -758,6 +799,9 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 	if len(hidden) > 0 {
 		fmt.Println("\n" + hiddenLine(hidden))
 	}
+	if outScreens+len(outSymbols) > 0 {
+		fmt.Println("\n" + outsideLine(fmt.Sprintf("%d screens", outScreens), fmt.Sprintf("%d symbols", len(outSymbols))))
+	}
 	if len(modules) > 0 {
 		mods := util.SortedKeys(modules)
 		sort.SliceStable(mods, func(i, j int) bool { return modules[mods[i]] > modules[mods[j]] })
@@ -807,6 +851,7 @@ func (g *Graph) cmdScreens(o opts) int {
 	}
 	var out []row
 	hidden, shown := map[string]int{}, shownKinds(o)
+	mf, outside := g.moduleFilter(o.modules), 0
 	s := &g.m.Screen
 	for i := range s.Node {
 		n := g.m.Index(s.Node[i])
@@ -819,6 +864,10 @@ func (g *Graph) cmdScreens(o opts) int {
 		host := strings.Join(hl, ", ")
 		if filter != "" && !slices.ContainsFunc([]string{label, target, module, host},
 			func(x string) bool { return strings.Contains(strings.ToLower(x), filter) }) {
+			continue
+		}
+		if !mf.keeps(module) {
+			outside++
 			continue
 		}
 		if !shown[kind] {
@@ -843,7 +892,11 @@ func (g *Graph) cmdScreens(o opts) int {
 			items[i] = append(append(obj{{"kind", r.kind}, {"module", r.module}, {"name", r.label}, {"target", r.target}},
 				g.hostsJSON(r.hosts)...), kv{"location", r.loc})
 		}
-		g.printJSON("screens", obj{{"screens", items}, {"hidden", countsObj(hidden)}})
+		result := obj{{"screens", items}, {"hidden", countsObj(hidden)}}
+		if mf != nil {
+			result = append(result, kv{"hidden_by_module", obj{{"screens", outside}}})
+		}
+		g.printJSON("screens", result)
 		return exitOK
 	}
 	for _, t := range config.ScreenTitles {
@@ -871,6 +924,9 @@ func (g *Graph) cmdScreens(o opts) int {
 	}
 	if len(hidden) > 0 {
 		fmt.Println("\n" + hiddenLine(hidden))
+	}
+	if outside > 0 {
+		fmt.Println("\n" + outsideLine(fmt.Sprintf("%d screens", outside)))
 	}
 	return exitOK
 }
@@ -1109,6 +1165,7 @@ func (g *Graph) cmdFind(o opts) int {
 		}
 	}
 	type row struct{ kind, q, module, loc string }
+	mf, outside := g.moduleFilter(o.modules), 0
 	seen := map[row]bool{}
 	var out []row
 	synthetic := map[string]bool{}
@@ -1135,9 +1192,14 @@ func (g *Graph) cmdFind(o opts) int {
 			continue
 		}
 		r := row{k, q, g.module(n), g.location(n)}
-		if !seen[r] {
-			seen[r] = true
+		if seen[r] {
+			continue
+		}
+		seen[r] = true
+		if mf.keeps(r.module) {
 			out = append(out, r)
+		} else {
+			outside++
 		}
 	}
 	sort.Slice(out, func(i, j int) bool {
@@ -1165,7 +1227,11 @@ func (g *Graph) cmdFind(o opts) int {
 		for i, r := range shownRows {
 			syms[i] = obj{{"symbol", r.q}, {"kind", kindName(r.kind)}, {"module", r.module}, {"location", r.loc}}
 		}
-		g.printJSON("find", obj{{"pattern", pattern}, {"total", len(out)}, {"synthetic", len(synthetic)}, {"symbols", syms}})
+		result := obj{{"pattern", pattern}, {"total", len(out)}, {"synthetic", len(synthetic)}, {"symbols", syms}}
+		if mf != nil {
+			result = append(result, kv{"hidden_by_module", obj{{"symbols", outside}}})
+		}
+		g.printJSON("find", result)
 		return exitOK
 	}
 	for _, r := range shownRows {
@@ -1176,6 +1242,9 @@ func (g *Graph) cmdFind(o opts) int {
 	}
 	if len(synthetic) > 0 {
 		fmt.Printf("(%d synthetic hidden: Hilt glue, lambdas, DefaultImpls; --all shows them)\n", len(synthetic))
+	}
+	if outside > 0 {
+		fmt.Printf("(%s)\n", outsideLine(fmt.Sprintf("%d symbols", outside)))
 	}
 	return exitOK
 }

@@ -11,7 +11,7 @@ strips it since `meta.run` is never reproducible).
 
 ```json
 {
-  "schema_version": "3.3.0",
+  "schema_version": "3.4.0",
   "command": "impact",
   "meta": {
     "tool_version": "0.2.0",
@@ -30,7 +30,7 @@ strips it since `meta.run` is never reproducible).
 }
 ```
 
-- `schema_version` — the shape of the JSON output (`"3.3.0"`, `internal/query/cli.go`). Independent
+- `schema_version` — the shape of the JSON output (`"3.4.0"`, `internal/query/cli.go`). Independent
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
   `"changes"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
@@ -94,10 +94,29 @@ directories, and changed/added/removed watched source/resource files. If anythin
 `codemap build` itself does nothing (no-op, logged to stderr) when `UpToDate` finds no stale
 inputs and `--force` was not given.
 
+## Module globs
+
+`--module GLOB` (repeatable; `impact`, `changes`, `used-by`, `uses`, `screens`, `find`, `graph`)
+takes module paths the way `.gitignore` takes directories
+([0013](decisions/0013-module-globs.md)):
+
+- a glob takes the module and the modules under it: `feature/userdoc` is also
+  `feature/userdoc/financial`, not `feature/userdocx`;
+- `*` is a run within one path segment, `**` any run of segments (`**/impl`, `feature/**`);
+- `!GLOB` takes back what the globs before it took; the last glob matching a module decides, and a
+  module no glob matches is kept only when the first glob is a `!` one: `--module feature/userdoc
+  --module '!feature/userdoc/*'` is the module alone, `--module '!feature/debug'` everything else;
+- the Gradle path is the same module: `:feature:userdoc` is `feature/userdoc`;
+- a glob that matches no module of the code map is an error (exit 2), not an empty answer.
+
+Except in `graph`, `--module` filters the answer, not the walk: a change in `core/network` still
+reaches a screen in `feature/cards` through `core/domain`. What it left out is counted in
+`hidden_by_module`, an object present only with `--module`, of the lists it shortens.
+
 ## used-by / uses
 
 ```
-codemap used-by|uses SYMBOL [--all] [--no-self] [--json]
+codemap used-by|uses SYMBOL [--all] [--no-self] [--module GLOB]... [--json]
 ```
 
 - `SYMBOL` (positional, required) — a class, method or field name; dotted, may be unqualified
@@ -105,6 +124,7 @@ codemap used-by|uses SYMBOL [--all] [--no-self] [--json]
 - `--all` — do not fail on an ambiguous match across unrelated top-level classes; return/report all
   of them.
 - `--no-self` (`used-by` only) — drop edges from the same top-level class as the match itself.
+- `--module GLOB` — only items in a matching module (see Module globs).
 - `--json`
 
 Result fields:
@@ -115,10 +135,11 @@ Result fields:
   than the resolved symbol, with `" (generated DI)"` appended when the user is Hilt/Dagger-generated
   glue).
 - `generated_di` — count of items that are generated DI glue.
+- `hidden_by_module` — with `--module` only: `{items}`, the items left out.
 
 ```json
 {
-  "schema_version": "3.3.0",
+  "schema_version": "3.4.0",
   "command": "used-by",
   "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
   "items": [
@@ -137,7 +158,7 @@ Result fields:
 ## impact
 
 ```
-codemap impact SYMBOL... [--depth N] [--kind KIND] [--no-paths] [--to TARGET] [--nav] [--all] [--json]
+codemap impact SYMBOL... [--depth N] [--kind KIND] [--no-paths] [--to TARGET] [--nav] [--module GLOB]... [--all] [--json]
 ```
 
 - `SYMBOL...` (one or more, required) — the changed symbol(s); each resolved the same way as
@@ -152,6 +173,8 @@ codemap impact SYMBOL... [--depth N] [--kind KIND] [--no-paths] [--to TARGET] [-
   symbol(s) to a named screen or symbol (see "impact --to" below).
 - `--nav` — for each affected screen, also add how the user reaches it (same computation as
   `nav-path`'s cheapest way), as a `nav` sub-object.
+- `--module GLOB` — only screens and affected symbols in a matching module (see Module globs); the
+  walk is whole, `changed` is not filtered. Not with `--to`.
 - `--all` — as in `used-by`.
 
 Result fields (full `impact`, no `--to`):
@@ -172,10 +195,12 @@ Result fields (full `impact`, no `--to`):
   `test_source`, `release_only`, `not_in_map`, `not_analysed`.
 - `warnings` — free-text warnings (e.g. a changed-but-unbuilt source edited after the map, from
   `changes`).
+- `hidden_by_module` — with `--module` only: `{screens, affected}`, the screens and the affected
+  symbols (seeds aside) outside the modules; `modules` and `packages` count only the ones shown.
 
 ```json
 {
-  "schema_version": "3.3.0",
+  "schema_version": "3.4.0",
   "command": "impact",
   "changed": [
     {
@@ -215,7 +240,7 @@ previous one, `null` for the first step). Empty `steps` with no error means no p
 ## changes
 
 ```
-codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--nav] [--depth N] [--kind KIND] [--no-paths] [--json]
+codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--nav] [--depth N] [--kind KIND] [--no-paths] [--module GLOB]... [--json]
 ```
 
 - `--base REF` — the branch the change forked from: the diff starts at the merge-base of `REF` and
@@ -226,7 +251,7 @@ codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--na
   have been built from exactly this commit, clean (no uncommitted changes), or the command fails.
 - `--diff -|FILE` — read a unified diff from stdin (`-`) or a file instead of running `git diff`.
 - `--files -|FILE` — read a list of `path`, `path:N` or `path:N-M` lines instead of a diff.
-- `--depth`, `--kind`, `--nav`, `--no-paths`, `--json` — as in `impact`.
+- `--depth`, `--kind`, `--nav`, `--no-paths`, `--module`, `--json` — as in `impact`.
 
 `--diff` and `--files` are mutually exclusive. Without either, `changes` runs `git diff` itself
 between the resolved base and `--head` (or the working tree).
@@ -238,7 +263,7 @@ resolved head commit or `"WORKTREE"`.
 
 ```json
 {
-  "schema_version": "3.3.0",
+  "schema_version": "3.4.0",
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
@@ -304,7 +329,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.3.0", "command": "nav-path",
+  "schema_version": "3.4.0", "command": "nav-path",
   "targets": [{ "name": "Login", "kind": "route", "module": "app",
     "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
   "screens": [
@@ -343,8 +368,9 @@ codemap graph SCREEN [--to SCREEN | --in] [--avoid GLOB]... [--module GLOB]... [
   go into `more`. Hosts are not followed: every way that opens a screen is drawn.
 - `--avoid GLOB` (repeatable) — leave out screens whose name or class matches (`*`: any run of
   characters), and what is reached only through them.
-- `--module GLOB` (repeatable) — walk on only from screens in a matching module; a screen elsewhere
-  is drawn but not walked from (a feature's map: `--module 'feature/cards*'`).
+- `--module GLOB` (repeatable) — walk on only from screens in a matching module (see Module globs;
+  unlike the other commands it limits the walk); a screen elsewhere is drawn but not walked from (a
+  feature's map: `--module feature/cards`).
 - `--direction` — how the Mermaid flowchart runs (text output only): `LR` (default), `RL`, `TB`
   (or `TD`), `BT`.
 - `--all`, `--json`.
@@ -367,7 +393,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.3.0", "command": "graph",
+  "schema_version": "3.4.0", "command": "graph",
   "roots": ["Home"], "walk": "out", "to": [],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
@@ -388,19 +414,21 @@ Result fields:
 ## screens
 
 ```
-codemap screens [FILTER] [--kind KIND] [--json]
+codemap screens [FILTER] [--kind KIND] [--module GLOB]... [--json]
 ```
 
 - `FILTER` (optional positional) — case-insensitive substring match against name/target/module/host.
+- `--module GLOB` — only screens in a matching module (see Module globs).
 - `--kind KIND`, `--json`.
 
 Result fields: `screens` — every matching screen, `{kind, module, name, target, host, hosts,
 location}`, sorted by kind, module, name, target, host, location; `hidden` — counts of screens
-excluded by `--kind`, by kind.
+excluded by `--kind`, by kind (of those in the modules); `hidden_by_module` — with `--module` only:
+`{screens}`, the screens outside the modules.
 
 ```json
 {
-  "schema_version": "3.3.0", "command": "screens",
+  "schema_version": "3.4.0", "command": "screens",
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
@@ -416,7 +444,7 @@ excluded by `--kind`, by kind.
 ## find
 
 ```
-codemap find PATTERN [--all] [--limit N] [--json]
+codemap find PATTERN [--all] [--limit N] [--module GLOB]... [--json]
 ```
 
 - `PATTERN` (positional, required) — a regexp (falls back to a literal substring if invalid)
@@ -427,15 +455,17 @@ codemap find PATTERN [--all] [--limit N] [--json]
   normally hidden.
 - `--limit N` — cap the number of symbols shown (default: unlimited; `--limit` only affects the
   text/JSON `symbols` list, not `total`).
+- `--module GLOB` — only symbols in a matching module (see Module globs).
 
 Result fields: `pattern` (as given), `total` (count of all matches before `--limit`), `synthetic`
 (count of matches hidden because they are synthetic, when `--all` is not given), `symbols` — array
 of `{symbol, kind, module, location}`, sorted by qualified-name length then kind then name then
-module then location, truncated to `--limit`.
+module then location, truncated to `--limit`; `hidden_by_module` — with `--module` only:
+`{symbols}`, the matches outside the modules (not in `total`).
 
 ```json
 {
-  "schema_version": "3.3.0", "command": "find", "pattern": "Activity",
+  "schema_version": "3.4.0", "command": "find", "pattern": "Activity",
   "total": 15, "synthetic": 0,
   "symbols": [
     { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",

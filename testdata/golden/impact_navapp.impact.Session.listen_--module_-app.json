@@ -1,0 +1,23 @@
+{
+  "schema_version": "3.4.0",
+  "command": "impact",
+  "changed": [
+    {
+      "symbol": "navapp.impact.Session.listen",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:27"
+    }
+  ],
+  "affected": [],
+  "screens": [],
+  "hidden": {},
+  "modules": {},
+  "packages": {},
+  "not_covered": [],
+  "warnings": [],
+  "hidden_by_module": {
+    "screens": 1,
+    "affected": 4
+  }
+}
