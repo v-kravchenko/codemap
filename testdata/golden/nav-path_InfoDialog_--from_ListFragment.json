@@ -6,7 +6,7 @@
       "name": "InfoDialog",
       "kind": "dialog",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:48",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:54",
       "host": "ViewsActivity",
       "hosts": [
         "ViewsActivity"

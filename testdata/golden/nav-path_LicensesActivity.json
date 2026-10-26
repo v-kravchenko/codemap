@@ -6,7 +6,7 @@
       "name": "LicensesActivity",
       "kind": "activity",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:50",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:56",
       "host": null,
       "hosts": []
     }
@@ -16,7 +16,7 @@
       "name": "AboutFragment",
       "kind": "fragment",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:40",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:46",
       "host": "ViewsActivity",
       "hosts": [
         "ViewsActivity"
@@ -119,7 +119,7 @@
       "name": "LinkActivity",
       "kind": "activity",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:53",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:59",
       "host": null,
       "hosts": [],
       "depth": 6,
@@ -171,7 +171,7 @@
       "name": "LinkActivity",
       "kind": "activity",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:53",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:59",
       "host": null,
       "hosts": [],
       "entry": [

@@ -6,7 +6,7 @@
       "name": "InfoDialog",
       "kind": "dialog",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:48",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:54",
       "host": "ViewsActivity",
       "hosts": [
         "ViewsActivity"
@@ -80,7 +80,7 @@
       "name": "LinkActivity",
       "kind": "activity",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:53",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:59",
       "host": null,
       "hosts": [],
       "depth": 4,
@@ -100,7 +100,7 @@
       "name": "LinkActivity",
       "kind": "activity",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:53",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:59",
       "host": null,
       "hosts": [],
       "entry": [

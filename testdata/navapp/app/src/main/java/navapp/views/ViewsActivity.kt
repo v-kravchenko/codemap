@@ -32,8 +32,14 @@ class DetailFragment : Fragment(R.layout.fragment_list) {
 }
 
 class SettingsFragment : Fragment(R.layout.fragment_list) {
+    private val pick = registerForActivityResult(PickContract()) {}
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.setOnClickListener { findNavController().navigate(R.id.action_settings_to_about) }
+        view.setOnLongClickListener {
+            pick.launch(Unit)
+            true
+        }
     }
 }
 

@@ -2,7 +2,7 @@
   "schema_version": "3.4.0",
   "command": "find",
   "pattern": "Activity",
-  "total": 16,
+  "total": 17,
   "synthetic": 0,
   "symbols": [
     {
@@ -21,7 +21,13 @@
       "symbol": "navapp.views.LinkActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:53"
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:59"
+    },
+    {
+      "symbol": "navapp.views.PickActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/Contracts.kt:16"
     },
     {
       "symbol": "navapp.impact.BaseActivity",
@@ -81,7 +87,7 @@
       "symbol": "navapp.views.LicensesActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:50"
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:56"
     },
     {
       "symbol": "navapp.impact.NicknameActivity",

@@ -57,6 +57,8 @@ func TestViewsNavigation(t *testing.T) {
 		"SettingsFragment": {"DetailFragment > @id/settings_graph > DetailFragment.onViewCreated{λ}"},
 		"AboutFragment":    {"SettingsFragment > @id/action_settings_to_about > SettingsFragment.onViewCreated{λ}"},
 		"LicensesActivity": {"AboutFragment > AboutFragment.onViewCreated{λ}"},
+		// the framework calls createIntent on the contract SettingsFragment makes
+		"PickActivity": {"SettingsFragment > PickContract.createIntent() > PickContract > SettingsFragment.<init>()"},
 	}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("opened by\n got %q\nwant %q", got, want)

@@ -51,6 +51,7 @@ var goldenCalls = [][]string{
 	{"screens", "--unreachable"},
 	{"nav-path", "AboutFragment"},
 	{"nav-path", "LicensesActivity"},
+	{"nav-path", "PickActivity"}, // through the ActivityResultContract SettingsFragment makes
 	{"nav-path", "InfoDialog"},
 	{"nav-path", "Login"},
 	{"nav-path", "comments/{postId}"},

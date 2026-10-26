@@ -1129,10 +1129,12 @@ func (w *edgeWorker) edgesOf(name string) *part {
 					route = ""
 					cont = nil
 				}
-				if (config.TypedRoutes || config.StringRoutes) && call && len(cont) > 0 && strings.Contains(d, "Lkotlin/jvm/functions/Function") &&
-					!config.RouteRegistration.MatchString(full) {
+				ownLambda := n == "<init>" && (strings.HasPrefix(owner, name+"$") || inlinedLambdaOfSameFile(owner, name))
+				if call && len(cont) > 0 && strings.Contains(d, "Lkotlin/jvm/functions/Function") &&
+					!config.RouteRegistration.MatchString(full) && !ownLambda {
 					// lambdas handed to the app's own function (a graph section's onClick) are not the
-					// content of the next destination
+					// content of the next destination, whatever names the routes; the content's own
+					// object (an inlined `screen {}`) is made the same way
 					if _, ok := b.classID[owner]; ok {
 						cont = nil
 					}

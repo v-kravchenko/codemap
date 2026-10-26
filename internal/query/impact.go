@@ -692,6 +692,19 @@ func (g *Graph) walk(seeds []Seed, maxDepth int, stopAt map[int32]bool, blocked 
 			if lambda { // a lambda of a `this` call
 				lambdaCtx = ctx
 			}
+			if bases != nil && !lambda && aff.Why == "framework callback" && !g.screenTops[nid] {
+				// the framework calls back an object the code makes (an ActivityResultContract's
+				// createIntent): who makes it runs the callback; a subclass's super() makes no object
+				for _, m := range g.members(nid) {
+					if g.name(m) == "<init>" {
+						for _, u := range g.users(m, snapshot.CALL) {
+							if g.topOf(u.N) != g.topOf(nid) && !g.diGlue[g.topOf(u.N)] && !g.isSubtype(g.callerClass(u.N), nid) {
+								push(g.key(u.N, noCtx), nd, &key, "creates "+g.label(nid))
+							}
+						}
+					}
+				}
+			}
 			base := bases != nil && g.subclassCount(nid) >= config.HubMin
 			if base { // a base of many classes: listed, its subclasses not walked
 				bases[nid] = true
