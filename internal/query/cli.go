@@ -44,8 +44,9 @@ type opts struct {
 	kinds, pos, via, avoid, modules                         []string
 }
 
-func parseOpts(args []string) opts {
+func parseOpts(cmd string, args []string) opts {
 	o := opts{depth: -1, limit: -1}
+	spec := commandSpec(cmd)
 	value := func(i *int, name string) string {
 		if *i+1 >= len(args) {
 			panic(util.UserError("argument --" + name + ": expected one argument"))
@@ -65,6 +66,12 @@ func parseOpts(args []string) opts {
 		if name, v, ok := strings.Cut(a, "="); ok && strings.HasPrefix(a, "--") {
 			args = append(args[:i+1], append([]string{v}, args[i+1:]...)...)
 			a = name
+		}
+		if strings.HasPrefix(a, "--") && !spec.hasFlag(a[2:]) {
+			if knownFlag(a[2:]) {
+				panic(util.UserError(fmt.Sprintf("argument %s: not an option of %s (codemap %s --help)", a, spec.name, cmd)))
+			}
+			panic(util.UserError("unrecognized arguments: " + a))
 		}
 		switch a {
 		case "--db":
@@ -126,6 +133,9 @@ func parseOpts(args []string) opts {
 			o.pos = append(o.pos, a)
 		}
 	}
+	if n := spec.maxArgs(); n >= 0 && len(o.pos) > n {
+		panic(util.UserError("unrecognized arguments: " + strings.Join(o.pos[n:], " ")))
+	}
 	if o.direction != "" && !slices.Contains(mermaidDirections, o.direction) {
 		panic(util.UserError(fmt.Sprintf("argument --direction: invalid choice: '%s' (choose from %s)", o.direction,
 			strings.Join(mermaidDirections, ", "))))
@@ -159,7 +169,7 @@ func Query(cmd string, args []string) (code int) {
 		defer pprof.StopCPUProfile()
 	}
 	debug.SetGCPercent(400)
-	o := parseOpts(args)
+	o := parseOpts(cmd, args)
 	root := util.FindRoot()
 	if o.db == "" {
 		o.db = config.DefaultSnapshot(root)

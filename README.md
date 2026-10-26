@@ -12,6 +12,7 @@ go install github.com/v-kravchenko/codemap/cmd/codemap@latest  # or: go build ./
 codemap init [--gradle CMD]                        # once, and after build files change
 codemap build [--out SNAPSHOT] [--jobs N] [--force]  # default: snapshot in codemap.yml
 codemap used-by|uses|impact|changes|nav-path|graph|screens|find|build --info ... [--json]
+codemap COMMAND --help                             # its options; one it does not take is an error
 CODEMAP_TIMES=1 codemap build                      # time of each stage on stderr
 CODEMAP_PROFILE=/tmp/cpu.prof codemap impact X     # CPU profile of a build or a query
 ```

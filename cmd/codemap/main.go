@@ -52,40 +52,42 @@ func inputsSha1(b *build.Builder) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-const usage = `usage:
-  codemap build [--root DIR] [--out SNAPSHOT] [--jobs N] [--force]
-  codemap used-by|uses SYMBOL [--all] [--no-self] [--json]
-  codemap impact SYMBOL... [--depth N] [--kind KIND] [--no-paths] [--to TARGET] [--nav] [--all] [--json]
-  codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--nav] [--depth N] [--kind KIND] [--json]
-  codemap nav-path SCREEN [--via SCREEN]... [--ways] [--from SCREEN | --entry launcher|deeplink|intent]
-                   [--avoid GLOB]... [--verbose] [--limit N] [--depth N] [--no-paths] [--all] [--json]
-  codemap graph SCREEN [--to SCREEN | --in] [--avoid GLOB]... [--module GLOB]... [--depth N]
-                [--direction LR|RL|TB|TD|BT] [--all] [--json]
-  codemap screens [FILTER] [--kind KIND] [--json]
-  codemap find PATTERN [--all] [--limit N] [--json]
-  codemap build --info [--json]
-  codemap init [--gradle CMD]
-  codemap config check|print|schema`
-
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, usage)
+		fmt.Fprintln(os.Stderr, query.Usage())
 		os.Exit(2)
 	}
-	switch os.Args[1] {
-	case "build":
-		if slices.Contains(os.Args[2:], "--info") {
-			os.Exit(query.Query("build", os.Args[2:]))
+	cmd, args := os.Args[1], os.Args[2:]
+	switch {
+	case cmd == "--help" || cmd == "-h" || cmd == "help" && len(args) == 0:
+		fmt.Println(query.Usage())
+		return
+	case cmd == "help":
+		cmd, args = args[0], []string{"--help"}
+	}
+	if slices.Contains(args, "--help") || slices.Contains(args, "-h") {
+		help, ok := query.Help(cmd)
+		if !ok {
+			fmt.Fprintf(os.Stderr, "error: unknown command %s\n%s\n", cmd, query.Usage())
+			os.Exit(2)
 		}
-		buildCmd(os.Args[2:])
+		fmt.Println(help)
+		return
+	}
+	switch cmd {
+	case "build":
+		if slices.Contains(args, "--info") {
+			os.Exit(query.Query("build", args))
+		}
+		buildCmd(args)
 	case "init":
-		os.Exit(project.InitCmd(os.Args[2:]))
+		os.Exit(project.InitCmd(args))
 	case "config":
-		os.Exit(config.ConfigCmd(os.Args[2:]))
+		os.Exit(config.ConfigCmd(args))
 	case "used-by", "uses", "impact", "find", "changes", "nav-path", "graph", "screens":
-		os.Exit(query.Query(os.Args[1], os.Args[2:]))
+		os.Exit(query.Query(cmd, args))
 	default:
-		fmt.Fprintln(os.Stderr, usage)
+		fmt.Fprintf(os.Stderr, "error: unknown command %s\n%s\n", cmd, query.Usage())
 		os.Exit(2)
 	}
 }

@@ -70,7 +70,7 @@ change").
 | Code | Meaning |
 |---|---|
 | `0` | OK |
-| `2` | A user error: bad arguments, symbol not found, ambiguous symbol, no code map at the given path, map from a different tool version (`index_version` mismatch), Gradle/git failures, etc. (`util.UserError`, caught in `Query`'s deferred recover) |
+| `2` | A user error: bad arguments (an option the command does not take, an extra positional), symbol not found, ambiguous symbol, no code map at the given path, map from a different tool version (`index_version` mismatch), Gradle/git failures, etc. (`util.UserError`, caught in `Query`'s deferred recover) |
 | `3` | `--strict` only: the code map is stale (older than its inputs) **and** this particular answer actually uses a changed file (`exitStale`, `internal/query/stale.go`). Without `--strict`, staleness is a warning on stderr and the exit code is whatever the command would otherwise return. |
 
 With `--strict`, stdout is buffered and only flushed if the final code is not `3` — a strict,
@@ -215,7 +215,7 @@ previous one, `null` for the first step). Empty `steps` with no error means no p
 ## changes
 
 ```
-codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--nav] [--depth N] [--kind KIND] [--json]
+codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--nav] [--depth N] [--kind KIND] [--no-paths] [--json]
 ```
 
 - `--base REF` — merge-base ref (default: the first of `changes.base` from config that resolves);
@@ -224,7 +224,7 @@ codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--na
   have been built from exactly this commit, clean (no uncommitted changes), or the command fails.
 - `--diff -|FILE` — read a unified diff from stdin (`-`) or a file instead of running `git diff`.
 - `--files -|FILE` — read a list of `path`, `path:N` or `path:N-M` lines instead of a diff.
-- `--depth`, `--kind`, `--nav`, `--all`, `--json` — as in `impact`.
+- `--depth`, `--kind`, `--nav`, `--no-paths`, `--json` — as in `impact`.
 
 `--diff` and `--files` are mutually exclusive. Without either, `changes` runs `git diff` itself
 between the resolved base and `--head` (or the working tree).
