@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime/pprof"
 	"slices"
 	"strings"
 )
@@ -26,6 +27,26 @@ func SortedKeys[K cmp.Ordered, V any](m map[K]V) []K {
 	}
 	slices.Sort(out)
 	return out
+}
+
+// Profile: a CPU profile into $CODEMAP_PROFILE until the returned stop runs.
+func Profile() (stop func()) {
+	pf := os.Getenv("CODEMAP_PROFILE")
+	if pf == "" {
+		return func() {}
+	}
+	f, err := os.Create(pf)
+	if err == nil {
+		err = pprof.StartCPUProfile(f)
+	}
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "CODEMAP_PROFILE: %v\n", err)
+		return func() {}
+	}
+	return func() {
+		pprof.StopCPUProfile()
+		f.Close()
+	}
 }
 
 func Fail(format string, a ...any) {

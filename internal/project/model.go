@@ -208,28 +208,35 @@ func InitCmd(args []string) int {
 		util.Fail("%v", err)
 	}
 	defer os.RemoveAll(tmp)
+	// util.Fail exits, skipping the deferred cleanup
+	fail := func(format string, a ...any) {
+		os.RemoveAll(tmp)
+		util.Fail(format, a...)
+	}
 	script, out := filepath.Join(tmp, "codemap.init.gradle"), filepath.Join(tmp, "model.json")
-	os.WriteFile(script, initScript, 0o644)
+	if err := os.WriteFile(script, initScript, 0o644); err != nil {
+		fail("%v", err)
+	}
 	t0 := time.Now()
 	cmd := exec.Command(cmdline[0], append(cmdline[1:], "help", "-q", "--no-configuration-cache",
 		"-I", script, "-Pcodemap.out="+out)...)
 	cmd.Dir, cmd.Stderr = abs, os.Stderr
 	fmt.Fprintf(os.Stderr, "codemap init: %s help -I codemap.init.gradle (configuration only)\n", strings.Join(cmdline, " "))
 	if err := cmd.Run(); err != nil {
-		util.Fail("Gradle failed: %v. Fix the build or list the class directories in %s (build.class_dirs).", err, config.ConfigFile)
+		fail("Gradle failed: %v. Fix the build or list the class directories in %s (build.class_dirs).", err, config.ConfigFile)
 	}
 	data, err := os.ReadFile(out)
 	if err != nil {
-		util.Fail("Gradle wrote no model: %v", err)
+		fail("Gradle wrote no model: %v", err)
 	}
 	var m ProjectModel
 	if err := json.Unmarshal(data, &m); err != nil {
-		util.Fail("Gradle wrote a bad model: %v", err)
+		fail("Gradle wrote a bad model: %v", err)
 	}
 	m.Generated.InputsSha1 = buildFilesSha1(abs)
 	data, _ = json.MarshalIndent(m, "", "  ")
 	if err := os.WriteFile(filepath.Join(abs, modelFile), append(data, '\n'), 0o644); err != nil {
-		util.Fail("%v", err)
+		fail("%v", err)
 	}
 	fmt.Fprintf(os.Stderr, "codemap init: %d modules, variants %s, %.0fs -> %s\n", len(m.Modules),
 		strings.Join(m.Variants, ", "), time.Since(t0).Seconds(), modelFile)

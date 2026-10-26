@@ -11,7 +11,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime/debug"
-	"runtime/pprof"
 	"slices"
 	"sort"
 	"strings"
@@ -100,11 +99,7 @@ func buildCmd(args []string) {
 	force := fs.Bool("force", false, "rebuild even when the inputs did not change")
 	fs.Parse(args)
 	abs, _ := filepath.Abs(*root)
-	if pf := os.Getenv("CODEMAP_PROFILE"); pf != "" {
-		f, _ := os.Create(pf)
-		pprof.StartCPUProfile(f)
-		defer pprof.StopCPUProfile()
-	}
+	defer util.Profile()()
 	debug.SetGCPercent(400)
 	t0 := time.Now()
 	c, err := config.LoadConfig(abs)

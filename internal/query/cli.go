@@ -10,7 +10,6 @@ import (
 	"os"
 	"regexp"
 	"runtime/debug"
-	"runtime/pprof"
 	"slices"
 	"sort"
 	"strconv"
@@ -190,11 +189,7 @@ func Query(cmd string, args []string) (code int) {
 			code = exitError
 		}
 	}()
-	if pf := os.Getenv("CODEMAP_PROFILE"); pf != "" {
-		f, _ := os.Create(pf)
-		pprof.StartCPUProfile(f)
-		defer pprof.StopCPUProfile()
-	}
+	defer util.Profile()()
 	debug.SetGCPercent(400)
 	o := parseOpts(cmd, args)
 	root := util.FindRoot()
