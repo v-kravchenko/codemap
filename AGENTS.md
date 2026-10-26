@@ -22,6 +22,8 @@ Run after every change:
 gofmt -l . && go vet ./... && go test ./...
 ```
 
+- Before a commit that touches more than a line, run `tools/check.sh`: staticcheck, govulncheck,
+  `go test -race` and the Windows and macOS builds, with the tools pinned in `tools/go.mod`.
 - `testdata/navapp` is an Android app compiled into `classes.zip`; the tests read the zip, not the
   sources. After changing its sources, run `testdata/navapp/update.sh` (Android SDK in
   `local.properties` or `ANDROID_HOME`) and commit the new `classes.zip` with them.
