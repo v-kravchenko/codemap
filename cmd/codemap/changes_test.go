@@ -55,3 +55,37 @@ func TestChangesBaseIsMergeBase(t *testing.T) {
 		t.Errorf("changes --base main: want BaseActivity and not defaultLabel in changed:\n%s", changed)
 	}
 }
+
+// TestChangesBaseRef: an explicit --base works where none of the default bases exists, and a value
+// git would read as an option is refused rather than passed on.
+func TestChangesBaseRef(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("no git")
+	}
+	root := fixture.FixtureRoot(t)
+	run := func(name string, args ...string) (string, error) {
+		cmd := exec.Command(name, args...)
+		cmd.Dir, cmd.Env = root, append(os.Environ(), "CODEMAP_AS_MAIN=1",
+			"GIT_AUTHOR_NAME=t", "GIT_AUTHOR_EMAIL=t@t", "GIT_COMMITTER_NAME=t", "GIT_COMMITTER_EMAIL=t@t")
+		out, err := cmd.CombinedOutput()
+		return string(out), err
+	}
+	must := func(name string, args ...string) {
+		if out, err := run(name, args...); err != nil {
+			t.Fatalf("%s %s: %v\n%s", name, strings.Join(args, " "), err, out)
+		}
+	}
+	must("git", "init", "-q", "-b", "trunk")
+	must("git", "add", ".")
+	must("git", "commit", "-qm", "base")
+	must(os.Args[0], "build")
+	if out, err := run(os.Args[0], "changes", "--base", "trunk", "--json", "--no-check"); err != nil {
+		t.Errorf("changes --base trunk without main: %v\n%s", err, out)
+	}
+	for _, args := range [][]string{{"--base", "--show-toplevel"}, {"--head", "--all"}} {
+		out, err := run(os.Args[0], append([]string{"changes", "--json", "--no-check"}, args...)...)
+		if err == nil || !strings.Contains(out, "is not a git revision") {
+			t.Errorf("changes %s: want a refusal, got %v\n%s", strings.Join(args, " "), err, out)
+		}
+	}
+}

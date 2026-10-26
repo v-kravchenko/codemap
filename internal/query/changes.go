@@ -276,6 +276,8 @@ func (g *Graph) cmdChanges(o opts) int {
 	if o.diff != "" && o.files != "" {
 		panic(util.UserError("--diff and --files cannot be combined"))
 	}
+	checkRef("--base", o.base)
+	checkRef("--head", o.head)
 	head := ""
 	if o.head != "" {
 		head = g.headOfMap(o.head)
@@ -303,9 +305,11 @@ func (g *Graph) cmdChanges(o opts) int {
 		}
 		g.refs = obj{{"input", input}, {"base", base}, {"head", headRef}}
 	} else {
-		ref := g.defaultBase(head)
+		var ref string
 		if o.base != "" {
 			ref = g.mergeBase(o.base, head)
+		} else {
+			ref = g.defaultBase(head)
 		}
 		baseRev = strings.TrimSpace(g.git("rev-parse", ref))
 		args := []string{"diff", "-M", "-U0", baseRev}
@@ -385,11 +389,19 @@ func exists(p string) bool {
 	return err == nil
 }
 
+// checkRef: a ref goes to git as an argument, where a leading '-' would read as an option.
+func checkRef(from, ref string) {
+	if strings.HasPrefix(ref, "-") {
+		panic(util.UserError(fmt.Sprintf("%s: %q is not a git revision", from, ref)))
+	}
+}
+
 func (g *Graph) defaultBase(head string) string {
 	if head == "" {
 		head = "HEAD"
 	}
 	for _, ref := range config.Cfg.Changes.Base {
+		checkRef("changes.base in "+config.ConfigFile, ref)
 		if out, ok := g.gitOK("merge-base", ref, head); ok {
 			return strings.TrimSpace(out)
 		}
