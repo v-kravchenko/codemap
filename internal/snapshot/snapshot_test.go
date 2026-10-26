@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"testing"
+	"unsafe"
 )
 
 func TestSnapshotRoundTrip(t *testing.T) {
@@ -76,4 +77,32 @@ func TestSnapshotCorrupt(t *testing.T) {
 			t.Errorf("%s: loaded without an error", name)
 		}
 	}
+}
+
+// FuzzLoad: any bytes load or fail with an error, never a panic. Run it with a memory limit:
+// `(ulimit -v 4000000; go test ./internal/snapshot -fuzz FuzzLoad -fuzztime 60s)`.
+func FuzzLoad(f *testing.F) {
+	m := &Map{}
+	m.Node.ID = []int64{10, 20}
+	m.Node.Owner = []int64{0, 10}
+	m.Node.Kind.Add("c")
+	m.Node.Kind.Add("m")
+	m.Out, m.In = EdgeCSR(map[Edge]struct{}{{10, 20, 1}: {}}, m.Node.ID)
+	m.Meta.Key.Add("nodes")
+	m.Meta.Value.Add("2")
+	path := filepath.Join(f.TempDir(), "map.snap")
+	if err := m.WriteSnapshot(path); err != nil {
+		f.Fatal(err)
+	}
+	good, err := os.ReadFile(path)
+	if err != nil {
+		f.Fatal(err)
+	}
+	f.Add(good)
+	f.Fuzz(func(t *testing.T, data []byte) {
+		// the columns are views of the buffer: copied into int64s for the alignment a mapped file has
+		buf := unsafe.Slice((*byte)(unsafe.Pointer(unsafe.SliceData(make([]int64, len(data)/8+1)))), len(data))
+		copy(buf, data)
+		loadBytes(buf)
+	})
 }

@@ -419,11 +419,20 @@ func LoadSnapshot(path string) (*Map, error) {
 	if err != nil {
 		return nil, err
 	}
+	m, err := loadBytes(buf)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %v", path, err)
+	}
+	return m, nil
+}
+
+// loadBytes: the map over buf, which must be 8-aligned.
+func loadBytes(buf []byte) (*Map, error) {
 	if len(buf) < 16 || string(buf[:8]) != snapMagic {
-		return nil, fmt.Errorf("%s: not a code map snapshot", path)
+		return nil, fmt.Errorf("not a code map snapshot")
 	}
 	if v := binary.LittleEndian.Uint32(buf[8:]); v != snapVersion {
-		return nil, fmt.Errorf("%s: snapshot format %d, expected %d: rebuild the map", path, v, snapVersion)
+		return nil, fmt.Errorf("snapshot format %d, expected %d: rebuild the map", v, snapVersion)
 	}
 	m := &Map{}
 	r := &snapReader{buf: buf, pos: 16}
@@ -432,7 +441,7 @@ func LoadSnapshot(path string) (*Map, error) {
 		r.err = fmt.Errorf("column count or size mismatch")
 	}
 	if r.err != nil {
-		return nil, fmt.Errorf("%s: %v", path, r.err)
+		return nil, r.err
 	}
 	return m, nil
 }
