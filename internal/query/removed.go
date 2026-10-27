@@ -3,7 +3,8 @@ package query
 // Screens a change removes: the activities, fragments, dialogs and previews the base's text of a
 // deleted or changed source declares and the map's revision has not. Read from the text, as added
 // ones are (docs/decisions/0021): the map has only the head, and a base map would need the base
-// compiled.
+// compiled. Given one (--base-db), the screens of the base's map the head's has not
+// (docs/decisions/0022).
 
 import (
 	"path/filepath"
@@ -190,4 +191,23 @@ func (g *Graph) removedScreens(paths []string, old func(path string) (base, oldP
 			[]string{b.kind, b.module, b.name, b.target, b.location})
 	})
 	return slices.CompactFunc(out, func(a, b removedScreen) bool { return a == b })
+}
+
+// removedFromBase: the screens of the base's map that are not screens in the map's revision, with
+// their location in the base.
+func (g *Graph) removedFromBase() []removedScreen {
+	out := []removedScreen{}
+	b := g.base
+	for _, n := range b.screenOrder {
+		if h := g.m.Index(b.m.Node.ID[n]); h >= 0 && len(g.screens[h]) > 0 {
+			continue
+		}
+		r := b.screens[n][0]
+		out = append(out, removedScreen{r.Kind, r.Label, r.Target, b.module(n), b.location(n)})
+	}
+	slices.SortFunc(out, func(a, b removedScreen) int {
+		return slices.Compare([]string{a.kind, a.module, a.name, a.target, a.location},
+			[]string{b.kind, b.module, b.name, b.target, b.location})
+	})
+	return out
 }

@@ -352,3 +352,76 @@ func TestChangesRemoved(t *testing.T) {
 		t.Errorf("changes --files without --base: removed %v, want null", got)
 	}
 }
+
+// TestChangesBaseDB: with the map of the base, a screen the base's map lacks is new and one the
+// head's lacks is removed, by the classes, with no git and no base text.
+func TestChangesBaseDB(t *testing.T) {
+	root := fixture.FixtureRoot(t)
+	run := func(args ...string) string {
+		cmd := exec.Command(os.Args[0], args...)
+		cmd.Dir, cmd.Env = root, append(os.Environ(), "CODEMAP_AS_MAIN=1")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("codemap %s: %v\n%s", strings.Join(args, " "), err, out)
+		}
+		return string(out)
+	}
+	classes := filepath.Join(root, "app/classes/navapp/impact/")
+	hide := func(name string) func() {
+		data, err := os.ReadFile(filepath.Join(classes, name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		os.Remove(filepath.Join(classes, name))
+		return func() { os.WriteFile(filepath.Join(classes, name), data, 0o644) }
+	}
+	restore := hide("QuietActivity.class")
+	run("build", "--out", "base.snap")
+	restore()
+	hide("LoudActivity.class")
+	run("build")
+	dir := "app/src/main/java/navapp/impact/"
+	os.WriteFile(filepath.Join(root, "files.txt"), []byte(dir+"Overrides.kt:22\n"), 0o644)
+	var a struct {
+		Meta struct {
+			Refs struct {
+				BaseMap struct {
+					Commit  *string
+					Variant string
+				} `json:"base_map"`
+			}
+		}
+		Changed []struct{ Symbol, Status string }
+		Screens []struct{ Name, Status string }
+		Removed []struct{ Kind, Name, Target, Module, Location string }
+	}
+	out := run("changes", "--files", "files.txt", "--base-db", "base.snap", "--json", "--no-check")
+	if err := json.Unmarshal([]byte(out), &a); err != nil {
+		t.Fatal(err)
+	}
+	got := map[string]string{}
+	for _, c := range a.Changed {
+		got[c.Symbol] = c.Status
+	}
+	for _, s := range a.Screens {
+		got["screen "+s.Name] = s.Status
+	}
+	for k, v := range map[string]string{"navapp.impact.QuietActivity.<init>": "added", "screen QuietActivity": "new"} {
+		if got[k] != v {
+			t.Errorf("%s is %q, want %q (all: %v)", k, got[k], v, got)
+		}
+	}
+	var removed []string
+	for _, r := range a.Removed {
+		removed = append(removed, strings.Join([]string{r.Kind, r.Name, r.Target, r.Module, r.Location}, " "))
+	}
+	if want := []string{"activity LoudActivity navapp.impact.LoudActivity app " + dir + "Overrides.kt:20"}; !slices.Equal(removed, want) {
+		t.Errorf("removed\n%v\nwant\n%v", strings.Join(removed, "\n"), strings.Join(want, "\n"))
+	}
+	if b := a.Meta.Refs.BaseMap; b.Commit != nil || b.Variant != "debug" {
+		t.Errorf("meta.refs.base_map: %+v", b)
+	}
+	if text := run("changes", "--files", "files.txt", "--base-db", "base.snap", "--no-check"); !strings.Contains(text, "Removed: 1") {
+		t.Errorf("changes text: no Removed: 1\n%s", text)
+	}
+}

@@ -5,6 +5,7 @@ package query
 import (
 	"bufio"
 	"bytes"
+	"cmp"
 	"fmt"
 	"io"
 	"os"
@@ -392,6 +393,37 @@ func (g *Graph) cmdChanges(o opts) int {
 	var seeds []Seed
 	var nc []notCovered
 	var warnings, analysed []string
+	var baseMap any
+	if o.baseDB != "" {
+		bm, bc := loadMap(o.baseDB, "codemap build --out "+o.baseDB+"` at the base, then `codemap changes --base-db "+o.baseDB)
+		g.base = NewGraph(bm, g.root)
+		var commit any
+		if c := bm.MetaValue("git_head"); c != "" {
+			commit = c
+		}
+		variant := cmp.Or(bc.Variant, "debug")
+		baseMap = obj{{"commit", commit}, {"variant", variant}, {"dirty", bm.MetaValue("dirty") == "1"}}
+		// a map of another revision than the base, or of another variant, adds and removes what the change does not
+		var wrong []string
+		if c, _ := commit.(string); c != "" && baseRev != "" && c != baseRev {
+			wrong = append(wrong, "is built from "+short(c)+", not the base "+short(baseRev))
+		}
+		if bm.MetaValue("dirty") == "1" {
+			wrong = append(wrong, "is built from a working tree with uncommitted changes")
+		}
+		if v := cmp.Or(config.Cfg.Variant, "debug"); variant != v {
+			wrong = append(wrong, "is of the variant "+variant+", not "+v)
+		}
+		if len(wrong) > 0 {
+			msg := "the code map at --base-db " + strings.Join(wrong, " and ") + ": added and removed may not be the change's"
+			if o.strict {
+				fmt.Fprintln(os.Stderr, "error: "+msg)
+				return exitStale
+			}
+			warnings = append(warnings, msg)
+		}
+	}
+	g.refs = append(g.refs.(obj), kv{"base_map", baseMap})
 	if len(mismatched) > 0 {
 		more := ""
 		if len(mismatched) > 5 {
@@ -405,7 +437,7 @@ func (g *Graph) cmdChanges(o opts) int {
 		}
 		warnings = append(warnings, msg)
 	}
-	g.bases, g.statusKnown, g.resChanges = map[string]*fileBase{}, !files || baseRev != "", map[int32][]resChange{}
+	g.bases, g.statusKnown, g.resChanges = map[string]*fileBase{}, !files || baseRev != "" || g.base != nil, map[int32][]resChange{}
 	for _, path := range util.SortedKeys(linesByPath) {
 		lines := linesByPath[path]
 		if strings.Contains(path, "/src/test") || strings.Contains(path, "/src/androidTest") {
@@ -453,7 +485,9 @@ func (g *Graph) cmdChanges(o opts) int {
 		}
 	}
 	g.removed = nil
-	if g.statusKnown {
+	if g.base != nil {
+		g.removed = g.removedFromBase()
+	} else if g.statusKnown {
 		var sources []string
 		for _, p := range util.SortedKeys(linesByPath) {
 			if (strings.HasSuffix(p, ".kt") || strings.HasSuffix(p, ".java")) && !strings.Contains(p, "/src/test") && !strings.Contains(p, "/src/androidTest") {
@@ -519,6 +553,9 @@ func (g *Graph) fileBase(path, oldPath string, isNew bool, base, head string, pl
 	}
 	return b
 }
+
+// short: a commit as git abbreviates it in a message.
+func short(commit string) string { return commit[:min(12, len(commit))] }
 
 func exists(p string) bool {
 	_, err := os.Stat(p)

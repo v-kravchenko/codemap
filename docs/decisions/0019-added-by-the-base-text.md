@@ -36,4 +36,5 @@ from `depth`. A route is never `new`: its node is not a declaration of the sourc
 - A preview in a new file, or added to an existing one, is `new`: a consumer comparing before and
   after knows it has no before without exporting the base's sources.
 - The match is textual, per file: a symbol moved from another file is `added` in its new one.
-- A map of the base stays possible later for what text cannot tell.
+- A map of the base gives the exact answer when there is one (`--base-db`, docs/decisions/0022);
+  the text stays the fallback.

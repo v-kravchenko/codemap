@@ -65,6 +65,7 @@ var commands = []command{
 		flags: []flagSpec{
 			{name: "base", arg: "REF", help: "the base to compare with (default: the first of changes.base in codemap.yml that resolves)"},
 			{name: "head", arg: "REF", help: "the commit to compare instead of the working tree; the map must be built from it"},
+			{name: "base-db", arg: "FILE", help: "the code map of the base: added and removed by the two maps, not by the base's text"},
 			{name: "diff", arg: "-|FILE", help: "a unified diff from stdin or a file instead of git diff"},
 			{name: "files", arg: "-|FILE", help: "lines of path, path:N or path:N-M instead of a diff"},
 			{name: "format", arg: "targets", help: "a line per screen: status, depth, target, module, qualifiers, tab-separated, new first (not with --json)"},

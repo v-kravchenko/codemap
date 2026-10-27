@@ -11,7 +11,7 @@ strips it since `meta.run` is never reproducible).
 
 ```json
 {
-  "schema_version": "3.7.0",
+  "schema_version": "3.8.0",
   "command": "impact",
   "meta": {
     "tool_version": "0.3.0",
@@ -32,7 +32,7 @@ strips it since `meta.run` is never reproducible).
 }
 ```
 
-- `schema_version` — the shape of the JSON output (`"3.7.0"`, `internal/query/cli.go`). Independent
+- `schema_version` — the shape of the JSON output (`"3.8.0"`, `internal/query/cli.go`). Independent
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
   `"changes"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
@@ -156,7 +156,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.7.0",
+  "schema_version": "3.8.0",
   "command": "used-by",
   "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
   "items": [
@@ -218,7 +218,7 @@ Result fields (full `impact`, no `--to`):
 
 ```json
 {
-  "schema_version": "3.7.0",
+  "schema_version": "3.8.0",
   "command": "impact",
   "changed": [
     {
@@ -270,6 +270,9 @@ codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--na
 - `--diff -|FILE` — read a unified diff from stdin (`-`) or a file instead of running `git diff`.
 - `--files -|FILE` — read a list of `path`, `path:N` or `path:N-M` lines instead of a diff.
 - `--depth`, `--kind`, `--nav`, `--no-paths`, `--module`, `--json` — as in `impact`.
+- `--base-db FILE` — the code map of the base (`codemap build --out FILE` on a checkout of it):
+  `changed[].status`, `screens[].status` and `removed` come from the two maps instead of the
+  base's text (docs/decisions/0022), with `--files` too.
 - `--format targets` — instead of the text, a line per screen for a script: status, depth, target,
   module and qualifiers (comma-separated, empty for every configuration), tab-separated, sorted by
   status (`new`, `changed`, `affected`), depth, target; warnings go to stderr. Not with `--json`.
@@ -301,16 +304,25 @@ Result: the shape of `impact` (it calls the same `reportImpactWith`), plus since
   previews the base's text of a deleted or changed source declares and neither the map nor the
   head's text has (docs/decisions/0021). A `--diff` without `--base` sees only deleted files;
   `null` for `--files` without `--base`.
+- With `--base-db` (since 3.8.0): a symbol is `added` and a screen (a route too) `new` when the
+  base's map has no node of its id and, for a member, its class there no member of its name (a
+  function whose parameters changed stays `modified`); a lambda or anonymous class goes with the
+  declaration it is in.
+  `removed` is every screen of the base's map that is not a screen in the head's, wherever its
+  source, routes and nested classes included, at its location in the base, sorted as above.
 - `screens[].qualifiers` — the qualifiers whose changes alone reach the screen (`["night"]`: only the
   night render changes); `null` when code or an unqualified resource reaches it.
 
-and `meta.refs: {input, base, head}` where `input` is `"git"`, `"diff"` or `"files"`, `base` is the
+and `meta.refs: {input, base, head, base_map}` where `input` is `"git"`, `"diff"` or `"files"`, `base` is the
 resolved base ref/commit (or `null` without `--diff`/`--files` and no `--base`), `head` is the
-resolved head commit or `"WORKTREE"`.
+resolved head commit or `"WORKTREE"`, and `base_map` is `{commit, variant, dirty}` of the `--base-db` map
+(`null` without it; since 3.8.0). A base map of another commit than the resolved base, built from
+a dirty tree or of another variant than the head's adds and removes what the change does not:
+`warnings` says so, and with `--strict` it is an error, exit 3, with no answer.
 
 ```json
 {
-  "schema_version": "3.7.0",
+  "schema_version": "3.8.0",
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
@@ -379,7 +391,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.7.0", "command": "nav-path",
+  "schema_version": "3.8.0", "command": "nav-path",
   "targets": [{ "name": "Login", "kind": "route", "module": "app",
     "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
   "screens": [
@@ -443,7 +455,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.7.0", "command": "graph",
+  "schema_version": "3.8.0", "command": "graph",
   "roots": ["Home"], "walk": "out", "to": [],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
@@ -499,7 +511,7 @@ where the walk back ends, as in `nav-path` (`{name, kind, module, location, host
 
 ```json
 {
-  "schema_version": "3.7.0", "command": "screens",
+  "schema_version": "3.8.0", "command": "screens",
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
@@ -541,7 +553,7 @@ module then location, truncated to `--limit`; `hidden_by_module` — with `--mod
 
 ```json
 {
-  "schema_version": "3.7.0", "command": "find", "pattern": "Activity",
+  "schema_version": "3.8.0", "command": "find", "pattern": "Activity",
   "total": 15, "synthetic": 0,
   "symbols": [
     { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",

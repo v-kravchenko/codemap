@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	schemaVersion = "3.7.0"
+	schemaVersion = "3.8.0"
 	exitOK        = 0
 	exitError     = 2
 )
@@ -36,12 +36,12 @@ var (
 )
 
 type opts struct {
-	db, variant, to, base, head, diff, files, from, entry, direction, host string
-	json, all, noPaths, noSelf, noDI, noCheck, nav                         bool
-	format                                                                 string
-	strict, verbose, info, ways, in, unreachable, noPreview                bool
-	depth, limit                                                           int
-	kinds, pos, via, avoid, modules, types                                 []string
+	db, variant, to, base, baseDB, head, diff, files, from, entry, direction, host string
+	json, all, noPaths, noSelf, noDI, noCheck, nav                                 bool
+	format                                                                         string
+	strict, verbose, info, ways, in, unreachable, noPreview                        bool
+	depth, limit                                                                   int
+	kinds, pos, via, avoid, modules, types                                         []string
 }
 
 // fields: where each option goes: a switch sets its bool, a value its string, a repeatable one
@@ -51,7 +51,7 @@ func (o *opts) fields() (map[string]*bool, map[string]*string, map[string]*[]str
 		"no-paths": &o.noPaths, "no-self": &o.noSelf, "no-di": &o.noDI, "unreachable": &o.unreachable,
 		"no-check": &o.noCheck, "strict": &o.strict, "nav": &o.nav, "ways": &o.ways, "in": &o.in,
 		"no-preview": &o.noPreview}
-	values := map[string]*string{"db": &o.db, "variant": &o.variant, "to": &o.to, "base": &o.base, "head": &o.head, "diff": &o.diff,
+	values := map[string]*string{"db": &o.db, "variant": &o.variant, "to": &o.to, "base": &o.base, "base-db": &o.baseDB, "head": &o.head, "diff": &o.diff,
 		"files": &o.files, "format": &o.format, "host": &o.host, "from": &o.from, "entry": &o.entry, "direction": &o.direction}
 	lists := map[string]*[]string{"kind": &o.kinds, "type": &o.types, "via": &o.via, "avoid": &o.avoid,
 		"module": &o.modules}
@@ -179,19 +179,7 @@ func Query(cmd string, args []string) (code int) {
 			panic(util.UserError(err.Error()))
 		}
 	}
-	m, err := snapshot.LoadSnapshot(o.db)
-	if os.IsNotExist(err) {
-		panic(util.UserError(fmt.Sprintf("No code map at %s: run `%s`.", o.db, rebuild)))
-	} else if err != nil {
-		panic(util.UserError(err.Error()))
-	}
-	if v := m.MetaValue("index_version"); v != snapshot.IndexVersion {
-		panic(util.UserError(fmt.Sprintf("The code map at %s is from another version of the tool: run `codemap build`.", o.db)))
-	}
-	var c config.Config
-	if err := json.Unmarshal([]byte(m.MetaValue("config")), &c); err != nil {
-		panic(util.UserError(fmt.Sprintf("The code map at %s has no settings: run `codemap build`.", o.db)))
-	}
+	m, c := loadMap(o.db, rebuild)
 	config.ApplyConfig(&c)
 	g := NewGraph(m, root)
 	if !o.noCheck && cmd != "build" {
@@ -220,6 +208,24 @@ func Query(cmd string, args []string) (code int) {
 		code = g.reportMissing(o.strict, code)
 	}
 	return g.reportStale(o.strict, code)
+}
+
+// loadMap: the map at path and the settings it was built with; rebuild is the command that makes it.
+func loadMap(path, rebuild string) (*snapshot.Map, config.Config) {
+	m, err := snapshot.LoadSnapshot(path)
+	if os.IsNotExist(err) {
+		panic(util.UserError(fmt.Sprintf("No code map at %s: run `%s`.", path, rebuild)))
+	} else if err != nil {
+		panic(util.UserError(err.Error()))
+	}
+	if v := m.MetaValue("index_version"); v != snapshot.IndexVersion {
+		panic(util.UserError(fmt.Sprintf("The code map at %s is from another version of the tool: run `codemap build`.", path)))
+	}
+	var c config.Config
+	if err := json.Unmarshal([]byte(m.MetaValue("config")), &c); err != nil {
+		panic(util.UserError(fmt.Sprintf("The code map at %s has no settings: run `codemap build`.", path)))
+	}
+	return m, c
 }
 
 func (g *Graph) run(cmd string, o opts) int {

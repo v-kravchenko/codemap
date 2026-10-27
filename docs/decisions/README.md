@@ -53,3 +53,4 @@ a stale file path) may be fixed directly in place; a changed decision gets a new
 | [0019](0019-added-by-the-base-text.md) | Added or modified: a declaration the base text lacks | accepted |
 | [0020](0020-previews-by-content.md) | A preview goes with the screen whose own composables it draws | accepted |
 | [0021](0021-removed-by-the-base-text.md) | Removed screens: declarations the base text has and the head has not | accepted |
+| [0022](0022-added-and-removed-by-a-base-map.md) | Added and removed by a map of the base | accepted |

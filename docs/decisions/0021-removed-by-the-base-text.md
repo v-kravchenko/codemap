@@ -33,4 +33,5 @@ the base), `null` when nothing tells it (`--files` without `--base`), as `change
 - Routes are not covered: a route is a node the map derives from navigation calls, not a declaration
   of the source. Nested classes, previews inside classes and screens whose base the map no longer
   has are not either.
-- A map of the base stays possible later for what text cannot tell.
+- A map of the base gives the exact answer when there is one (`--base-db`, docs/decisions/0022);
+  the text stays the fallback.

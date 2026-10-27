@@ -92,6 +92,9 @@ ends; `screens --host X` the screens an Activity hosts; `screens CreateConfirmSc
 draws a composable; `find --type class` one kind of symbol;
 `used-by --no-di` without generated DI code.
 
+`changes --base-db base.snap` reads what the change adds and removes from the map of the base
+(`build --out base.snap` on a checkout of it) instead of the base's text: exact, routes included.
+
 `build --variant release` builds the map of another variant next to the configured one
 (`build/codemap/release.snap`); a query reads it with `--variant release`.
 `build` skips a map built by the same binary from the same inputs (`--force` rebuilds it). Queries
