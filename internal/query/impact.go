@@ -485,249 +485,306 @@ func (g *Graph) key(n int32, ctx Ctx) Key {
 	return plainKey(n, modeMember)
 }
 
+// walker is the state of one walk; a step reads one reached key.
+type walker struct {
+	g        *Graph
+	w        *Walk
+	queue    []Key
+	maxDepth int
+	blocked  map[[3]int32]bool
+	skip     map[int32]bool
+	bases    map[int32]bool
+	alt      map[Key][]Parent
+}
+
+// step: a reached key, its decoded context and the depth of what it reaches.
+type step struct {
+	key   Key
+	ctx   int32
+	runs  []int32
+	aff   *Aff
+	depth int
+	nd    int
+}
+
 // walk: maxDepth < 0: no limit; nil maps: none. alt: the other parents of
 // a key at the depth of its first one.
 func (g *Graph) walk(seeds []Seed, maxDepth int, blocked map[[3]int32]bool,
 	skip map[int32]bool, bases map[int32]bool, alt map[Key][]Parent) *Walk {
-	w := newWalk()
-	queue := []Key{}
-	push := func(k Key, depth int, parent *Key, why string) {
-		if a, ok := w.Aff[k]; !ok {
-			v := &Aff{Depth: depth, Why: why}
-			if parent != nil {
-				v.Parent, v.HasParent = *parent, true
-			}
-			w.Aff[k] = v
-			w.Keys = append(w.Keys, k)
-			queue = append(queue, k)
-		} else if alt != nil && parent != nil && a.Depth == depth && !(a.HasParent && a.Parent == *parent && a.Why == why) {
-			p := Parent{*parent, why}
-			if !slices.Contains(alt[k], p) {
-				alt[k] = append(alt[k], p)
-			}
-		}
-	}
-	isBlocked := func(src, called, expanded int32) bool { return blocked[[3]int32{src, called, expanded}] }
+	wk := &walker{g: g, w: newWalk(), maxDepth: maxDepth, blocked: blocked, skip: skip, bases: bases, alt: alt}
 	for _, s := range seeds {
-		push(plainKey(s.N, s.Mode), 0, nil, "changed")
+		wk.push(plainKey(s.N, s.Mode), 0, nil, "changed")
 	}
-	for head := 0; head < len(queue); head++ {
-		key := queue[head]
-		nid, mode := key.N, key.Mode
-		ctx := key.Recv
-		var runs []int32
-		if key.Runs != "" {
-			runs = decodeRuns(key.Runs)
+	for head := 0; head < len(wk.queue); head++ {
+		wk.visit(wk.queue[head])
+	}
+	return wk.w
+}
+
+func (wk *walker) push(k Key, depth int, parent *Key, why string) {
+	if a, ok := wk.w.Aff[k]; !ok {
+		v := &Aff{Depth: depth, Why: why}
+		if parent != nil {
+			v.Parent, v.HasParent = *parent, true
 		}
-		aff := w.Aff[key]
-		depth := aff.Depth
-		kind := g.kind(nid)
-		top := g.topOf(nid)
-		if skip[nid] {
+		wk.w.Aff[k] = v
+		wk.w.Keys = append(wk.w.Keys, k)
+		wk.queue = append(wk.queue, k)
+	} else if wk.alt != nil && parent != nil && a.Depth == depth && !(a.HasParent && a.Parent == *parent && a.Why == why) {
+		p := Parent{*parent, why}
+		if !slices.Contains(wk.alt[k], p) {
+			wk.alt[k] = append(wk.alt[k], p)
+		}
+	}
+}
+
+func (wk *walker) isBlocked(src, called, expanded int32) bool {
+	return wk.blocked[[3]int32{src, called, expanded}]
+}
+
+func (wk *walker) visit(key Key) {
+	g, w, nid := wk.g, wk.w, key.N
+	aff := w.Aff[key]
+	s := &step{key: key, ctx: key.Recv, aff: aff, depth: aff.Depth, nd: aff.Depth + 1}
+	if key.Runs != "" {
+		s.runs = decodeRuns(key.Runs)
+	}
+	kind := g.kind(nid)
+	top := g.topOf(nid)
+	if wk.skip[nid] {
+		return
+	}
+	if kind == "ROUTE" {
+		w.screen(nid, key)
+		return
+	}
+	if rows, ok := g.screens[nid]; ok && rows[0].Kind == "preview" {
+		w.screen(nid, key)
+		return
+	}
+	if rows, ok := g.screens[nid]; ok && rows[0].Kind == "layout" {
+		w.screen(nid, key)
+	}
+	if g.screenTops[top] {
+		if route := g.routeContaining(nid); route >= 0 {
+			wk.push(plainKey(route, modeWhole), s.depth, &key, "route content")
+			return
+		}
+		w.screen(top, key)
+		return
+	}
+	if g.diGlue[top] && s.depth > 0 {
+		return
+	}
+	if wk.maxDepth >= 0 && s.depth >= wk.maxDepth {
+		return
+	}
+	switch kind {
+	case "M":
+		wk.method(s)
+	case "F":
+		for _, u := range g.users(nid, snapshot.READ) {
+			if !g.generatedRead(u.N, nid) {
+				wk.push(g.key(u.N, Ctx{g.callerCtx(u.N, s.ctx), ""}), s.nd, &s.key, "reads")
+			}
+		}
+		if g.flags(nid)&snapshot.ConstantFlag != 0 {
+			for _, src := range g.constUsers(nid) {
+				wk.push(plainKey(src, modeMember), s.nd, &s.key, "source")
+			}
+		}
+	case "C":
+		wk.class(s)
+	case "R":
+		for _, u := range g.users(nid, snapshot.RES, snapshot.XML_RES) {
+			wk.push(g.key(u.N, noCtx), s.nd, &s.key, edgeKinds[u.Kind])
+		}
+	}
+}
+
+func (wk *walker) method(s *step) {
+	g, nid, key := wk.g, s.key.N, &s.key
+	owner := g.owner(nid)
+	callers := g.users(nid, snapshot.CALL, snapshot.LAMBDA, snapshot.INLINE, snapshot.ROUTE_CONTENT)
+	calledHere := wk.callers(s, owner, callers)
+	sups := g.overridden(nid)
+	wk.callsViaSuper(s, owner, sups)
+	// a reached constructor: STATE below; a static initializer also changes the static fields it writes
+	name := g.name(nid)
+	if !(s.depth > 0 && name == "<init>") {
+		for _, u := range g.uses(nid, snapshot.WRITE) {
+			wk.push(g.key(u.N, Ctx{g.callerCtx(u.N, s.ctx), ""}), s.nd, key, "writes")
+		}
+	}
+	// a method that only names a changed type runs as before: its class does not change state
+	byType := s.aff.Why == "type"
+	if byType && name == "<init>" && s.aff.HasParent {
+		p := s.aff.Parent.N
+		if g.kind(p) == "C" && strings.HasPrefix(g.name(p), g.name(owner)+"$") {
+			byType = false // the constructor runs a lambda of its own class (init block)
+		}
+	}
+	callback := func() bool {
+		return len(sups) == 0 && g.flags(nid)&(accStatic|accPrivate) == 0 && g.hasExternalAncestor(owner)
+	}
+	switch {
+	case byType:
+	case name == "<init>" || name == "<clinit>":
+		wk.push(g.key(owner, Ctx{s.ctx, ""}), s.nd, key, "initializer")
+	case len(callers) == 0 && callback():
+		wk.push(g.key(owner, Ctx{s.ctx, key.Runs}), s.nd, key, "framework callback")
+	case s.ctx >= 0 && g.screenTops[s.ctx] && !calledHere && callback():
+		// a base's `onCreate()` the screen does not override: the framework calls it on the screen
+		wk.push(plainKey(s.ctx, modeState), s.nd, key, "framework callback")
+	}
+}
+
+// callers: the callers of a reached method, reports whether one runs on the instance of the context.
+func (wk *walker) callers(s *step, owner int32, callers []Use) bool {
+	g, nid, key := wk.g, s.key.N, &s.key
+	base := wk.bases != nil && owner >= 0 && g.subclassCount(owner) >= config.HubMin
+	calledHere := false
+	for _, u := range callers {
+		src := u.N
+		if wk.isBlocked(src, nid, nid) {
 			continue
 		}
-		if kind == "ROUTE" {
-			w.screen(nid, key)
+		if base && g.isSubtype(g.callerClass(src), owner) {
+			wk.bases[owner] = true // super.onCreate(), handleError() of a base of many classes
 			continue
 		}
-		if rows, ok := g.screens[nid]; ok && rows[0].Kind == "preview" {
-			w.screen(nid, key)
+		if !g.reaches(src, nid, s.ctx) {
 			continue
 		}
-		if rows, ok := g.screens[nid]; ok && rows[0].Kind == "layout" {
-			w.screen(nid, key)
+		calledHere = true
+		if via, ok := g.callVia[nid][src]; ok && g.screenTops[via] && g.screens[via][0].Kind == "dialog" &&
+			!g.kin(g.topOf(src), via) {
+			// an inherited method called on a dialog (`show()`) runs in that dialog
+			wk.push(g.key(via, noCtx), s.nd, key, "call on screen")
+			continue
 		}
-		if g.screenTops[top] {
-			if route := g.routeContaining(nid); route >= 0 {
-				push(plainKey(route, modeWhole), depth, &key, "route content")
+		caller := g.callerClass(src)
+		if g.runsOverride(caller, s.runs) {
+			continue
+		}
+		sub := g.callerCtx(src, s.ctx)
+		if g.runsOverride(sub, s.runs) {
+			continue
+		}
+		through := ""
+		if sub >= 0 || g.thisCall(caller, nid) { // the same instance
+			through = key.Runs
+			if u.Kind == snapshot.CALL && len(g.overriders(nid)) > 0 && !g.runsOverride(caller, []int32{nid}) {
+				through = addRun(key.Runs, nid)
+			}
+		}
+		wk.push(g.key(src, Ctx{sub, through}), s.nd, key, edgeKinds[u.Kind])
+	}
+	return calledHere
+}
+
+// callsViaSuper: calls through a supertype reach this implementation when the instance comes from
+// DI (or from nowhere visible); an instance the code creates changes the behaviour where created.
+func (wk *walker) callsViaSuper(s *step, owner int32, sups []int32) {
+	g, nid, key := wk.g, s.key.N, &s.key
+	if len(sups) == 0 {
+		return
+	}
+	receiver := s.ctx
+	if receiver < 0 {
+		receiver = owner
+	}
+	var madeBy []int32
+	di := false
+	if g.flags(owner)&snapshot.AccAbstract == 0 {
+		madeBy, di = g.creators(owner)
+	}
+	for _, src := range madeBy {
+		wk.push(g.key(src, noCtx), s.nd, key, "creates "+g.label(owner))
+	}
+	if !di && len(madeBy) > 0 {
+		return
+	}
+	type superCall struct {
+		u       Use
+		holders []int32
+	}
+	var viaSuper []superCall
+	for _, sup := range sups {
+		holders := g.holders(owner, g.owner(sup))
+		for _, u := range g.users(sup, snapshot.CALL, snapshot.LAMBDA, snapshot.INLINE) {
+			if g.reaches(u.N, sup, receiver) && !wk.isBlocked(u.N, sup, nid) &&
+				!g.runsOverride(g.callerClass(u.N), s.runs) {
+				viaSuper = append(viaSuper, superCall{u, holders})
+			}
+		}
+	}
+	for _, sc := range viaSuper {
+		u := sc.u
+		for _, rcv := range g.holdersIn(g.callerClass(u.N), receiver, sc.holders) {
+			sub := g.callerCtx(u.N, rcv)
+			if g.runsOverride(sub, s.runs) {
 				continue
 			}
-			w.screen(top, key)
+			through := ""
+			if sub >= 0 || g.thisCall(g.callerClass(u.N), nid) {
+				through = key.Runs
+			}
+			wk.push(g.key(u.N, Ctx{sub, through}), s.nd, key, "call via supertype")
+		}
+	}
+}
+
+func (wk *walker) class(s *step) {
+	g, nid, key := wk.g, s.key.N, &s.key
+	if s.key.Mode == modeWhole {
+		for _, m := range g.members(nid) {
+			wk.push(plainKey(m, modeMember), s.depth, key, "member")
+		}
+	}
+	_, _, lambda := g.enclosing(g.name(nid))
+	lambdaCtx := int32(-1)
+	if lambda { // a lambda of a `this` call
+		lambdaCtx = s.ctx
+	}
+	if wk.bases != nil && !lambda && s.aff.Why == "framework callback" && !g.screenTops[nid] {
+		wk.creatorsOfCallback(s)
+	}
+	base := wk.bases != nil && g.subclassCount(nid) >= config.HubMin
+	if base { // a base of many classes: listed, its subclasses not walked
+		wk.bases[nid] = true
+	}
+	for _, u := range g.users(nid, snapshot.TYPE, snapshot.EXTENDS, snapshot.IMPLEMENTS, snapshot.XML_CLASS, snapshot.ROUTE_CONTENT) {
+		if base && (u.Kind == snapshot.EXTENDS || u.Kind == snapshot.IMPLEMENTS) {
 			continue
 		}
-		if g.diGlue[top] && depth > 0 {
+		if wk.bases != nil && u.Kind == snapshot.TYPE && !lambda && !(g.screenTops[g.topOf(u.N)] && g.isViewModel(nid)) {
+			continue // who opens: code that runs it, not code naming its type
+		}
+		if len(s.runs) > 0 && u.Kind == snapshot.EXTENDS { // a subclass inherits the callback: unless it overrides
+			if !g.runsOverride(u.N, s.runs) {
+				wk.push(Key{u.N, modeState, Ctx{-1, key.Runs}}, s.nd, key, edgeKinds[u.Kind])
+			}
 			continue
 		}
-		if maxDepth >= 0 && depth >= maxDepth {
+		wk.push(g.key(u.N, Ctx{g.callerCtx(u.N, lambdaCtx), ""}), s.nd, key, edgeKinds[u.Kind])
+	}
+}
+
+// creatorsOfCallback: the framework calls back an object the code makes (an ActivityResultContract's
+// createIntent): who makes it runs the callback; a subclass's super() makes no object.
+func (wk *walker) creatorsOfCallback(s *step) {
+	g, nid := wk.g, s.key.N
+	for _, m := range g.members(nid) {
+		if g.name(m) != "<init>" {
 			continue
 		}
-		nd := depth + 1
-		switch kind {
-		case "M":
-			owner := g.owner(nid)
-			callers := g.users(nid, snapshot.CALL, snapshot.LAMBDA, snapshot.INLINE, snapshot.ROUTE_CONTENT)
-			base := bases != nil && owner >= 0 && g.subclassCount(owner) >= config.HubMin
-			calledHere := false // a caller runs on the instance of `ctx`
-			for _, u := range callers {
-				src := u.N
-				if isBlocked(src, nid, nid) {
-					continue
-				}
-				if base && g.isSubtype(g.callerClass(src), owner) {
-					bases[owner] = true // super.onCreate(), handleError() of a base of many classes
-					continue
-				}
-				if !g.reaches(src, nid, ctx) {
-					continue
-				}
-				calledHere = true
-				if via, ok := g.callVia[nid][src]; ok && g.screenTops[via] && g.screens[via][0].Kind == "dialog" &&
-					!g.kin(g.topOf(src), via) {
-					// an inherited method called on a dialog (`show()`) runs in that dialog
-					push(g.key(via, noCtx), nd, &key, "call on screen")
-					continue
-				}
-				caller := g.callerClass(src)
-				if g.runsOverride(caller, runs) {
-					continue
-				}
-				sub := g.callerCtx(src, ctx)
-				if g.runsOverride(sub, runs) {
-					continue
-				}
-				through := ""
-				if sub >= 0 || g.thisCall(caller, nid) { // the same instance
-					through = key.Runs
-					if u.Kind == snapshot.CALL && len(g.overriders(nid)) > 0 && !g.runsOverride(caller, []int32{nid}) {
-						through = addRun(key.Runs, nid)
-					}
-				}
-				push(g.key(src, Ctx{sub, through}), nd, &key, edgeKinds[u.Kind])
-			}
-			// calls through a supertype reach this implementation when the instance comes from DI (or
-			// from nowhere visible); an instance the code creates changes the behaviour where created
-			type superCall struct {
-				u       Use
-				holders []int32
-			}
-			var viaSuper []superCall
-			receiver := ctx
-			if receiver < 0 {
-				receiver = owner
-			}
-			sups := g.overridden(nid)
-			if len(sups) > 0 {
-				var madeBy []int32
-				di := false
-				if g.flags(owner)&snapshot.AccAbstract == 0 {
-					madeBy, di = g.creators(owner)
-				}
-				for _, src := range madeBy {
-					push(g.key(src, noCtx), nd, &key, "creates "+g.label(owner))
-				}
-				if di || len(madeBy) == 0 {
-					for _, sup := range sups {
-						holders := g.holders(owner, g.owner(sup))
-						for _, u := range g.users(sup, snapshot.CALL, snapshot.LAMBDA, snapshot.INLINE) {
-							if g.reaches(u.N, sup, receiver) && !isBlocked(u.N, sup, nid) &&
-								!g.runsOverride(g.callerClass(u.N), runs) {
-								viaSuper = append(viaSuper, superCall{u, holders})
-							}
-						}
-					}
-				}
-			}
-			for _, sc := range viaSuper {
-				u := sc.u
-				for _, rcv := range g.holdersIn(g.callerClass(u.N), receiver, sc.holders) {
-					sub := g.callerCtx(u.N, rcv)
-					if g.runsOverride(sub, runs) {
-						continue
-					}
-					through := ""
-					if sub >= 0 || g.thisCall(g.callerClass(u.N), nid) {
-						through = key.Runs
-					}
-					push(g.key(u.N, Ctx{sub, through}), nd, &key, "call via supertype")
-				}
-			}
-			// a reached constructor: STATE below; a static initializer also changes the static fields it writes
-			name := g.name(nid)
-			if !(depth > 0 && name == "<init>") {
-				for _, u := range g.uses(nid, snapshot.WRITE) {
-					push(g.key(u.N, Ctx{g.callerCtx(u.N, ctx), ""}), nd, &key, "writes")
-				}
-			}
-			// a method that only names a changed type runs as before: its class does not change state
-			byType := aff.Why == "type"
-			if byType && name == "<init>" && aff.HasParent {
-				p := aff.Parent.N
-				if g.kind(p) == "C" && strings.HasPrefix(g.name(p), g.name(owner)+"$") {
-					byType = false // the constructor runs a lambda of its own class (init block)
-				}
-			}
-			if byType {
-			} else if name == "<init>" || name == "<clinit>" {
-				push(g.key(owner, Ctx{ctx, ""}), nd, &key, "initializer")
-			} else if len(callers) == 0 && len(sups) == 0 && g.flags(nid)&(accStatic|accPrivate) == 0 &&
-				g.hasExternalAncestor(owner) {
-				push(g.key(owner, Ctx{ctx, key.Runs}), nd, &key, "framework callback")
-			} else if ctx >= 0 && g.screenTops[ctx] && !calledHere && len(sups) == 0 &&
-				g.flags(nid)&(accStatic|accPrivate) == 0 && g.hasExternalAncestor(owner) {
-				// a base's `onCreate()` the screen does not override: the framework calls it on the screen
-				push(plainKey(ctx, modeState), nd, &key, "framework callback")
-			}
-		case "F":
-			for _, u := range g.users(nid, snapshot.READ) {
-				if !g.generatedRead(u.N, nid) {
-					push(g.key(u.N, Ctx{g.callerCtx(u.N, ctx), ""}), nd, &key, "reads")
-				}
-			}
-			if g.flags(nid)&snapshot.ConstantFlag != 0 {
-				for _, src := range g.constUsers(nid) {
-					push(plainKey(src, modeMember), nd, &key, "source")
-				}
-			}
-		case "C":
-			if mode == modeWhole {
-				for _, m := range g.members(nid) {
-					push(plainKey(m, modeMember), depth, &key, "member")
-				}
-			}
-			_, _, lambda := g.enclosing(g.name(nid))
-			lambdaCtx := int32(-1)
-			if lambda { // a lambda of a `this` call
-				lambdaCtx = ctx
-			}
-			if bases != nil && !lambda && aff.Why == "framework callback" && !g.screenTops[nid] {
-				// the framework calls back an object the code makes (an ActivityResultContract's
-				// createIntent): who makes it runs the callback; a subclass's super() makes no object
-				for _, m := range g.members(nid) {
-					if g.name(m) == "<init>" {
-						for _, u := range g.users(m, snapshot.CALL) {
-							if g.topOf(u.N) != g.topOf(nid) && !g.diGlue[g.topOf(u.N)] && !g.isSubtype(g.callerClass(u.N), nid) {
-								push(g.key(u.N, noCtx), nd, &key, "creates "+g.label(nid))
-							}
-						}
-					}
-				}
-			}
-			base := bases != nil && g.subclassCount(nid) >= config.HubMin
-			if base { // a base of many classes: listed, its subclasses not walked
-				bases[nid] = true
-			}
-			for _, u := range g.users(nid, snapshot.TYPE, snapshot.EXTENDS, snapshot.IMPLEMENTS, snapshot.XML_CLASS, snapshot.ROUTE_CONTENT) {
-				if base && (u.Kind == snapshot.EXTENDS || u.Kind == snapshot.IMPLEMENTS) {
-					continue
-				}
-				if bases != nil && u.Kind == snapshot.TYPE && !lambda && !(g.screenTops[g.topOf(u.N)] && g.isViewModel(nid)) {
-					continue // who opens: code that runs it, not code naming its type
-				}
-				if len(runs) > 0 && u.Kind == snapshot.EXTENDS { // a subclass inherits the callback: unless it overrides
-					if !g.runsOverride(u.N, runs) {
-						push(Key{u.N, modeState, Ctx{-1, key.Runs}}, nd, &key, edgeKinds[u.Kind])
-					}
-					continue
-				}
-				push(g.key(u.N, Ctx{g.callerCtx(u.N, lambdaCtx), ""}), nd, &key, edgeKinds[u.Kind])
-			}
-		case "R":
-			for _, u := range g.users(nid, snapshot.RES, snapshot.XML_RES) {
-				push(g.key(u.N, noCtx), nd, &key, edgeKinds[u.Kind])
+		for _, u := range g.users(m, snapshot.CALL) {
+			if g.topOf(u.N) != g.topOf(nid) && !g.diGlue[g.topOf(u.N)] && !g.isSubtype(g.callerClass(u.N), nid) {
+				wk.push(g.key(u.N, noCtx), s.nd, &s.key, "creates "+g.label(nid))
 			}
 		}
 	}
-	return w
 }
 
 type Step struct {
