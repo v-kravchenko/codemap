@@ -29,12 +29,6 @@ itself.
   from the change to that screen, not the collapsed one `impact`/`changes` prints by default.
   Needed for anyone to trust a CI gate built on this data; without it, a false positive erodes
   confidence in the tool silently.
-- **CI: GitHub Actions (vet, test, golangci-lint).** The repo has no CI today; every change is
-  verified by hand (`gofmt -l . && go vet ./... && go test ./...`), which does not scale once
-  more than one person touches the project.
-- **Releases: goreleaser for Linux x64, macOS arm64, Windows.** There is no tagged, installable
-  binary yet — `go install`/`go build` from source is the only path, which is a real barrier
-  for anyone who isn't a Go developer adopting the tool.
 - **More fixture scenarios in `testdata/navapp`.** Golden tests currently cover one screen set
   per navigation preset plus XML nav graphs/dialogs/Activity intents; still missing: a
   dagger-android screen base (abstract base + generated `Dagger*`/`*_MembersInjector` glue, to

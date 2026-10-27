@@ -46,3 +46,6 @@ gofmt -l . && go vet ./... && go test ./...
   and not fixed goes into `docs/limitations.md` or `ROADMAP.md`.
 - Comments say why, in the terse style of the surrounding code.
 - Commit messages: one sentence on what changed and why it matters; no prefixes.
+- A user-visible change adds a line under `[Unreleased]` in `CHANGELOG.md`. A release: rename that
+  section to the version, push the tag `vX.Y.Z`; `.github/workflows/release.yml` does the rest
+  (docs/decisions/0016).

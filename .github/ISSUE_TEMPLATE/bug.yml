@@ -1,0 +1,37 @@
+name: Wrong answer or error
+description: A query answers wrong, misses something, or codemap fails
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: codemap version
+      description: "`codemap version`"
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command and output
+      description: The command you ran and what it printed (`--json` if it helps).
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: The screen, symbol or way that should (or should not) be in the answer, and why.
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: The code involved
+      description: A small Kotlin/Java example of the pattern (navigation call, base class, DI), with your codemap.yml if it matters.
+      render: kotlin
+  - type: input
+    id: setup
+    attributes:
+      label: Project setup
+      description: AGP version, Kotlin version, navigation library (Navigation Compose, Navigation 3, XML graphs, ...)

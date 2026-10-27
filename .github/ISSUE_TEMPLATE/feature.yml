@@ -1,0 +1,16 @@
+name: Feature request
+description: A question codemap should answer, or a pattern it should see
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What you want to find out
+      description: The question about your project codemap does not answer today, and what you would do with the answer.
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: An example
+      description: The code, command or output that shows it.

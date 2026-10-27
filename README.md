@@ -1,5 +1,11 @@
 # codemap
 
+[![CI](https://github.com/v-kravchenko/codemap/actions/workflows/ci.yml/badge.svg)](https://github.com/v-kravchenko/codemap/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/v-kravchenko/codemap)](https://github.com/v-kravchenko/codemap/releases/latest)
+[![Coverage](https://codecov.io/gh/v-kravchenko/codemap/graph/badge.svg)](https://codecov.io/gh/v-kravchenko/codemap)
+[![Go](https://img.shields.io/github/go-mod/go-version/v-kravchenko/codemap)](go.mod)
+[![License](https://img.shields.io/github/license/v-kravchenko/codemap)](LICENSE)
+
 The code map of an Android project, built from its compiled classes and resources: what a change
 affects (`impact`, `changes`), who uses a symbol (`used-by`, `uses`), how a user reaches a screen
 (`nav-path`), what a screen opens (`graph`). Every command has a stable `--json`.
@@ -8,7 +14,38 @@ affects (`impact`, `changes`), who uses a symbol (`used-by`, `uses`), how a user
 who opens every screen. A full build of a large app (~35k classes) takes ~3 s.
 
 ```
-go install github.com/v-kravchenko/codemap/cmd/codemap@latest  # or: go build ./cmd/codemap
+$ codemap impact CartViewModel.total
+Changed:
+  CartViewModel.total()  app  app/src/main/java/navapp/impact/GenericDi.kt:22
+
+Screens: 1  (fragment 1)
+
+Fragments
+  CartFragment                                       app
+      CartViewModel.total() -> CartFragment.onViewCreated()
+
+$ codemap nav-path InfoDialog
+Cheapest way to InfoDialog (launcher):
+  MainActivity              MainActivity.onCreate
+  -> ViewsActivity          @navigation/views_graph
+  -> ListFragment           ListFragment.onViewCreated
+  -> DetailFragment         DetailFragment.onViewCreated
+  -> InfoDialog
+```
+
+## Install
+
+A binary for Linux, macOS or Windows from [Releases](https://github.com/v-kravchenko/codemap/releases/latest)
+(`gh attestation verify codemap_*.tar.gz -R v-kravchenko/codemap` checks it was built here), or
+with Go:
+
+```
+go install github.com/v-kravchenko/codemap/cmd/codemap@latest
+```
+
+## Usage
+
+```
 codemap init [--gradle CMD]                        # once, and after build files change
 codemap build [--variant V] [--out SNAPSHOT] [--jobs N] [--force]  # default: <variant>.snap in snapshot_dir
 codemap used-by|uses|impact|changes|nav-path|graph|screens|find|build --info ... [--variant V] [--json]
@@ -99,6 +136,8 @@ graph from its start route and its own route; opening the graph opens the start 
 - [docs/decisions](docs/decisions): why it is built this way (ADRs)
 - [ROADMAP.md](ROADMAP.md): what is planned
 - [AGENTS.md](AGENTS.md): how to work on the code
+- [CHANGELOG.md](CHANGELOG.md): what changed in each release
+- [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md): issues, pull requests, reporting a vulnerability
 
 ## Checks
 

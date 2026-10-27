@@ -47,3 +47,4 @@ a stale file path) may be fixed directly in place; a changed decision gets a new
 | [0013](0013-module-globs.md) | `--module` globs as `.gitignore` takes directories | accepted |
 | [0014](0014-route-content-by-smap.md) | A route's content: the composables called where it is registered, by SMAP | accepted |
 | [0015](0015-map-per-variant.md) | A map per build variant, found by `--variant` | accepted |
+| [0016](0016-releases.md) | Releases by tag: goreleaser, notes from CHANGELOG.md, Codecov | accepted |
