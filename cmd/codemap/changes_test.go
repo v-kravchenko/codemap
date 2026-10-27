@@ -6,9 +6,31 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/v-kravchenko/codemap/internal/fixture"
 )
+
+// gitTestEnv: an identity for the commits, and no auto gc or maintenance, whose detached process
+// may still write to .git when the test removes its temp dir ("directory not empty", CI flake).
+var gitTestEnv = []string{"CODEMAP_AS_MAIN=1",
+	"GIT_AUTHOR_NAME=t", "GIT_AUTHOR_EMAIL=t@t", "GIT_COMMITTER_NAME=t", "GIT_COMMITTER_EMAIL=t@t",
+	"GIT_CONFIG_COUNT=3", "GIT_CONFIG_KEY_0=gc.auto", "GIT_CONFIG_VALUE_0=0",
+	"GIT_CONFIG_KEY_1=maintenance.auto", "GIT_CONFIG_VALUE_1=false",
+	"GIT_CONFIG_KEY_2=core.fsmonitor", "GIT_CONFIG_VALUE_2=false"}
+
+// removeGitLate: .git removed with retries before the temp dir goes, for a git process that
+// still writes there after the test.
+func removeGitLate(t *testing.T, root string) {
+	t.Cleanup(func() {
+		for range 20 {
+			if os.RemoveAll(filepath.Join(root, ".git")) == nil {
+				return
+			}
+			time.Sleep(50 * time.Millisecond)
+		}
+	})
+}
 
 // TestChangesBaseIsMergeBase: a branch forks from main, then main moves on; `changes --base main`
 // counts only the branch's change, not what landed on main since.
@@ -17,10 +39,10 @@ func TestChangesBaseIsMergeBase(t *testing.T) {
 		t.Skip("no git")
 	}
 	root := fixture.FixtureRoot(t)
+	removeGitLate(t, root)
 	run := func(name string, args ...string) string {
 		cmd := exec.Command(name, args...)
-		cmd.Dir, cmd.Env = root, append(os.Environ(), "CODEMAP_AS_MAIN=1",
-			"GIT_AUTHOR_NAME=t", "GIT_AUTHOR_EMAIL=t@t", "GIT_COMMITTER_NAME=t", "GIT_COMMITTER_EMAIL=t@t")
+		cmd.Dir, cmd.Env = root, append(os.Environ(), gitTestEnv...)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			t.Fatalf("%s %s: %v\n%s", name, strings.Join(args, " "), err, out)
@@ -63,10 +85,10 @@ func TestChangesBaseRef(t *testing.T) {
 		t.Skip("no git")
 	}
 	root := fixture.FixtureRoot(t)
+	removeGitLate(t, root)
 	run := func(name string, args ...string) (string, error) {
 		cmd := exec.Command(name, args...)
-		cmd.Dir, cmd.Env = root, append(os.Environ(), "CODEMAP_AS_MAIN=1",
-			"GIT_AUTHOR_NAME=t", "GIT_AUTHOR_EMAIL=t@t", "GIT_COMMITTER_NAME=t", "GIT_COMMITTER_EMAIL=t@t")
+		cmd.Dir, cmd.Env = root, append(os.Environ(), gitTestEnv...)
 		out, err := cmd.CombinedOutput()
 		return string(out), err
 	}
