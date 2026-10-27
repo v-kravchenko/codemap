@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -109,5 +110,80 @@ func TestChangesBaseRef(t *testing.T) {
 		if err == nil || !strings.Contains(out, "is not a git revision") {
 			t.Errorf("changes %s: want a refusal, got %v\n%s", strings.Join(args, " "), err, out)
 		}
+	}
+}
+
+// TestChangesStatus: a class the base has not is added and its screen new; what the base has is
+// modified, its screens changed or affected; --files without --base cannot tell.
+func TestChangesStatus(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("no git")
+	}
+	root := fixture.FixtureRoot(t)
+	removeGitLate(t, root)
+	run := func(name string, args ...string) string {
+		cmd := exec.Command(name, args...)
+		cmd.Dir, cmd.Env = root, append(os.Environ(), gitTestEnv...)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("%s %s: %v\n%s", name, strings.Join(args, " "), err, out)
+		}
+		return string(out)
+	}
+	path := filepath.Join(root, "app/src/main/java/navapp/impact/Overrides.kt")
+	data, _ := os.ReadFile(path)
+	quiet := "class QuietActivity : BaseActivity() {\n    override fun observeLogout() = Unit\n}\n\n"
+	os.WriteFile(path, []byte(strings.Replace(string(data), quiet, "", 1)), 0o644)
+	run("git", "init", "-q", "-b", "main")
+	run("git", "add", ".")
+	run("git", "commit", "-qm", "base")
+	os.WriteFile(path, data, 0o644)
+	run("git", "commit", "-qam", "add QuietActivity")
+	run(os.Args[0], "build")
+	type item struct{ Symbol, Name, Status string }
+	var got struct {
+		Changed []struct {
+			Symbol string
+			Status *string
+		}
+		Screens []item
+	}
+	statuses := func(args ...string) map[string]string {
+		out := run(os.Args[0], append([]string{"changes", "--json", "--no-check"}, args...)...)
+		if err := json.Unmarshal([]byte(out), &got); err != nil {
+			t.Fatal(err)
+		}
+		m := map[string]string{}
+		for _, c := range got.Changed {
+			m[c.Symbol] = "null"
+			if c.Status != nil {
+				m[c.Symbol] = *c.Status
+			}
+		}
+		for _, s := range got.Screens {
+			m["screen "+s.Name] = s.Status
+		}
+		return m
+	}
+	want := map[string]string{"navapp.impact.QuietActivity": "added", "navapp.impact.BaseActivity": "modified",
+		"screen QuietActivity": "new", "screen LoudActivity": "changed"}
+	diff := run("git", "diff", "HEAD~1", "HEAD")
+	os.WriteFile(filepath.Join(root, "mr.diff"), []byte(diff), 0o644)
+	for _, args := range [][]string{{"--base", "HEAD~1"}, {"--diff", "mr.diff", "--base", "HEAD~1"}} {
+		got := statuses(args...)
+		for k, v := range want {
+			if got[k] != v {
+				t.Errorf("changes %s: %s is %q, want %q (all: %v)", strings.Join(args, " "), k, got[k], v, got)
+			}
+		}
+	}
+	// no base: a function all of whose lines are added; a class is modified, its screen changed
+	if got := statuses("--diff", "mr.diff"); got["navapp.impact.QuietActivity"] != "modified" ||
+		got["screen QuietActivity"] != "changed" {
+		t.Errorf("changes --diff without --base: %v", got)
+	}
+	os.WriteFile(filepath.Join(root, "files.txt"), []byte("app/src/main/java/navapp/impact/Overrides.kt:22\n"), 0o644)
+	if got := statuses("--files", "files.txt"); got["navapp.impact.QuietActivity.<init>"] != "null" {
+		t.Errorf("changes --files: %v", got)
 	}
 }

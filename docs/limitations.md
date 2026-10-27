@@ -37,6 +37,9 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
 - A shared resource or constant (`@string`, `@color`, a `const val` many screens read) reaches
   every reader, whether or not the reader's behaviour depends on the value, so `impact` on it is
   wide. Workaround: run `impact` on the code that uses the value when you can.
+- `changes` tells an added symbol from a modified one by the text of its file in the base
+  (docs/decisions/0019): a symbol moved from another file is `added`, a route is never `new`, and
+  without a base only a function all of whose lines the diff adds is `added`.
 - Dead code (a reachable-looking branch nobody actually triggers, e.g. a `when` branch keyed on
   a string your code never constructs) is not detected — the walk cannot tell statically
   unreachable branches from live ones.

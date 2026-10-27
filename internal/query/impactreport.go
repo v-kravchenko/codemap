@@ -204,7 +204,11 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 	for _, s := range a.seeds {
 		if !listed[s.N] {
 			listed[s.N] = true
-			changed = append(changed, g.symbol(s.N))
+			sym := g.symbol(s.N)
+			if command == "changes" {
+				sym = append(sym, kv{"status", g.changedStatus(s.N)})
+			}
+			changed = append(changed, sym)
 		}
 	}
 	sortObjs(changed, "symbol", "location", "kind")
@@ -244,6 +248,9 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 			if nav, ok := a.navs[it.n]; ok {
 				s = append(s, kv{"nav", nav.json()})
 			}
+			if command == "changes" {
+				s = append(s, kv{"status", g.screenStatus(it.n, it.depth)})
+			}
 			screens = append(screens, s)
 		}
 	}
@@ -277,6 +284,9 @@ func (g *Graph) impactText(a *impactAnswer, o opts) {
 		whole := ""
 		if s.Mode == modeWhole && g.kind(s.N) == "C" {
 			whole = "  (whole class)"
+		}
+		if g.statusKnown && g.isAdded(s.N) {
+			whole += "  (added)"
 		}
 		fmt.Printf("  %s%s\n", g.describe(s.N), whole)
 	}
@@ -335,6 +345,9 @@ func (g *Graph) impactScreenText(a *impactAnswer, o opts, kind string, it screen
 			hl = append(hl, g.label(h))
 		}
 		extra = "  host " + strings.Join(hl, ", ")
+	}
+	if g.statusKnown && g.isAdded(it.n) {
+		extra += "  new"
 	}
 	name := it.label
 	if kind == "preview" {

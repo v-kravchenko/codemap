@@ -6,31 +6,36 @@
       "symbol": "@navigation/views_graph",
       "kind": "resource",
       "module": "app",
-      "location": "app/src/main/res/navigation/views_graph.xml"
+      "location": "app/src/main/res/navigation/views_graph.xml",
+      "status": null
     },
     {
       "symbol": "navapp.impact.BaseActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Overrides.kt:9"
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:9",
+      "status": null
     },
     {
       "symbol": "navapp.impact.LoudActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Overrides.kt:20"
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
+      "status": null
     },
     {
       "symbol": "navapp.impact.QuietActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Overrides.kt:22"
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:22",
+      "status": null
     },
     {
       "symbol": "navapp.impact.Session",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Overrides.kt:26"
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:26",
+      "status": null
     }
   ],
   "affected": [
@@ -205,7 +210,8 @@
       "opened_from": [],
       "path": [
         "navapp.impact.LoudActivity"
-      ]
+      ],
+      "status": "changed"
     },
     {
       "kind": "activity",
@@ -219,7 +225,8 @@
       "opened_from": [],
       "path": [
         "navapp.impact.QuietActivity"
-      ]
+      ],
+      "status": "changed"
     },
     {
       "kind": "activity",
@@ -235,7 +242,8 @@
         "@navigation/views_graph",
         "@layout/activity_views",
         "navapp.views.ViewsActivity.<init>"
-      ]
+      ],
+      "status": "affected"
     }
   ],
   "hidden": {},

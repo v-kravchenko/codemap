@@ -86,10 +86,10 @@ func splitLines(text string) []string {
 	return lines
 }
 
-// parseDiff: ({path: new-side lines, nil for a new file}, deleted paths, {moved path: old path}) of a
-// unified diff.
-func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map[string]string) {
-	out, deleted, moved := map[string]lineSet{}, map[string]bool{}, map[string]string{}
+// parseDiff: ({path: new-side lines, nil for a new file}, deleted paths, {moved path: old path},
+// {path: the added lines alone}) of a unified diff.
+func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map[string]string, map[string]lineSet) {
+	out, deleted, moved, plus := map[string]lineSet{}, map[string]bool{}, map[string]string{}, map[string]lineSet{}
 	var path, oldPath string
 	hasPath, hasOld := false, false
 	oldLeft, newLeft, newLine := 0, 0, 0
@@ -118,6 +118,12 @@ func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map
 			case "+":
 				removed = false
 				mark(newLine)
+				if hasPath && out[path] != nil {
+					if plus[path] == nil {
+						plus[path] = lineSet{}
+					}
+					plus[path][newLine] = true
+				}
 				newLine++
 				newLeft--
 			case "-":
@@ -191,7 +197,7 @@ func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map
 			}
 		}
 	}
-	return out, deleted, moved
+	return out, deleted, moved, plus
 }
 
 // parseFileList: {path: lines, nil for the whole file} of `path`, `path:N` or `path:N-M` lines.
@@ -286,8 +292,9 @@ func (g *Graph) cmdChanges(o opts) int {
 	if headRef == "" {
 		headRef = "WORKTREE"
 	}
-	var linesByPath map[string]lineSet
+	var linesByPath, plus map[string]lineSet
 	deleted, moved := map[string]bool{}, map[string]string{}
+	files := o.files != "" // a whole file listed is not a new one
 	var base any
 	baseRev := ""
 	if o.diff != "" || o.files != "" {
@@ -299,7 +306,7 @@ func (g *Graph) cmdChanges(o opts) int {
 		input := "files"
 		if o.diff != "" {
 			input = "diff"
-			linesByPath, deleted, moved = g.parseDiff(readInput(o.diff))
+			linesByPath, deleted, moved, plus = g.parseDiff(readInput(o.diff))
 		} else {
 			linesByPath = g.parseFileList(readInput(o.files))
 		}
@@ -316,7 +323,7 @@ func (g *Graph) cmdChanges(o opts) int {
 		if head != "" {
 			args = append(args, head)
 		}
-		linesByPath, deleted, moved = g.parseDiff(g.git(append(args, "--")...))
+		linesByPath, deleted, moved, plus = g.parseDiff(g.git(append(args, "--")...))
 		if head == "" {
 			for _, f := range splitLines(g.git("ls-files", "--others", "--exclude-standard")) {
 				linesByPath[f] = nil
@@ -327,6 +334,7 @@ func (g *Graph) cmdChanges(o opts) int {
 	var seeds []Seed
 	var nc []notCovered
 	var warnings, analysed []string
+	g.bases, g.statusKnown = map[string]*fileBase{}, !files || baseRev != ""
 	for _, path := range util.SortedKeys(linesByPath) {
 		lines := linesByPath[path]
 		if strings.Contains(path, "/src/test") || strings.Contains(path, "/src/androidTest") {
@@ -360,6 +368,11 @@ func (g *Graph) cmdChanges(o opts) int {
 			continue
 		}
 		seeds = append(seeds, found...)
+		old, has := moved[path]
+		if !has {
+			old = path
+		}
+		g.bases[path] = g.fileBase(path, old, lines == nil && !files, baseRev, head, plus[path])
 		if source {
 			analysed = append(analysed, path)
 		}
@@ -382,6 +395,27 @@ func (g *Graph) cmdChanges(o opts) int {
 		}
 	}
 	return g.reportImpactWith(sortSeeds(seeds), o, "changes", nc, warnings)
+}
+
+// fileBase: a changed file in the base and in the map's revision.
+func (g *Graph) fileBase(path, oldPath string, isNew bool, base, head string, plus lineSet) *fileBase {
+	b := &fileBase{isNew: isNew, plus: plus,
+		valuesFile: android.ResourceTypeOfDir(filepath.Base(filepath.Dir(path))) == "values"}
+	if isNew {
+		return b
+	}
+	b.cur, _ = g.readAt(path, head)
+	if base != "" {
+		b.old, b.hasOld = g.readAt(oldPath, base)
+		b.isNew = !b.hasOld
+		if b.valuesFile {
+			b.keys = map[string]bool{}
+			for k := range valuesSignature(b.old) {
+				b.keys[k] = true
+			}
+		}
+	}
+	return b
 }
 
 func exists(p string) bool {

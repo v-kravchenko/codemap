@@ -273,8 +273,17 @@ codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--na
 `--diff` and `--files` are mutually exclusive. Without either, `changes` runs `git diff` itself
 between the resolved base and `--head` (or the working tree).
 
-Result: identical shape to `impact` (it calls the same `reportImpactWith`), plus
-`meta.refs: {input, base, head}` where `input` is `"git"`, `"diff"` or `"files"`, `base` is the
+Result: the shape of `impact` (it calls the same `reportImpactWith`), plus since 3.7.0:
+
+- `changed[].status` — `"added"` when the change adds the symbol (its file is new, or the base's text
+  of the file does not declare it and the head's does; a member of an added class; a resource new in
+  every file defining it), else `"modified"`; without a base (`--diff` alone) a function is added
+  when the diff adds all its lines. `null` for `--files` without `--base`: nothing tells it.
+  docs/decisions/0019.
+- `screens[].status` — `"new"` when the screen itself is added (a preview or activity the change
+  declares; never a route), `"changed"` at `depth` 0, `"affected"` deeper.
+
+and `meta.refs: {input, base, head}` where `input` is `"git"`, `"diff"` or `"files"`, `base` is the
 resolved base ref/commit (or `null` without `--diff`/`--files` and no `--base`), `head` is the
 resolved head commit or `"WORKTREE"`.
 
@@ -284,9 +293,9 @@ resolved head commit or `"WORKTREE"`.
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
-      "location": "app/src/main/res/navigation/views_graph.xml" },
+      "location": "app/src/main/res/navigation/views_graph.xml", "status": null },
     { "symbol": "navapp.impact.Session", "kind": "class", "module": "app",
-      "location": "app/src/main/java/navapp/impact/Overrides.kt:26" }
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:26", "status": null }
   ],
   "affected": ["... same shape as impact ..."],
   "screens": ["..."],

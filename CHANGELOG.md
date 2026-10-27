@@ -13,6 +13,9 @@ notes from its section here (`tools/release-notes.sh`).
   `--json`, a warning of every query, exit 3 with `--strict`, `code map: 31 of 78 modules compiled`
   from `build`; their classes compiled since make the map stale. Such a map used to answer as if
   whole. `schema_version` 3.7.0.
+- `changes` tells what the change adds: `changed[].status` `added` or `modified`, `screens[].status`
+  `new`, `changed` (depth 0) or `affected`, and `(added)`/`new` in the text. A screenshot job no
+  longer needs the base's sources to know which previews have no before.
 
 ## [0.4.2] - 2026-10-27
 
