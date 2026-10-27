@@ -44,7 +44,7 @@ Each package imports only the ones above it in this list.
 | `internal/android` | resources, manifests, layouts and navigation XML: what each resource is and what it references |
 | `internal/snapshot` | the map's format: columns, CSR edges, the binary snapshot, derived tables (overriders, hierarchy), edge kinds |
 | `internal/build` | classes + resources into a map: nodes, edges, screens, hosts, routes, navigation graphs |
-| `internal/query` | the `Graph` over a loaded map, the walks (impact, opened_by, nav-path, graph), the stale check, the commands and their output; `commands.go` lists each command's options for the usage, `--help` and the check that rejects an option the command does not take |
+| `internal/query` | the `Graph` over a loaded map, the walks (impact, opened_by, nav-path, graph), the stale check, the commands and their output; a file per command (`usedby.go`, `impactreport.go`, `navpath.go`, `graphcmd.go`, `screens.go`, `find.go`, `changes.go`) over the walks (`impact.go`, `opened.go`, `nav.go`) and the shared `cli.go`; `commands.go` lists each command's options for the usage, `--help` and the check that rejects an option the command does not take |
 | `cmd/codemap` | the CLI: argument dispatch, `build`, `init`, `config` |
 | `internal/fixture` | tests only: a copy of `testdata/navapp` laid out as a built project |
 
