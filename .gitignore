@@ -8,3 +8,6 @@ testdata/**/.kotlin/
 testdata/**/.idea/
 testdata/**/local.properties
 testdata/**/gradle/gradle-daemon-jvm.properties
+
+# goreleaser output (release --snapshot)
+/dist/
