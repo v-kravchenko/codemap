@@ -108,3 +108,7 @@ itself.
 - **Per-zone "widely affected" threshold** (in `codemap.yml`), so a
   CI gate can flag "this change reaches an unusually large fraction of a zone" rather than only
   "this change reaches zone X at all" — depends on zones (Next) existing first.
+- **Changes that cannot change a render.** A change only inside a lambda passed to `onClick`,
+  `LaunchedEffect` or `onValueChange` leaves what a screen draws as it was, yet its screens come
+  out `changed`. A mark first (`changed[].visual: false`, never a filter): skipping such paths
+  risks missing a real change, and the mark shows how often it would be right.
