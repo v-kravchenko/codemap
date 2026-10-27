@@ -1,5 +1,5 @@
 # The checks of AGENTS.md on every push to main and every pull request: tools/check.sh on Linux
-# with coverage for Codecov, the tests on macOS and Windows.
+# with coverage for Codecov, the tests on macOS and Windows, install.sh on Linux and macOS.
 name: CI
 
 on:
@@ -45,3 +45,16 @@ jobs:
         with:
           go-version-file: go.mod
       - run: go test ./...
+
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: sh install.sh # dash on Ubuntu, the latest release
+        env:
+          CODEMAP_INSTALL_DIR: ${{ runner.temp }}/bin
+      - run: '"$RUNNER_TEMP/bin/codemap" version'

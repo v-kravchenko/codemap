@@ -35,6 +35,13 @@ Cheapest way to InfoDialog (launcher):
 
 ## Install
 
+On Linux or macOS, in CI too (`CODEMAP_VERSION=0.3.0` pins a release, `CODEMAP_INSTALL_DIR` changes
+the directory, default `~/.local/bin`; the download is checked against the release's checksums):
+
+```
+curl -fsSL https://raw.githubusercontent.com/v-kravchenko/codemap/main/install.sh | sh
+```
+
 A binary for Linux, macOS or Windows from [Releases](https://github.com/v-kravchenko/codemap/releases/latest)
 (`gh attestation verify codemap_*.tar.gz -R v-kravchenko/codemap` checks it was built here), or
 with Go:

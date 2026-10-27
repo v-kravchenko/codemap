@@ -7,6 +7,11 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Added
+
+- `install.sh`: installs a release on Linux or macOS with one line, for CI and machines without Go;
+  checks the download against the release's checksums.
+
 ## [0.3.0] - 2026-10-27
 
 The first public release.
