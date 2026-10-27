@@ -7,6 +7,8 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-10-27
+
 ### Fixed
 
 - `codemap wrapper --version X` of another release wrote its own build hook under X's header; it
@@ -63,7 +65,8 @@ The first public release.
   navigation events; anything project-specific goes into `codemap.yml`.
 - `codemap version`.
 
-[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/v-kravchenko/codemap/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/v-kravchenko/codemap/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/v-kravchenko/codemap/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/v-kravchenko/codemap/releases/tag/v0.3.0
