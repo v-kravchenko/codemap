@@ -913,357 +913,437 @@ func (s *oset[K]) add(k K) {
 
 type pb struct{ p, b int }
 
+// classEdges gathers the edges of one class and what its code tells about routes.
+type classEdges struct {
+	*edgeWorker
+	name          string
+	info          *classfile.Class
+	out           *part
+	edges         oset[snapshot.Edge]
+	callVia       oset[CallVia]
+	paramSwitches oset[Triple]
+	directReads   oset[[2]int64]
+	routeOpens    oset[routeOpen]
+	classLiterals oset[[2]int64]
+	resKeys       map[string]int64
+	resOrder      []string
+	smap          []string // the classes of the SMAP within the map: whose functions were inlined here
+	siteNo        int
+	// the method being read
+	mid        int64
+	hasGuards  bool
+	edgeGuards map[[2]int64]map[pb]bool // nil value: unguarded code
+	egOrder    [][2]int64
+	guard      map[pb]bool
+}
+
+// methodEdges is the state of reading one method's references in order.
+type methodEdges struct {
+	*classEdges
+	m           *classfile.Method
+	initializer bool
+	pending     []content // edges of an initializer given to the field it is written to
+	route       string
+	cont        []content
+	routeReads  []string
+	named       []string
+	strs        []string
+	reified     bool // the next class literal is a type parameter of an inline function's own body
+}
+
 func (w *edgeWorker) edgesOf(name string) *part {
-	b := w.b
-	var edges oset[snapshot.Edge]
-	var callVia oset[CallVia]
-	var paramSwitches oset[Triple]
-	var directReads oset[[2]int64]
-	var routeOpens oset[routeOpen]
-	var classLiterals oset[[2]int64]
-	resKeys := map[string]int64{}
-	var resOrder []string
-	out := &part{}
-	resRef := func(key string) int64 {
-		if id, ok := resKeys[key]; ok {
-			return id
+	info := w.b.parsed[name].C
+	c := &classEdges{edgeWorker: w, name: name, info: info, out: &part{}, resKeys: map[string]int64{}}
+	c.supers()
+	c.fields()
+	for _, s := range info.Smap {
+		if _, ok := w.b.classID[s]; ok {
+			c.smap = append(c.smap, s)
 		}
-		id := -int64(len(resKeys)) - 1
-		resKeys[key] = id
-		resOrder = append(resOrder, key)
+	}
+	for mi := range info.Methods {
+		c.method(&info.Methods[mi])
+	}
+	out := c.out
+	out.edges = c.edges.keys
+	out.callVia = c.callVia.keys
+	out.paramSwitches = c.paramSwitches.keys
+	out.directReads = c.directReads.keys
+	out.routeOpens = c.routeOpens.keys
+	out.classLiterals = c.classLiterals.keys
+	out.resKeys = c.resOrder
+	return out
+}
+
+func (c *classEdges) add(e snapshot.Edge) {
+	c.edges.add(e)
+	if !c.hasGuards || e.Src != c.mid {
+		return
+	}
+	k := [2]int64{e.Dst, int64(e.Kind)}
+	old, in := c.edgeGuards[k]
+	if !in {
+		c.egOrder = append(c.egOrder, k)
+	}
+	if c.guard == nil || (in && old == nil) {
+		c.edgeGuards[k] = nil
+		return
+	}
+	m := map[pb]bool{}
+	for x := range old {
+		m[x] = true
+	}
+	for x := range c.guard {
+		m[x] = true
+	}
+	c.edgeGuards[k] = m
+}
+
+// resRef: a placeholder id of a resource, made a node in mergeEdges.
+func (c *classEdges) resRef(key string) int64 {
+	if id, ok := c.resKeys[key]; ok {
 		return id
 	}
-	p := b.parsed[name]
-	info := p.C
-	cid := b.classID[name]
-	var mid int64
-	var edgeGuards map[[2]int64]map[pb]bool // nil value: unguarded code
-	var egOrder [][2]int64
-	var guard map[pb]bool
-	hasGuards := false
-	add := func(e snapshot.Edge) {
-		edges.add(e)
-		if hasGuards && e.Src == mid {
-			k := [2]int64{e.Dst, int64(e.Kind)}
-			old, in := edgeGuards[k]
-			if !in {
-				egOrder = append(egOrder, k)
-			}
-			if guard == nil || (in && old == nil) {
-				edgeGuards[k] = nil
-			} else {
-				m := map[pb]bool{}
-				for x := range old {
-					m[x] = true
-				}
-				for x := range guard {
-					m[x] = true
-				}
-				edgeGuards[k] = m
-			}
-		}
+	id := -int64(len(c.resKeys)) - 1
+	c.resKeys[key] = id
+	c.resOrder = append(c.resOrder, key)
+	return id
+}
+
+func (c *classEdges) supers() {
+	b, cid := c.b, c.b.classID[c.name]
+	if id, ok := b.classID[c.info.Super]; ok {
+		c.add(snapshot.Edge{Src: cid, Dst: id, Kind: snapshot.EXTENDS})
 	}
-	if id, ok := b.classID[info.Super]; ok {
-		add(snapshot.Edge{Src: cid, Dst: id, Kind: snapshot.EXTENDS})
-	}
-	for _, i := range info.Interfaces {
+	for _, i := range c.info.Interfaces {
 		if id, ok := b.classID[i]; ok {
-			add(snapshot.Edge{Src: cid, Dst: id, Kind: snapshot.IMPLEMENTS})
+			c.add(snapshot.Edge{Src: cid, Dst: id, Kind: snapshot.IMPLEMENTS})
 		}
 	}
-	for _, f := range info.Fields {
-		fid := b.memberID[[3]string{name, f.Name, f.Desc}]
+}
+
+func (c *classEdges) fields() {
+	b := c.b
+	for _, f := range c.info.Fields {
+		fid := b.memberID[[3]string{c.name, f.Name, f.Desc}]
 		for _, t := range descriptorClasses(f.Desc) {
-			if id, ok := b.classID[t]; ok && t != name {
-				add(snapshot.Edge{Src: fid, Dst: id, Kind: snapshot.TYPE})
+			if id, ok := b.classID[t]; ok && t != c.name {
+				c.add(snapshot.Edge{Src: fid, Dst: id, Kind: snapshot.TYPE})
 			}
 		}
 		if f.Signature != "" {
 			for _, t := range b.genericImpls[strings.ReplaceAll(f.Signature, "+L", "L")] {
-				if id, ok := b.classID[t]; ok && t != name {
-					add(snapshot.Edge{Src: fid, Dst: id, Kind: snapshot.INJECT})
+				if id, ok := b.classID[t]; ok && t != c.name {
+					c.add(snapshot.Edge{Src: fid, Dst: id, Kind: snapshot.INJECT})
 				}
 			}
 		}
 	}
-	var smap []string
-	for _, c := range info.Smap {
-		if _, ok := b.classID[c]; ok {
-			smap = append(smap, c)
+}
+
+func (c *classEdges) method(m *classfile.Method) {
+	b, name := c.b, c.name
+	c.mid = b.memberID[[3]string{name, m.Name, m.Desc}]
+	c.hasGuards = len(m.Guards) > 0
+	c.edgeGuards, c.egOrder, c.guard = nil, nil, nil
+	if c.hasGuards {
+		c.edgeGuards = map[[2]int64]map[pb]bool{}
+	}
+	for _, t := range descriptorClasses(m.Desc) {
+		if id, ok := b.classID[t]; ok && t != name {
+			c.add(snapshot.Edge{Src: c.mid, Dst: id, Kind: snapshot.TYPE})
 		}
 	}
-	siteNo := 0
-	for mi := range info.Methods {
-		m := &info.Methods[mi]
-		mid = b.memberID[[3]string{name, m.Name, m.Desc}]
-		hasGuards = len(m.Guards) > 0
-		edgeGuards, egOrder = nil, nil
-		if hasGuards {
-			edgeGuards = map[[2]int64]map[pb]bool{}
-		}
-		guard = nil
-		for _, t := range descriptorClasses(m.Desc) {
-			if id, ok := b.classID[t]; ok && t != name {
-				add(snapshot.Edge{Src: mid, Dst: id, Kind: snapshot.TYPE})
-			}
-		}
-		initializer := m.Name == "<init>" || m.Name == "<clinit>"
-		generated := strings.HasSuffix(name, "$WhenMappings") && m.Name == "<clinit>"
-		var pending []content
-		route := ""
-		var cont []content
-		var routeReads []string
-		var named []string
-		var strs []string
-		reified := false // the next class literal is a type parameter of an inline function's own body
-		for i := range m.Refs {
-			ref := &m.Refs[i]
-			if hasGuards {
-				guard = nil
-				if gs, ok := m.Guards[i]; ok {
-					guard = map[pb]bool{}
-					for _, g := range gs {
-						guard[pb{g.Param, g.Bit}] = true
-					}
-				}
-			}
-			if generated || ref.Kind == classfile.RTableSet {
-				continue
-			}
-			switch ref.Kind {
-			case classfile.RString:
-				strs = append(strs, ref.Owner)
-				continue
-			case classfile.RTableRead:
-				if tm := b.tables[[2]string{ref.Owner, ref.Name}]; tm != nil {
-					for _, k := range tm.keys {
-						index := tm.index[k]
-						target := b.resolveMember(k[0], k[1], k[2], true)
-						in := false
-						for _, c := range ref.Cases {
-							if int(c) == index {
-								in = true
-							}
-						}
-						if in && target != 0 {
-							add(snapshot.Edge{Src: mid, Dst: target, Kind: snapshot.READ})
-							if ref.Param >= 0 {
-								paramSwitches.add(Triple{mid, target, int64(ref.Param)})
-							}
-						}
-					}
-				}
-				continue
-			case classfile.RType, classfile.RClassLit:
-				t := ref.Owner
-				tid, ok := b.classID[t]
-				if !ok || t == name {
-					continue
-				}
-				if ref.Kind == classfile.RClassLit && !strings.HasSuffix(m.Desc, ")Z") {
-					classLiterals.add([2]int64{mid, tid})
-				}
-				if ref.Kind == classfile.RClassLit && reified {
-					reified = false
-				} else if (ref.Kind == classfile.RClassLit || ref.Index == 0xC1) && config.TypedRoutes && b.routeCandidate(t) {
-					route = t // composable<T> or entry<T>, or `is T -> NavEntry(key)`
-				}
-				if initializer && strings.HasPrefix(t, name+"$") {
-					pending = append(pending, content{tid, snapshot.TYPE})
-				} else {
-					add(snapshot.Edge{Src: mid, Dst: tid, Kind: snapshot.TYPE})
-				}
-				if strings.HasPrefix(t, name+"$") || inlinedLambdaOfSameFile(t, name) {
-					cont = append(cont, content{tid, snapshot.TYPE})
-				}
-			case classfile.RLambda:
-				target, ok := b.memberID[[3]string{ref.Owner, ref.Name, ref.Desc}]
-				if !ok {
-					continue
-				}
-				if initializer && ref.Owner == name {
-					pending = append(pending, content{target, snapshot.LAMBDA})
-				} else {
-					add(snapshot.Edge{Src: mid, Dst: target, Kind: snapshot.LAMBDA})
-				}
-				cont = append(cont, content{target, snapshot.LAMBDA})
-			case classfile.RInline:
-				for _, c := range smap {
-					for _, target := range w.membersByName(c, ref.Name) {
-						add(snapshot.Edge{Src: mid, Dst: target, Kind: snapshot.INLINE})
-					}
-				}
-			default:
-				owner, n, d := ref.Owner, ref.Name, ref.Desc
-				call := ref.Kind == classfile.RCall
-				full := owner + "." + n
-				if call && n == "reifiedOperationMarker" && owner == "kotlin/jvm/internal/Intrinsics" {
-					reified = true
-				}
-				var popped []string
-				if call && len(strs) > 0 {
-					if k := min(stringParams(d), len(strs)); k > 0 {
-						popped = strs[len(strs)-k:]
-						strs = strs[:len(strs)-k]
-					}
-				}
-				if call && config.RouteGraph.MatchString(full) {
-					if len(popped) >= 2 {
-						out.childStart = append(out.childStart, [2]string{`"` + popped[1], `"` + popped[0]})
-					} else if config.TypedRoutes && route != "" && len(routeReads) > 0 {
-						out.childStart = append(out.childStart, [2]string{route, routeReads[len(routeReads)-1]})
-						routeReads = routeReads[:len(routeReads)-1]
-					}
-					route = ""
-				}
-				if call && config.RouteRegistration.MatchString(full) {
-					if route == "" && config.StringRoutes && len(popped) > 0 {
-						route = `"` + popped[0]
-					} else if route == "" && config.TypedRoutes && len(routeReads) > 0 {
-						route = routeReads[len(routeReads)-1]
-						routeReads = routeReads[:len(routeReads)-1]
-					}
-					if route != "" {
-						out.registrations = append(out.registrations, registration{mid, route, cont})
-					}
-					route = ""
-					cont = nil
-				}
-				ownLambda := n == "<init>" && (strings.HasPrefix(owner, name+"$") || inlinedLambdaOfSameFile(owner, name))
-				if call && len(cont) > 0 && strings.Contains(d, "Lkotlin/jvm/functions/Function") &&
-					!config.RouteRegistration.MatchString(full) && !ownLambda {
-					// lambdas handed to the app's own function (a graph section's onClick) are not the
-					// content of the next destination, whatever names the routes; the content's own
-					// object (an inlined `screen {}`) is made the same way
-					if _, ok := b.classID[owner]; ok {
-						cont = nil
-					}
-				}
-				if len(named) > 0 && call && n != "getRoute" && !routeNamePass.MatchString(full) {
-					if config.RouteByName.MatchString(full) {
-						for _, r := range named {
-							routeOpens.add(routeOpen{mid, r})
-						}
-					}
-					named = nil
-				}
-				if len(popped) > 0 && config.RouteByName.MatchString(full) && opensRoute(owner, n, m.Name) {
-					for _, s := range popped {
-						routeOpens.add(routeOpen{mid, `"` + s})
-					}
-				}
-				if len(routeReads) > 0 && call && config.TypedRoutes && (n == "areEqual" || n == "equals" ||
-					owner == routeReads[len(routeReads)-1] && n == "serializer") {
-					// compared, or asked for its serializer: not handed anywhere
-					routeReads = routeReads[:len(routeReads)-1]
-				}
-				if len(routeReads) > 0 && call {
-					taken := 0
-					if b.navTypes[owner] {
-						taken++
-					}
-					if taken == 0 && config.TypedRoutes && config.RouteByName.MatchString(full) {
-						taken = 1
-					}
-					for _, pd := range classfile.ParamDescs(d) {
-						if c := classfile.ClassOfDesc(pd); c != "" && b.navTypes[c] {
-							taken++
-						}
-					}
-					if taken > 0 || !config.TypedRoutes && config.RouteRegistration.MatchString(full) {
-						k := min(max(taken, 1), len(routeReads))
-						tk := append([]string(nil), routeReads[len(routeReads)-k:]...)
-						routeReads = routeReads[:len(routeReads)-k]
-						if n == "<init>" && config.ChildBases[owner] && b.childClasses[name] {
-							out.childStart = append(out.childStart, [2]string{name, tk[len(tk)-1]})
-						} else if opensRoute(owner, n, m.Name) {
-							for _, r := range tk {
-								routeOpens.add(routeOpen{mid, r})
-							}
-						} else if n == "getRoute" {
-							named = append(named, tk...)
-						}
-					}
-				}
-				// the code of a route, of its nested classes (serializer) and of its sealed parent (whose
-				// serializer lists the subclasses) makes the route without opening it
-				typedOpen := config.TypedRoutes && owner != name && !strings.HasPrefix(name, owner+"$") && !b.ancestorOf(name, owner)
-				if typedOpen && call && n == "<init>" && !(m.Name == "<init>" && owner == info.Super) && b.routeCandidate(owner) {
-					routeReads = append(routeReads, owner)
-				}
-				if rtype := rClassType(owner); rtype != "" && ref.Kind == classfile.RRead {
-					add(snapshot.Edge{Src: mid, Dst: resRef(android.ResKey(rtype, n)), Kind: snapshot.RES})
-					continue
-				}
-				if _, ok := b.classID[owner]; !ok {
-					continue
-				}
-				if ref.Kind == classfile.RRead && n == "INSTANCE" && b.routeClasses[owner] {
-					route = owner
-				}
-				if ref.Kind == classfile.RRead && n == "INSTANCE" && (b.navTypes[owner] || typedOpen && b.routeCandidate(owner)) {
-					routeReads = append(routeReads, owner)
-				}
-				target := b.resolveMember(owner, n, d, !call)
-				if target == 0 {
-					continue
-				}
-				if ref.Kind == classfile.RWrite {
-					if len(pending) > 0 && owner == name {
-						for _, pc := range pending {
-							add(snapshot.Edge{Src: target, Dst: pc.target, Kind: pc.kind})
-						}
-						pending = nil
-					}
-					add(snapshot.Edge{Src: mid, Dst: target, Kind: snapshot.WRITE})
-				} else if ref.Kind == classfile.RRead && initializer && owner != name && b.enumClasses[owner] && b.Nodes[target].Flags&snapshot.AccEnum != 0 {
-					pending = append(pending, content{target, snapshot.READ})
-				} else {
-					k := snapshot.READ
-					if call {
-						k = snapshot.CALL
-					}
-					add(snapshot.Edge{Src: mid, Dst: target, Kind: k})
-					if ref.Kind == classfile.RRead && b.enumClasses[owner] && b.Nodes[target].Flags&snapshot.AccEnum != 0 {
-						directReads.add([2]int64{mid, target})
-					}
-					if call {
-						siteNo++
-						w.siteArgs(&out.callSites, mid, target, d, ref.Args, siteNo, strings.HasSuffix(n, "$default"))
-						if _, ok := b.memberID[[3]string{owner, n, d}]; !ok {
-							callVia.add(CallVia{mid, target, owner})
-						}
-						if strings.HasPrefix(n, "getLambda$") && strings.HasPrefix(shortName(owner), "ComposableSingletons$") {
-							cont = append(cont, content{target, snapshot.CALL})
-						}
-					}
+	s := &methodEdges{classEdges: c, m: m, initializer: m.Name == "<init>" || m.Name == "<clinit>"}
+	generated := strings.HasSuffix(name, "$WhenMappings") && m.Name == "<clinit>"
+	for i := range m.Refs {
+		ref := &m.Refs[i]
+		if c.hasGuards {
+			c.guard = nil
+			if gs, ok := m.Guards[i]; ok {
+				c.guard = map[pb]bool{}
+				for _, g := range gs {
+					c.guard[pb{g.Param, g.Bit}] = true
 				}
 			}
 		}
-		guard = nil
-		for _, r := range routeReads {
-			routeOpens.add(routeOpen{mid, r})
+		if generated || ref.Kind == classfile.RTableSet {
+			continue
 		}
-		for _, pc := range pending {
-			add(snapshot.Edge{Src: mid, Dst: pc.target, Kind: pc.kind})
-			if pc.kind == snapshot.READ {
-				directReads.add([2]int64{mid, pc.target})
+		s.ref(ref)
+	}
+	s.finish()
+}
+
+func (s *methodEdges) ref(ref *classfile.Ref) {
+	switch ref.Kind {
+	case classfile.RString:
+		s.strs = append(s.strs, ref.Owner)
+	case classfile.RTableRead:
+		s.tableRead(ref)
+	case classfile.RType, classfile.RClassLit:
+		s.typeRef(ref)
+	case classfile.RLambda:
+		s.lambda(ref)
+	case classfile.RInline:
+		for _, c := range s.smap {
+			for _, target := range s.membersByName(c, ref.Name) {
+				s.add(snapshot.Edge{Src: s.mid, Dst: target, Kind: snapshot.INLINE})
 			}
 		}
-		for _, k := range egOrder {
-			for x := range edgeGuards[k] {
-				out.defaultGuards = append(out.defaultGuards, Guarded{mid, k[0], int(k[1]), x.p, x.b})
+	default:
+		s.member(ref)
+	}
+}
+
+func (s *methodEdges) finish() {
+	s.guard = nil
+	for _, r := range s.routeReads {
+		s.routeOpens.add(routeOpen{s.mid, r})
+	}
+	for _, pc := range s.pending {
+		s.add(snapshot.Edge{Src: s.mid, Dst: pc.target, Kind: pc.kind})
+		if pc.kind == snapshot.READ {
+			s.directReads.add([2]int64{s.mid, pc.target})
+		}
+	}
+	for _, k := range s.egOrder {
+		for x := range s.edgeGuards[k] {
+			s.out.defaultGuards = append(s.out.defaultGuards, Guarded{s.mid, k[0], int(k[1]), x.p, x.b})
+		}
+	}
+}
+
+// tableRead: a `when` over an enum reads the constants of its cases.
+func (s *methodEdges) tableRead(ref *classfile.Ref) {
+	tm := s.b.tables[[2]string{ref.Owner, ref.Name}]
+	if tm == nil {
+		return
+	}
+	for _, k := range tm.keys {
+		index := tm.index[k]
+		target := s.b.resolveMember(k[0], k[1], k[2], true)
+		in := false
+		for _, c := range ref.Cases {
+			if int(c) == index {
+				in = true
+			}
+		}
+		if in && target != 0 {
+			s.add(snapshot.Edge{Src: s.mid, Dst: target, Kind: snapshot.READ})
+			if ref.Param >= 0 {
+				s.paramSwitches.add(Triple{s.mid, target, int64(ref.Param)})
 			}
 		}
 	}
-	out.edges = edges.keys
-	out.callVia = callVia.keys
-	out.paramSwitches = paramSwitches.keys
-	out.directReads = directReads.keys
-	out.routeOpens = routeOpens.keys
-	out.classLiterals = classLiterals.keys
-	out.resKeys = resOrder
-	return out
+}
+
+func (s *methodEdges) typeRef(ref *classfile.Ref) {
+	b, name, t := s.b, s.name, ref.Owner
+	tid, ok := b.classID[t]
+	if !ok || t == name {
+		return
+	}
+	if ref.Kind == classfile.RClassLit && !strings.HasSuffix(s.m.Desc, ")Z") {
+		s.classLiterals.add([2]int64{s.mid, tid})
+	}
+	if ref.Kind == classfile.RClassLit && s.reified {
+		s.reified = false
+	} else if (ref.Kind == classfile.RClassLit || ref.Index == 0xC1) && config.TypedRoutes && b.routeCandidate(t) {
+		s.route = t // composable<T> or entry<T>, or `is T -> NavEntry(key)`
+	}
+	if s.initializer && strings.HasPrefix(t, name+"$") {
+		s.pending = append(s.pending, content{tid, snapshot.TYPE})
+	} else {
+		s.add(snapshot.Edge{Src: s.mid, Dst: tid, Kind: snapshot.TYPE})
+	}
+	if strings.HasPrefix(t, name+"$") || inlinedLambdaOfSameFile(t, name) {
+		s.cont = append(s.cont, content{tid, snapshot.TYPE})
+	}
+}
+
+func (s *methodEdges) lambda(ref *classfile.Ref) {
+	target, ok := s.b.memberID[[3]string{ref.Owner, ref.Name, ref.Desc}]
+	if !ok {
+		return
+	}
+	if s.initializer && ref.Owner == s.name {
+		s.pending = append(s.pending, content{target, snapshot.LAMBDA})
+	} else {
+		s.add(snapshot.Edge{Src: s.mid, Dst: target, Kind: snapshot.LAMBDA})
+	}
+	s.cont = append(s.cont, content{target, snapshot.LAMBDA})
+}
+
+// member: a call, or a read or a write of a field.
+func (s *methodEdges) member(ref *classfile.Ref) {
+	b, name := s.b, s.name
+	owner, n, d := ref.Owner, ref.Name, ref.Desc
+	call := ref.Kind == classfile.RCall
+	if call {
+		s.routeCall(owner, n, d)
+	}
+	// the code of a route, of its nested classes (serializer) and of its sealed parent (whose
+	// serializer lists the subclasses) makes the route without opening it
+	typedOpen := config.TypedRoutes && owner != name && !strings.HasPrefix(name, owner+"$") && !b.ancestorOf(name, owner)
+	if typedOpen && call && n == "<init>" && !(s.m.Name == "<init>" && owner == s.info.Super) && b.routeCandidate(owner) {
+		s.routeReads = append(s.routeReads, owner)
+	}
+	if rtype := rClassType(owner); rtype != "" && ref.Kind == classfile.RRead {
+		s.add(snapshot.Edge{Src: s.mid, Dst: s.resRef(android.ResKey(rtype, n)), Kind: snapshot.RES})
+		return
+	}
+	if _, ok := b.classID[owner]; !ok {
+		return
+	}
+	if ref.Kind == classfile.RRead && n == "INSTANCE" && b.routeClasses[owner] {
+		s.route = owner
+	}
+	if ref.Kind == classfile.RRead && n == "INSTANCE" && (b.navTypes[owner] || typedOpen && b.routeCandidate(owner)) {
+		s.routeReads = append(s.routeReads, owner)
+	}
+	target := b.resolveMember(owner, n, d, !call)
+	if target == 0 {
+		return
+	}
+	switch {
+	case ref.Kind == classfile.RWrite:
+		if len(s.pending) > 0 && owner == name {
+			for _, pc := range s.pending {
+				s.add(snapshot.Edge{Src: target, Dst: pc.target, Kind: pc.kind})
+			}
+			s.pending = nil
+		}
+		s.add(snapshot.Edge{Src: s.mid, Dst: target, Kind: snapshot.WRITE})
+	case ref.Kind == classfile.RRead && s.initializer && owner != name && b.enumClasses[owner] && b.Nodes[target].Flags&snapshot.AccEnum != 0:
+		s.pending = append(s.pending, content{target, snapshot.READ})
+	case call:
+		s.add(snapshot.Edge{Src: s.mid, Dst: target, Kind: snapshot.CALL})
+		s.siteNo++
+		s.siteArgs(&s.out.callSites, s.mid, target, d, ref.Args, s.siteNo, strings.HasSuffix(n, "$default"))
+		if _, ok := b.memberID[[3]string{owner, n, d}]; !ok {
+			s.callVia.add(CallVia{s.mid, target, owner})
+		}
+		if strings.HasPrefix(n, "getLambda$") && strings.HasPrefix(shortName(owner), "ComposableSingletons$") {
+			s.cont = append(s.cont, content{target, snapshot.CALL})
+		}
+	default:
+		s.add(snapshot.Edge{Src: s.mid, Dst: target, Kind: snapshot.READ})
+		if ref.Kind == classfile.RRead && b.enumClasses[owner] && b.Nodes[target].Flags&snapshot.AccEnum != 0 {
+			s.directReads.add([2]int64{s.mid, target})
+		}
+	}
+}
+
+// routeCall: what a call does to the routes: registers one, starts a graph, opens one by name or
+// by the route objects handed to it.
+func (s *methodEdges) routeCall(owner, n, d string) {
+	full := owner + "." + n
+	if n == "reifiedOperationMarker" && owner == "kotlin/jvm/internal/Intrinsics" {
+		s.reified = true
+	}
+	var popped []string
+	if len(s.strs) > 0 {
+		if k := min(stringParams(d), len(s.strs)); k > 0 {
+			popped = s.strs[len(s.strs)-k:]
+			s.strs = s.strs[:len(s.strs)-k]
+		}
+	}
+	if config.RouteGraph.MatchString(full) {
+		if len(popped) >= 2 {
+			s.out.childStart = append(s.out.childStart, [2]string{`"` + popped[1], `"` + popped[0]})
+		} else if config.TypedRoutes && s.route != "" && len(s.routeReads) > 0 {
+			s.out.childStart = append(s.out.childStart, [2]string{s.route, s.popRouteReads(1)[0]})
+		}
+		s.route = ""
+	}
+	if config.RouteRegistration.MatchString(full) {
+		s.register(popped)
+	}
+	ownLambda := n == "<init>" && (strings.HasPrefix(owner, s.name+"$") || inlinedLambdaOfSameFile(owner, s.name))
+	if len(s.cont) > 0 && strings.Contains(d, "Lkotlin/jvm/functions/Function") &&
+		!config.RouteRegistration.MatchString(full) && !ownLambda {
+		// lambdas handed to the app's own function (a graph section's onClick) are not the
+		// content of the next destination, whatever names the routes; the content's own
+		// object (an inlined `screen {}`) is made the same way
+		if _, ok := s.b.classID[owner]; ok {
+			s.cont = nil
+		}
+	}
+	if len(s.named) > 0 && n != "getRoute" && !routeNamePass.MatchString(full) {
+		if config.RouteByName.MatchString(full) {
+			for _, r := range s.named {
+				s.routeOpens.add(routeOpen{s.mid, r})
+			}
+		}
+		s.named = nil
+	}
+	if len(popped) > 0 && config.RouteByName.MatchString(full) && opensRoute(owner, n, s.m.Name) {
+		for _, p := range popped {
+			s.routeOpens.add(routeOpen{s.mid, `"` + p})
+		}
+	}
+	if len(s.routeReads) > 0 && config.TypedRoutes && (n == "areEqual" || n == "equals" ||
+		owner == s.routeReads[len(s.routeReads)-1] && n == "serializer") {
+		// compared, or asked for its serializer: not handed anywhere
+		s.popRouteReads(1)
+	}
+	if len(s.routeReads) > 0 {
+		s.handRouteReads(owner, n, d, full)
+	}
+}
+
+// register: a call registering a route, named by the strings handed to it or by the route object
+// read last, with the content gathered since the last one.
+func (s *methodEdges) register(popped []string) {
+	if s.route == "" && config.StringRoutes && len(popped) > 0 {
+		s.route = `"` + popped[0]
+	} else if s.route == "" && config.TypedRoutes && len(s.routeReads) > 0 {
+		s.route = s.popRouteReads(1)[0]
+	}
+	if s.route != "" {
+		s.out.registrations = append(s.out.registrations, registration{s.mid, s.route, s.cont})
+	}
+	s.route = ""
+	s.cont = nil
+}
+
+// handRouteReads: the route objects read last, taken by a call by their types, start a child,
+// open a route or name the route of getRoute.
+func (s *methodEdges) handRouteReads(owner, n, d, full string) {
+	b := s.b
+	taken := 0
+	if b.navTypes[owner] {
+		taken++
+	}
+	if taken == 0 && config.TypedRoutes && config.RouteByName.MatchString(full) {
+		taken = 1
+	}
+	for _, pd := range classfile.ParamDescs(d) {
+		if c := classfile.ClassOfDesc(pd); c != "" && b.navTypes[c] {
+			taken++
+		}
+	}
+	if taken == 0 && (config.TypedRoutes || !config.RouteRegistration.MatchString(full)) {
+		return
+	}
+	tk := s.popRouteReads(min(max(taken, 1), len(s.routeReads)))
+	if n == "<init>" && config.ChildBases[owner] && b.childClasses[s.name] {
+		s.out.childStart = append(s.out.childStart, [2]string{s.name, tk[len(tk)-1]})
+	} else if opensRoute(owner, n, s.m.Name) {
+		for _, r := range tk {
+			s.routeOpens.add(routeOpen{s.mid, r})
+		}
+	} else if n == "getRoute" {
+		s.named = append(s.named, tk...)
+	}
+}
+
+// popRouteReads: the last k route objects read, taken off the stack.
+func (s *methodEdges) popRouteReads(k int) []string {
+	tk := append([]string(nil), s.routeReads[len(s.routeReads)-k:]...)
+	s.routeReads = s.routeReads[:len(s.routeReads)-k]
+	return tk
 }
 
 // routeCandidate: c may be a route of typedRoutes: a class of the map, not a lambda, a class the
