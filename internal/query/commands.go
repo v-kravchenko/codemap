@@ -31,7 +31,7 @@ var (
 	optAvoid    = flagSpec{name: "avoid", arg: "GLOB", many: true, help: "no way through a screen whose name or class matches (*: any run of characters)"}
 	optModule   = flagSpec{name: "module", arg: "GLOB", many: true, help: "show only what is in a matching module: the module and those under it (*: one level, **: any, !GLOB: not)"}
 	optJSON     = flagSpec{name: "json", help: "the answer as JSON (docs/json.md)"}
-	optDB       = flagSpec{name: "db", arg: "FILE", help: "the code map (default: snapshot in codemap.yml)"}
+	optDB       = flagSpec{name: "db", arg: "FILE", help: "the code map (default: <variant>.snap in snapshot_dir of codemap.yml)"}
 	optVariant  = flagSpec{name: "variant", arg: "VARIANT", help: "the code map of this build variant (default: variant in codemap.yml; not with --db)"}
 	commonFlags = []flagSpec{
 		optJSON, optDB, optVariant,
@@ -44,7 +44,7 @@ var commands = []command{
 	{name: "build", about: "Build the code map from the compiled classes and resources (skipped when nothing changed).",
 		flags: []flagSpec{
 			{name: "root", arg: "DIR", help: "project root (default: found from the working directory)"},
-			{name: "out", arg: "SNAPSHOT", help: "where to write the map (default: snapshot in codemap.yml)"},
+			{name: "out", arg: "SNAPSHOT", help: "where to write the map (default: <variant>.snap in snapshot_dir of codemap.yml)"},
 			{name: "variant", arg: "VARIANT", help: "the build variant whose classes are read (default: variant in codemap.yml)"},
 			{name: "jobs", arg: "N", help: "parallel workers (default: CPUs - 1)"},
 			{name: "force", help: "rebuild even when the inputs did not change"},

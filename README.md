@@ -10,7 +10,7 @@ who opens every screen. A full build of a large app (~35k classes) takes ~3 s.
 ```
 go install github.com/v-kravchenko/codemap/cmd/codemap@latest  # or: go build ./cmd/codemap
 codemap init [--gradle CMD]                        # once, and after build files change
-codemap build [--variant V] [--out SNAPSHOT] [--jobs N] [--force]  # default: snapshot in codemap.yml
+codemap build [--variant V] [--out SNAPSHOT] [--jobs N] [--force]  # default: <variant>.snap in snapshot_dir
 codemap used-by|uses|impact|changes|nav-path|graph|screens|find|build --info ... [--variant V] [--json]
 codemap COMMAND --help                             # its options; one it does not take is an error
 CODEMAP_TIMES=1 codemap build                      # time of each stage on stderr

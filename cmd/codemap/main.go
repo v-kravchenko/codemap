@@ -94,7 +94,7 @@ func main() {
 func buildCmd(args []string) {
 	fs := flag.NewFlagSet("build", flag.ExitOnError)
 	root := fs.String("root", util.FindRoot(), "project root")
-	out := fs.String("out", "", "snapshot (default: snapshot in codemap.yml)")
+	out := fs.String("out", "", "snapshot (default: <variant>.snap in snapshot_dir of codemap.yml)")
 	variant := fs.String("variant", "", "build variant (default: variant in codemap.yml)")
 	jobs := fs.Int("jobs", 0, "parallel workers (default: CPUs - 1)")
 	force := fs.Bool("force", false, "rebuild even when the inputs did not change")

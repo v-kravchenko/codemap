@@ -36,11 +36,11 @@ var configSchema []byte
 // replace); a scalar set later wins. Class names are dotted (com.example.Base, Outer$Inner); member patterns are
 // Class.member globs, see memberPattern.
 type Config struct {
-	Version  int      `yaml:"version" json:"version"`
-	Extends  []string `yaml:"extends,omitempty" json:"extends,omitempty"`
-	Variant  string   `yaml:"variant,omitempty" json:"variant,omitempty"`
-	Snapshot string   `yaml:"snapshot,omitempty" json:"snapshot,omitempty"`
-	Build    struct {
+	Version     int      `yaml:"version" json:"version"`
+	Extends     []string `yaml:"extends,omitempty" json:"extends,omitempty"`
+	Variant     string   `yaml:"variant,omitempty" json:"variant,omitempty"`
+	SnapshotDir string   `yaml:"snapshot_dir,omitempty" json:"snapshot_dir,omitempty"`
+	Build       struct {
 		ClassDirs  []string `yaml:"class_dirs,omitempty" json:"class_dirs,omitempty"`
 		SourceSets []string `yaml:"source_sets,omitempty" json:"source_sets,omitempty"`
 	} `yaml:"build,omitempty" json:"build"`
@@ -101,6 +101,9 @@ func decodeConfig(name string, data []byte) (*Config, error) {
 	d := yaml.NewDecoder(bytes.NewReader(data))
 	d.KnownFields(true)
 	if err := d.Decode(&c); err != nil && !errors.Is(err, io.EOF) {
+		if strings.Contains(err.Error(), "field snapshot not found") {
+			return nil, fmt.Errorf("%s: %s", name, errSnapshotKey)
+		}
 		return nil, fmt.Errorf("%s: %v", name, err)
 	}
 	return &c, nil
@@ -219,30 +222,29 @@ func (c *Config) Sha1() string {
 	return hex.EncodeToString(s[:])
 }
 
-// SnapshotPath: where the map of variant is (the configured one when ""), from the config's
-// snapshot (relative to root, {variant} replaced). The queries read only the snapshot and variant
-// keys of the file, the rest comes with the map. A path without {variant} holds only the
-// configured variant: another one would overwrite its map.
+// SnapshotPath: where the map of variant is (the configured one when ""): <variant>.snap in the
+// config's snapshot_dir (relative to root), so maps of two variants never share a file. The queries
+// read only the snapshot_dir and variant keys of the file, the rest comes with the map.
 func SnapshotPath(root, variant string) (string, error) {
 	c := struct {
-		Snapshot string `yaml:"snapshot"`
-		Variant  string `yaml:"variant"`
+		Snapshot    string `yaml:"snapshot"`
+		SnapshotDir string `yaml:"snapshot_dir"`
+		Variant     string `yaml:"variant"`
 	}{}
 	if data, err := os.ReadFile(filepath.Join(root, ConfigFile)); err == nil {
 		yaml.Unmarshal(data, &c)
 	}
-	configured := cmp.Or(c.Variant, "debug")
-	variant = cmp.Or(variant, configured)
+	if c.Snapshot != "" {
+		return "", fmt.Errorf("%s: %s", ConfigFile, errSnapshotKey)
+	}
+	variant = cmp.Or(variant, c.Variant, "debug")
 	if err := CheckVariant(variant); err != nil {
 		return "", err
 	}
-	rel := cmp.Or(c.Snapshot, "build/codemap/{variant}.snap")
-	if variant != configured && !strings.Contains(strings.ToLower(rel), "{variant}") {
-		return "", fmt.Errorf("%s: snapshot %s holds the map of %s only; add {variant} to it to keep a map per variant",
-			ConfigFile, rel, configured)
-	}
-	return filepath.Join(root, expandVariant(rel, variant)), nil
+	return filepath.Join(root, cmp.Or(c.SnapshotDir, "build/codemap"), variant+".snap"), nil
 }
+
+const errSnapshotKey = "snapshot is now snapshot_dir, the directory of the maps (<variant>.snap in it)"
 
 var variantName = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9_]*$`)
 

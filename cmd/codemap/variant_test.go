@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -56,22 +57,28 @@ func TestVariantMaps(t *testing.T) {
 	}
 }
 
-// TestVariantFixedSnapshot: a snapshot path without {variant} holds the configured variant only;
-// another one is refused rather than written over it.
-func TestVariantFixedSnapshot(t *testing.T) {
+// TestSnapshotDir: the maps go into snapshot_dir; the old snapshot key is refused with what replaced it.
+func TestSnapshotDir(t *testing.T) {
 	root := fixture.FixtureRoot(t)
 	path := filepath.Join(root, "codemap.yml")
 	data, _ := os.ReadFile(path)
-	os.WriteFile(path, append(data, "snapshot: build/map.snap\n"...), 0o644)
-	for _, args := range [][]string{{"build", "--variant", "release"}, {"screens", "--variant", "release"}} {
+	run := func(extra string, args ...string) (string, error) {
+		os.WriteFile(path, append(slices.Clip(data), extra...), 0o644)
 		cmd := exec.Command(os.Args[0], args...)
 		cmd.Dir, cmd.Env = root, append(os.Environ(), "CODEMAP_AS_MAIN=1")
 		out, err := cmd.CombinedOutput()
-		if err == nil || !strings.Contains(string(out), "add {variant} to it") {
-			t.Errorf("%s: got %v, want a refusal in\n%s", strings.Join(args, " "), err, out)
-		}
+		return string(out), err
 	}
-	if _, err := os.Stat(filepath.Join(root, "build/map.snap")); err == nil {
-		t.Error("build --variant release wrote the configured variant's map")
+	if out, err := run("snapshot_dir: maps\n", "build", "--variant", "release"); err != nil {
+		t.Fatalf("build: %v\n%s", err, out)
+	}
+	if out, err := run("snapshot_dir: maps\n", "screens", "--variant", "release", "--json"); err != nil || !strings.Contains(out, `"variant": "release"`) {
+		t.Errorf("screens from maps/release.snap: %v\n%.400s", err, out)
+	}
+	for _, args := range [][]string{{"build"}, {"screens"}} {
+		out, err := run("snapshot: build/map.snap\n", args...)
+		if err == nil || !strings.Contains(out, "snapshot is now snapshot_dir") {
+			t.Errorf("%s with snapshot: got %v, want a refusal in\n%s", args[0], err, out)
+		}
 	}
 }

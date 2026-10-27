@@ -27,9 +27,9 @@
       "type": "string",
       "description": "Build variant whose classes are read, e.g. debug, googleDebug."
     },
-    "snapshot": {
+    "snapshot_dir": {
       "type": "string",
-      "description": "Where the map is written, relative to the root; {variant} and {Variant} are replaced."
+      "description": "Directory of the maps, relative to the root; the map of a variant is <variant>.snap in it."
     },
     "build": {
       "type": "object",

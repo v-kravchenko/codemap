@@ -62,7 +62,7 @@ nav2-compose, nav2-compose-strings, nav3` to exercise every style in one fixture
   file's own list on top — **except** `build.class_dirs`, `build.source_sets` and `changes.base`,
   which **replace** (`orderedLists` in `config.go`): set any one of those three in your file and it
   throws away whatever the presets set, it does not append to it.
-- Scalars (`variant`, `snapshot`, `screens.layout_pattern`, `navigation.typed_routes`, …): the
+- Scalars (`variant`, `snapshot_dir`, `screens.layout_pattern`, `navigation.typed_routes`, …): the
   value set **later** wins (a later preset over an earlier one, the file over every preset).
 - A nested object (`build`, `screens`, `navigation`, `nav_path.costs`, …) merges key by key, not as
   a whole: setting `nav_path.costs.push` does not reset `own`/`shared`.
@@ -77,25 +77,25 @@ variant: debug
 
 Type: string. Default: `debug` (set by the `android` preset; if truly unset anywhere,
 `ApplyConfig` falls back to `debug`). The Gradle build variant whose classes are read, e.g.
-`debug`, `googleDebug`. Substituted into `build.class_dirs`/`build.source_sets`/`snapshot`
-(`{variant}`) and into `codemap.model.json`'s per-variant data (`codemap init` /
+`debug`, `googleDebug`. Substituted into `build.class_dirs`/`build.source_sets` (`{variant}`),
+names the map (`<variant>.snap` in `snapshot_dir`) and is read from `codemap.model.json`'s per-variant data (`codemap init` /
 `project.ModelModules`). `codemap build --variant X` and a query's `--variant X` override it for one
 run: the map of `release` sits next to the map of `debug`, and `meta.index.variant` says which one
 answered.
 
-### snapshot
+### snapshot_dir
 
 ```yaml
-snapshot: build/codemap/{variant}.snap
+snapshot_dir: build/codemap
 ```
 
-Type: string. Default: `build/codemap/{variant}.snap`, relative to the root; `{variant}` and
-`{Variant}` are replaced. Where `codemap build` writes the binary map and where queries read it by
-default (`--db` overrides per invocation). This and `variant` are the keys the queries read
-straight from the YAML file before loading the map (`config.SnapshotPath`) — the map itself carries
-the rest of the settings it was built with. A path without `{variant}` holds the map of the
-configured variant only: `--variant` with another one is an error rather than a map written over
-it.
+Type: string. Default: `build/codemap`, relative to the root. The directory of the binary maps:
+`codemap build` writes the map of a variant to `<variant>.snap` in it (`debug.snap`,
+`release.snap`), and a query reads the one of its `--variant` or the configured `variant`
+(`--out`/`--db` override per invocation). The file name is not configurable, so maps of two
+variants never share a file. This and `variant` are the keys the queries read straight from the
+YAML file before loading the map (`config.SnapshotPath`) — the map itself carries the rest of the
+settings it was built with. The former `snapshot` key (a file path) is refused with a pointer here.
 
 ### build.class_dirs
 
@@ -428,7 +428,7 @@ version: 1
 extends: [android, nav2-compose]
 
 variant: debug
-snapshot: build/codemap/{variant}.snap
+snapshot_dir: build/codemap
 
 screens:
   activity_bases:

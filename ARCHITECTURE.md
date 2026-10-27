@@ -23,7 +23,7 @@ symbols, finds the screens in it, and walks the graph to answer:
 codemap init ──Gradle (once)──> codemap.model.json   modules, variants, class/source/res dirs
                                       │
 classes (*.class) ─┐                  ▼
-resources, XML    ─┼──> build ──> snapshot (build/codemap/{variant}.snap) ──> queries ──> text / --json
+resources, XML    ─┼──> build ──> snapshot (build/codemap/<variant>.snap) ──> queries ──> text / --json
 manifests         ─┘    (~3 s for ~35k classes)       mapped, ~50 ms to load
 codemap.yml + presets ──> settings (stored in the snapshot, so queries use what build used)
 ```

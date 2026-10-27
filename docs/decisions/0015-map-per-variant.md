@@ -14,10 +14,10 @@ and an answer that says which of them it came from.
 
 - `codemap build --variant X` and a query's `--variant X` override `variant` for one run; the flag
   wins over the file, the file over the preset (`debug`).
-- The map's path depends on the variant: `snapshot` takes `{variant}`, and its default is
-  `build/codemap/{variant}.snap`. A query with `--variant X` reads the map `build --variant X` wrote.
-- A `snapshot` without `{variant}` holds the configured variant only: `--variant` with another one
-  is an error, not a map written over it.
+- `codemap.yml` names a directory, `snapshot_dir` (default `build/codemap`), not a file: the map of
+  a variant is always `<variant>.snap` in it. A query with `--variant X` reads the map
+  `build --variant X` wrote, and no setting can make two variants share a file. The former
+  `snapshot` key (a file path) is refused with a pointer to `snapshot_dir`.
 - `--variant` with `--db` is an error: the map at `--db` has its own variant.
 - `meta.index.variant` in `--json` names the variant of the map (schema 3.6.0).
 - One variant per `build`: the settings are package globals (ROADMAP, Later), and a run per variant
@@ -26,13 +26,18 @@ and an answer that says which of them it came from.
 ## Consequences
 
 - The default map moved from `build/codemap/codemap.snap` to `build/codemap/debug.snap`; the old
-  file stays until removed, and the queries ask for `codemap build` once.
+  file stays until removed, and the queries ask for `codemap build` once. A `codemap.yml` with
+  `snapshot` must say `snapshot_dir` instead.
+- `--out`/`--db` still take any file, for a one-off map.
 - A release map is read from the classes before R8 (`compileReleaseKotlin`), so minification does
   not change it; obfuscated stack traces are a separate feature (`mapping.txt`, ROADMAP).
 - Comparing two maps is not done yet; each answer names its variant, so a script can.
 
 ## Alternatives considered
 
+- **`{variant}` in the `snapshot` file path** (`build/codemap/{variant}.snap`). Keeps any file
+  name, but a path without the placeholder holds one variant only and needs an error for the
+  rest; a directory leaves nothing to get wrong.
 - **A suffix for other variants only** (`codemap.snap` for the configured one,
   `codemap-release.snap` for the rest). Keeps the old path, but the name of a map then depends on
   what the file says today, and two rules where one does.
