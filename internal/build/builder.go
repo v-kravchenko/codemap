@@ -2148,14 +2148,14 @@ func (b *Builder) Map(meta map[string]string) *snapshot.Map {
 	m := &snapshot.Map{}
 	for _, md := range b.modules {
 		m.Module.Name.Add(md.Name)
-		m.Module.Dir.Add(md.Dir)
+		m.Module.Dir.Add(filepath.ToSlash(md.Dir)) // paths in the map use /, on Windows too: the same answers everywhere
 	}
 	for _, p := range b.fileOrder {
 		f := b.files[p]
 		m.File.ID = append(m.File.ID, int32(f.ID))
 		m.File.Module = append(m.File.Module, int32(f.Module))
 		m.File.Lines = append(m.File.Lines, int32(f.Lines))
-		m.File.Path.Add(p)
+		m.File.Path.Add(filepath.ToSlash(p))
 	}
 
 	ids := make([]int64, 0, len(b.Nodes))
@@ -2293,7 +2293,7 @@ func (b *Builder) otherColumns(m *snapshot.Map) {
 	}
 	for _, p := range util.SortedKeys(all) {
 		s := all[p]
-		m.Input.Path.Add(p)
+		m.Input.Path.Add(filepath.ToSlash(p))
 		m.Input.Sha1.Add(s.Sha1)
 		m.Input.Size = append(m.Input.Size, s.Size)
 		m.Input.Mtime = append(m.Input.Mtime, s.Mtime)

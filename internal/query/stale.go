@@ -46,13 +46,17 @@ func staleInputs(m *snapshot.Map, root string) (changed, added, removed []string
 			filepath.WalkDir(filepath.Join(root, d), func(p string, e os.DirEntry, err error) error {
 				if err == nil && !e.IsDir() && strings.HasSuffix(e.Name(), ".class") && e.Name() != "module-info.class" {
 					rel, _ := filepath.Rel(root, p)
-					lists[i] = append(lists[i], rel)
+					lists[i] = append(lists[i], filepath.ToSlash(rel)) // the map's paths use /
 				}
 				return nil
 			})
 		})
 	}
-	wg.Go(func() { lists[len(dirs)] = build.WatchedFiles(root, modules) })
+	wg.Go(func() {
+		for _, p := range build.WatchedFiles(root, modules) {
+			lists[len(dirs)] = append(lists[len(dirs)], filepath.ToSlash(p))
+		}
+	})
 	wg.Wait()
 	var all []string
 	for _, l := range lists {
@@ -132,7 +136,7 @@ func UpToDate(snap, root string, modules []project.Module) bool {
 		return false
 	}
 	for i, mod := range modules {
-		if m.Module.Dir.At(i) != mod.Dir {
+		if m.Module.Dir.At(i) != filepath.ToSlash(mod.Dir) {
 			return false
 		}
 	}
@@ -174,7 +178,7 @@ func (g *Graph) findStale() *staleInfo {
 
 func (g *Graph) sourceOfClass(path string, classDirs []string) string {
 	for _, d := range classDirs {
-		if !strings.HasPrefix(path, d+string(os.PathSeparator)) {
+		if d = filepath.ToSlash(d); !strings.HasPrefix(path, d+"/") {
 			continue
 		}
 		name := filepath.ToSlash(strings.TrimSuffix(path[len(d)+1:], ".class"))
@@ -195,7 +199,7 @@ func (g *Graph) moduleDir(path string) (string, bool) {
 	best, ok := "", false
 	for i := range g.m.Module.Dir.Len() {
 		d := g.m.Module.Dir.At(i)
-		if (d == "." || strings.HasPrefix(path, d+string(os.PathSeparator))) && (!ok || len(d) > len(best)) {
+		if (d == "." || strings.HasPrefix(path, d+"/")) && (!ok || len(d) > len(best)) {
 			best, ok = d, true
 		}
 	}

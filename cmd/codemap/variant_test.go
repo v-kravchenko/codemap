@@ -45,7 +45,7 @@ func TestVariantMaps(t *testing.T) {
 		}
 	}
 	for args, want := range map[string]string{
-		"screens --variant beta":                "No code map at " + filepath.Join(root, "build/codemap/beta.snap") + ": run `codemap build --variant beta`",
+		"screens --variant beta":                filepath.Join("build", "codemap", "beta.snap") + ": run `codemap build --variant beta`", // the temp root may be a symlink
 		"screens --variant release --db x.snap": "not with --db",
 		"screens --variant ../x":                "expected a Gradle variant name",
 		"build --variant ../x":                  "expected a Gradle variant name",

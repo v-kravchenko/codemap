@@ -843,6 +843,7 @@ func (g *Graph) resolve(text string) []Seed {
 		abs, _ := filepath.Abs(path)
 		rel, _ = filepath.Rel(g.root, abs)
 	}
+	rel = filepath.ToSlash(rel) // the map's paths use /
 	if _, ok := g.fileID[rel]; ok {
 		var lines []int32
 		if line != 0 {

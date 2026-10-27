@@ -60,7 +60,7 @@ func (g *Graph) repoPath(name string) string {
 			name = r
 		}
 	}
-	return filepath.Clean(name)
+	return filepath.ToSlash(filepath.Clean(name)) // the map's paths use /
 }
 
 func (g *Graph) diffPath(name string) (string, bool) {
