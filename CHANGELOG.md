@@ -7,6 +7,8 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-27
+
 ### Added
 
 - `changes --base-db FILE` takes the code map of the base: `changed[].status`, `screens[].added`
@@ -112,7 +114,8 @@ The first public release.
   navigation events; anything project-specific goes into `codemap.yml`.
 - `codemap version`.
 
-[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/v-kravchenko/codemap/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/v-kravchenko/codemap/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/v-kravchenko/codemap/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/v-kravchenko/codemap/compare/v0.4.0...v0.4.1
