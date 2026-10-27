@@ -8,8 +8,11 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -20,6 +23,30 @@ import (
 const defaultDistributionURL = "https://github.com/v-kravchenko/codemap/releases/download/v{version}"
 
 var releaseVersion = regexp.MustCompile(`^\d+\.\d+\.\d+$`)
+
+// The first release with `codemap wrapper`: an older one cannot write its files.
+const firstWrapperRelease = "0.4.0"
+
+// Set for the release codemapw runs on behalf of another one: it must write the files itself.
+const wrapperDelegateEnv = "CODEMAP_WRAPPER_DELEGATE"
+
+// runRelease runs codemapw of dir with args; a variable for the tests, which have no release.
+var runRelease = func(dir string, args []string) int {
+	path := filepath.Join(dir, "codemapw")
+	if runtime.GOOS == "windows" {
+		path += ".cmd"
+	}
+	cmd := exec.Command(path, args...)
+	cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
+	cmd.Env = append(os.Environ(), wrapperDelegateEnv+"=1")
+	if err := cmd.Run(); err != nil {
+		if exit, ok := err.(*exec.ExitError); ok {
+			return exit.ExitCode()
+		}
+		util.Fail("%v", err)
+	}
+	return 0
+}
 
 // The systems of the release archives (.goreleaser.yaml): codemapw takes the sha256 of its own.
 var wrapperArchives = []struct{ os, arch, ext string }{
@@ -52,6 +79,9 @@ func WrapperCmd(args []string, toolVersion string) int {
 	if !releaseVersion.MatchString(v) {
 		util.Fail("%q is not a release (a build from a checkout?): pass --version X.Y.Z.", v)
 	}
+	if olderRelease(v, firstWrapperRelease) {
+		util.Fail("codemap %s has no wrapper: pass --version %s or later.", v, firstWrapperRelease)
+	}
 	base := strings.TrimSuffix(strings.ReplaceAll(*url, "{version}", v), "/")
 	sums, err := fetchChecksums(base + "/checksums.txt")
 	if err != nil {
@@ -61,6 +91,14 @@ func WrapperCmd(args []string, toolVersion string) int {
 	if err != nil {
 		util.Fail("%v", err)
 	}
+	if v != strings.TrimPrefix(toolVersion, "v") {
+		// The hook and codemapw belong to the release they run: that release writes them, run by
+		// codemapw from a temporary directory, so a failed download leaves the project as it was.
+		if os.Getenv(wrapperDelegateEnv) != "" {
+			util.Fail("codemap %s was run as release %s: a broken release?", toolVersion, v)
+		}
+		return delegateWrapper(abs, v, *url, props)
+	}
 	script := append([]byte(fmt.Sprintf("// codemap %s: written by `codemap wrapper`, which rewrites it for another release.\n", v)),
 		GradleScript...)
 	files := []struct {
@@ -69,7 +107,7 @@ func WrapperCmd(args []string, toolVersion string) int {
 		mode os.FileMode
 	}{
 		{"codemapw", wrapperSh, 0o755},
-		{"codemapw.cmd", []byte(strings.ReplaceAll(string(wrapperCmd), "\n", "\r\n")), 0o644},
+		{"codemapw.cmd", crlf(wrapperCmd), 0o644},
 		{"codemap-wrapper.properties", []byte(props), 0o644},
 		{filepath.Join("gradle", "codemap.gradle"), script, 0o644},
 	}
@@ -99,6 +137,37 @@ func WrapperCmd(args []string, toolVersion string) int {
 	fmt.Fprintln(os.Stderr, "Keep build/codemap and codemap.model.json out of git; commit the four files.")
 	return 0
 }
+
+// delegateWrapper runs `codemap wrapper` of release v, by this codemapw with v's properties.
+func delegateWrapper(root, v, url, props string) int {
+	tmp, err := os.MkdirTemp("", "codemapw")
+	if err != nil {
+		util.Fail("%v", err)
+	}
+	defer os.RemoveAll(tmp)
+	for name, data := range map[string][]byte{"codemapw": wrapperSh, "codemapw.cmd": crlf(wrapperCmd),
+		"codemap-wrapper.properties": []byte(props)} {
+		if err := os.WriteFile(filepath.Join(tmp, name), data, 0o755); err != nil {
+			util.Fail("%v", err)
+		}
+	}
+	return runRelease(tmp, []string{"wrapper", "--root", root, "--version", v, "--distribution-url", url})
+}
+
+// olderRelease: whether release a comes before release b, both X.Y.Z.
+func olderRelease(a, b string) bool {
+	pa, pb := strings.Split(a, "."), strings.Split(b, ".")
+	for i := range pa {
+		x, _ := strconv.Atoi(pa[i])
+		y, _ := strconv.Atoi(pb[i])
+		if x != y {
+			return x < y
+		}
+	}
+	return false
+}
+
+func crlf(b []byte) []byte { return []byte(strings.ReplaceAll(string(b), "\n", "\r\n")) }
 
 // wrapperProperties: the release, where it is, and the sha256 of each archive from its checksums.
 func wrapperProperties(version, base string, sums map[string]string) (string, error) {

@@ -26,8 +26,24 @@ func TestWrapper(t *testing.T) {
 	defer srv.Close()
 	root := t.TempDir()
 	writeFiles(t, root, map[string]string{"settings.gradle.kts": `rootProject.name = "x"`})
+	// Another release writes its own files: this one runs it by codemapw, as the release does here.
+	var ran []string
+	defer func(run func(string, []string) int) { runRelease = run }(runRelease)
+	runRelease = func(dir string, args []string) int {
+		ran = args
+		if props, _ := os.ReadFile(filepath.Join(dir, "codemap-wrapper.properties")); !strings.Contains(string(props), "version=1.2.3\n") {
+			t.Errorf("codemapw of the release without its properties:\n%s", props)
+		}
+		if _, err := os.Stat(filepath.Join(root, "codemapw")); err == nil {
+			t.Error("files written before the release ran")
+		}
+		return WrapperCmd(args[1:], "1.2.3")
+	}
 	if code := WrapperCmd([]string{"--root", root, "--version", "v1.2.3", "--distribution-url", srv.URL + "/v{version}/"}, "dev"); code != 0 {
 		t.Fatalf("exit %d", code)
+	}
+	if want := []string{"wrapper", "--root", root, "--version", "1.2.3", "--distribution-url", srv.URL + "/v{version}/"}; fmt.Sprint(ran) != fmt.Sprint(want) {
+		t.Errorf("ran %q, want %q", ran, want)
 	}
 	props, _ := os.ReadFile(filepath.Join(root, "codemap-wrapper.properties"))
 	for _, want := range []string{"version=1.2.3\n", "distribution_url=" + srv.URL + "/v1.2.3\n",
@@ -44,6 +60,9 @@ func TestWrapper(t *testing.T) {
 	}
 	if script, _ := os.ReadFile(filepath.Join(root, "gradle", "codemap.gradle")); !strings.HasPrefix(string(script), "// codemap 1.2.3:") {
 		t.Errorf("gradle/codemap.gradle: %.60s", script)
+	}
+	if !olderRelease("0.3.9", "0.4.0") || olderRelease("0.10.0", "0.4.0") || olderRelease("0.4.0", "0.4.0") {
+		t.Error("olderRelease")
 	}
 	if _, err := wrapperProperties("1.2.3", srv.URL, map[string]string{}); err == nil {
 		t.Error("a release without its archives must fail")

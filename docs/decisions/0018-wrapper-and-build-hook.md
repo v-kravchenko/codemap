@@ -17,7 +17,8 @@ itself; what changes is that a project may now opt in.
 
 ## Decision
 
-`codemap wrapper [--version V]` writes four files a project commits, as Gradle's wrapper does:
+`codemap wrapper [--version V]` writes four files a project commits, as Gradle's wrapper does
+(for another release V, V writes them: codemap runs it by codemapw from a temporary directory):
 
 - `codemapw` (sh) and `codemapw.cmd` (PowerShell inside): download the release once into
   `$CODEMAP_HOME` (`~/.cache/codemap`, `%LOCALAPPDATA%\codemap`), check its sha256, run it.

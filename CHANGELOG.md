@@ -7,6 +7,11 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Fixed
+
+- `codemap wrapper --version X` of another release wrote its own build hook under X's header; it
+  now runs release X through codemapw to write X's files, and refuses releases before 0.4.0.
+
 ## [0.4.1] - 2026-10-27
 
 ### Fixed
