@@ -42,9 +42,24 @@ type opts struct {
 	kinds, pos, via, avoid, modules, types                        []string
 }
 
+// fields: where each option goes: a switch sets its bool, a value its string, a repeatable one
+// appends, a number its int.
+func (o *opts) fields() (map[string]*bool, map[string]*string, map[string]*[]string, map[string]*int) {
+	switches := map[string]*bool{"verbose": &o.verbose, "info": &o.info, "json": &o.json, "all": &o.all,
+		"no-paths": &o.noPaths, "no-self": &o.noSelf, "no-di": &o.noDI, "unreachable": &o.unreachable,
+		"no-check": &o.noCheck, "strict": &o.strict, "nav": &o.nav, "ways": &o.ways, "in": &o.in}
+	values := map[string]*string{"db": &o.db, "to": &o.to, "base": &o.base, "head": &o.head, "diff": &o.diff,
+		"files": &o.files, "host": &o.host, "from": &o.from, "entry": &o.entry, "direction": &o.direction}
+	lists := map[string]*[]string{"kind": &o.kinds, "type": &o.types, "via": &o.via, "avoid": &o.avoid,
+		"module": &o.modules}
+	numbers := map[string]*int{"depth": &o.depth, "limit": &o.limit}
+	return switches, values, lists, numbers
+}
+
 func parseOpts(cmd string, args []string) opts {
 	o := opts{depth: -1, limit: -1}
 	spec := commandSpec(cmd)
+	switches, values, lists, numbers := o.fields()
 	// inline: the value of `--flag=value`, taken by the flag instead of the next argument
 	inline, hasInline := "", false
 	value := func(i *int, name string) string {
@@ -58,122 +73,79 @@ func parseOpts(cmd string, args []string) opts {
 		*i++
 		return args[*i]
 	}
-	number := func(i *int, name string) int {
-		v, err := strconv.Atoi(value(i, name))
-		if err != nil {
-			panic(util.UserError("argument --" + name + ": invalid int value"))
-		}
-		if v < 0 {
-			panic(util.UserError("argument --" + name + ": expected N >= 0"))
-		}
-		return v
-	}
 	for i := 0; i < len(args); i++ {
 		a := args[i]
 		hasInline = false
 		if name, v, ok := strings.Cut(a, "="); ok && strings.HasPrefix(a, "--") {
 			a, inline, hasInline = name, v, true
 		}
-		if strings.HasPrefix(a, "--") && !spec.hasFlag(a[2:]) {
-			if knownFlag(a[2:]) {
+		if !strings.HasPrefix(a, "--") {
+			o.pos = append(o.pos, a)
+			continue
+		}
+		name := a[2:]
+		if !spec.hasFlag(name) {
+			if knownFlag(name) {
 				panic(util.UserError(fmt.Sprintf("argument %s: not an option of %s (codemap %s --help)", a, spec.name, cmd)))
 			}
 			panic(util.UserError("unrecognized arguments: " + a))
 		}
-		switch a {
-		case "--db":
-			o.db = value(&i, "db")
-		case "--to":
-			o.to = value(&i, "to")
-		case "--base":
-			o.base = value(&i, "base")
-		case "--head":
-			o.head = value(&i, "head")
-		case "--diff":
-			o.diff = value(&i, "diff")
-		case "--files":
-			o.files = value(&i, "files")
-		case "--verbose":
-			o.verbose = true
-		case "--info":
-			o.info = true
-		case "--depth":
-			o.depth = number(&i, "depth")
-		case "--limit":
-			o.limit = number(&i, "limit")
-		case "--kind":
-			o.kinds = append(o.kinds, value(&i, "kind"))
-		case "--json":
-			o.json = true
-		case "--all":
-			o.all = true
-		case "--no-paths":
-			o.noPaths = true
-		case "--no-self":
-			o.noSelf = true
-		case "--no-di":
-			o.noDI = true
-		case "--host":
-			o.host = value(&i, "host")
-		case "--unreachable":
-			o.unreachable = true
-		case "--type":
-			o.types = append(o.types, value(&i, "type"))
-		case "--no-check":
-			o.noCheck = true
-		case "--strict":
-			o.strict = true
-		case "--nav":
-			o.nav = true
-		case "--via":
-			o.via = append(o.via, value(&i, "via"))
-		case "--avoid":
-			o.avoid = append(o.avoid, value(&i, "avoid"))
-		case "--from":
-			o.from = value(&i, "from")
-		case "--entry":
-			o.entry = value(&i, "entry")
-		case "--ways":
-			o.ways = true
-		case "--in":
-			o.in = true
-		case "--direction":
-			o.direction = strings.ToUpper(value(&i, "direction"))
-		case "--module":
-			o.modules = append(o.modules, value(&i, "module"))
-		default:
-			if strings.HasPrefix(a, "--") {
-				panic(util.UserError("unrecognized arguments: " + a))
-			}
-			o.pos = append(o.pos, a)
+		if p, ok := switches[name]; ok {
+			*p = true
+		} else if p, ok := values[name]; ok {
+			*p = value(&i, name)
+		} else if p, ok := lists[name]; ok {
+			*p = append(*p, value(&i, name))
+		} else if p, ok := numbers[name]; ok {
+			*p = nonNegative(value(&i, name), name)
+		} else {
+			panic(util.UserError("unrecognized arguments: " + a))
 		}
 		if hasInline {
 			panic(util.UserError(fmt.Sprintf("argument %s: takes no value, got '%s'", a, inline)))
 		}
 	}
+	o.direction = strings.ToUpper(o.direction)
+	o.check(spec)
+	return o
+}
+
+func nonNegative(s, name string) int {
+	v, err := strconv.Atoi(s)
+	if err != nil {
+		panic(util.UserError("argument --" + name + ": invalid int value"))
+	}
+	if v < 0 {
+		panic(util.UserError("argument --" + name + ": expected N >= 0"))
+	}
+	return v
+}
+
+// check: the positionals the command takes and the values of the options with a set of choices.
+func (o *opts) check(spec *command) {
 	if n := spec.maxArgs(); n >= 0 && len(o.pos) > n {
 		panic(util.UserError("unrecognized arguments: " + strings.Join(o.pos[n:], " ")))
 	}
-	if o.direction != "" && !slices.Contains(mermaidDirections, o.direction) {
-		panic(util.UserError(fmt.Sprintf("argument --direction: invalid choice: '%s' (choose from %s)", o.direction,
-			strings.Join(mermaidDirections, ", "))))
+	choice := func(flag, v string, choices []string) {
+		if !slices.Contains(choices, v) {
+			panic(util.UserError(fmt.Sprintf("argument --%s: invalid choice: '%s' (choose from %s)", flag, v,
+				strings.Join(choices, ", "))))
+		}
 	}
-	if o.entry != "" && !slices.Contains(entryKinds, o.entry) {
-		panic(util.UserError(fmt.Sprintf("argument --entry: invalid choice: '%s' (choose from %s)", o.entry,
-			strings.Join(entryKinds, ", "))))
+	if o.direction != "" {
+		choice("direction", o.direction, mermaidDirections)
+	}
+	if o.entry != "" {
+		choice("entry", o.entry, entryKinds)
 	}
 	for _, t := range o.types {
-		if !slices.Contains(findTypes, t) {
-			panic(util.UserError(fmt.Sprintf("argument --type: invalid choice: '%s' (choose from %s)", t,
-				strings.Join(findTypes, ", "))))
-		}
+		choice("type", t, findTypes)
 	}
 	for _, k := range o.kinds {
 		if k != "all" && !slices.ContainsFunc(config.ScreenTitles, func(t [2]string) bool { return t[0] == k }) {
 			panic(util.UserError(fmt.Sprintf("argument --kind: invalid choice: '%s'", k)))
 		}
 	}
-	return o
 }
 
 func Query(cmd string, args []string) (code int) {

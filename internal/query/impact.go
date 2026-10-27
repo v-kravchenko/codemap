@@ -208,151 +208,179 @@ func (g *Graph) sitesInto(target int32) *sitesInto {
 	return out
 }
 
+// conduits: the methods that depend on a changed enum entry only through a parameter.
+type conduits struct {
+	g        *Graph
+	entry    int32
+	entryID  int64
+	switches map[int32]map[int64]bool // method -> the parameters it switches on over the entry
+	swOrder  []int32
+	direct   map[int32]bool // methods reading the entry itself
+	reached  map[int32]bool
+	impls    map[int32]map[int32]bool
+	cache    map[int32]*sitesInto
+	pos      map[int32]int64 // conduit -> the parameter the entry comes through
+	order    []int32
+}
+
 // blockedCalls: calls that cannot reach the changed enum `entry`: {(caller, called, expanded method)}.
 // A conduit depends on the entry only through a parameter; a call of it that passes another entry or
 // null at every call site of that caller is blocked.
 func (g *Graph) blockedCalls(entry int32, w *Walk) map[[3]int32]bool {
-	entryID := g.id(entry)
-	switches := map[int32]map[int64]bool{}
-	var swOrder []int32
+	c := &conduits{g: g, entry: entry, entryID: g.id(entry), switches: map[int32]map[int64]bool{},
+		direct: map[int32]bool{}, reached: map[int32]bool{}, cache: map[int32]*sitesInto{}, pos: map[int32]int64{}}
 	ps := &g.m.ParamSwitch
 	for i := range ps.Method {
-		if ps.Entry[i] == entryID {
+		if ps.Entry[i] == c.entryID {
 			m := g.m.Index(ps.Method[i])
-			if switches[m] == nil {
-				switches[m] = map[int64]bool{}
-				swOrder = append(swOrder, m)
+			if c.switches[m] == nil {
+				c.switches[m] = map[int64]bool{}
+				c.swOrder = append(c.swOrder, m)
 			}
-			switches[m][ps.Pos[i]] = true
+			c.switches[m][ps.Pos[i]] = true
 		}
 	}
-	direct := map[int32]bool{}
 	for i := range g.m.DirectRead.Method {
-		if g.m.DirectRead.Entry[i] == entryID {
-			direct[g.m.Index(g.m.DirectRead.Method[i])] = true
+		if g.m.DirectRead.Entry[i] == c.entryID {
+			c.direct[g.m.Index(g.m.DirectRead.Method[i])] = true
 		}
 	}
-	if len(switches) == 0 {
+	if len(c.switches) == 0 {
 		return nil
 	}
-	reached := map[int32]bool{}
 	for k := range w.Aff {
-		reached[k.N] = true
+		c.reached[k.N] = true
 	}
-	impls := g.reachedImpls(reached)
-	cache := map[int32]*sitesInto{}
-	into := func(t int32) *sitesInto {
-		s, ok := cache[t]
-		if !ok {
-			s = g.sitesInto(t)
-			cache[t] = s
-		}
-		return s
+	c.impls = g.reachedImpls(c.reached)
+	c.find()
+	return c.blocked()
+}
+
+func (c *conduits) into(t int32) *sitesInto {
+	s, ok := c.cache[t]
+	if !ok {
+		s = c.g.sitesInto(t)
+		c.cache[t] = s
 	}
-	targetsOf := func(d int32) []int32 { return append([]int32{d}, g.overridden(d)...) }
-	conduit := map[int32]int64{}
-	evaluate := func(m int32) (int64, bool) {
-		forwarded := map[int64]bool{}
-		for p := range switches[m] {
-			forwarded[p] = true
-		}
-		for _, u := range g.uses(m) {
-			dst, kind := u.N, u.Kind
-			if dst == m {
-				continue
-			}
-			if dst == entry && kind == snapshot.READ {
-				if _, sw := switches[m]; direct[m] || !sw {
-					return 0, false
-				}
-				continue
-			}
-			var hit []int32
-			if reached[dst] {
-				hit = append(hit, dst)
-			}
-			if kind == snapshot.CALL {
-				for h := range impls[dst] {
-					hit = append(hit, h)
-				}
-			}
-			if len(hit) == 0 {
-				continue
-			}
-			anyConduit := false
-			for _, h := range hit {
-				_, ok := conduit[h]
-				anyConduit = anyConduit || ok
-			}
-			if kind != snapshot.CALL || !anyConduit {
-				return 0, false
-			}
-			for _, h := range hit {
-				pos, ok := conduit[h]
-				if !ok {
-					return 0, false
-				}
-				for _, t := range targetsOf(h) {
-					cs, ok := into(t).By[m]
-					if !ok {
-						continue
-					}
-					for _, site := range cs.Order {
-						a := cs.get(site, pos)
-						if a.Kind == "p" {
-							forwarded[a.Arg] = true
-						} else if a.Kind == "u" || a.Kind == "c" && a.Arg == entryID {
-							return 0, false
-						}
-					}
-				}
-			}
-		}
-		if len(forwarded) == 1 {
-			for p := range forwarded {
-				return p, true
-			}
-		}
-		return 0, false
-	}
+	return s
+}
+
+func (c *conduits) targetsOf(d int32) []int32 { return append([]int32{d}, c.g.overridden(d)...) }
+
+// find: the conduits, from the switching methods out to their callers.
+func (c *conduits) find() {
 	var work []int32
-	for _, m := range swOrder {
-		if reached[m] {
+	for _, m := range c.swOrder {
+		if c.reached[m] {
 			work = append(work, m)
 		}
 	}
-	var conduitOrder []int32
 	for len(work) > 0 {
 		m := work[len(work)-1]
 		work = work[:len(work)-1]
-		if _, ok := conduit[m]; ok {
+		if _, ok := c.pos[m]; ok {
 			continue
 		}
-		pos, ok := evaluate(m)
+		pos, ok := c.evaluate(m)
 		if !ok {
 			continue
 		}
-		conduit[m] = pos
-		conduitOrder = append(conduitOrder, m)
-		for _, t := range targetsOf(m) {
-			for _, src := range into(t).Callers {
-				if _, done := conduit[src]; reached[src] && !done {
+		c.pos[m] = pos
+		c.order = append(c.order, m)
+		for _, t := range c.targetsOf(m) {
+			for _, src := range c.into(t).Callers {
+				if _, done := c.pos[src]; c.reached[src] && !done {
 					work = append(work, src)
 				}
 			}
 		}
 	}
+}
+
+// evaluate: whether `m` is a conduit, and the one parameter the entry comes through.
+func (c *conduits) evaluate(m int32) (int64, bool) {
+	forwarded := map[int64]bool{}
+	for p := range c.switches[m] {
+		forwarded[p] = true
+	}
+	for _, u := range c.g.uses(m) {
+		if u.N != m && !c.forwards(m, u, forwarded) {
+			return 0, false
+		}
+	}
+	if len(forwarded) == 1 {
+		for p := range forwarded {
+			return p, true
+		}
+	}
+	return 0, false
+}
+
+// forwards: whether a use of `m` keeps it a conduit: it reads the entry where `m` switches on a
+// parameter, reaches nothing changed, or calls conduits passing them parameters of `m` (added to
+// `forwarded`).
+func (c *conduits) forwards(m int32, u Use, forwarded map[int64]bool) bool {
+	dst, kind := u.N, u.Kind
+	if dst == c.entry && kind == snapshot.READ {
+		_, sw := c.switches[m]
+		return !c.direct[m] && sw
+	}
+	var hit []int32
+	if c.reached[dst] {
+		hit = append(hit, dst)
+	}
+	if kind == snapshot.CALL {
+		for h := range c.impls[dst] {
+			hit = append(hit, h)
+		}
+	}
+	if len(hit) == 0 {
+		return true
+	}
+	anyConduit := false
+	for _, h := range hit {
+		_, ok := c.pos[h]
+		anyConduit = anyConduit || ok
+	}
+	if kind != snapshot.CALL || !anyConduit {
+		return false
+	}
+	for _, h := range hit {
+		pos, ok := c.pos[h]
+		if !ok {
+			return false
+		}
+		for _, t := range c.targetsOf(h) {
+			cs, ok := c.into(t).By[m]
+			if !ok {
+				continue
+			}
+			for _, site := range cs.Order {
+				a := cs.get(site, pos)
+				if a.Kind == "p" {
+					forwarded[a.Arg] = true
+				} else if a.Kind == "u" || a.Kind == "c" && a.Arg == c.entryID {
+					return false
+				}
+			}
+		}
+	}
+	return true
+}
+
+// blocked: the calls of a conduit passing another entry or null at every site of the caller.
+func (c *conduits) blocked() map[[3]int32]bool {
 	blocked := map[[3]int32]bool{}
-	for _, d := range conduitOrder {
-		pos := conduit[d]
-		for _, t := range targetsOf(d) {
-			s := into(t)
+	for _, d := range c.order {
+		pos := c.pos[d]
+		for _, t := range c.targetsOf(d) {
+			s := c.into(t)
 			for _, src := range s.Callers {
 				cs := s.By[src]
 				all := len(cs.Order) > 0
 				for _, site := range cs.Order {
 					a := cs.get(site, pos)
-					if !(a.Kind == "n" || a.Kind == "c" && a.Arg != entryID) {
+					if !(a.Kind == "n" || a.Kind == "c" && a.Arg != c.entryID) {
 						all = false
 						break
 					}

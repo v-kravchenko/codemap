@@ -67,27 +67,77 @@ func (g *Graph) reportImpact(seeds []Seed, o opts, command string) int {
 }
 
 // reportImpactWith: nc, the changes left out; warnings, what may make the result wrong.
+// impactAnswer: what reportImpactWith prints, as text or --json.
+type impactAnswer struct {
+	seeds        []Seed
+	seedIDs      map[int32]bool
+	w            *Walk
+	mf           *moduleFilter
+	byKind       map[string][]screenItem
+	hidden       map[string]int
+	outScreens   int
+	outSymbols   map[int32]bool // affected outside --module
+	navs         map[int32]*navOf
+	notCov       []notCovered
+	warnings     []string
+	modules      map[string]int // affected symbols per module
+	packages     map[string]int
+	nearest      map[int32]Key // the key of each affected node nearest to the change
+	nearestOrder []int32
+	elapsed      time.Duration
+	elapsedNav   time.Duration
+}
+
 func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notCovered, warnings []string) int {
-	mf := g.moduleFilter(o.modules) // the answer, not the walk: a screen elsewhere is reached through any module
+	a := &impactAnswer{seeds: seeds, warnings: warnings, seedIDs: map[int32]bool{},
+		mf: g.moduleFilter(o.modules)} // the answer, not the walk: a screen elsewhere is reached through any module
 	t := time.Now()
-	w := newWalk()
+	a.w = newWalk()
 	if len(seeds) > 0 {
-		w = g.impact(seeds, o.depth)
+		a.w = g.impact(seeds, o.depth)
 	}
-	elapsed := time.Since(t)
-	byKind, hidden, shown := map[string][]screenItem{}, map[string]int{}, shownKinds(o)
-	outScreens, outSymbols := 0, map[int32]bool{}
-	for _, n := range w.ScreenOrder {
-		r := g.screens[n][0]
-		if !mf.keeps(g.module(n)) {
-			outScreens++
-		} else if shown[r.Kind] {
-			byKind[r.Kind] = append(byKind[r.Kind], screenItem{w.Aff[w.Screens[n]].Depth, r.Label, r.Target, g.module(n), g.hosts(n), n})
-		} else {
-			hidden[r.Kind]++
+	a.elapsed = time.Since(t)
+	g.impactScreens(a, shownKinds(o))
+	a.navs = map[int32]*navOf{}
+	if o.nav {
+		for _, items := range a.byKind {
+			for _, it := range items {
+				if screenKinds[g.screens[it.n][0].Kind] {
+					a.navs[it.n] = g.navOfScreen(it.n)
+				}
+			}
 		}
 	}
-	for _, items := range byKind {
+	a.elapsedNav = time.Since(t) - a.elapsed
+	a.notCov = uniqueNotCovered(nc)
+	for _, s := range seeds {
+		a.seedIDs[s.N] = true
+	}
+	g.impactSymbols(a)
+	if o.json {
+		g.impactJSON(a, command)
+	} else {
+		g.impactText(a, o)
+	}
+	return exitOK
+}
+
+// impactScreens: the screens reached, by kind, nearest first; those of a kind not shown and those
+// outside --module counted.
+func (g *Graph) impactScreens(a *impactAnswer, shown map[string]bool) {
+	w := a.w
+	a.byKind, a.hidden = map[string][]screenItem{}, map[string]int{}
+	for _, n := range w.ScreenOrder {
+		r := g.screens[n][0]
+		if !a.mf.keeps(g.module(n)) {
+			a.outScreens++
+		} else if shown[r.Kind] {
+			a.byKind[r.Kind] = append(a.byKind[r.Kind], screenItem{w.Aff[w.Screens[n]].Depth, r.Label, r.Target, g.module(n), g.hosts(n), n})
+		} else {
+			a.hidden[r.Kind]++
+		}
+	}
+	for _, items := range a.byKind {
 		sort.SliceStable(items, func(i, j int) bool {
 			a, b := items[i], items[j]
 			if a.depth != b.depth {
@@ -102,231 +152,234 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 			return a.mod < b.mod
 		})
 	}
-	navs := map[int32]*navOf{}
-	if o.nav {
-		for _, items := range byKind {
-			for _, it := range items {
-				if screenKinds[g.screens[it.n][0].Kind] {
-					navs[it.n] = g.navOfScreen(it.n)
-				}
-			}
-		}
-	}
-	elapsedNav := time.Since(t) - elapsed
-	seenNC := map[notCovered]bool{}
-	var notCov []notCovered
+}
+
+func uniqueNotCovered(nc []notCovered) []notCovered {
+	seen := map[notCovered]bool{}
+	var out []notCovered
 	for _, x := range nc {
-		if !seenNC[x] {
-			seenNC[x] = true
-			notCov = append(notCov, x)
+		if !seen[x] {
+			seen[x] = true
+			out = append(out, x)
 		}
 	}
-	sort.Slice(notCov, func(i, j int) bool {
-		if notCov[i].path != notCov[j].path {
-			return notCov[i].path < notCov[j].path
+	sort.Slice(out, func(i, j int) bool {
+		if out[i].path != out[j].path {
+			return out[i].path < out[j].path
 		}
-		return notCov[i].reason < notCov[j].reason
+		return out[i].reason < out[j].reason
 	})
-	seedIDs := map[int32]bool{}
-	for _, s := range seeds {
-		seedIDs[s.N] = true
-	}
-	modules, packages := map[string]int{}, map[string]int{}
-	nearest := map[int32]Key{}
-	var nearestOrder []int32
-	for _, k := range w.Keys {
-		if !mf.keeps(g.module(k.N)) {
-			if !seedIDs[k.N] {
-				outSymbols[k.N] = true
+	return out
+}
+
+// impactSymbols: the affected symbols within --module, counted by module and package, each by its
+// key nearest to the change.
+func (g *Graph) impactSymbols(a *impactAnswer) {
+	a.outSymbols, a.modules, a.packages, a.nearest = map[int32]bool{}, map[string]int{}, map[string]int{}, map[int32]Key{}
+	for _, k := range a.w.Keys {
+		if !a.mf.keeps(g.module(k.N)) {
+			if !a.seedIDs[k.N] {
+				a.outSymbols[k.N] = true
 			}
 			continue
 		}
-		modules[g.module(k.N)]++
+		a.modules[g.module(k.N)]++
 		if p, ok := g.pkg(k.N); ok {
-			packages[p]++
+			a.packages[p]++
 		}
-		old, ok := nearest[k.N]
+		old, ok := a.nearest[k.N]
 		if !ok {
-			nearestOrder = append(nearestOrder, k.N)
+			a.nearestOrder = append(a.nearestOrder, k.N)
 		}
-		if !ok || g.before(w, k, old) {
-			nearest[k.N] = k
+		if !ok || g.before(a.w, k, old) {
+			a.nearest[k.N] = k
 		}
 	}
-	if o.json {
-		listed := map[int32]bool{}
-		var changed []obj
-		for _, s := range seeds {
-			if !listed[s.N] {
-				listed[s.N] = true
-				changed = append(changed, g.symbol(s.N))
-			}
+}
+
+func (g *Graph) impactJSON(a *impactAnswer, command string) {
+	w := a.w
+	listed := map[int32]bool{}
+	var changed []obj
+	for _, s := range a.seeds {
+		if !listed[s.N] {
+			listed[s.N] = true
+			changed = append(changed, g.symbol(s.N))
 		}
-		sortObjs(changed, "symbol", "location", "kind")
-		var affected []obj
-		for _, n := range nearestOrder {
-			if seedIDs[n] {
-				continue
-			}
-			k := nearest[n]
-			affected = append(affected, append(g.symbol(n), kv{"depth", w.Aff[k].Depth}, kv{"path", g.qualifiedPath(g.path(w, k))}))
-		}
-		sort.SliceStable(affected, func(i, j int) bool {
-			a, b := affected[i], affected[j]
-			if da, db := a.getInt("depth"), b.getInt("depth"); da != db {
-				return da < db
-			}
-			if a.get("symbol") != b.get("symbol") {
-				return a.get("symbol") < b.get("symbol")
-			}
-			return a.get("location") < b.get("location")
-		})
-		var screens []any
-		for _, kind := range util.SortedKeys(byKind) {
-			for _, it := range byKind[kind] {
-				hostNames := []string{}
-				for _, h := range it.hosts {
-					hostNames = append(hostNames, g.label(h))
-				}
-				var host any
-				if len(hostNames) > 0 {
-					host = hostNames[0]
-				}
-				s := obj{{"kind", kind}, {"name", it.label}, {"target", it.target}, {"module", it.mod},
-					{"location", g.location(it.n)}, {"host", host}, {"hosts", strs(hostNames)}, {"depth", it.depth},
-					{"opened_from", strs(g.openedFromNames(it.n))},
-					{"path", g.qualifiedPath(g.path(w, w.Screens[it.n]))}}
-				if nav, ok := navs[it.n]; ok {
-					s = append(s, kv{"nav", nav.json()})
-				}
-				screens = append(screens, s)
-			}
-		}
-		var ncJSON []any
-		for _, x := range notCov {
-			ncJSON = append(ncJSON, obj{{"path", x.path}, {"reason", x.reason}})
-		}
-		result := obj{
-			{"changed", objs(changed)},
-			{"affected", objs(affected)},
-			{"screens", list(screens)},
-			{"hidden", countsObj(hidden)},
-			{"modules", countsObj(modules)},
-			{"packages", countsObj(packages)},
-			{"not_covered", list(ncJSON)},
-			{"warnings", strs(warnings)},
-		}
-		if mf != nil {
-			result = append(result, kv{"hidden_by_module", obj{{"screens", outScreens}, {"affected", len(outSymbols)}}})
-		}
-		g.printJSON(command, result)
-		return exitOK
 	}
-	if len(seeds) > 0 {
+	sortObjs(changed, "symbol", "location", "kind")
+	var affected []obj
+	for _, n := range a.nearestOrder {
+		if a.seedIDs[n] {
+			continue
+		}
+		k := a.nearest[n]
+		affected = append(affected, append(g.symbol(n), kv{"depth", w.Aff[k].Depth}, kv{"path", g.qualifiedPath(g.path(w, k))}))
+	}
+	sort.SliceStable(affected, func(i, j int) bool {
+		a, b := affected[i], affected[j]
+		if da, db := a.getInt("depth"), b.getInt("depth"); da != db {
+			return da < db
+		}
+		if a.get("symbol") != b.get("symbol") {
+			return a.get("symbol") < b.get("symbol")
+		}
+		return a.get("location") < b.get("location")
+	})
+	var screens []any
+	for _, kind := range util.SortedKeys(a.byKind) {
+		for _, it := range a.byKind[kind] {
+			hostNames := []string{}
+			for _, h := range it.hosts {
+				hostNames = append(hostNames, g.label(h))
+			}
+			var host any
+			if len(hostNames) > 0 {
+				host = hostNames[0]
+			}
+			s := obj{{"kind", kind}, {"name", it.label}, {"target", it.target}, {"module", it.mod},
+				{"location", g.location(it.n)}, {"host", host}, {"hosts", strs(hostNames)}, {"depth", it.depth},
+				{"opened_from", strs(g.openedFromNames(it.n))},
+				{"path", g.qualifiedPath(g.path(w, w.Screens[it.n]))}}
+			if nav, ok := a.navs[it.n]; ok {
+				s = append(s, kv{"nav", nav.json()})
+			}
+			screens = append(screens, s)
+		}
+	}
+	var ncJSON []any
+	for _, x := range a.notCov {
+		ncJSON = append(ncJSON, obj{{"path", x.path}, {"reason", x.reason}})
+	}
+	result := obj{
+		{"changed", objs(changed)},
+		{"affected", objs(affected)},
+		{"screens", list(screens)},
+		{"hidden", countsObj(a.hidden)},
+		{"modules", countsObj(a.modules)},
+		{"packages", countsObj(a.packages)},
+		{"not_covered", list(ncJSON)},
+		{"warnings", strs(a.warnings)},
+	}
+	if a.mf != nil {
+		result = append(result, kv{"hidden_by_module", obj{{"screens", a.outScreens}, {"affected", len(a.outSymbols)}}})
+	}
+	g.printJSON(command, result)
+}
+
+func (g *Graph) impactText(a *impactAnswer, o opts) {
+	if len(a.seeds) > 0 {
 		fmt.Println("Changed:")
 	} else {
 		fmt.Println("Changed: nothing the code map analyses")
 	}
-	for _, s := range seeds {
+	for _, s := range a.seeds {
 		whole := ""
 		if s.Mode == modeWhole && g.kind(s.N) == "C" {
 			whole = "  (whole class)"
 		}
 		fmt.Printf("  %s%s\n", g.describe(s.N), whole)
 	}
-	for _, w := range warnings {
+	for _, w := range a.warnings {
 		fmt.Println("  warning: " + w)
 	}
 	total := 0
 	var counts []string
 	for _, t := range config.ScreenTitles {
-		total += len(byKind[t[0]])
-		if len(byKind[t[0]]) > 0 {
-			counts = append(counts, fmt.Sprintf("%s %d", t[0], len(byKind[t[0]])))
+		total += len(a.byKind[t[0]])
+		if len(a.byKind[t[0]]) > 0 {
+			counts = append(counts, fmt.Sprintf("%s %d", t[0], len(a.byKind[t[0]])))
 		}
 	}
 	fmt.Printf("\nScreens: %d  (%s)\n", total, strings.Join(counts, ", "))
 	for _, t := range config.ScreenTitles {
-		items := byKind[t[0]]
+		items := a.byKind[t[0]]
 		if len(items) == 0 {
 			continue
 		}
 		fmt.Println("\n" + t[1])
 		for _, it := range items {
-			extra := ""
-			if len(it.hosts) > 0 {
-				var hl []string
-				for _, h := range it.hosts {
-					hl = append(hl, g.label(h))
-				}
-				extra = "  host " + strings.Join(hl, ", ")
-			}
-			name := it.label
-			if t[0] == "preview" {
-				name = it.target
-			}
-			fmt.Println(strings.TrimRight(fmt.Sprintf("  %-50s %-28s%s", name, it.mod, extra), " "))
-			if g.screens[it.n][0].Kind == "dialog" {
-				names := g.openedFromNames(it.n)
-				if len(names) == 0 {
-					names = []string{"not found"}
-				}
-				fmt.Println("      opened from: " + strings.Join(names, ", "))
-			}
-			if nav, ok := navs[it.n]; ok {
-				if nav == nil {
-					fmt.Println("      nav: not found")
-				} else if nav.entry == "launcher" {
-					fmt.Println("      nav: " + nav.text)
-				} else {
-					fmt.Printf("      nav (%s): %s\n", nav.entry, nav.text)
-				}
-			}
-			if !o.noPaths {
-				fmt.Println("      " + g.formatPath(g.path(w, w.Screens[it.n])))
-			}
+			g.impactScreenText(a, o, t[0], it)
 		}
 	}
-	if len(hidden) > 0 {
-		fmt.Println("\n" + hiddenLine(hidden))
+	if len(a.hidden) > 0 {
+		fmt.Println("\n" + hiddenLine(a.hidden))
 	}
-	if outScreens+len(outSymbols) > 0 {
-		fmt.Println("\n" + outsideLine(fmt.Sprintf("%d screens", outScreens), fmt.Sprintf("%d symbols", len(outSymbols))))
+	if a.outScreens+len(a.outSymbols) > 0 {
+		fmt.Println("\n" + outsideLine(fmt.Sprintf("%d screens", a.outScreens), fmt.Sprintf("%d symbols", len(a.outSymbols))))
 	}
-	if len(modules) > 0 {
-		mods := util.SortedKeys(modules)
-		sort.SliceStable(mods, func(i, j int) bool { return modules[mods[i]] > modules[mods[j]] })
+	if len(a.modules) > 0 {
+		mods := util.SortedKeys(a.modules)
+		sort.SliceStable(mods, func(i, j int) bool { return a.modules[mods[i]] > a.modules[mods[j]] })
 		var parts []string
 		for _, m := range mods {
-			parts = append(parts, fmt.Sprintf("%s %d", m, modules[m]))
+			parts = append(parts, fmt.Sprintf("%s %d", m, a.modules[m]))
 		}
 		fmt.Println("\nModules (affected symbols): " + strings.Join(parts, ", "))
 	}
-	if len(notCov) > 0 {
-		fmt.Println("\nNot covered:")
-		for _, t := range notCoveredTitles {
-			var paths []string
-			for _, x := range notCov {
-				if x.reason == t[0] {
-					paths = append(paths, x.path)
-				}
-			}
-			if len(paths) == 0 {
-				continue
-			}
-			more := ""
-			if len(paths) > 15 {
-				paths, more = paths[:15], fmt.Sprintf(" ... %d more", len(paths)-15)
-			}
-			fmt.Printf("  %s: %s%s\n", t[1], strings.Join(paths, ", "), more)
-		}
+	if len(a.notCov) > 0 {
+		notCoveredText(a.notCov)
 	}
 	nav := ""
 	if o.nav {
-		nav = fmt.Sprintf(", nav %.2fs", elapsedNav.Seconds())
+		nav = fmt.Sprintf(", nav %.2fs", a.elapsedNav.Seconds())
 	}
-	fmt.Printf("(%d symbols affected, %.2fs%s)\n", len(w.Keys), elapsed.Seconds(), nav)
-	return exitOK
+	fmt.Printf("(%d symbols affected, %.2fs%s)\n", len(a.w.Keys), a.elapsed.Seconds(), nav)
+}
+
+func (g *Graph) impactScreenText(a *impactAnswer, o opts, kind string, it screenItem) {
+	extra := ""
+	if len(it.hosts) > 0 {
+		var hl []string
+		for _, h := range it.hosts {
+			hl = append(hl, g.label(h))
+		}
+		extra = "  host " + strings.Join(hl, ", ")
+	}
+	name := it.label
+	if kind == "preview" {
+		name = it.target
+	}
+	fmt.Println(strings.TrimRight(fmt.Sprintf("  %-50s %-28s%s", name, it.mod, extra), " "))
+	if g.screens[it.n][0].Kind == "dialog" {
+		names := g.openedFromNames(it.n)
+		if len(names) == 0 {
+			names = []string{"not found"}
+		}
+		fmt.Println("      opened from: " + strings.Join(names, ", "))
+	}
+	if nav, ok := a.navs[it.n]; ok {
+		if nav == nil {
+			fmt.Println("      nav: not found")
+		} else if nav.entry == "launcher" {
+			fmt.Println("      nav: " + nav.text)
+		} else {
+			fmt.Printf("      nav (%s): %s\n", nav.entry, nav.text)
+		}
+	}
+	if !o.noPaths {
+		fmt.Println("      " + g.formatPath(g.path(a.w, a.w.Screens[it.n])))
+	}
+}
+
+func notCoveredText(notCov []notCovered) {
+	fmt.Println("\nNot covered:")
+	for _, t := range notCoveredTitles {
+		var paths []string
+		for _, x := range notCov {
+			if x.reason == t[0] {
+				paths = append(paths, x.path)
+			}
+		}
+		if len(paths) == 0 {
+			continue
+		}
+		more := ""
+		if len(paths) > 15 {
+			paths, more = paths[:15], fmt.Sprintf(" ... %d more", len(paths)-15)
+		}
+		fmt.Printf("  %s: %s%s\n", t[1], strings.Join(paths, ", "), more)
+	}
 }
 
 func (g *Graph) qualifiedPath(path []Step) []any {
