@@ -11,6 +11,9 @@ notes from its section here (`tools/release-notes.sh`).
 
 - The build hook builds the map when the compile tasks were up to date too: a map that was missing
   or deleted stayed missing until something was recompiled. A fresh map costs the check, ~0.15 s.
+- The build hook writes the model again after the build, from the configuration cache: on a cache
+  hit the model of an earlier configuration (another branch) stayed, and `build` stopped with "run
+  `codemap init`".
 
 ## [0.4.0] - 2026-10-27
 

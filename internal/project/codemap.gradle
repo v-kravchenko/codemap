@@ -21,6 +21,7 @@ abstract class CodemapRebuild implements BuildService<Params>, OperationCompleti
     interface Params extends BuildServiceParameters {
         Property<String> getRoot()
         MapProperty<String, String> getVariants() // compile task -> variant
+        Property<String> getModel() // the JSON the configuration wrote, kept in the configuration cache
     }
 
     private final Set<String> variants = new TreeSet<String>().asSynchronized()
@@ -42,6 +43,12 @@ abstract class CodemapRebuild implements BuildService<Params>, OperationCompleti
             return
         }
         def root = new File(parameters.root.get())
+        // the model again, always: on a cache hit the configuration did not write it, and the one in
+        // codemap.model.json may be of another configuration (a branch checked out and back); `build`
+        // takes the newer file with the hash of the build files as they are
+        def model = new File(root, 'build/codemap/gradle-model.json')
+        model.parentFile.mkdirs()
+        model.text = parameters.model.get()
         def windows = System.getProperty('os.name').toLowerCase().contains('windows')
         def wrapper = new File(root, windows ? 'codemapw.cmd' : 'codemapw')
         def cmd = wrapper.isFile() ? (windows ? ['cmd', '/c', wrapper.path] : [wrapper.path]) : ['codemap']
@@ -69,10 +76,11 @@ abstract class CodemapHook implements Plugin<Settings> {
 
     void apply(Settings settings) {}
 
-    void listen(Gradle gradle, File root, Map<String, String> variants) {
+    void listen(Gradle gradle, File root, Map<String, String> variants, String model) {
         def service = gradle.sharedServices.registerIfAbsent('codemapRebuild', CodemapRebuild) {
             it.parameters.root.set(root.absolutePath)
             it.parameters.variants.set(variants)
+            it.parameters.model.set(model)
         }
         registry.onTaskCompletion(service)
     }
@@ -185,7 +193,7 @@ gradle.projectsEvaluated {
         modules.values().each { module ->
             module.variants.each { name, v -> v.compile_tasks.each { tasks[it] = name } }
         }
-        hook.listen(gradle, root.rootDir, tasks)
+        hook.listen(gradle, root.rootDir, tasks, text)
     }
     // written, never read: a file the configuration reads is an input of the configuration cache
     def out = new File(initOut ?: new File(root.rootDir, 'build/codemap/gradle-model.json').path)
