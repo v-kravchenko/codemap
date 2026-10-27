@@ -56,6 +56,10 @@ type ModelVariant struct {
 	Sources      []string `json:"sources"`
 	Res          []string `json:"res"`
 	Manifests    []string `json:"manifests"`
+	// the Gradle paths of the modules it depends on; nil in a model of a script before them (a
+	// hook's older copy): every module then counts
+	CompileDeps []string `json:"compile_deps"`
+	RuntimeDeps []string `json:"runtime_deps"`
 }
 
 func LoadModel(root string) (*ProjectModel, error) {
@@ -182,6 +186,7 @@ func ModelModules(root string, m *ProjectModel, variant string) ([]Module, []Mod
 	slices.SortFunc(mods, func(a, b ModelModule) int { // the order of the tree walk
 		return slices.Compare(strings.Split(a.Dir, "/"), strings.Split(b.Dir, "/"))
 	})
+	inApp, compiledBy := appGraph(mods, variant)
 	var out, missing []Module
 	var tasks, left []string
 	for _, mm := range mods {
@@ -197,25 +202,90 @@ func ModelModules(root string, m *ProjectModel, variant string) ([]Module, []Mod
 		}
 		mod := Module{Name: mm.Dir, Dir: mm.Dir, ClassDirs: classes, Sources: v.Sources, Res: resDirsOf(root, v.Res),
 			Manifests: v.Manifests}
-		if !slices.ContainsFunc(classes, func(d string) bool { return hasFile(d, ".class") }) &&
+		// a module no app has (a test helper) misses nothing of the app's map
+		app := inApp == nil || inApp[mm.Path]
+		if app && !slices.ContainsFunc(classes, func(d string) bool { return hasFile(d, ".class") }) &&
 			slices.ContainsFunc(v.Sources, func(d string) bool { return hasFile(filepath.Join(root, d), ".kt", ".java") }) {
 			missing = append(missing, mod)
 		}
 		if !compiled {
-			tasks = append(tasks, v.CompileTasks...)
-			left = append(left, mm.Path)
+			if app {
+				left = append(left, mm.Path)
+				if by := compiledBy[mm.Path]; len(by) > 0 {
+					tasks = append(tasks, by...)
+				} else {
+					tasks = append(tasks, v.CompileTasks...)
+				}
+			}
 			continue
 		}
 		out = append(out, mod)
 	}
 	if len(tasks) > 0 {
-		run := "./gradlew " + strings.Join(tasks, " ")
+		var once []string // an app's tasks once, in the order first named
+		for _, t := range tasks {
+			if !slices.Contains(once, t) {
+				once = append(once, t)
+			}
+		}
+		run := "./gradlew " + strings.Join(once, " ")
 		if len(out) == 0 {
 			return nil, nil, fmt.Errorf("no compiled %s classes: run %s", variant, run)
 		}
 		fmt.Fprintf(os.Stderr, "warning: %d modules not compiled, left out of the map: run %s\n", len(left), run)
 	}
 	return out, missing, nil
+}
+
+// appGraph: the modules of the apps (application and dynamic-feature modules and what they depend
+// on), and for each the compile tasks of the first app whose compilation compiles it too (reached by
+// compile dependencies alone). nil, nil when the model has no app or no dependencies (an older
+// script): every module counts and compiles by its own tasks.
+func appGraph(mods []ModelModule, variant string) (map[string]bool, map[string][]string) {
+	byPath := map[string]ModelVariant{}
+	var apps []ModelModule
+	for _, mm := range mods {
+		v, ok := mm.Variants[variant]
+		if !ok {
+			continue
+		}
+		if v.CompileDeps == nil || v.RuntimeDeps == nil {
+			return nil, nil
+		}
+		byPath[mm.Path] = v
+		if mm.Type == "application" || mm.Type == "dynamic-feature" {
+			apps = append(apps, mm)
+		}
+	}
+	if len(apps) == 0 {
+		return nil, nil
+	}
+	walk := func(from string, deps func(ModelVariant) []string) []string {
+		seen, queue := map[string]bool{from: true}, []string{from}
+		for len(queue) > 0 {
+			x := queue[0]
+			queue = queue[1:]
+			for _, d := range deps(byPath[x]) {
+				if _, ok := byPath[d]; ok && !seen[d] {
+					seen[d] = true
+					queue = append(queue, d)
+				}
+			}
+		}
+		return util.SortedKeys(seen)
+	}
+	inApp, compiledBy := map[string]bool{}, map[string][]string{}
+	for _, a := range apps {
+		for _, p := range walk(a.Path, func(v ModelVariant) []string { return slices.Concat(v.CompileDeps, v.RuntimeDeps) }) {
+			inApp[p] = true
+		}
+		for _, p := range walk(a.Path, func(v ModelVariant) []string { return v.CompileDeps }) {
+			if _, ok := compiledBy[p]; !ok { // one app's tasks are enough
+				compiledBy[p] = byPath[a.Path].CompileTasks
+			}
+		}
+	}
+	return inApp, compiledBy
 }
 
 // hasFile: whether the tree under dir has a file with one of the suffixes; stops at the first.

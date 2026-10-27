@@ -57,6 +57,8 @@ strips it since `meta.run` is never reproducible).
 - `meta.index.missing_modules` — the modules of the project model (`codemap init` or the build
   hook) with sources and no class file of the variant when the map was built, sorted: not
   compiled, so every answer may leave out what is in them; `[]` for a whole map and without a model.
+  With the dependencies in the model, only the modules an application or dynamic-feature module
+  depends on (transitively, test dependencies left out) count: a test helper misses nothing.
   A query warns of them on stderr; since 3.7.0.
 - `meta.refs` — `null` for most commands; for `changes`, the resolved input/base/head (see
   `changes` below).

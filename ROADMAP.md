@@ -73,8 +73,9 @@ itself.
   is only about catching a stale map at query time.
 - **Classpath of library dependencies and a module dependency graph.** Needed before a call
   into a library's internals, or a "which modules does this change ripple through" query, can
-  be answered; `codemap init`'s Gradle model would need to capture the resolved classpath and
-  module graph, not just each module's own class directories.
+  be answered; `codemap init`'s Gradle model has the declared project dependencies of each
+  variant (0024, used for the missing modules), not yet the resolved classpath, and no query
+  reads the module graph.
 - **Split `internal/query` into sub-packages** (one per command: impact, nav-path, graph,
   changes): it's ~7,500 lines all on one `*Graph` type, a file per command since the split of
   cli.go and nav.go; packages would mean exporting the ~80 `Graph` helpers the commands share —

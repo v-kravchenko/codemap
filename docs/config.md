@@ -401,13 +401,18 @@ androidx.navigation.NavGraphBuilder.<init>                   # constructor
 `codemap init [--gradle CMD]` runs Gradle once (`help`, with the init script as an init script,
 configuration phase only — nothing is compiled) and writes `codemap.model.json` at the root: the
 Gradle modules with their path and directory, and for each build variant the compile tasks, class
-directories, source sets, resource directories and manifests of its source sets.
+directories, source sets, resource directories and manifests of its source sets, and the modules its
+compile and runtime classpaths depend on (`compile_deps`, `runtime_deps`: Gradle paths, as declared).
 
 With this model present, `codemap build` and the queries do **not** walk the tree or guess
 directories: they take the modules of the configured `variant` straight from the model
 (`project.ModelModules`), name any module whose classes are missing together with the Gradle tasks
 that compile it, and refuse to build when the Gradle/version-catalog/settings files have changed
-since `codemap init` ran (re-run `codemap init`).
+since `codemap init` ran (re-run `codemap init`). A module counts as missing only when an
+application or dynamic-feature module depends on it (test dependencies left out), and the tasks
+named are the app's when compiling the app compiles the module too (docs/decisions/0024); a model
+written before the dependencies (a hook's older copy of the script: rerun `codemap wrapper`) counts
+every module and names each one's tasks.
 
 Without a `codemap.model.json` (or when it is missing a variant), the build instead discovers
 modules by walking the project tree for directories containing `src/`, matching `build.class_dirs`

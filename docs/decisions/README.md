@@ -55,3 +55,4 @@ a stale file path) may be fixed directly in place; a changed decision gets a new
 | [0021](0021-removed-by-the-base-text.md) | Removed screens: declarations the base text has and the head has not | superseded by 0022 |
 | [0022](0022-added-and-removed-by-a-base-map.md) | Added and removed by a map of the base | accepted |
 | [0023](0023-diff-of-two-maps.md) | Two maps compared by node id: `codemap diff --base FILE` | accepted |
+| [0024](0024-missing-modules-by-the-app-graph.md) | Missing modules: those the app depends on | accepted |

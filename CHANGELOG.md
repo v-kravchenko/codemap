@@ -7,6 +7,13 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Changed
+
+- A module no app depends on (a test helper, `testImplementation` only) is no longer missing from
+  the map, so `--strict` does not fail on it; the build's hint for modules not compiled names the
+  app's compile tasks instead of each module's. `codemap init` (or `codemap wrapper` for the hook)
+  writes the module dependencies this needs.
+
 ## [0.6.0] - 2026-10-27
 
 ### Added

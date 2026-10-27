@@ -109,8 +109,8 @@ check whether the map is older than the sources and warn of modules not compiled
 only, nothing compiled; `--gradle gw` or `$CODEMAP_GRADLE` for another launcher) and writes
 `codemap.model.json`: the modules with their Gradle paths, and for every variant the class
 directories (the compile tasks' outputs), sources, resources and manifests of its source sets. With
-the model `build` takes the modules of `variant` from it, names the modules not compiled with the
-tasks that compile them, and stops when the build files (settings, build scripts, version catalogs,
+the model `build` takes the modules of `variant` from it, names the modules of the app not compiled
+with the tasks that compile them (the app's, when they compile with it), and stops when the build files (settings, build scripts, version catalogs,
 gradle.properties, included builds) changed since `init`. Without it the modules are found by
 walking the tree for `build.class_dirs`. The build hook (`codemap wrapper`) writes the model on
 each configuration instead, and `build` takes it over when it is newer than the build files.

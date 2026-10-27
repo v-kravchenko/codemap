@@ -1,6 +1,7 @@
 package project
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 	"slices"
@@ -83,6 +84,59 @@ func TestModelModules(t *testing.T) {
 	writeFiles(t, root, map[string]string{"b/build.gradle": "changed"})
 	if _, _, err := ModelModules(root, m, "debug"); err == nil || !strings.Contains(err.Error(), "run `codemap init`") {
 		t.Errorf("changed build files: %v", err)
+	}
+}
+
+// TestModelModulesAppGraph: with the dependencies in the model, a module no app depends on (a test
+// helper) is not missing, and the hint compiles the app instead of each module its compilation compiles.
+func TestModelModulesAppGraph(t *testing.T) {
+	root := t.TempDir()
+	files := map[string]string{"settings.gradle": "", "app/build/classes/A.class": ""}
+	for _, d := range []string{"app", "lib", "rt", "testing"} {
+		files[d+"/build.gradle"], files[d+"/src/main/kotlin/K.kt"] = "", ""
+	}
+	writeFiles(t, root, files)
+	mod := func(dir, typ string, compile, runtime []string) ModelModule {
+		return ModelModule{Path: ":" + dir, Dir: dir, Type: typ, Variants: map[string]ModelVariant{"debug": {
+			Classes: []string{dir + "/build/classes"}, Sources: []string{dir + "/src/main/kotlin"},
+			CompileTasks: []string{":" + dir + ":compileDebugKotlin", ":" + dir + ":compileDebugJavaWithJavac"},
+			CompileDeps:  compile, RuntimeDeps: runtime}}}
+	}
+	m := &ProjectModel{Version: 1, Variants: []string{"debug"}, Modules: []ModelModule{
+		mod("app", "application", []string{":lib"}, []string{":lib", ":rt"}), mod("lib", "library", []string{}, []string{}),
+		mod("rt", "library", []string{}, []string{}), mod("testing", "library", []string{":lib"}, []string{":lib"})}}
+	m.Generated.InputsSha1 = buildFilesSha1(root)
+	r, w, _ := os.Pipe()
+	stderr := os.Stderr
+	os.Stderr = w
+	_, missing, err := ModelModules(root, m, "debug")
+	os.Stderr = stderr
+	w.Close()
+	log, _ := io.ReadAll(r)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var dirs []string
+	for _, x := range missing {
+		dirs = append(dirs, x.Dir)
+	}
+	if !slices.Equal(dirs, []string{"lib", "rt"}) {
+		t.Errorf("missing %v", dirs)
+	}
+	// lib compiles with the app; rt, at runtime only, by its own tasks
+	want := "warning: 2 modules not compiled, left out of the map: run ./gradlew :app:compileDebugKotlin " +
+		":app:compileDebugJavaWithJavac :rt:compileDebugKotlin :rt:compileDebugJavaWithJavac\n"
+	if string(log) != want {
+		t.Errorf("hint %q", log)
+	}
+	// a model without dependencies (a hook's older script): every module counts
+	for i := range m.Modules {
+		v := m.Modules[i].Variants["debug"]
+		v.CompileDeps, v.RuntimeDeps = nil, nil
+		m.Modules[i].Variants["debug"] = v
+	}
+	if _, missing, _ := ModelModules(root, m, "debug"); len(missing) != 3 {
+		t.Errorf("without dependencies: %d missing, want 3", len(missing))
 	}
 }
 

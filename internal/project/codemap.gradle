@@ -7,6 +7,7 @@
 //     as the model, and after a build that ran a compile task of a variant, `codemapw build --variant`.
 import groovy.json.JsonOutput
 import javax.inject.Inject
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.build.event.BuildEventsListenerRegistry
@@ -163,6 +164,14 @@ gradle.projectsEvaluated {
             }
             v.classes = classes
             v.compile_tasks = tasks.findAll { p.tasks.findByName(it) != null }.collect { p.path == ':' ? ":$it" : "$p.path:$it" }
+            // the modules the variant's code is compiled against and runs with, as declared (nothing
+            // resolved): what an app's compile task compiles too, and what is in the app
+            ['compile', 'runtime'].each { kind ->
+                def c = p.configurations.findByName(module.type == 'jvm' ? "${kind}Classpath" : "${name}${capital(kind)}Classpath")
+                v["${kind}_deps"] = c == null ? [] : c.allDependencies.withType(ProjectDependency).collect {
+                    it.hasProperty('path') ? it.path : it.dependencyProject.path // Gradle 8.11 added path
+                }.findAll { it != p.path }.unique().sort()
+            }
             def sources = [], res = [], manifests = []
             v.source_sets.each { s ->
                 def set = module.type == 'jvm' ? p.sourceSets.findByName(s) : p.android.sourceSets.findByName(s)
