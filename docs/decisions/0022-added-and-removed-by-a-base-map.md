@@ -28,15 +28,18 @@ at hand.
 
 ## Decision
 
-`--base-db` by node id, then by name, the text kept for runs without it. With a base map,
-`changed[].status`, `screens[].status` and `removed` come from the two maps alone, with `--files`
-too. A node whose id the base's map lacks is still modified when the base's class has a member of
-its name (a function whose parameters changed, an overload added); what the compiler numbers (a
-lambda, an anonymous class, a ComposableSingletons lambda, a property initializer) goes with the
-declaration it is in. `removed` covers the whole map, not only the changed
-files: the two maps differ only by the change. `meta.refs.base_map` names the map's commit,
-variant and dirtiness; a map of another commit than the base, built dirty or of another variant
-than the head's is a warning, exit 3 with `--strict`, as a diff of another revision is.
+`--base-db` by node id, then by name, and the text heuristics removed. `changed[].status` and
+`removed` come from the two maps alone, with `--files` too, and are `null` without a base map;
+`screens[].status` gives way to `screens[].added` (`true`/`false`, `null` without), its `changed`
+and `affected` being `depth` 0 or more. A node whose id the base's map lacks is still modified when
+the base's class has a member of its name (a function whose parameters changed, an overload
+added); what the compiler numbers (a lambda, an anonymous class, a ComposableSingletons lambda, a
+property initializer) goes with the declaration it is in. `removed` covers the whole map, not
+only the changed files: the two maps differ only by the change. `meta.refs.base_map` names the
+map's commit, variant and dirtiness; a map of another commit than the base, built dirty or of
+another variant than the head's is a warning, exit 3 with `--strict`, as a diff of another
+revision is. `--format targets` goes too: a third output contract for one script, which `--json`
+and a JSON tool give. `schema_version` 4.0.0.
 
 ## Consequences
 
@@ -46,5 +49,6 @@ than the head's is a warning, exit 3 with `--strict`, as a diff of another revis
 - On a real project (611 changed files, 440 changed symbols) the map and the text disagreed on 12
   statuses, each a text miss (a class moved to another package, a property of a nested class
   taken for the outer's), and the map alone found 12 new routes and a removed one.
-- The text heuristics stay as the fallback; whether they go once base maps are common is open.
+- A CI job that wants added and removed builds the base too (or keeps its map per commit); one
+  that does not gets `null`, never a guess.
 - The same loading of two maps is what comparing two variants' maps needs (ROADMAP).

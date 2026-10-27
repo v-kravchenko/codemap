@@ -1,6 +1,6 @@
 # 0019. Added or modified: a declaration the base text lacks
 
-- Status: accepted
+- Status: superseded by [0022](0022-added-and-removed-by-a-base-map.md)
 - Date: 2026-10-27
 
 ## Context
@@ -36,5 +36,4 @@ from `depth`. A route is never `new`: its node is not a declaration of the sourc
 - A preview in a new file, or added to an existing one, is `new`: a consumer comparing before and
   after knows it has no before without exporting the base's sources.
 - The match is textual, per file: a symbol moved from another file is `added` in its new one.
-- A map of the base gives the exact answer when there is one (`--base-db`, docs/decisions/0022);
-  the text stays the fallback.
+- Replaced by a map of the base (`--base-db`, docs/decisions/0022); the text heuristics are gone.

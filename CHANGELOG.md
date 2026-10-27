@@ -9,13 +9,24 @@ notes from its section here (`tools/release-notes.sh`).
 
 ### Added
 
-- `changes --base-db FILE` takes the code map of the base: `changed[].status`, `screens[].status`
-  and `removed` come from the two maps by node id instead of the base's text, routes and nested
-  screens included; `meta.refs.base_map` names its commit and variant, and a map of another commit
-  or variant warns (exit 3 with `--strict`). `schema_version` 3.8.0.
+- `changes --base-db FILE` takes the code map of the base: `changed[].status`, `screens[].added`
+  and `removed` come from the two maps by node id and member name, routes and nested screens
+  included; `meta.refs.base_map` names its commit and variant, and a map of another commit or
+  variant warns (exit 3 with `--strict`).
 - `codemap diff --base FILE` compares two maps: the screens, manifest entries and opens between
   screens that only one has, so a debug-only screen or a release-only path shows without reading
   both maps' answers; for two revisions too.
+
+### Removed
+
+- `changes` no longer reads the base's text to tell added from modified and to find removed
+  screens: those regular expressions missed routes, nested classes and moved declarations, and
+  misjudged a dozen statuses on a real project. Without `--base-db`, `changed[].status` and
+  `removed` are `null`.
+- `screens[].status` of `changes`: `screens[].added` says whether the screen is new, `depth`
+  whether it changed itself (0) or through what it uses.
+- `changes --format targets`: `--json` with a JSON tool gives the same lines.
+- `schema_version` 4.0.0.
 
 ## [0.5.0] - 2026-10-27
 

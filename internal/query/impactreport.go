@@ -4,7 +4,6 @@ package query
 
 import (
 	"fmt"
-	"os"
 	"sort"
 	"strings"
 	"time"
@@ -119,9 +118,7 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 		a.seedIDs[s.N] = true
 	}
 	g.impactSymbols(a)
-	if o.format == "targets" {
-		g.impactTargets(a)
-	} else if o.json {
+	if o.json {
 		g.impactJSON(a, command)
 	} else {
 		g.impactText(a, o)
@@ -267,7 +264,7 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 				if q, ok := a.qualifiers[it.n]; ok {
 					qs = strs(q)
 				}
-				s = append(s, kv{"status", g.screenStatus(it.n, it.depth)}, kv{"qualifiers", qs})
+				s = append(s, kv{"added", g.screenAdded(it.n)}, kv{"qualifiers", qs})
 			}
 			screens = append(screens, s)
 		}
@@ -283,7 +280,7 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 	}
 	if command == "changes" {
 		var removed any
-		if g.statusKnown {
+		if g.base != nil {
 			rows := []any{}
 			for _, r := range g.removed {
 				rows = append(rows, obj{{"kind", r.kind}, {"name", r.name}, {"target", r.target}, {"module", r.module}, {"location", r.location}})
@@ -316,7 +313,7 @@ func (g *Graph) impactText(a *impactAnswer, o opts) {
 		if s.Mode == modeWhole && g.kind(s.N) == "C" {
 			whole = "  (whole class)"
 		}
-		if g.statusKnown && g.isAdded(s.N) {
+		if g.isAdded(s.N) {
 			whole += "  (added)"
 		}
 		if q, ok := g.qualifiersOf(s.N); ok && len(q) > 0 {
@@ -386,7 +383,7 @@ func (g *Graph) impactScreenText(a *impactAnswer, o opts, kind string, it screen
 		}
 		extra = "  host " + strings.Join(hl, ", ")
 	}
-	if g.statusKnown && g.isAdded(it.n) {
+	if g.isAdded(it.n) {
 		extra += "  new"
 	}
 	if q := a.qualifiers[it.n]; len(q) > 0 {
@@ -415,42 +412,6 @@ func (g *Graph) impactScreenText(a *impactAnswer, o opts, kind string, it screen
 	}
 	if !o.noPaths {
 		fmt.Println("      " + g.formatPath(g.path(a.w, a.w.Screens[it.n])))
-	}
-}
-
-// impactTargets: the screens of changes as tab-separated lines for a script, new first, then
-// changed, then affected, each by depth and target: status, depth, target, module, qualifiers
-// (comma-separated, empty for every configuration).
-func (g *Graph) impactTargets(a *impactAnswer) {
-	rank := map[string]int{"new": 0, "changed": 1, "affected": 2}
-	type row struct {
-		status string
-		it     screenItem
-	}
-	var rows []row
-	for _, kind := range util.SortedKeys(a.byKind) {
-		for _, it := range a.byKind[kind] {
-			rows = append(rows, row{g.screenStatus(it.n, it.depth), it})
-		}
-	}
-	sort.SliceStable(rows, func(i, j int) bool {
-		a, b := rows[i], rows[j]
-		if a.status != b.status {
-			return rank[a.status] < rank[b.status]
-		}
-		if a.it.depth != b.it.depth {
-			return a.it.depth < b.it.depth
-		}
-		if a.it.target != b.it.target {
-			return a.it.target < b.it.target
-		}
-		return a.it.mod < b.it.mod
-	})
-	for _, r := range rows {
-		fmt.Printf("%s\t%d\t%s\t%s\t%s\n", r.status, r.it.depth, r.it.target, r.it.mod, strings.Join(a.qualifiers[r.it.n], ","))
-	}
-	for _, w := range a.warnings {
-		fmt.Fprintln(os.Stderr, "warning: "+w)
 	}
 }
 

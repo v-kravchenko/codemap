@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.8.0",
+  "schema_version": "4.0.0",
   "command": "changes",
   "changed": [
     {
@@ -217,7 +217,7 @@
       "path": [
         "navapp.impact.LoudActivity"
       ],
-      "status": "changed",
+      "added": null,
       "qualifiers": null
     },
     {
@@ -234,7 +234,7 @@
       "path": [
         "navapp.impact.QuietActivity"
       ],
-      "status": "changed",
+      "added": null,
       "qualifiers": null
     },
     {
@@ -253,7 +253,7 @@
         "@layout/activity_views",
         "navapp.views.ViewsActivity.<init>"
       ],
-      "status": "affected",
+      "added": null,
       "qualifiers": null
     }
   ],

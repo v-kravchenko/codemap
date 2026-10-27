@@ -42,12 +42,9 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   drawing only what no screen of its module draws, or a screen built from composables of another
   module, has none; a screen's own component previews (in its module, drawn by it alone) count as
   its previews.
-- `changes` tells an added symbol from a modified one by the text of its file in the base
-  (docs/decisions/0019): a symbol moved from another file is `added`, a route is never `new`, and
-  without a base only a function all of whose lines the diff adds is `added`.
-- `changes` finds removed screens in the base's text too (docs/decisions/0021): top-level activities,
-  fragments, dialogs and previews only, not routes, nested classes or previews inside classes; a
-  `--diff` without `--base` sees only deleted files.
+- `changes` tells what a change adds and removes only from a map of the base (`--base-db`,
+  docs/decisions/0022), so the base must be compiled too; without one the status and `removed`
+  are `null`. A screen moved to another class name is removed and added.
 - Dead code (a reachable-looking branch nobody actually triggers, e.g. a `when` branch keyed on
   a string your code never constructs) is not detected — the walk cannot tell statically
   unreachable branches from live ones.

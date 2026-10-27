@@ -1,6 +1,6 @@
 # 0021. Removed screens: declarations the base text has and the head has not
 
-- Status: accepted
+- Status: superseded by [0022](0022-added-and-removed-by-a-base-map.md)
 - Date: 2026-10-27
 
 ## Context
@@ -33,5 +33,4 @@ the base), `null` when nothing tells it (`--files` without `--base`), as `change
 - Routes are not covered: a route is a node the map derives from navigation calls, not a declaration
   of the source. Nested classes, previews inside classes and screens whose base the map no longer
   has are not either.
-- A map of the base gives the exact answer when there is one (`--base-db`, docs/decisions/0022);
-  the text stays the fallback.
+- Replaced by a map of the base (`--base-db`, docs/decisions/0022); the text heuristics are gone.

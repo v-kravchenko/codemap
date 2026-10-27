@@ -1,3 +1,0 @@
-changed	0	navapp.impact.LoudActivity	app	
-changed	0	navapp.impact.QuietActivity	app	
-affected	2	navapp.views.ViewsActivity	app	

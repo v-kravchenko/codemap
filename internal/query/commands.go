@@ -68,7 +68,6 @@ var commands = []command{
 			{name: "base-db", arg: "FILE", help: "the code map of the base: added and removed by the two maps, not by the base's text"},
 			{name: "diff", arg: "-|FILE", help: "a unified diff from stdin or a file instead of git diff"},
 			{name: "files", arg: "-|FILE", help: "lines of path, path:N or path:N-M instead of a diff"},
-			{name: "format", arg: "targets", help: "a line per screen: status, depth, target, module, qualifiers, tab-separated, new first (not with --json)"},
 			optNav, optDepth, optKind, optNoPrev, optNoPaths, optModule}},
 	{name: "diff", query: true, about: "What this map has and another has not: screens, manifest entries, the screens that open them.",
 		flags: []flagSpec{

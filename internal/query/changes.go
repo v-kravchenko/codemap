@@ -92,14 +92,12 @@ type diffInput struct {
 	lines   map[string]lineSet        // path: new-side lines, nil for a new file
 	deleted map[string]bool           // the deleted paths
 	moved   map[string]string         // moved path: old path
-	plus    map[string]lineSet        // path: the added lines alone
 	post    map[string]map[int]string // path: {line: text} of the new side's context and added lines
-	minus   map[string][]string       // path: its removed lines, the whole text of a deleted file
 }
 
 func (g *Graph) parseDiff(text string) diffInput {
-	out, deleted, moved, plus := map[string]lineSet{}, map[string]bool{}, map[string]string{}, map[string]lineSet{}
-	post, minus := map[string]map[int]string{}, map[string][]string{}
+	out, deleted, moved := map[string]lineSet{}, map[string]bool{}, map[string]string{}
+	post := map[string]map[int]string{}
 	var path, oldPath string
 	hasPath, hasOld := false, false
 	oldLeft, newLeft, newLine := 0, 0, 0
@@ -141,20 +139,11 @@ func (g *Graph) parseDiff(text string) diffInput {
 				removed = false
 				mark(newLine)
 				keep(line)
-				if hasPath && out[path] != nil {
-					if plus[path] == nil {
-						plus[path] = lineSet{}
-					}
-					plus[path][newLine] = true
-				}
 				newLine++
 				newLeft--
 			case "-":
 				removed = true
 				oldLeft--
-				if hasOld {
-					minus[oldPath] = append(minus[oldPath], line[1:])
-				}
 			case "\\":
 			default:
 				if removed {
@@ -224,7 +213,7 @@ func (g *Graph) parseDiff(text string) diffInput {
 			}
 		}
 	}
-	return diffInput{out, deleted, moved, plus, post, minus}
+	return diffInput{out, deleted, moved, post}
 }
 
 // diffMismatches: the files of a diff whose context and added lines are not those of the sources
@@ -330,12 +319,6 @@ func (g *Graph) cmdChanges(o opts) int {
 	if o.diff != "" && o.files != "" {
 		panic(util.UserError("--diff and --files cannot be combined"))
 	}
-	if o.format != "" && o.format != "targets" {
-		panic(util.UserError("--format: " + o.format + " is not a format (targets)"))
-	}
-	if o.format != "" && o.json {
-		panic(util.UserError("--format and --json cannot be combined"))
-	}
 	checkRef("--base", o.base)
 	checkRef("--head", o.head)
 	head := ""
@@ -346,11 +329,9 @@ func (g *Graph) cmdChanges(o opts) int {
 	if headRef == "" {
 		headRef = "WORKTREE"
 	}
-	var linesByPath, plus map[string]lineSet
+	var linesByPath map[string]lineSet
 	var mismatched []string
-	var gone map[string][]string
 	deleted, moved := map[string]bool{}, map[string]string{}
-	files := o.files != "" // a whole file listed is not a new one
 	var base any
 	baseRev := ""
 	if o.diff != "" || o.files != "" {
@@ -363,7 +344,7 @@ func (g *Graph) cmdChanges(o opts) int {
 		if o.diff != "" {
 			input = "diff"
 			d := g.parseDiff(readInput(o.diff))
-			linesByPath, deleted, moved, plus, gone = d.lines, d.deleted, d.moved, d.plus, d.minus
+			linesByPath, deleted, moved = d.lines, d.deleted, d.moved
 			mismatched = g.diffMismatches(d.post, deleted, head)
 		} else {
 			linesByPath = g.parseFileList(readInput(o.files))
@@ -382,7 +363,7 @@ func (g *Graph) cmdChanges(o opts) int {
 			args = append(args, head)
 		}
 		d := g.parseDiff(g.git(append(args, "--")...))
-		linesByPath, deleted, moved, plus = d.lines, d.deleted, d.moved, d.plus
+		linesByPath, deleted, moved = d.lines, d.deleted, d.moved
 		if head == "" {
 			for _, f := range splitLines(g.git("ls-files", "--others", "--exclude-standard")) {
 				linesByPath[f] = nil
@@ -437,7 +418,7 @@ func (g *Graph) cmdChanges(o opts) int {
 		}
 		warnings = append(warnings, msg)
 	}
-	g.bases, g.statusKnown, g.resChanges = map[string]*fileBase{}, !files || baseRev != "" || g.base != nil, map[int32][]resChange{}
+	g.resChanges = map[int32][]resChange{}
 	for _, path := range util.SortedKeys(linesByPath) {
 		lines := linesByPath[path]
 		if strings.Contains(path, "/src/test") || strings.Contains(path, "/src/androidTest") {
@@ -475,11 +456,6 @@ func (g *Graph) cmdChanges(o opts) int {
 			continue
 		}
 		seeds = append(seeds, found...)
-		old, has := moved[path]
-		if !has {
-			old = path
-		}
-		g.bases[path] = g.fileBase(path, old, lines == nil && !files, baseRev, head, plus[path])
 		if source {
 			analysed = append(analysed, path)
 		}
@@ -487,31 +463,6 @@ func (g *Graph) cmdChanges(o opts) int {
 	g.removed = nil
 	if g.base != nil {
 		g.removed = g.removedFromBase()
-	} else if g.statusKnown {
-		var sources []string
-		for _, p := range util.SortedKeys(linesByPath) {
-			if (strings.HasSuffix(p, ".kt") || strings.HasSuffix(p, ".java")) && !strings.Contains(p, "/src/test") && !strings.Contains(p, "/src/androidTest") {
-				sources = append(sources, p)
-			}
-		}
-		g.removed = g.removedScreens(sources, func(path string) (string, string, string, bool) {
-			if deleted[path] || head == "" && !exists(filepath.Join(g.root, path)) {
-				if baseRev != "" {
-					text, ok := g.readAt(path, baseRev)
-					return text, path, "", ok
-				}
-				lines, ok := gone[path]
-				return strings.Join(lines, "\n"), path, "", ok
-			}
-			if b := g.bases[path]; b != nil && b.hasOld {
-				old, has := moved[path]
-				if !has {
-					old = path
-				}
-				return b.old, old, b.cur, true
-			}
-			return "", "", "", false
-		})
 	}
 	if head == "" {
 		builtAt, _ := strconv.ParseInt(g.m.MetaValue("built_at"), 10, 64)
@@ -531,27 +482,6 @@ func (g *Graph) cmdChanges(o opts) int {
 		}
 	}
 	return g.reportImpactWith(sortSeeds(seeds), o, "changes", nc, warnings)
-}
-
-// fileBase: a changed file in the base and in the map's revision.
-func (g *Graph) fileBase(path, oldPath string, isNew bool, base, head string, plus lineSet) *fileBase {
-	b := &fileBase{isNew: isNew, plus: plus,
-		valuesFile: android.ResourceTypeOfDir(filepath.Base(filepath.Dir(path))) == "values"}
-	if isNew {
-		return b
-	}
-	b.cur, _ = g.readAt(path, head)
-	if base != "" {
-		b.old, b.hasOld = g.readAt(oldPath, base)
-		b.isNew = !b.hasOld
-		if b.valuesFile {
-			b.keys = map[string]bool{}
-			for k := range valuesSignature(b.old) {
-				b.keys[k] = true
-			}
-		}
-	}
-	return b
 }
 
 // short: a commit as git abbreviates it in a message.
