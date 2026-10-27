@@ -75,5 +75,7 @@ jobs:
       - if: runner.os != 'Windows'
         run: testdata/navapp/codemapw version | grep -x 'codemap 0.3.0'
       - if: runner.os == 'Windows'
-        shell: cmd
-        run: testdata\navapp\codemapw.cmd version | findstr /x /c:"codemap 0.3.0"
+        shell: pwsh # findstr /x misses lines that end in LF alone
+        run: |
+          $out = & testdata\navapp\codemapw.cmd version
+          if ($LASTEXITCODE -ne 0 -or $out -ne 'codemap 0.3.0') { throw "codemapw.cmd: exit $LASTEXITCODE, '$out'" }
