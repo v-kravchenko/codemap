@@ -24,3 +24,8 @@ checksum:
 
 changelog:
   disable: true
+
+release:
+  github: # named here, not read from the git remote, so a local check works too
+    owner: v-kravchenko
+    name: codemap
