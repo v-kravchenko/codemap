@@ -95,6 +95,7 @@ func buildCmd(args []string) {
 	fs := flag.NewFlagSet("build", flag.ExitOnError)
 	root := fs.String("root", util.FindRoot(), "project root")
 	out := fs.String("out", "", "snapshot (default: snapshot in codemap.yml)")
+	variant := fs.String("variant", "", "build variant (default: variant in codemap.yml)")
 	jobs := fs.Int("jobs", 0, "parallel workers (default: CPUs - 1)")
 	force := fs.Bool("force", false, "rebuild even when the inputs did not change")
 	fs.Parse(args)
@@ -106,10 +107,18 @@ func buildCmd(args []string) {
 	if err != nil {
 		util.Fail("%v", err)
 	}
-	config.ApplyConfig(c)
 	if *out == "" {
-		*out = config.DefaultSnapshot(abs)
+		if *out, err = config.SnapshotPath(abs, *variant); err != nil {
+			util.Fail("%v", err)
+		}
 	}
+	if *variant != "" {
+		if err := config.CheckVariant(*variant); err != nil {
+			util.Fail("%v", err)
+		}
+		c.Variant = *variant
+	}
+	config.ApplyConfig(c)
 	var modules []project.Module
 	if pm, err := project.LoadModel(abs); err == nil {
 		if modules, err = project.ModelModules(abs, pm, c.Variant); err != nil {

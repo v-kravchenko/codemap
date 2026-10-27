@@ -77,19 +77,25 @@ variant: debug
 
 Type: string. Default: `debug` (set by the `android` preset; if truly unset anywhere,
 `ApplyConfig` falls back to `debug`). The Gradle build variant whose classes are read, e.g.
-`debug`, `googleDebug`. Substituted into `build.class_dirs`/`build.source_sets` (`{variant}`) and
-into `codemap.model.json`'s per-variant data (`codemap init` / `project.ModelModules`).
+`debug`, `googleDebug`. Substituted into `build.class_dirs`/`build.source_sets`/`snapshot`
+(`{variant}`) and into `codemap.model.json`'s per-variant data (`codemap init` /
+`project.ModelModules`). `codemap build --variant X` and a query's `--variant X` override it for one
+run: the map of `release` sits next to the map of `debug`, and `meta.index.variant` says which one
+answered.
 
 ### snapshot
 
 ```yaml
-snapshot: build/codemap/codemap.snap
+snapshot: build/codemap/{variant}.snap
 ```
 
-Type: string. Default: `build/codemap/codemap.snap`, relative to the root. Where `codemap build`
-writes the binary map and where queries read it by default (`--db` overrides per invocation). This
-is the one key the queries read straight from the YAML file before loading the map (`snapshotPath`)
-— the map itself carries the rest of the settings it was built with.
+Type: string. Default: `build/codemap/{variant}.snap`, relative to the root; `{variant}` and
+`{Variant}` are replaced. Where `codemap build` writes the binary map and where queries read it by
+default (`--db` overrides per invocation). This and `variant` are the keys the queries read
+straight from the YAML file before loading the map (`config.SnapshotPath`) — the map itself carries
+the rest of the settings it was built with. A path without `{variant}` holds the map of the
+configured variant only: `--variant` with another one is an error rather than a map written over
+it.
 
 ### build.class_dirs
 
@@ -422,7 +428,7 @@ version: 1
 extends: [android, nav2-compose]
 
 variant: debug
-snapshot: build/codemap/codemap.snap
+snapshot: build/codemap/{variant}.snap
 
 screens:
   activity_bases:

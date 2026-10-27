@@ -11,12 +11,13 @@ strips it since `meta.run` is never reproducible).
 
 ```json
 {
-  "schema_version": "3.5.0",
+  "schema_version": "3.6.0",
   "command": "impact",
   "meta": {
     "tool_version": "0.2.0",
     "index": {
       "version": "...",
+      "variant": "debug",
       "commit": "a1b2c3d...",
       "dirty": false,
       "inputs_sha1": "...",
@@ -30,13 +31,15 @@ strips it since `meta.run` is never reproducible).
 }
 ```
 
-- `schema_version` — the shape of the JSON output (`"3.5.0"`, `internal/query/cli.go`). Independent
+- `schema_version` — the shape of the JSON output (`"3.6.0"`, `internal/query/cli.go`). Independent
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
   `"changes"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
 - `meta.tool_version` — the codemap binary's own version (`"0.2.0"`).
 - `meta.index.version` — the snapshot format version the map was built with (`index_version`);
   queries refuse to run against a map from a different one (see Exit codes).
+- `meta.index.variant` — the build variant whose classes the map was built from (`codemap build
+  --variant`, else `variant` in codemap.yml); since 3.6.0.
 - `meta.index.commit` — the git HEAD the map was built from, or `null` when the project has no git
   repo or HEAD could not be read.
 - `meta.index.dirty` — `true` when the working tree had uncommitted changes at build time (`git
@@ -141,7 +144,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.5.0",
+  "schema_version": "3.6.0",
   "command": "used-by",
   "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
   "items": [
@@ -202,7 +205,7 @@ Result fields (full `impact`, no `--to`):
 
 ```json
 {
-  "schema_version": "3.5.0",
+  "schema_version": "3.6.0",
   "command": "impact",
   "changed": [
     {
@@ -265,7 +268,7 @@ resolved head commit or `"WORKTREE"`.
 
 ```json
 {
-  "schema_version": "3.5.0",
+  "schema_version": "3.6.0",
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
@@ -331,7 +334,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.5.0", "command": "nav-path",
+  "schema_version": "3.6.0", "command": "nav-path",
   "targets": [{ "name": "Login", "kind": "route", "module": "app",
     "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
   "screens": [
@@ -395,7 +398,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.5.0", "command": "graph",
+  "schema_version": "3.6.0", "command": "graph",
   "roots": ["Home"], "walk": "out", "to": [],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
@@ -443,7 +446,7 @@ where the walk back ends, as in `nav-path` (`{name, kind, module, location, host
 
 ```json
 {
-  "schema_version": "3.5.0", "command": "screens",
+  "schema_version": "3.6.0", "command": "screens",
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
@@ -484,7 +487,7 @@ module then location, truncated to `--limit`; `hidden_by_module` — with `--mod
 
 ```json
 {
-  "schema_version": "3.5.0", "command": "find", "pattern": "Activity",
+  "schema_version": "3.6.0", "command": "find", "pattern": "Activity",
   "total": 15, "synthetic": 0,
   "symbols": [
     { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",

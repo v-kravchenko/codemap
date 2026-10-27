@@ -9,10 +9,12 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   deep link and intent filters). Gradle files (`build.gradle*`, `libs.versions.toml`,
   `gradle.properties`) and ProGuard/R8 rules are not read for behaviour: `codemap init` asks
   Gradle only where the modules, class directories, sources and resources are.
-- Only one build variant is analysed at a time (`codemap.yml`'s `variant:`, default `debug`).
-  A release-only code path, a flavor-specific override, or code gated by `BuildConfig` fields
-  the configured variant does not take is invisible. Workaround: rebuild with a different
-  `variant` (e.g. `release`) and compare.
+- One map holds one build variant (`codemap.yml`'s `variant:`, default `debug`; `--variant` for
+  one run). A release-only code path, a flavor-specific override, or code gated by `BuildConfig`
+  fields the variant does not take is invisible in its map. Workaround: `codemap build --variant
+  release` next to the debug map and compare the answers; nothing compares two maps yet.
+- A release map is built from the classes before R8: code R8 strips as unused is still in it, and
+  an obfuscated stack trace cannot be read against it (no `mapping.txt` support).
 - Reflection (`Class.forName`, method handles) and deep links resolved from a URI at run time
   are not followed — a destination reached only that way has no edge into it. Example: a
   screen registered solely through a `NavDeepLink` URI pattern shows no opener.

@@ -29,7 +29,7 @@
     },
     "snapshot": {
       "type": "string",
-      "description": "Where the map is written, relative to the root."
+      "description": "Where the map is written, relative to the root; {variant} and {Variant} are replaced."
     },
     "build": {
       "type": "object",

@@ -4,6 +4,7 @@ package query
 
 import (
 	"bufio"
+	"cmp"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -22,7 +23,7 @@ import (
 
 const (
 	toolVersion   = "0.2.0"
-	schemaVersion = "3.5.0"
+	schemaVersion = "3.6.0"
 	exitOK        = 0
 	exitError     = 2
 )
@@ -35,11 +36,11 @@ var (
 )
 
 type opts struct {
-	db, to, base, head, diff, files, from, entry, direction, host string
-	json, all, noPaths, noSelf, noDI, noCheck, nav                bool
-	strict, verbose, info, ways, in, unreachable                  bool
-	depth, limit                                                  int
-	kinds, pos, via, avoid, modules, types                        []string
+	db, variant, to, base, head, diff, files, from, entry, direction, host string
+	json, all, noPaths, noSelf, noDI, noCheck, nav                         bool
+	strict, verbose, info, ways, in, unreachable                           bool
+	depth, limit                                                           int
+	kinds, pos, via, avoid, modules, types                                 []string
 }
 
 // fields: where each option goes: a switch sets its bool, a value its string, a repeatable one
@@ -48,7 +49,7 @@ func (o *opts) fields() (map[string]*bool, map[string]*string, map[string]*[]str
 	switches := map[string]*bool{"verbose": &o.verbose, "info": &o.info, "json": &o.json, "all": &o.all,
 		"no-paths": &o.noPaths, "no-self": &o.noSelf, "no-di": &o.noDI, "unreachable": &o.unreachable,
 		"no-check": &o.noCheck, "strict": &o.strict, "nav": &o.nav, "ways": &o.ways, "in": &o.in}
-	values := map[string]*string{"db": &o.db, "to": &o.to, "base": &o.base, "head": &o.head, "diff": &o.diff,
+	values := map[string]*string{"db": &o.db, "variant": &o.variant, "to": &o.to, "base": &o.base, "head": &o.head, "diff": &o.diff,
 		"files": &o.files, "host": &o.host, "from": &o.from, "entry": &o.entry, "direction": &o.direction}
 	lists := map[string]*[]string{"kind": &o.kinds, "type": &o.types, "via": &o.via, "avoid": &o.avoid,
 		"module": &o.modules}
@@ -106,6 +107,9 @@ func parseOpts(cmd string, args []string) opts {
 		}
 	}
 	o.direction = strings.ToUpper(o.direction)
+	if o.db != "" && o.variant != "" {
+		panic(util.UserError("argument --variant: not with --db (the map at --db has its own variant)"))
+	}
 	o.check(spec)
 	return o
 }
@@ -163,12 +167,19 @@ func Query(cmd string, args []string) (code int) {
 	debug.SetGCPercent(400)
 	o := parseOpts(cmd, args)
 	root := util.FindRoot()
+	rebuild := "codemap build"
+	if o.variant != "" {
+		rebuild += " --variant " + o.variant
+	}
 	if o.db == "" {
-		o.db = config.DefaultSnapshot(root)
+		var err error
+		if o.db, err = config.SnapshotPath(root, o.variant); err != nil {
+			panic(util.UserError(err.Error()))
+		}
 	}
 	m, err := snapshot.LoadSnapshot(o.db)
 	if os.IsNotExist(err) {
-		panic(util.UserError(fmt.Sprintf("No code map at %s: run `codemap build`.", o.db)))
+		panic(util.UserError(fmt.Sprintf("No code map at %s: run `%s`.", o.db, rebuild)))
 	} else if err != nil {
 		panic(util.UserError(err.Error()))
 	}
@@ -338,7 +349,7 @@ func (g *Graph) printJSON(command string, result obj) {
 		{"command", command},
 		{"meta", obj{
 			{"tool_version", toolVersion},
-			{"index", obj{{"version", m.MetaValue("index_version")}, {"commit", commit},
+			{"index", obj{{"version", m.MetaValue("index_version")}, {"variant", cmp.Or(config.Cfg.Variant, "debug")}, {"commit", commit},
 				{"dirty", m.MetaValue("dirty") == "1"}, {"inputs_sha1", m.MetaValue("inputs_sha1")},
 				{"stale", stale}, {"stale_inputs", g.staleJSON()}}},
 			{"refs", g.refs},

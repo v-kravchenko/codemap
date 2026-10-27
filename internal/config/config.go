@@ -2,6 +2,7 @@ package config
 
 import (
 	"bytes"
+	"cmp"
 	"crypto/sha1"
 	"embed"
 	"encoding/hex"
@@ -218,19 +219,45 @@ func (c *Config) Sha1() string {
 	return hex.EncodeToString(s[:])
 }
 
-// snapshotPath: where the map is, from the config's snapshot (relative to root); the queries read
-// only this key of the file, the rest comes with the map.
-func snapshotPath(root string) string {
-	rel := "build/codemap/codemap.snap"
+// SnapshotPath: where the map of variant is (the configured one when ""), from the config's
+// snapshot (relative to root, {variant} replaced). The queries read only the snapshot and variant
+// keys of the file, the rest comes with the map. A path without {variant} holds only the
+// configured variant: another one would overwrite its map.
+func SnapshotPath(root, variant string) (string, error) {
+	c := struct {
+		Snapshot string `yaml:"snapshot"`
+		Variant  string `yaml:"variant"`
+	}{}
 	if data, err := os.ReadFile(filepath.Join(root, ConfigFile)); err == nil {
-		var c struct {
-			Snapshot string `yaml:"snapshot"`
-		}
-		if yaml.Unmarshal(data, &c) == nil && c.Snapshot != "" {
-			rel = c.Snapshot
-		}
+		yaml.Unmarshal(data, &c)
 	}
-	return filepath.Join(root, rel)
+	configured := cmp.Or(c.Variant, "debug")
+	variant = cmp.Or(variant, configured)
+	if err := CheckVariant(variant); err != nil {
+		return "", err
+	}
+	rel := cmp.Or(c.Snapshot, "build/codemap/{variant}.snap")
+	if variant != configured && !strings.Contains(strings.ToLower(rel), "{variant}") {
+		return "", fmt.Errorf("%s: snapshot %s holds the map of %s only; add {variant} to it to keep a map per variant",
+			ConfigFile, rel, configured)
+	}
+	return filepath.Join(root, expandVariant(rel, variant)), nil
+}
+
+var variantName = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9_]*$`)
+
+// CheckVariant: v is a Gradle variant name, so it can go into a path.
+func CheckVariant(v string) error {
+	if !variantName.MatchString(v) {
+		return fmt.Errorf("variant %q: expected a Gradle variant name such as debug or googleRelease", v)
+	}
+	return nil
+}
+
+// expandVariant: {variant} and {Variant} (capitalized) in s.
+func expandVariant(s, variant string) string {
+	s = strings.ReplaceAll(s, "{variant}", variant)
+	return strings.ReplaceAll(s, "{Variant}", strings.ToUpper(variant[:1])+variant[1:])
 }
 
 // -- compiled settings, what the builder and the queries use
@@ -355,8 +382,7 @@ func ApplyConfig(c *Config) {
 	expand := func(xs []string) []string {
 		var out []string
 		for _, x := range xs {
-			x = strings.ReplaceAll(x, "{variant}", variant)
-			out = append(out, strings.ReplaceAll(x, "{Variant}", strings.ToUpper(variant[:1])+variant[1:]))
+			out = append(out, expandVariant(x, variant))
 		}
 		return out
 	}
@@ -440,5 +466,3 @@ var (
 
 // screenTitles: the screen kinds in the order of the output, with their headings (a preview note set by applyConfig).
 var ScreenTitles = [][2]string{{"activity", "Activities"}, {"fragment", "Fragments"}, {"dialog", "Dialog fragments"}, {"route", "Compose routes"}, {"preview", "Screen previews"}, {"layout", "Screen layouts"}}
-
-func DefaultSnapshot(root string) string { return snapshotPath(root) }

@@ -32,8 +32,9 @@ var (
 	optModule   = flagSpec{name: "module", arg: "GLOB", many: true, help: "show only what is in a matching module: the module and those under it (*: one level, **: any, !GLOB: not)"}
 	optJSON     = flagSpec{name: "json", help: "the answer as JSON (docs/json.md)"}
 	optDB       = flagSpec{name: "db", arg: "FILE", help: "the code map (default: snapshot in codemap.yml)"}
+	optVariant  = flagSpec{name: "variant", arg: "VARIANT", help: "the code map of this build variant (default: variant in codemap.yml; not with --db)"}
 	commonFlags = []flagSpec{
-		optJSON, optDB,
+		optJSON, optDB, optVariant,
 		{name: "no-check", help: "skip the check that the map is newer than its inputs"},
 		{name: "strict", help: "exit 3 when the map is stale and the answer uses a changed file"},
 	}
@@ -44,11 +45,12 @@ var commands = []command{
 		flags: []flagSpec{
 			{name: "root", arg: "DIR", help: "project root (default: found from the working directory)"},
 			{name: "out", arg: "SNAPSHOT", help: "where to write the map (default: snapshot in codemap.yml)"},
+			{name: "variant", arg: "VARIANT", help: "the build variant whose classes are read (default: variant in codemap.yml)"},
 			{name: "jobs", arg: "N", help: "parallel workers (default: CPUs - 1)"},
 			{name: "force", help: "rebuild even when the inputs did not change"},
 		}},
 	{name: "build --info", about: "What the code map holds and what it was built from.",
-		flags: []flagSpec{optJSON, optDB}},
+		flags: []flagSpec{optJSON, optDB, optVariant}},
 	{name: "used-by", args: "SYMBOL", query: true, about: "What uses a class, method or field directly.",
 		flags: []flagSpec{optAll, {name: "no-self", help: "leave out uses from the symbol's own top-level class"},
 			{name: "no-di", help: "leave out generated DI code (Hilt/Dagger factories, components, modules)"}, optModule}},
