@@ -71,11 +71,11 @@ jobs:
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: go.mod
-      - run: go run ./cmd/codemap wrapper --version 0.3.0 --root testdata/navapp
+      - run: go run ./cmd/codemap wrapper --version 0.4.1 --root testdata/navapp
       - if: runner.os != 'Windows'
-        run: testdata/navapp/codemapw version | grep -x 'codemap 0.3.0'
+        run: testdata/navapp/codemapw version | grep -x 'codemap 0.4.1'
       - if: runner.os == 'Windows'
         shell: pwsh # findstr /x misses lines that end in LF alone
         run: |
           $out = & testdata\navapp\codemapw.cmd version
-          if ($LASTEXITCODE -ne 0 -or $out -ne 'codemap 0.3.0') { throw "codemapw.cmd: exit $LASTEXITCODE, '$out'" }
+          if ($LASTEXITCODE -ne 0 -or $out -ne 'codemap 0.4.1') { throw "codemapw.cmd: exit $LASTEXITCODE, '$out'" }
