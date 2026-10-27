@@ -425,3 +425,57 @@ func TestChangesBaseDB(t *testing.T) {
 		t.Errorf("changes text: no Removed: 1\n%s", text)
 	}
 }
+
+// TestDiff: a screen only one map has, with its manifest entry, from either side.
+func TestDiff(t *testing.T) {
+	root := fixture.FixtureRoot(t)
+	run := func(args ...string) string {
+		cmd := exec.Command(os.Args[0], args...)
+		cmd.Dir, cmd.Env = root, append(os.Environ(), "CODEMAP_AS_MAIN=1")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("codemap %s: %v\n%s", strings.Join(args, " "), err, out)
+		}
+		return string(out)
+	}
+	hide := func(rel string) func() {
+		path := filepath.Join(root, "app/classes", rel)
+		data, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		os.Remove(path)
+		return func() { os.WriteFile(path, data, 0o644) }
+	}
+	restore := hide("navapp/views/LinkActivity.class")
+	run("build", "--out", "base.snap")
+	restore()
+	hide("navapp/impact/LoudActivity.class")
+	run("build")
+	type screen struct{ Name, Kind string }
+	type entry struct{ Kind, Detail, Screen string }
+	type side[T any] struct{ Added, Removed []T }
+	var a struct {
+		Screens  side[screen]
+		Entries  side[entry]
+		Warnings []string
+	}
+	if err := json.Unmarshal([]byte(run("diff", "--base", "base.snap", "--json", "--no-check")), &a); err != nil {
+		t.Fatal(err)
+	}
+	if want := (side[screen]{[]screen{{"LinkActivity", "activity"}}, []screen{{"LoudActivity", "activity"}}}); !slices.Equal(a.Screens.Added, want.Added) || !slices.Equal(a.Screens.Removed, want.Removed) {
+		t.Errorf("screens %+v, want %+v", a.Screens, want)
+	}
+	if len(a.Entries.Added) != 1 || a.Entries.Added[0].Kind != "deeplink" || a.Entries.Added[0].Screen != "LinkActivity" || len(a.Entries.Removed) != 0 {
+		t.Errorf("entries %+v, want the deep link of LinkActivity added", a.Entries)
+	}
+	if len(a.Warnings) != 0 {
+		t.Errorf("warnings %v", a.Warnings)
+	}
+	if text := run("diff", "--base", "base.snap", "--no-check"); !strings.Contains(text, "Screens: +1 -1") || !strings.Contains(text, "+ activity  LinkActivity") {
+		t.Errorf("diff text:\n%s", text)
+	}
+	if text := run("diff", "--base", "base.snap", "--no-check", "--module", "!app"); !strings.Contains(text, "Screens: +0 -0") {
+		t.Errorf("diff --module !app:\n%s", text)
+	}
+}

@@ -70,6 +70,10 @@ var commands = []command{
 			{name: "files", arg: "-|FILE", help: "lines of path, path:N or path:N-M instead of a diff"},
 			{name: "format", arg: "targets", help: "a line per screen: status, depth, target, module, qualifiers, tab-separated, new first (not with --json)"},
 			optNav, optDepth, optKind, optNoPrev, optNoPaths, optModule}},
+	{name: "diff", query: true, about: "What this map has and another has not: screens, manifest entries, the screens that open them.",
+		flags: []flagSpec{
+			{name: "base", arg: "FILE", help: "the other code map: another variant's (build/codemap/release.snap) or another revision's"},
+			optModule}},
 	{name: "nav-path", args: "SCREEN", query: true, about: "How a user gets to a screen: the cheapest way from an entry, and the branches.",
 		flags: []flagSpec{
 			{name: "via", arg: "SCREEN", many: true, help: "the cheapest way through these screens, in order"},

@@ -87,9 +87,6 @@ itself.
   vars) to a value threaded through `Graph`/`Builder` — needed before two configs (two
   variants, or two projects) could ever be loaded in one process; not needed for anything on
   Next/Later today, so it's a Later-priority cleanup.
-- **Compare two variants' maps** (`codemap variants diff debug release`): the screens, entries and
-  edges only one variant has — a release-only path, a flavor override, a `BuildConfig` branch.
-  Each variant has a map of its own now (`build --variant`); nothing reads two at once yet.
 
 ## Ideas
 

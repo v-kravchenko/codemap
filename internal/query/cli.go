@@ -246,6 +246,8 @@ func (g *Graph) run(cmd string, o opts) int {
 		return g.cmdFind(o)
 	case "changes":
 		return g.cmdChanges(o)
+	case "diff":
+		return g.cmdDiff(o)
 	case "nav-path":
 		need(1, "SCREEN")
 		return g.cmdNavPath(o)

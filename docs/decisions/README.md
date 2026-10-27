@@ -54,3 +54,4 @@ a stale file path) may be fixed directly in place; a changed decision gets a new
 | [0020](0020-previews-by-content.md) | A preview goes with the screen whose own composables it draws | accepted |
 | [0021](0021-removed-by-the-base-text.md) | Removed screens: declarations the base text has and the head has not | accepted |
 | [0022](0022-added-and-removed-by-a-base-map.md) | Added and removed by a map of the base | accepted |
+| [0023](0023-diff-of-two-maps.md) | Two maps compared by node id: `codemap diff --base FILE` | accepted |

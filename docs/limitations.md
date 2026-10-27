@@ -11,8 +11,9 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   Gradle only where the modules, class directories, sources and resources are.
 - One map holds one build variant (`codemap.yml`'s `variant:`, default `debug`; `--variant` for
   one run). A release-only code path, a flavor-specific override, or code gated by `BuildConfig`
-  fields the variant does not take is invisible in its map. Workaround: `codemap build --variant
-  release` next to the debug map and compare the answers; nothing compares two maps yet.
+  fields the variant does not take is invisible in its map. `codemap build --variant
+  release` next to the debug map and `codemap diff --base build/codemap/release.snap` shows what
+  only one of them has.
 - A release map is built from the classes before R8: code R8 strips as unused is still in it, and
   an obfuscated stack trace cannot be read against it (no `mapping.txt` support).
 - Reflection (`Class.forName`, method handles) and deep links resolved from a URI at run time

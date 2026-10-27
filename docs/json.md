@@ -340,6 +340,55 @@ a dirty tree or of another variant than the head's adds and removes what the cha
 }
 ```
 
+## diff
+
+```
+codemap diff --base FILE [--module GLOB]... [--json]
+```
+
+What the map (`--db`/`--variant`, as any query) has and the map at `--base` has not, and the other
+way round, by node id (docs/decisions/0023): another variant's map (`--base
+build/codemap/release.snap`: a debug-only screen, a release-only path) or another revision's (`build
+--out` on a checkout of the base). Since 3.8.0.
+
+- `--base FILE` (required) — the other map.
+- `--module GLOB` — only screens in matching modules; an open when either end is in one.
+
+Result: `screens`, `entries` and `opens`, each `{added, removed}`: `added` what only the map has,
+`removed` what only `--base` has, each named and located as in the map that has it.
+- `screens` — `{name, kind, module, location, host, hosts}` as in `nav-path` (previews and layouts
+  too), sorted by kind, module, name.
+- `entries` — the manifest's ways into a screen, `{kind, detail, screen, module}`, sorted by kind,
+  detail, screen; the entries of an added or removed screen are listed too.
+- `opens` — a screen opening another, as `graph` draws it: `{from, to, from_module, to_module}`,
+  sorted by from, to; every open of an added or removed screen is listed (the text shows only
+  those between screens both maps have, and counts the rest).
+- `warnings` — maps built with other settings than the variant (another `codemap.yml`) differ with
+  no change of code: said here, exit 3 with `--strict`.
+
+`meta.refs: {base_map: {commit, variant, dirty}}` names the map at `--base`.
+
+```json
+{
+  "schema_version": "3.8.0",
+  "command": "diff",
+  "screens": {
+    "added": [{ "name": "LinkActivity", "kind": "activity", "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:59", "host": null, "hosts": [] }],
+    "removed": []
+  },
+  "entries": {
+    "added": [{ "kind": "deeplink", "detail": "https://navapp.example/views", "screen": "LinkActivity", "module": "app" }],
+    "removed": []
+  },
+  "opens": {
+    "added": [{ "from": "LinkActivity", "to": "ViewsActivity", "from_module": "app", "to_module": "app" }],
+    "removed": []
+  },
+  "warnings": []
+}
+```
+
 ## nav-path
 
 ```

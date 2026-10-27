@@ -69,7 +69,7 @@ keep `build/codemap` and `codemap.model.json` out of git.
 codemap init [--gradle CMD]                        # once, and after build files change
 codemap wrapper [--version V]                      # codemapw and the build hook for the project
 codemap build [--variant V] [--out SNAPSHOT] [--jobs N] [--force]  # default: <variant>.snap in snapshot_dir
-codemap used-by|uses|impact|changes|nav-path|graph|screens|find|build --info ... [--variant V] [--json]
+codemap used-by|uses|impact|changes|diff|nav-path|graph|screens|find|build --info ... [--variant V] [--json]
 codemap COMMAND --help                             # its options; one it does not take is an error
 codemap version                                    # the release, or dev for a build from a checkout
 CODEMAP_TIMES=1 codemap build                      # time of each stage on stderr
@@ -97,6 +97,8 @@ draws a composable; `find --type class` one kind of symbol;
 
 `build --variant release` builds the map of another variant next to the configured one
 (`build/codemap/release.snap`); a query reads it with `--variant release`.
+`diff --base build/codemap/release.snap` lists the screens, manifest entries and opens one map has
+and the other has not: two variants, or two revisions.
 `build` skips a map built by the same binary from the same inputs (`--force` rebuilds it). Queries
 check whether the map is older than the sources and warn of modules not compiled when it was built
 (`--strict`: exit with an error when the answer touches a changed file or modules are missing). `changes` needs git; nothing else does (`build` records HEAD when there is one).
