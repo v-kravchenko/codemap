@@ -29,7 +29,8 @@ itself; what changes is that a project may now opt in.
   - writes the model on each configuration to `build/codemap/gradle-model.json`; `build` takes
     it over as `codemap.model.json` when it is newer than every build file, with the hash of the
     build files computed in Go, so the format and the stale check stay codemap's;
-  - after a build in which a compile task of a variant ran (not up to date), runs `codemapw
+  - after a build in which a compile task of a variant ran, up to date or not (the map may be
+    missing; `build` skips itself in ~0.15 s when it is fresh), runs `codemapw
     build --variant` for each such variant, synchronously: when the build ends, the map is the
     classes'. A failure is a warning; `CODEMAP_SKIP=1` turns it off (a CI job that does not
     need the map).
@@ -43,7 +44,8 @@ never read, by the configuration: a file it read would become an input of the ca
 
 - A project opts in with the four files and one line in its settings; without them codemap works
   as before (`codemap init`, `codemap build`).
-- A build that compiled pays the `codemap build` after it, ~3 s on a project of 80 modules, and
+- A build that compiled pays the `codemap build` after it, ~3 s on a project of 80 modules (one
+  with nothing compiled ~0.15 s for the check), and
   on a configuration (no cache hit) writing the model, under a second.
 - Two builds of one project at once each write the map through a temp file of their own; the
   last one wins, whole.

@@ -7,6 +7,11 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Fixed
+
+- The build hook builds the map when the compile tasks were up to date too: a map that was missing
+  or deleted stayed missing until something was recompiled. A fresh map costs the check, ~0.15 s.
+
 ## [0.4.0] - 2026-10-27
 
 ### Added

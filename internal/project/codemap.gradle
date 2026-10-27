@@ -4,7 +4,7 @@
 //   codemap init: an init script (-I, with `help --no-configuration-cache`), the JSON to -Pcodemap.out;
 //   a project's settings.gradle(.kts), `apply from` the copy `codemap wrapper` writes to gradle/: on
 //     each configuration the JSON to build/codemap/gradle-model.json, which `codemap build` takes
-//     as the model, and after a build that compiled a variant, `codemapw build --variant` for it.
+//     as the model, and after a build that ran a compile task of a variant, `codemapw build --variant`.
 import groovy.json.JsonOutput
 import javax.inject.Inject
 import org.gradle.api.services.BuildService
@@ -26,8 +26,9 @@ abstract class CodemapRebuild implements BuildService<Params>, OperationCompleti
     private final Set<String> variants = new TreeSet<String>().asSynchronized()
 
     void onFinish(FinishEvent e) {
-        // up to date: the classes did not change; from the cache: they did
-        if (e instanceof TaskFinishEvent && e.result instanceof TaskSuccessResult && !e.result.upToDate) {
+        // up to date too: the map may be missing or older than the classes; `build` skips itself
+        // in a fraction of a second when it is not
+        if (e instanceof TaskFinishEvent && e.result instanceof TaskSuccessResult) {
             def v = parameters.variants.get()[e.descriptor.taskPath]
             if (v != null) {
                 variants << v
@@ -49,7 +50,7 @@ abstract class CodemapRebuild implements BuildService<Params>, OperationCompleti
                 def p = new ProcessBuilder(cmd + ['build', '--variant', v]).directory(root).redirectErrorStream(true).start()
                 def out = p.inputStream.text.trim()
                 if (p.waitFor() == 0) {
-                    out.eachLine { log.lifecycle("codemap: $it") }
+                    out.eachLine { if (!it.startsWith('code map is up to date')) log.lifecycle("codemap: $it") }
                 } else {
                     log.warn("codemap: the $v map was not rebuilt (exit ${p.exitValue()}):\n$out")
                 }
