@@ -23,8 +23,14 @@ import (
 // guesses no directory; without it the modules are found by walking the tree (build.class_dirs).
 const modelFile = "codemap.model.json"
 
-//go:embed codemap.init.gradle
-var initScript []byte
+// gradleModelFile: the model as the hook of a project's build writes it on each configuration
+// (codemap.gradle); LoadModel takes it over when it is newer than the build files.
+const gradleModelFile = "build/codemap/gradle-model.json"
+
+// GradleScript: both the init script of `codemap init` and the hook `codemap wrapper` writes.
+//
+//go:embed codemap.gradle
+var GradleScript []byte
 
 type ProjectModel struct {
 	Version   int `json:"version"`
@@ -53,6 +59,9 @@ type ModelVariant struct {
 }
 
 func LoadModel(root string) (*ProjectModel, error) {
+	if err := importGradleModel(root); err != nil {
+		return nil, err
+	}
 	data, err := os.ReadFile(filepath.Join(root, modelFile))
 	if err != nil {
 		return nil, err
@@ -67,9 +76,60 @@ func LoadModel(root string) (*ProjectModel, error) {
 	return &m, nil
 }
 
-// buildFilesSha1: the hash of what decides the model: settings, build scripts, version catalogs and
-// gradle.properties anywhere in the tree, and every file of an included build (build-logic, buildSrc).
+// importGradleModel: the model the build's hook wrote becomes codemap.model.json when it is newer
+// than that and than every build file; one older than a build file is of a configuration before
+// the change, and the stale check of ModelModules says so.
+func importGradleModel(root string) error {
+	raw, err := os.Stat(filepath.Join(root, gradleModelFile))
+	if err != nil {
+		return nil
+	}
+	if m, err := os.Stat(filepath.Join(root, modelFile)); err == nil && !raw.ModTime().After(m.ModTime()) {
+		return nil
+	}
+	for _, p := range buildFiles(root) {
+		if f, err := os.Stat(p); err == nil && f.ModTime().After(raw.ModTime()) {
+			return nil
+		}
+	}
+	data, err := os.ReadFile(filepath.Join(root, gradleModelFile))
+	if err != nil {
+		return err
+	}
+	_, err = writeModel(root, data)
+	return err
+}
+
+// writeModel: the model from Gradle with the hash of the build files it was made from.
+func writeModel(root string, data []byte) (*ProjectModel, error) {
+	var m ProjectModel
+	if err := json.Unmarshal(data, &m); err != nil {
+		return nil, fmt.Errorf("a bad model from Gradle: %v", err)
+	}
+	m.Generated.InputsSha1 = buildFilesSha1(root)
+	data, _ = json.MarshalIndent(m, "", "  ")
+	// a temp file renamed over the model: two builds of the project may import it at once
+	return &m, util.WriteFileAtomic(filepath.Join(root, modelFile), append(data, '\n'))
+}
+
+// buildFilesSha1: the hash of what decides the model (buildFiles).
 func buildFilesSha1(root string) string {
+	h := sha1.New()
+	for _, p := range buildFiles(root) {
+		data, err := os.ReadFile(p)
+		if err != nil {
+			continue
+		}
+		rel, _ := filepath.Rel(root, p)
+		s := sha1.Sum(data)
+		fmt.Fprintf(h, "%s %x\n", rel, s)
+	}
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+// buildFiles: settings, build scripts, version catalogs and gradle.properties anywhere in the tree,
+// and every file of an included build (build-logic, buildSrc), sorted.
+func buildFiles(root string) []string {
 	var paths []string
 	var walk func(dir string, included bool)
 	walk = func(dir string, included bool) {
@@ -94,17 +154,7 @@ func buildFilesSha1(root string) string {
 	}
 	walk(root, false)
 	slices.Sort(paths)
-	h := sha1.New()
-	for _, p := range paths {
-		data, err := os.ReadFile(p)
-		if err != nil {
-			continue
-		}
-		rel, _ := filepath.Rel(root, p)
-		s := sha1.Sum(data)
-		fmt.Fprintf(h, "%s %x\n", rel, s)
-	}
-	return hex.EncodeToString(h.Sum(nil))
+	return paths
 }
 
 func hasSettings(dir string) bool {
@@ -213,15 +263,15 @@ func InitCmd(args []string) int {
 		os.RemoveAll(tmp)
 		util.Fail(format, a...)
 	}
-	script, out := filepath.Join(tmp, "codemap.init.gradle"), filepath.Join(tmp, "model.json")
-	if err := os.WriteFile(script, initScript, 0o644); err != nil {
+	script, out := filepath.Join(tmp, "codemap.gradle"), filepath.Join(tmp, "model.json")
+	if err := os.WriteFile(script, GradleScript, 0o644); err != nil {
 		fail("%v", err)
 	}
 	t0 := time.Now()
 	cmd := exec.Command(cmdline[0], append(cmdline[1:], "help", "-q", "--no-configuration-cache",
 		"-I", script, "-Pcodemap.out="+out)...)
 	cmd.Dir, cmd.Stderr = abs, os.Stderr
-	fmt.Fprintf(os.Stderr, "codemap init: %s help -I codemap.init.gradle (configuration only)\n", strings.Join(cmdline, " "))
+	fmt.Fprintf(os.Stderr, "codemap init: %s help -I codemap.gradle (configuration only)\n", strings.Join(cmdline, " "))
 	if err := cmd.Run(); err != nil {
 		fail("Gradle failed: %v. Fix the build or list the class directories in %s (build.class_dirs).", err, config.ConfigFile)
 	}
@@ -229,13 +279,8 @@ func InitCmd(args []string) int {
 	if err != nil {
 		fail("Gradle wrote no model: %v", err)
 	}
-	var m ProjectModel
-	if err := json.Unmarshal(data, &m); err != nil {
-		fail("Gradle wrote a bad model: %v", err)
-	}
-	m.Generated.InputsSha1 = buildFilesSha1(abs)
-	data, _ = json.MarshalIndent(m, "", "  ")
-	if err := os.WriteFile(filepath.Join(abs, modelFile), append(data, '\n'), 0o644); err != nil {
+	m, err := writeModel(abs, data)
+	if err != nil {
 		fail("%v", err)
 	}
 	fmt.Fprintf(os.Stderr, "codemap init: %d modules, variants %s, %.0fs -> %s\n", len(m.Modules),

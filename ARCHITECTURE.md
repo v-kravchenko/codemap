@@ -40,7 +40,7 @@ Each package imports only the ones above it in this list.
 | `internal/util` | small helpers: sorted keys, sets, file checks, the user-error type |
 | `internal/classfile` | the class file parser: members, references with their kind and line, call arguments that are constants, Kotlin metadata the walk needs (default-argument guards, `when` switch maps, signatures) |
 | `internal/config` | `codemap.yml`, the built-in presets (`presets/*.yml`), the JSON Schema, and the settings derived from them (`applyConfig`) |
-| `internal/project` | the modules of the project: `codemap init` (runs Gradle with `codemap.init.gradle`), `codemap.model.json`, the fallback discovery by class directories |
+| `internal/project` | the modules of the project: `codemap init` (runs Gradle with `codemap.gradle`), `codemap wrapper` (codemapw and that script as the build hook), `codemap.model.json`, the fallback discovery by class directories |
 | `internal/android` | resources, manifests, layouts and navigation XML: what each resource is and what it references |
 | `internal/snapshot` | the map's format: columns, CSR edges, the binary snapshot, derived tables (overriders, hierarchy), edge kinds |
 | `internal/build` | classes + resources into a map: nodes, edges, screens, hosts, routes, navigation graphs |

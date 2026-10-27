@@ -103,6 +103,12 @@ var commands = []command{
 			{name: "root", arg: "DIR", help: "project root (default: found from the working directory)"},
 			{name: "gradle", arg: "CMD", help: "the Gradle command (default: $CODEMAP_GRADLE, else ./gradlew)"},
 		}},
+	{name: "wrapper", about: "Write codemapw (and .cmd), codemap-wrapper.properties and gradle/codemap.gradle: a checkout runs one release, and its build keeps the map fresh.",
+		flags: []flagSpec{
+			{name: "root", arg: "DIR", help: "project root (default: found from the working directory)"},
+			{name: "version", arg: "V", help: "the codemap release (default: this one)"},
+			{name: "distribution-url", arg: "URL", help: "where the release archives are, {version} for the release (default: GitHub Releases)"},
+		}},
 	{name: "config", args: "check|print|schema", about: "Check codemap.yml, print it with the presets applied, or print its schema."},
 }
 

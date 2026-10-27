@@ -34,8 +34,9 @@ gofmt -l . && go vet ./... && go test ./...
 
 ## Rules
 
-- Gradle runs only in `codemap init`; `build` and the queries read files and never start Gradle
-  or reach the network. git is optional: `build` records HEAD when there is one, only `changes`
+- Gradle runs only in `codemap init`, and the project's build runs codemap only through the hook
+  `codemap wrapper` writes (docs/decisions/0018); `build` and the queries read files and never
+  start Gradle or reach the network (only `init` and `wrapper` do). git is optional: `build` records HEAD when there is one, only `changes`
   needs it.
 - Output is deterministic: the same inputs give byte-identical `--json`. Sort, never rely on map
   order. A change to the `--json` shape is a deliberate, documented change.

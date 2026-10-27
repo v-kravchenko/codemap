@@ -1,0 +1,62 @@
+#!/bin/sh
+# codemapw: runs the codemap release of codemap-wrapper.properties, downloaded once into
+# $CODEMAP_HOME (default ~/.cache/codemap) and checked against the sha256 there. Written by
+# `codemap wrapper`; run it again to change the release.
+set -eu
+
+dir=$(cd "$(dirname "$0")" && pwd)
+props=$dir/codemap-wrapper.properties
+prop() { sed -n "s/^$1=//p" "$props" | tr -d '\r'; }
+
+fail() {
+	echo "codemapw: $*" >&2
+	exit 1
+}
+
+[ -f "$props" ] || fail "no $props"
+version=$(prop version)
+case $(uname -s) in
+Linux) os=linux ;;
+Darwin) os=darwin ;;
+*) fail "no codemap for $(uname -s): on Windows run codemapw.cmd" ;;
+esac
+case $(uname -m) in
+x86_64 | amd64) arch=amd64 ;;
+aarch64 | arm64) arch=arm64 ;;
+*) fail "no codemap for $(uname -m)" ;;
+esac
+home=${CODEMAP_HOME:-${XDG_CACHE_HOME:-$HOME/.cache}/codemap}
+bin=$home/$version/codemap
+
+if [ ! -x "$bin" ]; then
+	archive=codemap_${version}_${os}_${arch}.tar.gz
+	want=$(prop "sha256_${os}_${arch}")
+	[ -n "$want" ] || fail "no sha256_${os}_${arch} in $props"
+	if command -v sha256sum >/dev/null; then
+		sha() { sha256sum "$1"; }
+	elif command -v shasum >/dev/null; then
+		sha() { shasum -a 256 "$1"; }
+	else
+		fail "needs sha256sum or shasum to check the download"
+	fi
+	mkdir -p "$home/$version"
+	tmp=$(mktemp -d "$home/$version/.download.XXXXXX")
+	trap 'rm -rf "$tmp"' EXIT
+	url=$(prop distribution_url)/$archive
+	echo "codemapw: downloading $url" >&2
+	if command -v curl >/dev/null; then
+		curl -fsSL -o "$tmp/$archive" "$url" || fail "cannot download $url"
+	elif command -v wget >/dev/null; then
+		wget -q -O "$tmp/$archive" "$url" || fail "cannot download $url"
+	else
+		fail "needs curl or wget"
+	fi
+	got=$(sha "$tmp/$archive" | awk '{ print $1 }')
+	[ "$got" = "$want" ] || fail "checksum of $archive does not match $props"
+	tar -xzf "$tmp/$archive" -C "$tmp" codemap
+	chmod 755 "$tmp/codemap"
+	mv -f "$tmp/codemap" "$bin" # a rename: two first runs at once both end with a whole binary
+	rm -rf "$tmp"
+	trap - EXIT
+fi
+exec "$bin" "$@"

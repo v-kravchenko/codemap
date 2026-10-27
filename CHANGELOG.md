@@ -11,6 +11,21 @@ notes from its section here (`tools/release-notes.sh`).
 
 - `install.sh`: installs a release on Linux or macOS with one line, for CI and machines without Go;
   checks the download against the release's checksums.
+- `codemap wrapper`: writes `codemapw` and `codemapw.cmd`, which run a pinned release checked by
+  sha256, and `gradle/codemap.gradle`, which a project applies in its settings so that each build
+  writes the model and rebuilds the map of each variant it compiled. After a pull, a build is all
+  a developer needs before `./codemapw` answers.
+
+### Changed
+
+- `codemap build` takes over the model the build hook wrote (`build/codemap/gradle-model.json`)
+  when it is newer than the build files, so `codemap init` is not needed with the hook.
+- Two `codemap build` at once no longer share a temp file: each writes the map through its own.
+
+### Security
+
+- Built with Go 1.27.3: `codemap wrapper` downloads over TLS, and 1.27.2 trusted compromised
+  intermediate certificates (GO-2026-6809).
 
 ## [0.3.0] - 2026-10-27
 

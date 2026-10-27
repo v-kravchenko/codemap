@@ -6,6 +6,7 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"time"
 )
 
 func writeFiles(t *testing.T, root string, files map[string]string) {
@@ -79,5 +80,29 @@ func TestResDirsOf(t *testing.T) {
 	got := resDirsOf(root, []string{"m/src/main/res-z", "m/src/main/res", "m/src/main/gone", "m/src/debug/res"})
 	if want := []string{"m/src/main/res", "m/src/main/res-z", "m/src/debug/res"}; !slices.Equal(got, want) {
 		t.Errorf("got %v, want %v", got, want)
+	}
+}
+
+func TestImportGradleModel(t *testing.T) {
+	root := t.TempDir()
+	writeFiles(t, root, map[string]string{"settings.gradle": "include ':a'", "a/build.gradle": ""})
+	raw := `{"version": 1, "generated": {"gradle": "9.1"}, "variants": ["debug"], "modules": [{"path": ":a", "dir": "a"}]}`
+	writeFiles(t, root, map[string]string{gradleModelFile: raw})
+	old := time.Now().Add(-time.Hour)
+	os.Chtimes(filepath.Join(root, "a/build.gradle"), old, old)
+	m, err := LoadModel(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(m.Modules) != 1 || m.Generated.InputsSha1 != buildFilesSha1(root) {
+		t.Errorf("imported model %+v", m)
+	}
+	// a build file changed after the build wrote the model: not imported, the stale check tells
+	os.Remove(filepath.Join(root, modelFile))
+	writeFiles(t, root, map[string]string{"a/build.gradle": "android {}"})
+	later := time.Now().Add(time.Hour)
+	os.Chtimes(filepath.Join(root, "a/build.gradle"), later, later)
+	if _, err := LoadModel(root); !os.IsNotExist(err) {
+		t.Errorf("model of an older configuration imported: %v", err)
 	}
 }

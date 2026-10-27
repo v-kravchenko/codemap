@@ -16,6 +16,8 @@ import (
 	"slices"
 	"sort"
 	"unsafe"
+
+	"github.com/v-kravchenko/codemap/internal/util"
 )
 
 const (
@@ -335,13 +337,13 @@ func (w *snapWriter) strs(s *Strs) {
 }
 
 // WriteSnapshot writes to a temp file renamed over path, so a failed write (disk full) leaves the
-// old map in place and no temp file behind.
+// old map in place and no temp file behind; two builds at once each write a temp file of their own.
 func (m *Map) WriteSnapshot(path string) (err error) {
-	tmp := path + ".tmp"
-	f, err := os.Create(tmp)
+	f, err := util.CreateTemp(path)
 	if err != nil {
 		return err
 	}
+	tmp := f.Name()
 	defer func() {
 		if err != nil {
 			f.Close()
@@ -362,6 +364,9 @@ func (m *Map) WriteSnapshot(path string) (err error) {
 		return err
 	}
 	if err = f.Close(); err != nil {
+		return err
+	}
+	if err = os.Chmod(tmp, 0o644); err != nil { // CreateTemp makes it 0600
 		return err
 	}
 	return os.Rename(tmp, path)

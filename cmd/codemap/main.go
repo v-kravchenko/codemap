@@ -99,6 +99,8 @@ func main() {
 		buildCmd(args)
 	case "init":
 		os.Exit(project.InitCmd(args))
+	case "wrapper":
+		os.Exit(project.WrapperCmd(args, query.ToolVersion))
 	case "config":
 		os.Exit(config.ConfigCmd(args))
 	case "used-by", "uses", "impact", "find", "changes", "nav-path", "graph", "screens":

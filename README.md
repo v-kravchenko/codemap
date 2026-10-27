@@ -50,10 +50,24 @@ with Go:
 go install github.com/v-kravchenko/codemap/cmd/codemap@latest
 ```
 
+### In a project: codemapw and the build hook
+
+`codemap wrapper` writes four files to commit with the project: `codemapw` and `codemapw.cmd`,
+which download this release once (to `$CODEMAP_HOME`, default `~/.cache/codemap` or
+`%LOCALAPPDATA%\codemap`) and check it against the sha256 in `codemap-wrapper.properties`, and
+`gradle/codemap.gradle`. Applied at the end of `settings.gradle` (`apply from:
+'gradle/codemap.gradle'`; in `.kts`, `apply(from = "gradle/codemap.gradle")`), it makes each
+build of the project keep the map fresh: the configuration writes the model (no `codemap init`),
+and a build that compiled a variant runs `codemapw build --variant` for it before it ends (a
+failure is a warning, `CODEMAP_SKIP=1` skips it). After a pull, a build is all a developer needs
+before `./codemapw screens`. `--version` picks another release, `--distribution-url` a mirror;
+keep `build/codemap` and `codemap.model.json` out of git.
+
 ## Usage
 
 ```
 codemap init [--gradle CMD]                        # once, and after build files change
+codemap wrapper [--version V]                      # codemapw and the build hook for the project
 codemap build [--variant V] [--out SNAPSHOT] [--jobs N] [--force]  # default: <variant>.snap in snapshot_dir
 codemap used-by|uses|impact|changes|nav-path|graph|screens|find|build --info ... [--variant V] [--json]
 codemap COMMAND --help                             # its options; one it does not take is an error
@@ -86,14 +100,15 @@ touches a changed file). `changes` needs git; nothing else does (`build` records
 
 ## Project model: codemap init
 
-`codemap init [--gradle CMD]` runs Gradle once (`help` with `codemap.init.gradle`, configuration
+`codemap init [--gradle CMD]` runs Gradle once (`help` with `codemap.gradle`, configuration
 only, nothing compiled; `--gradle gw` or `$CODEMAP_GRADLE` for another launcher) and writes
 `codemap.model.json`: the modules with their Gradle paths, and for every variant the class
 directories (the compile tasks' outputs), sources, resources and manifests of its source sets. With
 the model `build` takes the modules of `variant` from it, names the modules not compiled with the
 tasks that compile them, and stops when the build files (settings, build scripts, version catalogs,
 gradle.properties, included builds) changed since `init`. Without it the modules are found by
-walking the tree for `build.class_dirs`.
+walking the tree for `build.class_dirs`. The build hook (`codemap wrapper`) writes the model on
+each configuration instead, and `build` takes it over when it is newer than the build files.
 
 ## Settings: codemap.yml
 

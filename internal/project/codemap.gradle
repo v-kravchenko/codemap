@@ -1,8 +1,96 @@
-// codemap init: the modules of the build, and for each variant where its classes, sources, resources
-// and manifests are, written as JSON to -Pcodemap.out. Only reads the configured build: nothing is
-// compiled (run it with `help --no-configuration-cache`). Groovy, so the Android Gradle plugin is
-// reached without its classes on the script's classpath.
+// The modules of the build, and for each variant where its classes, sources, resources and
+// manifests are, as JSON; nothing is compiled. Groovy, so the Android Gradle plugin is reached
+// without its classes on the script's classpath. Two ways in:
+//   codemap init: an init script (-I, with `help --no-configuration-cache`), the JSON to -Pcodemap.out;
+//   a project's settings.gradle(.kts), `apply from` the copy `codemap wrapper` writes to gradle/: on
+//     each configuration the JSON to build/codemap/gradle-model.json, which `codemap build` takes
+//     as the model, and after a build that compiled a variant, `codemapw build --variant` for it.
 import groovy.json.JsonOutput
+import javax.inject.Inject
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
+import org.gradle.build.event.BuildEventsListenerRegistry
+import org.gradle.tooling.events.FinishEvent
+import org.gradle.tooling.events.OperationCompletionListener
+import org.gradle.tooling.events.task.TaskFinishEvent
+import org.gradle.tooling.events.task.TaskSuccessResult
+
+// After the build, the map of each variant whose classes a task of the build compiled. A failure is
+// a warning: the map is a help, it must not fail the build. CODEMAP_SKIP=1 turns it off.
+abstract class CodemapRebuild implements BuildService<Params>, OperationCompletionListener, AutoCloseable {
+    interface Params extends BuildServiceParameters {
+        Property<String> getRoot()
+        MapProperty<String, String> getVariants() // compile task -> variant
+    }
+
+    private final Set<String> variants = new TreeSet<String>().asSynchronized()
+
+    void onFinish(FinishEvent e) {
+        // up to date: the classes did not change; from the cache: they did
+        if (e instanceof TaskFinishEvent && e.result instanceof TaskSuccessResult && !e.result.upToDate) {
+            def v = parameters.variants.get()[e.descriptor.taskPath]
+            if (v != null) {
+                variants << v
+            }
+        }
+    }
+
+    void close() {
+        def log = org.gradle.api.logging.Logging.getLogger('codemap')
+        if (variants.isEmpty() || System.getenv('CODEMAP_SKIP') in ['1', 'true']) {
+            return
+        }
+        def root = new File(parameters.root.get())
+        def windows = System.getProperty('os.name').toLowerCase().contains('windows')
+        def wrapper = new File(root, windows ? 'codemapw.cmd' : 'codemapw')
+        def cmd = wrapper.isFile() ? (windows ? ['cmd', '/c', wrapper.path] : [wrapper.path]) : ['codemap']
+        for (v in variants) {
+            try {
+                def p = new ProcessBuilder(cmd + ['build', '--variant', v]).directory(root).redirectErrorStream(true).start()
+                def out = p.inputStream.text.trim()
+                if (p.waitFor() == 0) {
+                    out.eachLine { log.lifecycle("codemap: $it") }
+                } else {
+                    log.warn("codemap: the $v map was not rebuilt (exit ${p.exitValue()}):\n$out")
+                }
+            } catch (IOException err) {
+                log.warn("codemap: the $v map was not rebuilt: ${err.message}")
+            }
+        }
+    }
+}
+
+// A plugin for the injected registry; listens once the projects are configured, with the compile
+// tasks of the model (a provider of them would be read before that: no task would be known).
+abstract class CodemapHook implements Plugin<Settings> {
+    @Inject
+    abstract BuildEventsListenerRegistry getRegistry()
+
+    void apply(Settings settings) {}
+
+    void listen(Gradle gradle, File root, Map<String, String> variants) {
+        def service = gradle.sharedServices.registerIfAbsent('codemapRebuild', CodemapRebuild) {
+            it.parameters.root.set(root.absolutePath)
+            it.parameters.variants.set(variants)
+        }
+        registry.onTaskCompletion(service)
+    }
+}
+
+// applied by settings: the hook; an init script (the target is Gradle, no settingsDir): -Pcodemap.out
+def hook = null
+def initOut = null
+if (hasProperty('settingsDir')) {
+    apply plugin: CodemapHook
+    hook = settings.plugins.getPlugin(CodemapHook)
+} else if (gradle.parent != null) {
+    return // an included build (build-logic): an init script reaches it too, its modules are not the project's
+} else {
+    initOut = gradle.startParameter.projectProperties['codemap.out']
+    if (initOut == null) {
+        throw new GradleException('codemap: pass -Pcodemap.out=FILE')
+    }
+}
 
 def modules = [:].asSynchronized() // Gradle path -> module
 
@@ -29,7 +117,7 @@ def sourceSetNames = { variant ->
     names.unique()
 }
 
-allprojects { Project p ->
+gradle.allprojects { Project p ->
     ['com.android.application': 'application', 'com.android.library': 'library',
      'com.android.dynamic-feature': 'dynamic-feature', 'com.android.test': 'test'].each { id, type ->
         p.plugins.withId(id) {
@@ -86,13 +174,20 @@ gradle.projectsEvaluated {
             v.manifests = manifests.unique()
         }
     }
-    def out = root.findProperty('codemap.out')
-    if (out == null) {
-        throw new GradleException('codemap: pass -Pcodemap.out=FILE')
-    }
     def model = [version: 1,
                  generated: [gradle: gradle.gradleVersion],
                  variants: variants as List,
                  modules: modules.values().sort { it.dir }]
-    new File(out.toString()).text = JsonOutput.prettyPrint(JsonOutput.toJson(model)) + '\n'
+    def text = JsonOutput.prettyPrint(JsonOutput.toJson(model)) + '\n'
+    if (hook != null) {
+        def tasks = [:]
+        modules.values().each { module ->
+            module.variants.each { name, v -> v.compile_tasks.each { tasks[it] = name } }
+        }
+        hook.listen(gradle, root.rootDir, tasks)
+    }
+    // written, never read: a file the configuration reads is an input of the configuration cache
+    def out = new File(initOut ?: new File(root.rootDir, 'build/codemap/gradle-model.json').path)
+    out.parentFile.mkdirs()
+    out.text = text
 }

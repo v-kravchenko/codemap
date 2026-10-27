@@ -117,9 +117,11 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
 
 ## Tooling
 
-- No CI pipeline: `gofmt`/`go vet`/`go test`/lint only run locally, on request.
-- No tagged releases or prebuilt binaries; `go install`/`go build` from source is the only way
-  to get the CLI today.
+- The build hook (`gradle/codemap.gradle`) reaches every project with `allprojects`, which
+  Gradle's Isolated Projects forbids: a build with it on fails to configure. Workaround: leave the
+  hook out and run `codemap init` and `codemap build`; the fix is a settings plugin (0018).
+- The hook rebuilds the whole map of a variant after any compile of it, even of one module
+  (~3 s on 80 modules); there is no incremental build of the map.
 - There is no `export` of the map to a dependency-free, queryable format (the map is read only
   by the CLI's own binary snapshot reader); ad-hoc exploration needs a query flag that already
   exists or a new one, not arbitrary SQL/joins over the map.

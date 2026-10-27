@@ -83,6 +83,34 @@ func IsFile(p string) bool {
 	return err == nil && st.Mode().IsRegular()
 }
 
+// CreateTemp: a new file next to path, to be renamed over it; a name of its own, so two processes
+// writing path at once (two builds of the project) do not write one file.
+func CreateTemp(path string) (*os.File, error) {
+	return os.CreateTemp(filepath.Dir(path), "."+filepath.Base(path)+".*.tmp")
+}
+
+// WriteFileAtomic: data in a temp file renamed over path, so a reader sees the old or the new file.
+func WriteFileAtomic(path string, data []byte) error {
+	f, err := CreateTemp(path)
+	if err != nil {
+		return err
+	}
+	_, err = f.Write(data)
+	if err1 := f.Close(); err == nil {
+		err = err1
+	}
+	if err == nil {
+		err = os.Chmod(f.Name(), 0o644)
+	}
+	if err == nil {
+		err = os.Rename(f.Name(), path)
+	}
+	if err != nil {
+		os.Remove(f.Name())
+	}
+	return err
+}
+
 func FindRoot() string {
 	d, _ := os.Getwd()
 	for p := d; ; p = filepath.Dir(p) {
