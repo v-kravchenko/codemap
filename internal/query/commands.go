@@ -26,6 +26,7 @@ var (
 	optAll      = flagSpec{name: "all", help: "every match of an ambiguous name instead of an error"}
 	optDepth    = flagSpec{name: "depth", arg: "N", help: "stop the walk after N steps (default: no limit)"}
 	optKind     = flagSpec{name: "kind", arg: "KIND", many: true, help: "list screens of this kind: activity, fragment, dialog, route, preview, layout or all (default: the first four)"}
+	optNoPrev   = flagSpec{name: "no-preview", help: "only the screens no preview draws (activities, fragments, dialogs, routes)"}
 	optNoPaths  = flagSpec{name: "no-paths", help: "leave out the way to each screen (text only; --json always has it)"}
 	optNav      = flagSpec{name: "nav", help: "add how the user reaches each affected screen"}
 	optAvoid    = flagSpec{name: "avoid", arg: "GLOB", many: true, help: "no way through a screen whose name or class matches (*: any run of characters)"}
@@ -57,7 +58,7 @@ var commands = []command{
 	{name: "uses", args: "SYMBOL", query: true, about: "What a class, method or field uses directly.",
 		flags: []flagSpec{optAll, optModule}},
 	{name: "impact", args: "SYMBOL...", query: true, about: "What a change to the symbols reaches, up to the screens.",
-		flags: []flagSpec{optDepth, optKind, optNoPaths,
+		flags: []flagSpec{optDepth, optKind, optNoPrev, optNoPaths,
 			{name: "to", arg: "TARGET", help: "only the shortest way to this screen or symbol"},
 			optNav, optModule, optAll}},
 	{name: "changes", query: true, about: "The impact of a change: git against the base branch, a diff or a list of files.",
@@ -66,7 +67,7 @@ var commands = []command{
 			{name: "head", arg: "REF", help: "the commit to compare instead of the working tree; the map must be built from it"},
 			{name: "diff", arg: "-|FILE", help: "a unified diff from stdin or a file instead of git diff"},
 			{name: "files", arg: "-|FILE", help: "lines of path, path:N or path:N-M instead of a diff"},
-			optNav, optDepth, optKind, optNoPaths, optModule}},
+			optNav, optDepth, optKind, optNoPrev, optNoPaths, optModule}},
 	{name: "nav-path", args: "SCREEN", query: true, about: "How a user gets to a screen: the cheapest way from an entry, and the branches.",
 		flags: []flagSpec{
 			{name: "via", arg: "SCREEN", many: true, help: "the cheapest way through these screens, in order"},
@@ -88,7 +89,7 @@ var commands = []command{
 			{name: "direction", arg: "LR|RL|TB|TD|BT", help: "the way the flowchart runs (default LR)"},
 			optAll}},
 	{name: "screens", args: "[FILTER]", query: true, about: "The screens by kind; FILTER keeps those whose name, class, module, host or drawn composable contains it.",
-		flags: []flagSpec{optKind, optModule,
+		flags: []flagSpec{optKind, optNoPrev, optModule,
 			{name: "host", arg: "SCREEN", help: "only screens hosted in this screen (an Activity, or the screen hosting routes)"},
 			{name: "unreachable", help: "only screens no entry of the manifest reaches, with where the way back ends"}}},
 	{name: "find", args: "PATTERN", query: true, about: "Classes, members, resources and routes whose name matches a regexp (any case).",

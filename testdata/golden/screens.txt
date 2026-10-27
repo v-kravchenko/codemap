@@ -44,9 +44,13 @@ Compose routes (17)
   Settings                                           app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
   Terms                                              app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
       content SectionsAppKt.TermsScreen()
+      previews navapp.sections.SectionsAppKt.TermsScreenPreview
   Welcome                                            app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
       content SectionsAppKt.WelcomeScreen()
+      previews navapp.sections.SectionsAppKt.WelcomeScreenPreview
   comments/{postId}                                  app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
   feed                                               app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
   post/{id}                                          app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
   signin                                             app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
+
+Not shown: preview 2 (--kind KIND, --kind all)

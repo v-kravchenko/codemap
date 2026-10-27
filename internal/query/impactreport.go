@@ -97,7 +97,7 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 		a.w = g.impact(seeds, o.depth)
 	}
 	a.elapsed = time.Since(t)
-	g.impactScreens(a, shownKinds(o))
+	g.impactScreens(a, shownKinds(o), o.noPreview)
 	a.navs = map[int32]*navOf{}
 	if o.nav {
 		for _, items := range a.byKind {
@@ -124,13 +124,15 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 
 // impactScreens: the screens reached, by kind, nearest first; those of a kind not shown and those
 // outside --module counted.
-func (g *Graph) impactScreens(a *impactAnswer, shown map[string]bool) {
+func (g *Graph) impactScreens(a *impactAnswer, shown map[string]bool, noPreview bool) {
 	w := a.w
 	a.byKind, a.hidden = map[string][]screenItem{}, map[string]int{}
 	for _, n := range w.ScreenOrder {
 		r := g.screens[n][0]
 		if !a.mf.keeps(g.module(n)) {
 			a.outScreens++
+		} else if noPreview && (!screenKinds[r.Kind] || len(g.previews[n]) > 0) {
+			continue
 		} else if shown[r.Kind] {
 			a.byKind[r.Kind] = append(a.byKind[r.Kind], screenItem{w.Aff[w.Screens[n]].Depth, r.Label, r.Target, g.module(n), g.hosts(n), n})
 		} else {
@@ -243,7 +245,7 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 			}
 			s := obj{{"kind", kind}, {"name", it.label}, {"target", it.target}, {"module", it.mod},
 				{"location", g.location(it.n)}, {"host", host}, {"hosts", strs(hostNames)}, {"depth", it.depth},
-				{"opened_from", strs(g.openedFromNames(it.n))},
+				{"opened_from", strs(g.openedFromNames(it.n))}, {"previews", strs(g.previewNames(it.n))},
 				{"path", g.qualifiedPath(g.path(w, w.Screens[it.n]))}}
 			if nav, ok := a.navs[it.n]; ok {
 				s = append(s, kv{"nav", nav.json()})

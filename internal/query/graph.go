@@ -61,7 +61,8 @@ type Graph struct {
 	screenTops        map[int32]bool
 	routeOf           map[int32]int32
 	routeContentNames map[string]int32
-	drawn             map[int32][]int32         // route -> the composables its content draws (ScreenContent)
+	drawn             map[int32][]int32         // route, preview -> the composables its content draws (ScreenContent)
+	previews          map[int32][]int32         // screen -> the previews drawing its own composables (ScreenRelated)
 	callVia           map[int32]map[int32]int32 // callee -> caller -> class the call names
 	diGlue            map[int32]bool
 	shown             []bool // by file id: the files of the nodes an answer names or walks
@@ -126,6 +127,14 @@ func NewGraph(m *snapshot.Map, root string) *Graph {
 	for i := range m.ScreenContent.Screen {
 		r := m.Index(m.ScreenContent.Screen[i])
 		g.drawn[r] = append(g.drawn[r], m.Index(m.ScreenContent.Node[i]))
+	}
+	g.previews = map[int32][]int32{}
+	for i := range m.ScreenRelated.Screen {
+		p := m.Index(m.ScreenRelated.Related[i])
+		if rows := g.screens[p]; len(rows) > 0 && rows[0].Kind == "preview" {
+			s := m.Index(m.ScreenRelated.Screen[i])
+			g.previews[s] = append(g.previews[s], p)
+		}
 	}
 	for n, rows := range g.screens {
 		if screenClassKinds[rows[0].Kind] {

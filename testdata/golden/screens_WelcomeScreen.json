@@ -14,8 +14,13 @@
       "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
       "content": [
         "SectionsAppKt.WelcomeScreen()"
+      ],
+      "previews": [
+        "navapp.sections.SectionsAppKt.WelcomeScreenPreview"
       ]
     }
   ],
-  "hidden": {}
+  "hidden": {
+    "preview": 1
+  }
 }

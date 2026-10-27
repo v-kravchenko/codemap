@@ -73,6 +73,9 @@ var goldenCalls = [][]string{
 	{"graph", "MainActivity", "--depth", "2", "--module", "!app"},
 	{"graph", "InfoDialog", "--in", "--depth", "5"},
 	{"changes", "--files", "changed.txt"},
+	{"screens", "--kind", "preview"},
+	{"screens", "Screen", "--kind", "route", "--no-preview"},
+	{"impact", "navapp.sections.WelcomeScreen", "--kind", "all"},
 }
 
 // goldenText: the queries whose text is kept too, one per way of printing an answer.

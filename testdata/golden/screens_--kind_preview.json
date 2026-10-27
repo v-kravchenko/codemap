@@ -1,0 +1,39 @@
+{
+  "schema_version": "3.7.0",
+  "command": "screens",
+  "screens": [
+    {
+      "kind": "preview",
+      "module": "app",
+      "name": "SectionsApp.TermsScreenPreview",
+      "target": "navapp.sections.SectionsAppKt.TermsScreenPreview",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:88",
+      "content": [
+        "SectionsAppKt.TermsScreen()"
+      ],
+      "previews": []
+    },
+    {
+      "kind": "preview",
+      "module": "app",
+      "name": "SectionsApp.WelcomeScreenPreview",
+      "target": "navapp.sections.SectionsAppKt.WelcomeScreenPreview",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:82",
+      "content": [
+        "SectionsAppKt.SectionsTheme()",
+        "SectionsAppKt.WelcomeScreen()"
+      ],
+      "previews": []
+    }
+  ],
+  "hidden": {
+    "activity": 14,
+    "dialog": 1,
+    "fragment": 6,
+    "route": 17
+  }
+}

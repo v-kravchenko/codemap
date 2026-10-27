@@ -479,7 +479,7 @@ const (
 	ConstantFlag = 0x10000
 )
 
-const IndexVersion = "9"
+const IndexVersion = "10"
 
 func ToolSha1() string {
 	exe, err := os.Executable()

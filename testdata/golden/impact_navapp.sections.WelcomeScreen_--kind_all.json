@@ -1,0 +1,197 @@
+{
+  "schema_version": "3.7.0",
+  "command": "impact",
+  "changed": [
+    {
+      "symbol": "navapp.sections.SectionsAppKt.WelcomeScreen",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:57"
+    }
+  ],
+  "affected": [
+    {
+      "symbol": "navapp.sections.ComposableSingletons.SectionsAppKt.lambda__1408756015$lambda$0",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:83",
+      "depth": 1,
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.ComposableSingletons.SectionsAppKt.lambda__1408756015$lambda$0"
+      ]
+    },
+    {
+      "symbol": "navapp.sections.SectionsAppKt.WelcomeScreen$lambda$0",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "depth": 1,
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.SectionsAppKt.WelcomeScreen$lambda$0"
+      ]
+    },
+    {
+      "symbol": "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1.invoke",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:25",
+      "depth": 1,
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1.invoke"
+      ]
+    },
+    {
+      "symbol": "navapp.sections.ComposableSingletons.SectionsAppKt.lambda$-1408756015",
+      "kind": "field",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "depth": 2,
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.ComposableSingletons.SectionsAppKt.lambda__1408756015$lambda$0"
+      ]
+    },
+    {
+      "symbol": "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1.invoke",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:25",
+      "depth": 2,
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1.invoke"
+      ]
+    },
+    {
+      "symbol": "navapp.sections.ComposableSingletons.SectionsAppKt.getLambda$-1408756015$app",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "depth": 3,
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.ComposableSingletons.SectionsAppKt.lambda__1408756015$lambda$0"
+      ]
+    },
+    {
+      "symbol": "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:25",
+      "depth": 3,
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1.invoke"
+      ]
+    },
+    {
+      "symbol": "navapp.sections.SectionsAppKt.WelcomeScreenPreview",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:82",
+      "depth": 4,
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.ComposableSingletons.SectionsAppKt.lambda__1408756015$lambda$0",
+        "navapp.sections.SectionsAppKt.WelcomeScreenPreview"
+      ]
+    },
+    {
+      "symbol": "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.invoke",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:25",
+      "depth": 4,
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1.invoke"
+      ]
+    },
+    {
+      "symbol": "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.invoke",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:25",
+      "depth": 5,
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1.invoke"
+      ]
+    },
+    {
+      "symbol": "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:25",
+      "depth": 6,
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1.invoke"
+      ]
+    },
+    {
+      "symbol": "route Welcome",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "depth": 7,
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1.invoke",
+        "route Welcome"
+      ]
+    }
+  ],
+  "screens": [
+    {
+      "kind": "preview",
+      "name": "SectionsApp.WelcomeScreenPreview",
+      "target": "navapp.sections.SectionsAppKt.WelcomeScreenPreview",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:82",
+      "host": null,
+      "hosts": [],
+      "depth": 4,
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.ComposableSingletons.SectionsAppKt.lambda__1408756015$lambda$0",
+        "navapp.sections.SectionsAppKt.WelcomeScreenPreview"
+      ]
+    },
+    {
+      "kind": "route",
+      "name": "Welcome",
+      "target": "navapp.sections.Welcome",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "depth": 7,
+      "opened_from": [],
+      "previews": [
+        "navapp.sections.SectionsAppKt.WelcomeScreenPreview"
+      ],
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1.invoke",
+        "route Welcome"
+      ]
+    }
+  ],
+  "hidden": {},
+  "modules": {
+    "app": 13
+  },
+  "packages": {
+    "navapp.sections": 12
+  },
+  "not_covered": [],
+  "warnings": []
+}

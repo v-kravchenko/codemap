@@ -200,9 +200,10 @@ Result fields (full `impact`, no `--to`):
   as `{symbol, kind, module, location, depth, path}`; `depth` is the walk distance, `path` the
   qualified names from a changed symbol down to this one.
 - `screens` — affected screens, as `{kind, name, target, module, location, host, hosts, depth,
-  opened_from, path[, nav]}`. `host`/`hosts`: the Activity/parent hosting a fragment/dialog (`host`
+  opened_from, previews, path[, nav]}`. `host`/`hosts`: the Activity/parent hosting a fragment/dialog (`host`
   is `hosts[0]` or `null`). `opened_from`: for a dialog, the screens observed to open it (by name);
-  empty if none found. `nav`: present only with `--nav`, `{entry, detail, cost, path}` (see
+  empty if none found. `previews`: as in `screens` (since 3.7.0); `--no-preview` keeps only the
+  activities, fragments, dialogs and routes with none. `nav`: present only with `--nav`, `{entry, detail, cost, path}` (see
   `nav-path`) or `null` if no way was found.
 - `hidden` — counts of screens hidden by `--kind`, by kind.
 - `modules` — count of affected symbols by module.
@@ -440,7 +441,7 @@ Result fields:
 ## screens
 
 ```
-codemap screens [FILTER] [--kind KIND] [--module GLOB]... [--host SCREEN] [--unreachable] [--json]
+codemap screens [FILTER] [--kind KIND] [--no-preview] [--module GLOB]... [--host SCREEN] [--unreachable] [--json]
 ```
 
 - `FILTER` (optional positional) — case-insensitive substring match against name/target/module/host
@@ -453,13 +454,21 @@ codemap screens [FILTER] [--kind KIND] [--module GLOB]... [--host SCREEN] [--unr
   (`unknown`) or where only code outside the screens opens it (`outside`). A way ending at a base
   class (`base`: every screen extending it opens the screen, such as a popup `BaseActivity` shows)
   counts as reached. A dead-screen audit, as far as the code map sees.
+- `--no-preview` — only activities, fragments, dialogs and routes no preview draws (`previews`
+  empty): screens no screenshot checks. Also in `impact` and `changes`.
 - `--kind KIND`, `--json`.
 
 Result fields: `screens` — every matching screen, `{kind, module, name, target, host, hosts,
-location, content}`, sorted by kind, module, name, target, host, location; `content` — for a route,
+location, content, previews}`, sorted by kind, module, name, target, host, location; `content` — for a route,
 the repo composables its registration draws, by label (`CreateConfirmScreenKt.CreateConfirmScreen()`:
 those called from the code written at the registration, not from an inlined wrapper such as
-`screen<VM> {}`), sorted; empty for other kinds and for a route drawing only library composables; `hidden` — counts of screens
+`screen<VM> {}`), sorted; for a preview, the repo composables it draws, through its lambdas (since 3.7.0); empty for
+other kinds and for a route drawing only library composables; `previews` — the targets of the
+previews drawing the screen's own composables, sorted (since 3.7.0): a preview goes with the screens
+drawing a composable of its own file (else module) that the screen draws itself or through a
+composable of its own module calling it in that composable's file, those the fewest screens draw
+when there are several; so a theme or a design system's component links no screen; empty for
+previews and layouts; `hidden` — counts of screens
 excluded by `--kind`, by kind (of those in the modules); `hidden_by_module` — with `--module` only:
 `{screens}`, the screens outside the modules. With `--unreachable` each screen also has `entries`:
 where the walk back ends, as in `nav-path` (`{name, kind, module, location, host, hosts, entry}`,
@@ -471,13 +480,14 @@ where the walk back ends, as in `nav-path` (`{name, kind, module, location, host
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
-      "location": "app/src/main/java/navapp/impact/DataClasses.kt:18", "content": [] },
+      "location": "app/src/main/java/navapp/impact/DataClasses.kt:18", "content": [], "previews": [] },
     { "kind": "dialog", "module": "app", "name": "InfoDialog",
       "target": "navapp.views.InfoDialog", "host": "ViewsActivity", "hosts": ["ViewsActivity"],
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:48", "content": [] },
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:48", "content": [], "previews": [] },
     { "kind": "route", "module": "app", "name": "Home", "target": "navapp.typed.Home",
       "host": "MainActivity", "hosts": ["MainActivity"],
-      "location": "app/src/main/java/navapp/typed/TypedApp.kt", "content": ["TypedAppKt.HomeScreen()"] }
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt", "content": ["TypedAppKt.HomeScreen()"],
+      "previews": [] }
   ],
   "hidden": {}
 }

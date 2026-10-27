@@ -10,7 +10,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/DataClasses.kt:18",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -20,7 +21,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -30,7 +32,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Defaults.kt:23",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -40,7 +43,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:56",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -50,7 +54,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Constants.kt:10",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -60,7 +65,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:59",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -70,7 +76,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -80,7 +87,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/MainActivity.kt:14",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -90,7 +98,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/DataClasses.kt:11",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -100,7 +109,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/views/Contracts.kt:16",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -110,7 +120,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Defaults.kt:16",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -120,7 +131,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Overrides.kt:22",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -130,7 +142,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Constructors.kt:18",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -140,7 +153,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "dialog",
@@ -152,7 +166,8 @@
         "ViewsActivity"
       ],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:54",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "fragment",
@@ -164,7 +179,8 @@
         "ViewsActivity"
       ],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:46",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "fragment",
@@ -174,7 +190,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/GenericDi.kt:29",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "fragment",
@@ -186,7 +203,8 @@
         "ViewsActivity"
       ],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:24",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "fragment",
@@ -198,7 +216,8 @@
         "ViewsActivity"
       ],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:18",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "fragment",
@@ -208,7 +227,8 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/GenericDi.kt:38",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "fragment",
@@ -220,7 +240,8 @@
         "ViewsActivity"
       ],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:34",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "route",
@@ -234,7 +255,8 @@
       "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
       "content": [
         "SectionsAppKt.AboutScreen()"
-      ]
+      ],
+      "previews": []
     },
     {
       "kind": "route",
@@ -246,7 +268,8 @@
         "MainActivity"
       ],
       "location": "app/src/main/java/navapp/nav3when/Nav3WhenApp.kt",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "route",
@@ -258,7 +281,8 @@
         "MainActivity"
       ],
       "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "route",
@@ -270,7 +294,8 @@
         "MainActivity"
       ],
       "location": "app/src/main/java/navapp/typed/TypedApp.kt",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "route",
@@ -284,7 +309,8 @@
       "location": "app/src/main/java/navapp/typed/TypedApp.kt",
       "content": [
         "TypedAppKt.HomeScreen()"
-      ]
+      ],
+      "previews": []
     },
     {
       "kind": "route",
@@ -296,7 +322,8 @@
         "MainActivity"
       ],
       "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "route",
@@ -308,7 +335,8 @@
         "MainActivity"
       ],
       "location": "app/src/main/java/navapp/nav3when/Nav3WhenApp.kt",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "route",
@@ -322,7 +350,8 @@
       "location": "app/src/main/java/navapp/typed/TypedApp.kt",
       "content": [
         "TypedAppKt.LoginScreen()"
-      ]
+      ],
+      "previews": []
     },
     {
       "kind": "route",
@@ -334,7 +363,8 @@
         "MainActivity"
       ],
       "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "route",
@@ -348,7 +378,8 @@
       "location": "app/src/main/java/navapp/typed/TypedApp.kt",
       "content": [
         "TypedAppKt.ProfileScreen()"
-      ]
+      ],
+      "previews": []
     },
     {
       "kind": "route",
@@ -360,7 +391,8 @@
         "MainActivity"
       ],
       "location": "app/src/main/java/navapp/typed/TypedApp.kt",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "route",
@@ -374,6 +406,9 @@
       "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
       "content": [
         "SectionsAppKt.TermsScreen()"
+      ],
+      "previews": [
+        "navapp.sections.SectionsAppKt.TermsScreenPreview"
       ]
     },
     {
@@ -388,6 +423,9 @@
       "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
       "content": [
         "SectionsAppKt.WelcomeScreen()"
+      ],
+      "previews": [
+        "navapp.sections.SectionsAppKt.WelcomeScreenPreview"
       ]
     },
     {
@@ -400,7 +438,8 @@
         "MainActivity"
       ],
       "location": "app/src/main/java/navapp/strings/StringApp.kt",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "route",
@@ -412,7 +451,8 @@
         "MainActivity"
       ],
       "location": "app/src/main/java/navapp/strings/StringApp.kt",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "route",
@@ -424,7 +464,8 @@
         "MainActivity"
       ],
       "location": "app/src/main/java/navapp/strings/StringApp.kt",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "route",
@@ -436,8 +477,11 @@
         "MainActivity"
       ],
       "location": "app/src/main/java/navapp/strings/StringApp.kt",
-      "content": []
+      "content": [],
+      "previews": []
     }
   ],
-  "hidden": {}
+  "hidden": {
+    "preview": 2
+  }
 }

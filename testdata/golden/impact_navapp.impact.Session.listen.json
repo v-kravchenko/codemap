@@ -72,6 +72,7 @@
       "hosts": [],
       "depth": 4,
       "opened_from": [],
+      "previews": [],
       "path": [
         "navapp.impact.Session.listen",
         "navapp.impact.BaseActivity.observeLogout",

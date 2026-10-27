@@ -12,7 +12,8 @@
         "ViewsActivity"
       ],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:54",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "fragment",
@@ -24,7 +25,8 @@
         "ViewsActivity"
       ],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:46",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "fragment",
@@ -36,7 +38,8 @@
         "ViewsActivity"
       ],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:24",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "fragment",
@@ -48,7 +51,8 @@
         "ViewsActivity"
       ],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:18",
-      "content": []
+      "content": [],
+      "previews": []
     },
     {
       "kind": "fragment",
@@ -60,7 +64,8 @@
         "ViewsActivity"
       ],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:34",
-      "content": []
+      "content": [],
+      "previews": []
     }
   ],
   "hidden": {}

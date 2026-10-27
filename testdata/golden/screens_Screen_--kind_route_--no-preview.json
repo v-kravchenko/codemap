@@ -1,0 +1,69 @@
+{
+  "schema_version": "3.7.0",
+  "command": "screens",
+  "screens": [
+    {
+      "kind": "route",
+      "module": "app",
+      "name": "About",
+      "target": "navapp.sections.About",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "content": [
+        "SectionsAppKt.AboutScreen()"
+      ],
+      "previews": []
+    },
+    {
+      "kind": "route",
+      "module": "app",
+      "name": "Home",
+      "target": "navapp.typed.Home",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "content": [
+        "TypedAppKt.HomeScreen()"
+      ],
+      "previews": []
+    },
+    {
+      "kind": "route",
+      "module": "app",
+      "name": "Login",
+      "target": "navapp.typed.Login",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "content": [
+        "TypedAppKt.LoginScreen()"
+      ],
+      "previews": []
+    },
+    {
+      "kind": "route",
+      "module": "app",
+      "name": "Profile",
+      "target": "navapp.typed.Profile",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "content": [
+        "TypedAppKt.ProfileScreen()"
+      ],
+      "previews": []
+    }
+  ],
+  "hidden": {
+    "preview": 2
+  }
+}

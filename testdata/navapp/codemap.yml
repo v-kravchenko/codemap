@@ -2,3 +2,5 @@ version: 1
 extends: [android, nav2-compose, nav2-compose-strings, nav3]
 build:
   class_dirs: [classes]
+screens:
+  preview_annotations: [Preview]

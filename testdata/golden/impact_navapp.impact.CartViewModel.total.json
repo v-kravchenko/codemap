@@ -33,6 +33,7 @@
       "hosts": [],
       "depth": 1,
       "opened_from": [],
+      "previews": [],
       "path": [
         "navapp.impact.CartViewModel.total",
         "navapp.impact.CartFragment.onViewCreated"

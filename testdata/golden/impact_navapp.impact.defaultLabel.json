@@ -45,6 +45,7 @@
       "hosts": [],
       "depth": 2,
       "opened_from": [],
+      "previews": [],
       "path": [
         "navapp.impact.DefaultsKt.defaultLabel",
         "navapp.impact.DefaultsKt.copyText",

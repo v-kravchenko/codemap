@@ -16,6 +16,10 @@ notes from its section here (`tools/release-notes.sh`).
 - `changes` tells what the change adds: `changed[].status` `added` or `modified`, `screens[].status`
   `new`, `changed` (depth 0) or `affected`, and `(added)`/`new` in the text. A screenshot job no
   longer needs the base's sources to know which previews have no before.
+- Screens name their previews: `previews` in `screens`, `impact` and `changes`, a preview's
+  `content` (the composables it draws), and `--no-preview` for the screens no preview shows. A
+  preview goes with the screen whose own composables it draws, not a theme or a shared component.
+  The map format changes (index 10): run `codemap build`.
 
 ## [0.4.2] - 2026-10-27
 

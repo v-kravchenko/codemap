@@ -67,3 +67,24 @@ fun TermsScreen(onAbout: () -> Unit) {
 fun AboutScreen() {
     Text("about")
 }
+
+// Previews: each goes with the screen whose own composable it draws, not with every screen of the
+// file; SectionsTheme, which no screen draws, picks none.
+annotation class Preview
+
+@Composable
+fun SectionsTheme(content: @Composable () -> Unit) {
+    content()
+}
+
+@Preview
+@Composable
+fun WelcomeScreenPreview() {
+    SectionsTheme { WelcomeScreen(onNext = {}) }
+}
+
+@Preview
+@Composable
+fun TermsScreenPreview() {
+    TermsScreen(onAbout = {})
+}

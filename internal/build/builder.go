@@ -1828,14 +1828,9 @@ func (b *Builder) relatedAll() {
 	for e := range b.Edges {
 		outEdges[e.Src] = append(outEdges[e.Src], e)
 	}
-	previewsByFile := map[int][]int64{}
 	layouts := map[int64]bool{}
 	for _, s := range b.Screens {
-		switch s.Kind {
-		case "preview":
-			f := b.Nodes[s.Node].File
-			previewsByFile[f] = append(previewsByFile[f], s.Node)
-		case "layout":
+		if s.Kind == "layout" {
 			layouts[s.Node] = true
 		}
 	}
@@ -1854,22 +1849,12 @@ func (b *Builder) relatedAll() {
 		}
 		return out
 	}
-	isComposable := func(id int64) bool {
-		return strings.Contains(b.Nodes[id].Desc, "Landroidx/compose/runtime/Composer;")
-	}
-	collect := func(screen int64, methods []int64, ownFile int) {
-		module := b.Nodes[screen].Module
-		files := map[int]bool{}
-		if ownFile != 0 {
-			files[ownFile] = true
-		}
+	collect := func(screen int64, methods []int64) {
 		for _, m := range methods {
 			for _, e := range outEdges[m] {
 				d, k := e.Dst, e.Kind
 				dn := b.Nodes[d]
-				if (k == snapshot.CALL || k == snapshot.LAMBDA) && dn.Kind == "M" && isComposable(d) && dn.Module == module {
-					files[dn.File] = true
-				} else if k == snapshot.RES && layouts[d] {
+				if k == snapshot.RES && layouts[d] {
 					b.related[[2]int64{screen, d}] = struct{}{}
 				} else if (k == snapshot.TYPE || k == snapshot.CALL) && (dn.Kind == "C" || dn.Kind == "M") {
 					cn := d
@@ -1889,16 +1874,13 @@ func (b *Builder) relatedAll() {
 				}
 			}
 		}
-		for f := range files {
-			for _, p := range previewsByFile[f] {
-				b.related[[2]int64{screen, p}] = struct{}{}
-			}
-		}
 	}
+	drawnBy := map[int64][]int64{} // activity, fragment, dialog -> the repo composables it calls
 	for _, s := range b.Screens {
 		switch s.Kind {
 		case "activity", "fragment", "dialog":
-			collect(s.Node, nested(b.Nodes[s.Node].Name), b.Nodes[s.Node].File)
+			collect(s.Node, nested(b.Nodes[s.Node].Name))
+			drawnBy[s.Node] = b.composablesDrawn(nested(b.Nodes[s.Node].Name), outEdges, nested)
 		case "route":
 			var methods []int64
 			from := map[int]bool{} // the files registering the route
@@ -1927,12 +1909,127 @@ func (b *Builder) relatedAll() {
 					}
 				}
 			}
-			collect(s.Node, methods, 0)
+			collect(s.Node, methods)
 			for _, c := range b.ownComposableCalls(methods, from) {
 				b.content[[2]int64{s.Node, c}] = struct{}{}
+				drawnBy[s.Node] = append(drawnBy[s.Node], c)
 			}
 		}
 	}
+	b.previewsOfScreens(drawnBy, outEdges, nested)
+}
+
+// previewsOfScreens: a preview's content is the repo composables it draws, its lambdas' included.
+// It goes with the screens drawing one of those of its own file (else of its module: not a theme of
+// a shared module), a screen drawing what it calls of its own module and what those call in their own file (a
+// screen's private content); of several, those the fewest screens draw: the screen's own
+// composable, not a component every screen draws. A file holding several screens and their
+// previews gives each preview its own screen.
+func (b *Builder) previewsOfScreens(drawnBy map[int64][]int64, outEdges map[int64][]snapshot.Edge, nested func(string) []int64) {
+	inFile := map[int64][]int64{} // a composable -> those it draws in its own file
+	screensOf := map[int64][]int64{}
+	for _, s := range util.SortedKeys(drawnBy) {
+		for _, c := range drawnBy[s] {
+			own, ok := inFile[c]
+			if !ok {
+				for _, d := range b.composablesDrawn([]int64{c}, outEdges, nested) {
+					if b.Nodes[d].File == b.Nodes[c].File {
+						own = append(own, d)
+					}
+				}
+				inFile[c] = own
+			}
+			for _, d := range append([]int64{c}, own...) {
+				// a component of another module (a design system's button) is not the screen's
+				if b.Nodes[d].Module == b.Nodes[s].Module && !slices.Contains(screensOf[d], s) {
+					screensOf[d] = append(screensOf[d], s)
+				}
+			}
+		}
+	}
+	for _, s := range b.Screens {
+		if s.Kind != "preview" {
+			continue
+		}
+		content := b.composablesDrawn([]int64{s.Node}, outEdges, nested)
+		p := b.Nodes[s.Node]
+		var near []int64
+		for _, same := range []func(*Node) bool{func(n *Node) bool { return n.File == p.File },
+			func(n *Node) bool { return n.Module == p.Module }} {
+			for _, c := range content {
+				if same(b.Nodes[c]) && len(screensOf[c]) > 0 {
+					near = append(near, c)
+				}
+			}
+			if len(near) > 0 {
+				break
+			}
+		}
+		best := 0
+		for _, c := range content {
+			b.content[[2]int64{s.Node, c}] = struct{}{}
+		}
+		for _, c := range near {
+			if n := len(screensOf[c]); best == 0 || n < best {
+				best = n
+			}
+		}
+		for _, c := range near {
+			if len(screensOf[c]) == best {
+				for _, screen := range screensOf[c] {
+					b.related[[2]int64{screen, s.Node}] = struct{}{}
+				}
+			}
+		}
+	}
+}
+
+// composablesDrawn: the repo composables `methods` call, through the code the compiler made for
+// their lambdas (classes of a function, ComposableSingletons) in the same file.
+func (b *Builder) composablesDrawn(methods []int64, outEdges map[int64][]snapshot.Edge, nested func(string) []int64) []int64 {
+	made := func(id int64) bool {
+		n := b.Nodes[id]
+		cls := n.Name
+		if n.Kind != "C" {
+			if n.Owner == 0 {
+				return false // a resource, a route
+			}
+			cls = b.Nodes[n.Owner].Name
+		}
+		p, ok := b.parsed[cls]
+		return ok && p.C.Enclosing[0] != "" || strings.HasPrefix(shortName(cls), "ComposableSingletons$") ||
+			strings.Contains(n.Name, "lambda")
+	}
+	seen, out := map[int64]bool{}, []int64{}
+	queue := slices.Clone(methods)
+	for _, m := range methods {
+		seen[m] = true
+	}
+	for len(queue) > 0 {
+		x := queue[0]
+		queue = queue[1:]
+		file := b.Nodes[x].File
+		for _, e := range outEdges[x] {
+			d := e.Dst
+			dn := b.Nodes[d]
+			switch {
+			case seen[d]:
+			case made(d) && dn.File == file:
+				seen[d] = true
+				if dn.Kind == "C" {
+					queue = append(queue, nested(dn.Name)...)
+				} else {
+					queue = append(queue, d)
+				}
+			case (e.Kind == snapshot.CALL || e.Kind == snapshot.LAMBDA) && dn.Kind == "M" && dn.Module != 0 &&
+				strings.Contains(dn.Desc, "Landroidx/compose/runtime/Composer;"):
+				seen[d] = true
+				out = append(out, d)
+			}
+		}
+	}
+	slices.Sort(out)
+	return out
 }
 
 // ownComposableCalls: the repo composables `methods` call from code written where the route is

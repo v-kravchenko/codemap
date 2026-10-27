@@ -25,4 +25,6 @@ Fragments (2)
   OrdersFragment                                     app                          app/src/main/java/navapp/impact/GenericDi.kt:38
       ends at OrdersFragment: nothing opens it
 
+Not shown: preview 2 (--kind KIND, --kind all)
+
 (11 screens no entry of the manifest reaches, as far as the code map sees)

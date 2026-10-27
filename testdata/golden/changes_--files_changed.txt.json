@@ -208,6 +208,7 @@
       "hosts": [],
       "depth": 0,
       "opened_from": [],
+      "previews": [],
       "path": [
         "navapp.impact.LoudActivity"
       ],
@@ -223,6 +224,7 @@
       "hosts": [],
       "depth": 0,
       "opened_from": [],
+      "previews": [],
       "path": [
         "navapp.impact.QuietActivity"
       ],
@@ -238,6 +240,7 @@
       "hosts": [],
       "depth": 2,
       "opened_from": [],
+      "previews": [],
       "path": [
         "@navigation/views_graph",
         "@layout/activity_views",

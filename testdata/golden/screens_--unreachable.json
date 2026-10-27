@@ -11,6 +11,7 @@
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/DataClasses.kt:18",
       "content": [],
+      "previews": [],
       "entries": [
         {
           "name": "AvatarActivity",
@@ -37,6 +38,7 @@
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
       "content": [],
+      "previews": [],
       "entries": [
         {
           "name": "FirstActivity",
@@ -63,6 +65,7 @@
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Defaults.kt:23",
       "content": [],
+      "previews": [],
       "entries": [
         {
           "name": "LabelledCopyActivity",
@@ -89,6 +92,7 @@
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Constants.kt:10",
       "content": [],
+      "previews": [],
       "entries": [
         {
           "name": "LimitActivity",
@@ -115,6 +119,7 @@
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
       "content": [],
+      "previews": [],
       "entries": [
         {
           "name": "LoudActivity",
@@ -141,6 +146,7 @@
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/DataClasses.kt:11",
       "content": [],
+      "previews": [],
       "entries": [
         {
           "name": "NicknameActivity",
@@ -167,6 +173,7 @@
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Defaults.kt:16",
       "content": [],
+      "previews": [],
       "entries": [
         {
           "name": "PlainCopyActivity",
@@ -193,6 +200,7 @@
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Overrides.kt:22",
       "content": [],
+      "previews": [],
       "entries": [
         {
           "name": "QuietActivity",
@@ -219,6 +227,7 @@
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Constructors.kt:18",
       "content": [],
+      "previews": [],
       "entries": [
         {
           "name": "SecondActivity",
@@ -245,6 +254,7 @@
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/GenericDi.kt:29",
       "content": [],
+      "previews": [],
       "entries": [
         {
           "name": "CartFragment",
@@ -271,6 +281,7 @@
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/GenericDi.kt:38",
       "content": [],
+      "previews": [],
       "entries": [
         {
           "name": "OrdersFragment",
@@ -289,5 +300,7 @@
       ]
     }
   ],
-  "hidden": {}
+  "hidden": {
+    "preview": 2
+  }
 }

@@ -21,7 +21,7 @@ func (g *Graph) cmdScreens(o opts) int {
 	type row struct {
 		kind, module, label, target, host, loc string
 		hosts                                  []int32
-		content                                []string
+		content, previews                      []string
 		ends                                   []navRoot
 	}
 	var out []row
@@ -65,6 +65,10 @@ func (g *Graph) cmdScreens(o opts) int {
 			hidden[kind]++
 			continue
 		}
+		previews := g.previewNames(n)
+		if o.noPreview && (!screenKinds[kind] || len(previews) > 0) {
+			continue
+		}
 		var ends []navRoot
 		if o.unreachable {
 			if !screenKinds[kind] {
@@ -75,7 +79,7 @@ func (g *Graph) cmdScreens(o opts) int {
 				continue
 			}
 		}
-		out = append(out, row{kind, module, label, target, host, g.location(n), hosts, content, ends})
+		out = append(out, row{kind, module, label, target, host, g.location(n), hosts, content, previews, ends})
 	}
 	sort.SliceStable(out, func(i, j int) bool {
 		a, b := out[i], out[j]
@@ -91,7 +95,8 @@ func (g *Graph) cmdScreens(o opts) int {
 		items := make([]any, len(out))
 		for i, r := range out {
 			item := append(append(obj{{"kind", r.kind}, {"module", r.module}, {"name", r.label}, {"target", r.target}},
-				g.hostsJSON(r.hosts)...), kv{"location", r.loc}, kv{"content", strs(r.content)})
+				g.hostsJSON(r.hosts)...), kv{"location", r.loc}, kv{"content", strs(r.content)},
+				kv{"previews", strs(r.previews)})
 			if o.unreachable {
 				var ends []any
 				for _, e := range r.ends {
@@ -131,6 +136,9 @@ func (g *Graph) cmdScreens(o opts) int {
 			fmt.Printf("  %-50s %-28s %s%s\n", name, r.module, r.loc, host)
 			if len(r.content) > 0 {
 				fmt.Printf("      content %s\n", strings.Join(r.content, ", "))
+			}
+			if len(r.previews) > 0 {
+				fmt.Printf("      previews %s\n", strings.Join(r.previews, ", "))
 			}
 			for _, e := range r.ends {
 				fmt.Printf("      ends at %s: %s\n", g.screenName(e.sid), deadEnd(e.how[0]))
@@ -209,4 +217,14 @@ func hiddenLine(hidden map[string]int) string {
 		}
 	}
 	return "Not shown: " + strings.Join(parts, ", ") + " (--kind KIND, --kind all)"
+}
+
+// previewNames: the targets of the previews drawing screen n's own composables, sorted.
+func (g *Graph) previewNames(n int32) []string {
+	out := []string{}
+	for _, p := range g.previews[n] {
+		out = append(out, g.screens[p][0].Target)
+	}
+	slices.Sort(out)
+	return slices.Compact(out)
 }

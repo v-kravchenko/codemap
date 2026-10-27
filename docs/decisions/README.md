@@ -51,3 +51,4 @@ a stale file path) may be fixed directly in place; a changed decision gets a new
 | [0017](0017-install-script.md) | An install script for CI and machines without Go | accepted |
 | [0018](0018-wrapper-and-build-hook.md) | A wrapper and a build hook: the checkout runs codemap, the build keeps the map fresh | accepted |
 | [0019](0019-added-by-the-base-text.md) | Added or modified: a declaration the base text lacks | accepted |
+| [0020](0020-previews-by-content.md) | A preview goes with the screen whose own composables it draws | accepted |

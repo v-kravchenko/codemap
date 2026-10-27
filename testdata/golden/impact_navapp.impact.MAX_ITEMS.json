@@ -33,6 +33,7 @@
       "hosts": [],
       "depth": 1,
       "opened_from": [],
+      "previews": [],
       "path": [
         "navapp.impact.ConstantsKt.MAX_ITEMS",
         "navapp.impact.LimitActivity.onCreate"
