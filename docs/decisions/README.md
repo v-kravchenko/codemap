@@ -45,3 +45,4 @@ a stale file path) may be fixed directly in place; a changed decision gets a new
 | [0011](0011-golden-tests.md) | Golden tests on a compiled fixture | accepted |
 | [0012](0012-nav-path-via-and-ways.md) | `nav-path --via` as chained walks, `--ways` by the fork | accepted |
 | [0013](0013-module-globs.md) | `--module` globs as `.gitignore` takes directories | accepted |
+| [0014](0014-route-content-by-smap.md) | A route's content: the composables called where it is registered, by SMAP | accepted |

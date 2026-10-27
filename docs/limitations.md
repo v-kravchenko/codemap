@@ -53,6 +53,9 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   entries, a map of `NavKey` to content) has no static call edge from a registering class to a
   host Activity — `nav-path` reports "No way": there's a receiving list, but nothing shows
   which code populates and reaches it at run time.
+- A route's `content` (`screens`) lists the repo composables called where the route is registered,
+  so a helper composable called there is listed next to the screen; one that only a library draws
+  is not listed, and without a LineNumberTable a wrapper's composables count too.
 - A route can have more than one host (the same nested graph included from two different
   Activities); `nav-path` picks the cheapest path to one host, so a screen reachable in several
   different ways through different hosts shows only one of them unless you compare branches

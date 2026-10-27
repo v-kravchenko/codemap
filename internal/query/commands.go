@@ -85,7 +85,7 @@ var commands = []command{
 			{name: "depth", arg: "N", help: "how many steps to draw (default 1; with --to the fewest steps plus 2)"},
 			{name: "direction", arg: "LR|RL|TB|TD|BT", help: "the way the flowchart runs (default LR)"},
 			optAll}},
-	{name: "screens", args: "[FILTER]", query: true, about: "The screens by kind; FILTER keeps those whose name contains it.",
+	{name: "screens", args: "[FILTER]", query: true, about: "The screens by kind; FILTER keeps those whose name, class, module, host or drawn composable contains it.",
 		flags: []flagSpec{optKind, optModule,
 			{name: "host", arg: "SCREEN", help: "only screens hosted in this screen (an Activity, or the screen hosting routes)"},
 			{name: "unreachable", help: "only screens no entry of the manifest reaches, with where the way back ends"}}},

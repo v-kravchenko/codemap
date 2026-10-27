@@ -1,4 +1,4 @@
-C     navapp.MainActivity                                                    app                          app/src/main/java/navapp/MainActivity.kt:13
+C     navapp.MainActivity                                                    app                          app/src/main/java/navapp/MainActivity.kt:14
 R     @layout/activity_views                                                 app                          app/src/main/res/layout/activity_views.xml
 C     navapp.views.LinkActivity                                              app                          app/src/main/java/navapp/views/ViewsActivity.kt:59
 C     navapp.views.PickActivity                                              app                          app/src/main/java/navapp/views/Contracts.kt:16

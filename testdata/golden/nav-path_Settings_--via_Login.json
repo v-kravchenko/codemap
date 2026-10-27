@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.4.0",
+  "schema_version": "3.5.0",
   "command": "nav-path",
   "targets": [
     {
@@ -7,8 +7,10 @@
       "kind": "route",
       "module": "app",
       "location": "app/src/main/java/navapp/typed/TypedApp.kt",
-      "host": null,
-      "hosts": []
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ]
     }
   ],
   "via": [

@@ -3,6 +3,8 @@ package classfile
 import (
 	"encoding/binary"
 	"errors"
+	"slices"
+	"strconv"
 	"strings"
 )
 
@@ -32,6 +34,7 @@ type Ref struct {
 	Cases             []int32
 	Param             int
 	Index             int
+	Line              int // 0: no LineNumberTable
 }
 
 type Guard struct{ End, Param, Bit int }
@@ -61,6 +64,8 @@ type Class struct {
 	Annotations []string
 	Source      string
 	Smap        []string
+	SmapLines   []SmapRange
+	SmapOrigin  string // the SMAP's first class: the one this class copies (an inline function's) or itself
 	Enclosing   [3]string
 	Fields      []Field
 	Methods     []Method
@@ -325,6 +330,7 @@ func Parse(d []byte) (c *Class, err error) {
 	}
 	if smap != "" {
 		c.Smap = smapClasses(smap)
+		c.SmapLines, c.SmapOrigin = smapRanges(smap)
 	}
 	c.Methods = make([]Method, len(raw))
 	for i, r := range raw {
@@ -340,6 +346,77 @@ func Parse(d []byte) (c *Class, err error) {
 		}
 	}
 	return c, nil
+}
+
+// SmapRange: lines From..To of the class file come from Class (JSR-45, the first stratum).
+type SmapRange struct {
+	From, To int
+	Class    string
+}
+
+// SourceOf: the class whose source holds `line` of the class file: the class itself unless the
+// line is code inlined from another one (or the class is a copy an inline function made).
+func (c *Class) SourceOf(line int) string {
+	for _, r := range c.SmapLines {
+		if line >= r.From && line <= r.To {
+			return r.Class
+		}
+	}
+	return c.Name
+}
+
+func smapRanges(text string) ([]SmapRange, string) {
+	lines := strings.Split(text, "\n")
+	files := map[string]string{}
+	var out []SmapRange
+	origin := "" // the first file's class
+	section, file := "", ""
+	for i := 0; i < len(lines); i++ {
+		l := strings.TrimSpace(lines[i])
+		if strings.HasPrefix(l, "*") {
+			if section == "L" { // the first stratum only
+				break
+			}
+			section = strings.TrimPrefix(l, "*")
+			continue
+		}
+		switch section {
+		case "F":
+			id, _, _ := strings.Cut(strings.TrimPrefix(l, "+ "), " ")
+			if strings.HasPrefix(l, "+ ") && i+1 < len(lines) && !strings.HasPrefix(lines[i+1], "*") {
+				i++
+				files[id] = strings.TrimSpace(lines[i])
+				if origin == "" {
+					origin = files[id]
+				}
+			}
+		case "L":
+			in, outs, ok := strings.Cut(l, ":")
+			if !ok {
+				continue
+			}
+			in, repeat, _ := strings.Cut(in, ",")
+			if _, id, ok := strings.Cut(in, "#"); ok {
+				file = id
+			}
+			start, inc, _ := strings.Cut(outs, ",")
+			from, err1 := strconv.Atoi(start)
+			n, err2 := atoiOr(repeat, 1)
+			k, err3 := atoiOr(inc, 1)
+			if err1 != nil || err2 != nil || err3 != nil || files[file] == "" {
+				continue
+			}
+			out = append(out, SmapRange{from, from + max(n*k, 1) - 1, files[file]})
+		}
+	}
+	return out, origin
+}
+
+func atoiOr(s string, def int) (int, error) {
+	if s == "" {
+		return def, nil
+	}
+	return strconv.Atoi(s)
 }
 
 func smapClasses(text string) []string {
@@ -504,6 +581,7 @@ func (p *parser) code(pos int, bootstrap [][][3]string, m *Method) {
 	defaults := strings.HasSuffix(m.Name, "$default")
 	table, ordinal := "", ""
 	ordParam := -1
+	var pcs []int // by ref, its instruction's offset
 	for c := c0; c < end; {
 		op := int(d[c])
 		cur := c
@@ -660,6 +738,9 @@ func (p *parser) code(pos int, bootstrap [][][3]string, m *Method) {
 				guards = append(guards, Guard{cur + int(int16(p.u16(cur+1))), pi, bit})
 			}
 		}
+		for i := first; i < len(m.Refs); i++ {
+			pcs = append(pcs, cur-c0)
+		}
 		if len(guards) > 0 {
 			if m.Guards == nil {
 				m.Guards = map[int][]Guard{}
@@ -687,8 +768,17 @@ func (p *parser) code(pos int, bootstrap [][][3]string, m *Method) {
 	for _, a := range attrs {
 		switch a.name {
 		case "LineNumberTable":
-			for k, cnt := 0, p.u16(a.pos); k < cnt; k++ {
-				m.Lines = append(m.Lines, p.u16(a.pos+2+4*k+2))
+			lnt := make([][2]int, p.u16(a.pos)) // pc, line
+			for k := range lnt {
+				lnt[k] = [2]int{p.u16(a.pos + 2 + 4*k), p.u16(a.pos + 2 + 4*k + 2)}
+				m.Lines = append(m.Lines, lnt[k][1])
+			}
+			// a ref's line is that of the last entry starting at or before it
+			slices.SortStableFunc(lnt, func(x, y [2]int) int { return x[0] - y[0] })
+			for i, pc := range pcs {
+				if k, _ := slices.BinarySearchFunc(lnt, pc+1, func(e [2]int, t int) int { return e[0] - t }); k > 0 {
+					m.Refs[i].Line = lnt[k-1][1]
+				}
 			}
 		case "LocalVariableTable":
 			seen := map[string]bool{}

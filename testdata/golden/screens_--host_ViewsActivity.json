@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.4.0",
+  "schema_version": "3.5.0",
   "command": "screens",
   "screens": [
     {
@@ -11,7 +11,8 @@
       "hosts": [
         "ViewsActivity"
       ],
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:54"
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:54",
+      "content": []
     },
     {
       "kind": "fragment",
@@ -22,7 +23,8 @@
       "hosts": [
         "ViewsActivity"
       ],
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:46"
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:46",
+      "content": []
     },
     {
       "kind": "fragment",
@@ -33,7 +35,8 @@
       "hosts": [
         "ViewsActivity"
       ],
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:24"
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:24",
+      "content": []
     },
     {
       "kind": "fragment",
@@ -44,7 +47,8 @@
       "hosts": [
         "ViewsActivity"
       ],
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:18"
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:18",
+      "content": []
     },
     {
       "kind": "fragment",
@@ -55,7 +59,8 @@
       "hosts": [
         "ViewsActivity"
       ],
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:34"
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:34",
+      "content": []
     }
   ],
   "hidden": {}

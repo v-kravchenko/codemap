@@ -272,6 +272,7 @@ type Builder struct {
 	Screens       []*Screen
 	resDefs       []ResDef
 	related       map[[2]int64]struct{}
+	content       map[[2]int64]struct{} // route, a composable its content calls from its own lines
 	entries       map[EntryRow]struct{}
 	callSites     []CallSite
 	paramSwitches map[Triple]struct{}
@@ -335,7 +336,7 @@ func NewBuilder(root string, modules []project.Module, jobs int, log func(string
 	return &Builder{root: root, modules: modules, Jobs: jobs, log: log,
 		Nodes: make(map[int64]*Node, 1<<19), Edges: make(map[snapshot.Edge]struct{}, 1<<20), callVia: map[CallVia]struct{}{},
 		classID: make(map[string]int64, 1<<16), memberID: make(map[[3]string]int64, 1<<19), resID: map[string]int64{},
-		files: map[string]*File{}, related: map[[2]int64]struct{}{}, entries: map[EntryRow]struct{}{},
+		files: map[string]*File{}, related: map[[2]int64]struct{}{}, content: map[[2]int64]struct{}{}, entries: map[EntryRow]struct{}{},
 		paramSwitches: map[Triple]struct{}{}, directReads: map[[2]int64]struct{}{}, Stats: map[string]string{},
 		owned: make(map[int64][]int64, 1<<16), sourceNames: map[string]map[string][]string{}}
 }
@@ -1820,20 +1821,72 @@ func (b *Builder) relatedAll() {
 			collect(s.Node, nested(b.Nodes[s.Node].Name), b.Nodes[s.Node].File)
 		case "route":
 			var methods []int64
-			for _, e := range outEdges[s.Node] {
-				if e.Kind != snapshot.ROUTE_CONTENT {
-					continue
-				}
-				dn := b.Nodes[e.Dst]
-				if dn.Kind == "C" {
+			from := map[int]bool{} // the files registering the route
+			add := func(d int64) {
+				if dn := b.Nodes[d]; dn.Kind == "C" {
 					methods = append(methods, nested(dn.Name)...)
 				} else {
-					methods = append(methods, e.Dst)
+					methods = append(methods, d)
+				}
+			}
+			for _, e := range outEdges[s.Node] {
+				switch e.Kind {
+				case snapshot.ROUTE_HOST:
+					from[b.Nodes[e.Dst].File] = true
+				case snapshot.ROUTE_CONTENT:
+					add(e.Dst)
+					// a ComposableSingletons getter: the lambda its field holds
+					for _, r := range outEdges[e.Dst] {
+						if r.Kind == snapshot.READ && b.Nodes[r.Dst].Owner == b.Nodes[e.Dst].Owner {
+							for _, l := range outEdges[r.Dst] {
+								if l.Kind == snapshot.LAMBDA || l.Kind == snapshot.TYPE {
+									add(l.Dst)
+								}
+							}
+						}
+					}
 				}
 			}
 			collect(s.Node, methods, 0)
+			for _, c := range b.ownComposableCalls(methods, from) {
+				b.content[[2]int64{s.Node, c}] = struct{}{}
+			}
 		}
 	}
+}
+
+// ownComposableCalls: the repo composables `methods` call from code written where the route is
+// registered (in a file of `from`): the content it draws (`{ ConfirmScreen(vm) }`), not what an
+// inlined `screen<VM> {}` adds around it. In a copy of a wrapper's class SMAP gives the wrapper's
+// lines to the class copied, the rest to where they were written.
+func (b *Builder) ownComposableCalls(methods []int64, from map[int]bool) []int64 {
+	made := func(cls string) bool { p, ok := b.parsed[cls]; return ok && p.C.Enclosing[0] != "" }
+	var out []int64
+	for _, mid := range methods {
+		mn := b.Nodes[mid]
+		cls := b.parsed[b.Nodes[mn.Owner].Name].C
+		for _, m := range cls.Methods {
+			if m.Name != mn.Name || m.Desc != mn.Desc {
+				continue
+			}
+			for _, r := range m.Refs {
+				if r.Kind != classfile.RCall || !strings.Contains(r.Desc, "Landroidx/compose/runtime/Composer;") {
+					continue
+				}
+				if src := cls.SourceOf(r.Line); src != cls.Name {
+					if id, ok := b.classID[src]; !ok || src == cls.SmapOrigin || !from[b.Nodes[id].File] {
+						continue
+					}
+				}
+				t := b.resolveMember(r.Owner, r.Name, r.Desc, false)
+				if t == 0 || made(b.Nodes[b.Nodes[t].Owner].Name) || strings.Contains(b.Nodes[t].Name, "lambda$") || strings.Contains(b.Nodes[t].Name, "$lambda") {
+					continue // a lambda calling itself again on recomposition
+				}
+				out = append(out, t)
+			}
+		}
+	}
+	return out
 }
 
 func (b *Builder) hosts() {
@@ -2175,6 +2228,10 @@ func (b *Builder) otherColumns(m *snapshot.Map) {
 	for _, p := range snapshot.SortedPairs(b.related) {
 		m.ScreenRelated.Screen = append(m.ScreenRelated.Screen, p[0])
 		m.ScreenRelated.Related = append(m.ScreenRelated.Related, p[1])
+	}
+	for _, p := range snapshot.SortedPairs(b.content) {
+		m.ScreenContent.Screen = append(m.ScreenContent.Screen, p[0])
+		m.ScreenContent.Node = append(m.ScreenContent.Node, p[1])
 	}
 	ent := make([]EntryRow, 0, len(b.entries))
 	for e := range b.entries {

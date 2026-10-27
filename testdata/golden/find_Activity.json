@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.4.0",
+  "schema_version": "3.5.0",
   "command": "find",
   "pattern": "Activity",
   "total": 17,
@@ -9,7 +9,7 @@
       "symbol": "navapp.MainActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/MainActivity.kt:13"
+      "location": "app/src/main/java/navapp/MainActivity.kt:14"
     },
     {
       "symbol": "@layout/activity_views",

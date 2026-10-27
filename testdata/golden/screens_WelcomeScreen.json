@@ -1,0 +1,21 @@
+{
+  "schema_version": "3.5.0",
+  "command": "screens",
+  "screens": [
+    {
+      "kind": "route",
+      "module": "app",
+      "name": "Welcome",
+      "target": "navapp.sections.Welcome",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "content": [
+        "SectionsAppKt.WelcomeScreen()"
+      ]
+    }
+  ],
+  "hidden": {}
+}

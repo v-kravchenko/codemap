@@ -7,7 +7,7 @@ Activities (14)
   LimitActivity                                      app                          app/src/main/java/navapp/impact/Constants.kt:10
   LinkActivity                                       app                          app/src/main/java/navapp/views/ViewsActivity.kt:59
   LoudActivity                                       app                          app/src/main/java/navapp/impact/Overrides.kt:20
-  MainActivity                                       app                          app/src/main/java/navapp/MainActivity.kt:13
+  MainActivity                                       app                          app/src/main/java/navapp/MainActivity.kt:14
   NicknameActivity                                   app                          app/src/main/java/navapp/impact/DataClasses.kt:11
   PickActivity                                       app                          app/src/main/java/navapp/views/Contracts.kt:16
   PlainCopyActivity                                  app                          app/src/main/java/navapp/impact/Defaults.kt:16
@@ -26,18 +26,27 @@ Fragments (6)
 Dialog fragments (1)
   InfoDialog                                         app                          app/src/main/java/navapp/views/ViewsActivity.kt:54  host ViewsActivity
 
-Compose routes (14)
-  Catalog                                            app                          app/src/main/java/navapp/nav3when/Nav3WhenApp.kt
+Compose routes (17)
+  About                                              app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
+      content SectionsAppKt.AboutScreen()
+  Catalog                                            app                          app/src/main/java/navapp/nav3when/Nav3WhenApp.kt  host MainActivity
   Compose                                            app                          app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt  host MainActivity
-  Confirm                                            app                          app/src/main/java/navapp/typed/TypedApp.kt
-  Home                                               app                          app/src/main/java/navapp/typed/TypedApp.kt
+  Confirm                                            app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
+  Home                                               app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
+      content TypedAppKt.HomeScreen()
   Inbox                                              app                          app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt  host MainActivity
-  Item                                               app                          app/src/main/java/navapp/nav3when/Nav3WhenApp.kt
-  Login                                              app                          app/src/main/java/navapp/typed/TypedApp.kt
+  Item                                               app                          app/src/main/java/navapp/nav3when/Nav3WhenApp.kt  host MainActivity
+  Login                                              app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
+      content TypedAppKt.LoginScreen()
   Message                                            app                          app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt  host MainActivity
-  Profile                                            app                          app/src/main/java/navapp/typed/TypedApp.kt
-  Settings                                           app                          app/src/main/java/navapp/typed/TypedApp.kt
-  comments/{postId}                                  app                          app/src/main/java/navapp/strings/StringApp.kt
-  feed                                               app                          app/src/main/java/navapp/strings/StringApp.kt
-  post/{id}                                          app                          app/src/main/java/navapp/strings/StringApp.kt
-  signin                                             app                          app/src/main/java/navapp/strings/StringApp.kt
+  Profile                                            app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
+      content TypedAppKt.ProfileScreen()
+  Settings                                           app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
+  Terms                                              app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
+      content SectionsAppKt.TermsScreen()
+  Welcome                                            app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
+      content SectionsAppKt.WelcomeScreen()
+  comments/{postId}                                  app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
+  feed                                               app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
+  post/{id}                                          app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
+  signin                                             app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity

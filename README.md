@@ -29,7 +29,8 @@ one way through each screen that opens it, `--from SCREEN` a way from a screen t
 some modules, as `.gitignore` takes directories: `feature/cards` with the modules under it,
 `'!feature/debug'` everything but, `**/impl` every `impl` (docs/json.md, Module globs).
 `screens --unreachable` lists the screens no entry of the manifest reaches, and where the way back
-ends; `screens --host X` the screens an Activity hosts; `find --type class` one kind of symbol;
+ends; `screens --host X` the screens an Activity hosts; `screens CreateConfirmScreen` the route that
+draws a composable; `find --type class` one kind of symbol;
 `used-by --no-di` without generated DI code.
 
 `build` skips a map built by the same binary from the same inputs (`--force` rebuilds it). Queries

@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.4.0",
+  "schema_version": "3.5.0",
   "command": "graph",
   "roots": [
     "MainActivity"
@@ -10,6 +10,26 @@
     {
       "name": "MainActivity",
       "kind": "activity",
+      "module": "app"
+    },
+    {
+      "name": "MainActivity: SectionsAppKt.SectionsApp",
+      "kind": "action",
+      "module": "app"
+    },
+    {
+      "name": "About",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "Terms",
+      "kind": "route",
+      "module": "app"
+    },
+    {
+      "name": "Welcome",
+      "kind": "route",
       "module": "app"
     },
     {
@@ -84,6 +104,34 @@
     }
   ],
   "edges": [
+    {
+      "from": "MainActivity",
+      "to": "MainActivity: SectionsAppKt.SectionsApp",
+      "label": null,
+      "hint": "SectionsAppKt.SectionsApp",
+      "shared": null
+    },
+    {
+      "from": "MainActivity: SectionsAppKt.SectionsApp",
+      "to": "About",
+      "label": null,
+      "hint": "SectionsAppKt.SectionsApp",
+      "shared": null
+    },
+    {
+      "from": "MainActivity: SectionsAppKt.SectionsApp",
+      "to": "Terms",
+      "label": null,
+      "hint": "SectionsAppKt.SectionsApp",
+      "shared": null
+    },
+    {
+      "from": "MainActivity: SectionsAppKt.SectionsApp",
+      "to": "Welcome",
+      "label": null,
+      "hint": "SectionsAppKt.SectionsApp",
+      "shared": null
+    },
     {
       "from": "MainActivity",
       "to": "Catalog",

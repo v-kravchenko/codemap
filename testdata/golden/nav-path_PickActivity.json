@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.4.0",
+  "schema_version": "3.5.0",
   "command": "nav-path",
   "targets": [
     {
@@ -118,7 +118,7 @@
       "name": "MainActivity",
       "kind": "activity",
       "module": "app",
-      "location": "app/src/main/java/navapp/MainActivity.kt:13",
+      "location": "app/src/main/java/navapp/MainActivity.kt:14",
       "host": null,
       "hosts": [],
       "depth": 5,
@@ -138,7 +138,7 @@
       "name": "MainActivity",
       "kind": "activity",
       "module": "app",
-      "location": "app/src/main/java/navapp/MainActivity.kt:13",
+      "location": "app/src/main/java/navapp/MainActivity.kt:14",
       "host": null,
       "hosts": [],
       "entry": [

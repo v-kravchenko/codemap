@@ -61,6 +61,49 @@ func TestParseFixture(t *testing.T) {
 	}
 }
 
+// A copy an inline function made gives its lines to the classes they were written in.
+func TestSmapRanges(t *testing.T) {
+	smap := "SMAP\nNav.kt\nKotlin\n*S Kotlin\n*F\n+ 1 Nav.kt\nui/NavKt$screen$1$1\n+ 2 Graph.kt\napp/GraphKt\n" +
+		"*L\n1#1,104:1\n39#2,2:166\n7#2,3:170,2\n*E\n*S KotlinDebug\n*F\n+ 1 Other.kt\nx/Y\n*L\n1#1:500\n*E\n"
+	ranges, origin := smapRanges(smap)
+	if origin != "ui/NavKt$screen$1$1" {
+		t.Errorf("origin %q", origin)
+	}
+	c := &Class{Name: "app/GraphKt$g$$inlined$screen$1$1", SmapLines: ranges}
+	for line, want := range map[int]string{0: c.Name, 1: "ui/NavKt$screen$1$1", 104: "ui/NavKt$screen$1$1",
+		105: c.Name, 166: "app/GraphKt", 167: "app/GraphKt", 168: c.Name, 175: "app/GraphKt", 176: c.Name, 500: c.Name} {
+		if got := c.SourceOf(line); got != want {
+			t.Errorf("line %d: %q, want %q", line, got, want)
+		}
+	}
+	if r, o := smapRanges("*F\n+ 1 A.kt\n*L\n1#9,x:1\n99999999999#1,99999999999:1,99999999999\n"); o != "" || len(r) > 1 {
+		t.Errorf("malformed: %v %q", r, o)
+	}
+}
+
+// Every call of a fixture method has the line it is on, from the LineNumberTable.
+func TestRefLines(t *testing.T) {
+	for _, data := range fixtureClasses(t) {
+		c, err := Parse(data)
+		if err != nil || c.Name != "navapp/sections/SectionsAppKt$onboardingSteps$$inlined$screen$1$1" {
+			continue
+		}
+		var welcome []int
+		for _, m := range c.Methods {
+			for _, r := range m.Refs {
+				if r.Kind == RCall && r.Name == "WelcomeScreen" {
+					welcome = append(welcome, r.Line)
+				}
+			}
+		}
+		if len(welcome) != 1 || c.SourceOf(welcome[0]) != "navapp/sections/SectionsAppKt" {
+			t.Errorf("WelcomeScreen called on lines %v of %v", welcome, c.SmapLines)
+		}
+		return
+	}
+	t.Fatal("no copy of the inlined screen wrapper in the fixture")
+}
+
 // A forged length anywhere in a class file is an error, never a panic or a giant allocation.
 func TestParseForgedLength(t *testing.T) {
 	var good []byte
@@ -112,7 +155,7 @@ func FuzzParse(f *testing.F) {
 			ParamDescs(m.Desc)
 		}
 		for _, fd := range c.Fields {
-			ClassOfDesc(fd.Desc)
+			_ = ClassOfDesc(fd.Desc)
 		}
 	})
 }

@@ -24,7 +24,7 @@ import (
 
 const (
 	toolVersion   = "0.2.0"
-	schemaVersion = "3.4.0"
+	schemaVersion = "3.5.0"
 	exitOK        = 0
 	exitError     = 2
 )
@@ -879,6 +879,7 @@ func (g *Graph) cmdScreens(o opts) int {
 	type row struct {
 		kind, module, label, target, host, loc string
 		hosts                                  []int32
+		content                                []string
 		ends                                   []navRoot
 	}
 	var out []row
@@ -902,7 +903,12 @@ func (g *Graph) cmdScreens(o opts) int {
 			hl = append(hl, g.label(h))
 		}
 		host := strings.Join(hl, ", ")
-		if filter != "" && !slices.ContainsFunc([]string{label, target, module, host},
+		var content []string
+		for _, c := range g.drawn[n] {
+			content = append(content, g.label(c))
+		}
+		slices.Sort(content)
+		if filter != "" && !slices.ContainsFunc(append([]string{label, target, module, host}, content...),
 			func(x string) bool { return strings.Contains(strings.ToLower(x), filter) }) {
 			continue
 		}
@@ -927,7 +933,7 @@ func (g *Graph) cmdScreens(o opts) int {
 				continue
 			}
 		}
-		out = append(out, row{kind, module, label, target, host, g.location(n), hosts, ends})
+		out = append(out, row{kind, module, label, target, host, g.location(n), hosts, content, ends})
 	}
 	sort.SliceStable(out, func(i, j int) bool {
 		a, b := out[i], out[j]
@@ -943,7 +949,7 @@ func (g *Graph) cmdScreens(o opts) int {
 		items := make([]any, len(out))
 		for i, r := range out {
 			item := append(append(obj{{"kind", r.kind}, {"module", r.module}, {"name", r.label}, {"target", r.target}},
-				g.hostsJSON(r.hosts)...), kv{"location", r.loc})
+				g.hostsJSON(r.hosts)...), kv{"location", r.loc}, kv{"content", strs(r.content)})
 			if o.unreachable {
 				var ends []any
 				for _, e := range r.ends {
@@ -981,6 +987,9 @@ func (g *Graph) cmdScreens(o opts) int {
 				host = "  host " + r.host
 			}
 			fmt.Printf("  %-50s %-28s %s%s\n", name, r.module, r.loc, host)
+			if len(r.content) > 0 {
+				fmt.Printf("      content %s\n", strings.Join(r.content, ", "))
+			}
 			for _, e := range r.ends {
 				fmt.Printf("      ends at %s: %s\n", g.screenName(e.sid), deadEnd(e.how[0]))
 			}

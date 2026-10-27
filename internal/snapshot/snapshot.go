@@ -106,6 +106,7 @@ type Map struct {
 		Kind, Label, Target Strs
 	}
 	ScreenRelated struct{ Screen, Related []int64 }
+	ScreenContent struct{ Screen, Node []int64 } // route -> the composables its own source code draws
 	Entry         struct {
 		Node         []int64
 		Kind, Detail Strs
@@ -215,6 +216,8 @@ func (m *Map) columns(c codec) {
 	c.strs(&s.Target)
 	c.i64(&m.ScreenRelated.Screen)
 	c.i64(&m.ScreenRelated.Related)
+	c.i64(&m.ScreenContent.Screen)
+	c.i64(&m.ScreenContent.Node)
 	e := &m.Entry
 	c.i64(&e.Node)
 	c.strs(&e.Kind)
@@ -471,7 +474,7 @@ const (
 	ConstantFlag = 0x10000
 )
 
-const IndexVersion = "8"
+const IndexVersion = "9"
 
 func ToolSha1() string {
 	exe, err := os.Executable()

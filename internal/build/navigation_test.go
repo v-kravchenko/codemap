@@ -64,6 +64,10 @@ func TestNavigationPresets(t *testing.T) {
 		// nav3: `is T -> NavEntry(key)` in an entryProvider lambda
 		"Catalog": {"nav3when/Nav3WhenAppKt.Nav3WhenApp"},
 		"Item":    {"nav3when/Nav3WhenAppKt.Nav3WhenApp$lambda$2$0$0$0$0"},
+		// nav2-compose through the project's own inline wrappers: section<T>(start) opens its start
+		"Welcome": {"sections/SectionsAppKt.SectionsApp"},
+		"Terms":   {"sections/SectionsAppKt$SectionsApp$1$1$1$1.invoke"},
+		"About":   {"sections/SectionsAppKt$SectionsApp$1$1$1$2.invoke"},
 	}
 	if !reflect.DeepEqual(got, want) {
 		for k, v := range want {

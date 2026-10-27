@@ -61,6 +61,7 @@ type Graph struct {
 	screenTops        map[int32]bool
 	routeOf           map[int32]int32
 	routeContentNames map[string]int32
+	drawn             map[int32][]int32         // route -> the composables its content draws (ScreenContent)
 	callVia           map[int32]map[int32]int32 // callee -> caller -> class the call names
 	diGlue            map[int32]bool
 	shown             []bool // by file id: the files of the nodes an answer names or walks
@@ -118,6 +119,11 @@ func NewGraph(m *snapshot.Map, root string) *Graph {
 			g.screenOrder = append(g.screenOrder, n)
 		}
 		g.screens[n] = append(g.screens[n], ScreenRow{s.Kind.At(i), s.Label.At(i), s.Target.At(i), m.Index(s.Host[i])})
+	}
+	g.drawn = map[int32][]int32{}
+	for i := range m.ScreenContent.Screen {
+		r := m.Index(m.ScreenContent.Screen[i])
+		g.drawn[r] = append(g.drawn[r], m.Index(m.ScreenContent.Node[i]))
 	}
 	for n, rows := range g.screens {
 		if screenClassKinds[rows[0].Kind] {
@@ -506,8 +512,15 @@ func (g *Graph) routeHostsOf(route int32) map[int32]bool {
 			if g.routeHosts[r] == nil {
 				g.routeHosts[r] = map[int32]bool{}
 			}
-			for s := range g.registeringScreens(content) {
-				g.routeHosts[r][s] = true
+			// from the registering code too: build moved its edge to a content lambda onto the route
+			starts := []int32{content}
+			for _, u := range g.uses(r, snapshot.ROUTE_HOST) {
+				starts = append(starts, u.N)
+			}
+			for _, n := range starts {
+				for s := range g.registeringScreens(n) {
+					g.routeHosts[r][s] = true
+				}
 			}
 		}
 	}
@@ -533,6 +546,14 @@ func (g *Graph) registeringScreens(n int32) map[int32]bool {
 		}
 		for _, u := range g.users(n, snapshot.CALL, snapshot.LAMBDA, snapshot.INLINE) {
 			stack = append(stack, u.N)
+		}
+		if g.kind(n) == "M" {
+			// a lambda's method is run by whoever makes its class: `navigation(R) { section() }`
+			if o := g.owner(n); o >= 0 {
+				if _, _, ok := g.enclosing(g.name(o)); ok {
+					stack = append(stack, o)
+				}
+			}
 		}
 		if g.kind(n) == "C" {
 			cls, method, ok := g.enclosing(g.name(n))

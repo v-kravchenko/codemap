@@ -11,7 +11,7 @@ strips it since `meta.run` is never reproducible).
 
 ```json
 {
-  "schema_version": "3.4.0",
+  "schema_version": "3.5.0",
   "command": "impact",
   "meta": {
     "tool_version": "0.2.0",
@@ -30,7 +30,7 @@ strips it since `meta.run` is never reproducible).
 }
 ```
 
-- `schema_version` — the shape of the JSON output (`"3.4.0"`, `internal/query/cli.go`). Independent
+- `schema_version` — the shape of the JSON output (`"3.5.0"`, `internal/query/cli.go`). Independent
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
   `"changes"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
@@ -141,7 +141,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.4.0",
+  "schema_version": "3.5.0",
   "command": "used-by",
   "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
   "items": [
@@ -202,7 +202,7 @@ Result fields (full `impact`, no `--to`):
 
 ```json
 {
-  "schema_version": "3.4.0",
+  "schema_version": "3.5.0",
   "command": "impact",
   "changed": [
     {
@@ -265,7 +265,7 @@ resolved head commit or `"WORKTREE"`.
 
 ```json
 {
-  "schema_version": "3.4.0",
+  "schema_version": "3.5.0",
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
@@ -331,7 +331,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.4.0", "command": "nav-path",
+  "schema_version": "3.5.0", "command": "nav-path",
   "targets": [{ "name": "Login", "kind": "route", "module": "app",
     "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
   "screens": [
@@ -395,7 +395,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.4.0", "command": "graph",
+  "schema_version": "3.5.0", "command": "graph",
   "roots": ["Home"], "walk": "out", "to": [],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
@@ -419,7 +419,8 @@ Result fields:
 codemap screens [FILTER] [--kind KIND] [--module GLOB]... [--host SCREEN] [--unreachable] [--json]
 ```
 
-- `FILTER` (optional positional) — case-insensitive substring match against name/target/module/host.
+- `FILTER` (optional positional) — case-insensitive substring match against name/target/module/host
+  and the composables a route draws (`content`): `screens CreateConfirmScreen` finds its route.
 - `--module GLOB` — only screens in a matching module (see Module globs).
 - `--host SCREEN` — only screens whose `hosts` hold this screen (an Activity hosting fragments and
   dialogs, the screen hosting routes); the direct host, not the host of the host.
@@ -431,7 +432,10 @@ codemap screens [FILTER] [--kind KIND] [--module GLOB]... [--host SCREEN] [--unr
 - `--kind KIND`, `--json`.
 
 Result fields: `screens` — every matching screen, `{kind, module, name, target, host, hosts,
-location}`, sorted by kind, module, name, target, host, location; `hidden` — counts of screens
+location, content}`, sorted by kind, module, name, target, host, location; `content` — for a route,
+the repo composables its registration draws, by label (`CreateConfirmScreenKt.CreateConfirmScreen()`:
+those called from the code written at the registration, not from an inlined wrapper such as
+`screen<VM> {}`), sorted; empty for other kinds and for a route drawing only library composables; `hidden` — counts of screens
 excluded by `--kind`, by kind (of those in the modules); `hidden_by_module` — with `--module` only:
 `{screens}`, the screens outside the modules. With `--unreachable` each screen also has `entries`:
 where the walk back ends, as in `nav-path` (`{name, kind, module, location, host, hosts, entry}`,
@@ -439,14 +443,17 @@ where the walk back ends, as in `nav-path` (`{name, kind, module, location, host
 
 ```json
 {
-  "schema_version": "3.4.0", "command": "screens",
+  "schema_version": "3.5.0", "command": "screens",
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
-      "location": "app/src/main/java/navapp/impact/DataClasses.kt:18" },
+      "location": "app/src/main/java/navapp/impact/DataClasses.kt:18", "content": [] },
     { "kind": "dialog", "module": "app", "name": "InfoDialog",
       "target": "navapp.views.InfoDialog", "host": "ViewsActivity", "hosts": ["ViewsActivity"],
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:48" }
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:48", "content": [] },
+    { "kind": "route", "module": "app", "name": "Home", "target": "navapp.typed.Home",
+      "host": "MainActivity", "hosts": ["MainActivity"],
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt", "content": ["TypedAppKt.HomeScreen()"] }
   ],
   "hidden": {}
 }
@@ -477,7 +484,7 @@ module then location, truncated to `--limit`; `hidden_by_module` — with `--mod
 
 ```json
 {
-  "schema_version": "3.4.0", "command": "find", "pattern": "Activity",
+  "schema_version": "3.5.0", "command": "find", "pattern": "Activity",
   "total": 15, "synthetic": 0,
   "symbols": [
     { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",
