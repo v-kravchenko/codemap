@@ -283,6 +283,14 @@ Result: the shape of `impact` (it calls the same `reportImpactWith`), plus since
   docs/decisions/0019.
 - `screens[].status` — `"new"` when the screen itself is added (a preview or activity the change
   declares; never a route), `"changed"` at `depth` 0, `"affected"` deeper.
+- `changed[].location` — for a resource, the changed file defining it, at the resource's line in a
+  `values*/` file: `values-night/colors.xml:12`, not the default `values/`; an unqualified file
+  first when several changed. Other symbols: their own location.
+- `changed[].qualifiers` — for a resource, the qualifiers of the directories of its changed files,
+  sorted (`["night"]` for `values-night/`); `[]` when an unqualified file changed (every
+  configuration); `null` for code.
+- `screens[].qualifiers` — the qualifiers whose changes alone reach the screen (`["night"]`: only the
+  night render changes); `null` when code or an unqualified resource reaches it.
 
 and `meta.refs: {input, base, head}` where `input` is `"git"`, `"diff"` or `"files"`, `base` is the
 resolved base ref/commit (or `null` without `--diff`/`--files` and no `--base`), `head` is the
@@ -294,9 +302,11 @@ resolved head commit or `"WORKTREE"`.
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
-      "location": "app/src/main/res/navigation/views_graph.xml", "status": null },
+      "location": "app/src/main/res/navigation/views_graph.xml", "status": null,
+      "qualifiers": [] },
     { "symbol": "navapp.impact.Session", "kind": "class", "module": "app",
-      "location": "app/src/main/java/navapp/impact/Overrides.kt:26", "status": null }
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:26", "status": null,
+      "qualifiers": null }
   ],
   "affected": ["... same shape as impact ..."],
   "screens": ["..."],

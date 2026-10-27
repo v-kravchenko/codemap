@@ -82,7 +82,8 @@ type impactAnswer struct {
 	warnings     []string
 	modules      map[string]int // affected symbols per module
 	packages     map[string]int
-	nearest      map[int32]Key // the key of each affected node nearest to the change
+	nearest      map[int32]Key      // the key of each affected node nearest to the change
+	qualifiers   map[int32][]string // changes: screens reached by qualified resources alone
 	nearestOrder []int32
 	elapsed      time.Duration
 	elapsedNav   time.Duration
@@ -98,6 +99,9 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 	}
 	a.elapsed = time.Since(t)
 	g.impactScreens(a, shownKinds(o), o.noPreview)
+	if command == "changes" {
+		a.qualifiers = g.screenQualifiers(seeds, o.depth)
+	}
 	a.navs = map[int32]*navOf{}
 	if o.nav {
 		for _, items := range a.byKind {
@@ -208,7 +212,12 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 			listed[s.N] = true
 			sym := g.symbol(s.N)
 			if command == "changes" {
-				sym = append(sym, kv{"status", g.changedStatus(s.N)})
+				var qs any
+				if q, ok := g.qualifiersOf(s.N); ok {
+					qs = strs(q)
+				}
+				sym[3] = kv{"location", g.changedLocation(s.N)}
+				sym = append(sym, kv{"status", g.changedStatus(s.N)}, kv{"qualifiers", qs})
 			}
 			changed = append(changed, sym)
 		}
@@ -251,7 +260,11 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 				s = append(s, kv{"nav", nav.json()})
 			}
 			if command == "changes" {
-				s = append(s, kv{"status", g.screenStatus(it.n, it.depth)})
+				var qs any
+				if q, ok := a.qualifiers[it.n]; ok {
+					qs = strs(q)
+				}
+				s = append(s, kv{"status", g.screenStatus(it.n, it.depth)}, kv{"qualifiers", qs})
 			}
 			screens = append(screens, s)
 		}
@@ -290,7 +303,10 @@ func (g *Graph) impactText(a *impactAnswer, o opts) {
 		if g.statusKnown && g.isAdded(s.N) {
 			whole += "  (added)"
 		}
-		fmt.Printf("  %s%s\n", g.describe(s.N), whole)
+		if q, ok := g.qualifiersOf(s.N); ok && len(q) > 0 {
+			whole += "  (" + strings.Join(q, ", ") + ")"
+		}
+		fmt.Printf("  %s  %s  %s%s\n", g.label(s.N), g.module(s.N), g.changedLocation(s.N), whole)
 	}
 	for _, w := range a.warnings {
 		fmt.Println("  warning: " + w)
@@ -350,6 +366,9 @@ func (g *Graph) impactScreenText(a *impactAnswer, o opts, kind string, it screen
 	}
 	if g.statusKnown && g.isAdded(it.n) {
 		extra += "  new"
+	}
+	if q := a.qualifiers[it.n]; len(q) > 0 {
+		extra += "  only " + strings.Join(q, ", ")
 	}
 	name := it.label
 	if kind == "preview" {

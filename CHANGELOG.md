@@ -20,6 +20,10 @@ notes from its section here (`tools/release-notes.sh`).
   `content` (the composables it draws), and `--no-preview` for the screens no preview shows. A
   preview goes with the screen whose own composables it draws, not a theme or a shared component.
   The map format changes (index 10): run `codemap build`.
+- `changes` names the resource qualifiers of a change: `changed[].location` is the changed file
+  (`values-night/colors.xml:12`, not `values/`), `changed[].qualifiers` its qualifiers and
+  `screens[].qualifiers` those a screen is reached by alone, `only night` in the text, so a
+  night-only change needs only the night screenshots.
 
 ## [0.4.2] - 2026-10-27
 

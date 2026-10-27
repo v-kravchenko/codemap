@@ -334,7 +334,7 @@ func (g *Graph) cmdChanges(o opts) int {
 	var seeds []Seed
 	var nc []notCovered
 	var warnings, analysed []string
-	g.bases, g.statusKnown = map[string]*fileBase{}, !files || baseRev != ""
+	g.bases, g.statusKnown, g.resChanges = map[string]*fileBase{}, !files || baseRev != "", map[int32][]resChange{}
 	for _, path := range util.SortedKeys(linesByPath) {
 		lines := linesByPath[path]
 		if strings.Contains(path, "/src/test") || strings.Contains(path, "/src/androidTest") {
@@ -356,6 +356,10 @@ func (g *Graph) cmdChanges(o opts) int {
 				old = path
 			}
 			found, ok = g.changedResource(path, lines, baseRev, head, old)
+			if ok {
+				text, _ := g.readAt(path, head)
+				g.noteResChanges(path, text, found)
+			}
 		}
 		if !ok {
 			reason := "not_analysed"

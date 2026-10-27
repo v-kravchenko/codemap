@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -185,5 +186,72 @@ func TestChangesStatus(t *testing.T) {
 	os.WriteFile(filepath.Join(root, "files.txt"), []byte("app/src/main/java/navapp/impact/Overrides.kt:22\n"), 0o644)
 	if got := statuses("--files", "files.txt"); got["navapp.impact.QuietActivity.<init>"] != "null" {
 		t.Errorf("changes --files: %v", got)
+	}
+}
+
+// TestChangesQualifiers: a color changed only in values-night/ is located there and needs only the
+// night render of its screens; changed in values/ too, every configuration.
+func TestChangesQualifiers(t *testing.T) {
+	root := fixture.FixtureRoot(t)
+	res := filepath.Join(root, "app/src/main/res")
+	write := func(rel, text string) {
+		os.MkdirAll(filepath.Dir(filepath.Join(res, rel)), 0o755)
+		if err := os.WriteFile(filepath.Join(res, rel), []byte(text), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	colors := "<resources>\n    <color name=\"pad\">#000</color>\n    <color name=\"accent\">#%s</color>\n</resources>\n"
+	write("values/colors.xml", strings.Replace(colors, "%s", "fff", 1))
+	write("values-night/colors.xml", strings.Replace(colors, "%s", "111", 1))
+	layout, _ := os.ReadFile(filepath.Join(res, "layout/activity_views.xml"))
+	write("layout/activity_views.xml", strings.Replace(string(layout), "app:navGraph", "android:background=\"@color/accent\"\n    app:navGraph", 1))
+	run := func(args ...string) string {
+		cmd := exec.Command(os.Args[0], args...)
+		cmd.Dir, cmd.Env = root, append(os.Environ(), "CODEMAP_AS_MAIN=1")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("codemap %s: %v\n%s", strings.Join(args, " "), err, out)
+		}
+		return string(out)
+	}
+	run("build")
+	type answer struct {
+		Changed []struct {
+			Symbol, Location string
+			Qualifiers       []string
+		}
+		Screens []struct {
+			Name       string
+			Qualifiers []string
+		}
+	}
+	changes := func(files string) answer {
+		os.WriteFile(filepath.Join(root, "files.txt"), []byte(files), 0o644)
+		var a answer
+		if err := json.Unmarshal([]byte(run("changes", "--files", "files.txt", "--json", "--no-check")), &a); err != nil {
+			t.Fatal(err)
+		}
+		if len(a.Changed) != 1 || a.Changed[0].Symbol != "@color/accent" || len(a.Screens) == 0 {
+			t.Fatalf("changes %q: want @color/accent and its screens: %+v", files, a)
+		}
+		return a
+	}
+	night := changes("app/src/main/res/values-night/colors.xml:3\n")
+	if c := night.Changed[0]; c.Location != "app/src/main/res/values-night/colors.xml:3" || !slices.Equal(c.Qualifiers, []string{"night"}) {
+		t.Errorf("night only: %+v, want values-night/colors.xml:3 and [night]", c)
+	}
+	for _, s := range night.Screens {
+		if !slices.Equal(s.Qualifiers, []string{"night"}) {
+			t.Errorf("night only: screen %s qualifiers %v, want [night]", s.Name, s.Qualifiers)
+		}
+	}
+	both := changes("app/src/main/res/values/colors.xml:3\napp/src/main/res/values-night/colors.xml:3\n")
+	if c := both.Changed[0]; c.Location != "app/src/main/res/values/colors.xml:3" || c.Qualifiers == nil || len(c.Qualifiers) != 0 {
+		t.Errorf("both: %+v, want values/colors.xml:3 and []", c)
+	}
+	for _, s := range both.Screens {
+		if s.Qualifiers != nil {
+			t.Errorf("both: screen %s qualifiers %v, want null", s.Name, s.Qualifiers)
+		}
 	}
 }

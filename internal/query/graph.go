@@ -86,11 +86,12 @@ type Graph struct {
 	pushes                     []int8  // pushWay per node: 0 not made yet, 1 no, 2 yes
 	opened                     map[int32]openedRows
 	entries                    map[int32][]navEntry
-	refs                       any                  // meta.refs of the --json (changes)
-	checked                    bool                 // whether the inputs were compared with the map's (not --no-check)
-	stale                      *staleInfo           // nil: up to date or not checked
-	bases                      map[string]*fileBase // changes: the changed files as the base had them
-	statusKnown                bool                 // changes: whether the input tells added from modified
+	refs                       any                   // meta.refs of the --json (changes)
+	checked                    bool                  // whether the inputs were compared with the map's (not --no-check)
+	stale                      *staleInfo            // nil: up to date or not checked
+	bases                      map[string]*fileBase  // changes: the changed files as the base had them
+	statusKnown                bool                  // changes: whether the input tells added from modified
+	resChanges                 map[int32][]resChange // changes: the changed files of each resource seed
 }
 
 func NewGraph(m *snapshot.Map, root string) *Graph {
