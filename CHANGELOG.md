@@ -7,6 +7,8 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-27
+
 ### Added
 
 - `install.sh`: installs a release on Linux or macOS with one line, for CI and machines without Go;
@@ -46,5 +48,6 @@ The first public release.
   navigation events; anything project-specific goes into `codemap.yml`.
 - `codemap version`.
 
-[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/v-kravchenko/codemap/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/v-kravchenko/codemap/releases/tag/v0.3.0
