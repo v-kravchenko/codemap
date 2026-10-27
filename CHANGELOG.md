@@ -7,6 +7,13 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Added
+
+- A map built while modules were not compiled says so: `meta.index.missing_modules` in every
+  `--json`, a warning of every query, exit 3 with `--strict`, `code map: 31 of 78 modules compiled`
+  from `build`; their classes compiled since make the map stale. Such a map used to answer as if
+  whole. `schema_version` 3.7.0.
+
 ## [0.4.2] - 2026-10-27
 
 ### Fixed

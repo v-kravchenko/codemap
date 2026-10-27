@@ -11,7 +11,7 @@ strips it since `meta.run` is never reproducible).
 
 ```json
 {
-  "schema_version": "3.6.0",
+  "schema_version": "3.7.0",
   "command": "impact",
   "meta": {
     "tool_version": "0.3.0",
@@ -22,7 +22,8 @@ strips it since `meta.run` is never reproducible).
       "dirty": false,
       "inputs_sha1": "...",
       "stale": false,
-      "stale_inputs": null
+      "stale_inputs": null,
+      "missing_modules": []
     },
     "refs": null,
     "run": { "started_at": "2024-01-01T00:00:00Z", "duration_s": 0.42 }
@@ -31,7 +32,7 @@ strips it since `meta.run` is never reproducible).
 }
 ```
 
-- `schema_version` — the shape of the JSON output (`"3.6.0"`, `internal/query/cli.go`). Independent
+- `schema_version` — the shape of the JSON output (`"3.7.0"`, `internal/query/cli.go`). Independent
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
   `"changes"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
@@ -53,6 +54,10 @@ strips it since `meta.run` is never reproducible).
   `classes` (counts of changed/added/removed inputs of each kind), `compile` (modules with changed
   sources but no changed class files — not yet recompiled), `affects_answer` (bool: a changed file
   is actually used by this answer), `changed_files` (the changed files this answer uses).
+- `meta.index.missing_modules` — the modules of the project model (`codemap init` or the build
+  hook) with sources and no class file of the variant when the map was built, sorted: not
+  compiled, so every answer may leave out what is in them; `[]` for a whole map and without a model.
+  A query warns of them on stderr; since 3.7.0.
 - `meta.refs` — `null` for most commands; for `changes`, the resolved input/base/head (see
   `changes` below).
 - `meta.run.started_at` — UTC timestamp the process started, `started_at` format
@@ -75,7 +80,7 @@ change").
 |---|---|
 | `0` | OK |
 | `2` | A user error: bad arguments (an option the command does not take, an extra positional), symbol not found, ambiguous symbol, no code map at the given path, map from a different tool version (`index_version` mismatch), Gradle/git failures, etc. (`util.UserError`, caught in `Query`'s deferred recover) |
-| `3` | `--strict` only: the code map is stale (older than its inputs) **and** this particular answer actually uses a changed file (`exitStale`, `internal/query/stale.go`). Without `--strict`, staleness is a warning on stderr and the exit code is whatever the command would otherwise return. |
+| `3` | `--strict` only: the code map misses modules not compiled (`meta.index.missing_modules`), or it is stale (older than its inputs) **and** this particular answer actually uses a changed file (`exitStale`, `internal/query/stale.go`). Without `--strict`, staleness is a warning on stderr and the exit code is whatever the command would otherwise return. |
 
 With `--strict`, stdout is buffered and only flushed if the final code is not `3` — a strict,
 stale run that would exit 3 prints nothing to stdout, only the warning/error to stderr.
@@ -84,7 +89,8 @@ stale run that would exit 3 prints nothing to stdout, only the warning/error to 
 
 Every query (not `build` without `--info`, and not with `--no-check`) compares the map's recorded
 inputs against the filesystem: changed/added/removed `.class` files under the map's class
-directories, and changed/added/removed watched source/resource files. If anything differs:
+directories and those of its missing modules (compiled since the build), and changed/added/removed
+watched source/resource files. If anything differs:
 
 - Without `--strict`: a warning goes to stderr (which files changed, by kind, and the fix — compile
   the affected modules then `codemap build`, or just `codemap build` if no source needs
@@ -94,6 +100,11 @@ directories, and changed/added/removed watched source/resource files. If anythin
   (`stale_inputs.affects_answer`), the command exits `3` and prints nothing but the error. If the
   stale files are unrelated to this answer, it behaves like the non-strict case (warning only,
   normal exit code).
+
+A map with missing modules (`meta.index.missing_modules`) answers without them: every query warns
+(`the code map misses N modules (not compiled): ...`), and with `--strict` exits `3` whatever the
+answer, since what it leaves out cannot be told from what it has. `build` names them in its last
+line (`code map: 31 of 78 modules compiled, ...`) and in `build --info`.
 
 `codemap build` itself does nothing (no-op, logged to stderr) when `UpToDate` finds no stale
 inputs and `--force` was not given.
@@ -145,7 +156,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.6.0",
+  "schema_version": "3.7.0",
   "command": "used-by",
   "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
   "items": [
@@ -206,7 +217,7 @@ Result fields (full `impact`, no `--to`):
 
 ```json
 {
-  "schema_version": "3.6.0",
+  "schema_version": "3.7.0",
   "command": "impact",
   "changed": [
     {
@@ -269,7 +280,7 @@ resolved head commit or `"WORKTREE"`.
 
 ```json
 {
-  "schema_version": "3.6.0",
+  "schema_version": "3.7.0",
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
@@ -335,7 +346,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.6.0", "command": "nav-path",
+  "schema_version": "3.7.0", "command": "nav-path",
   "targets": [{ "name": "Login", "kind": "route", "module": "app",
     "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
   "screens": [
@@ -399,7 +410,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "3.6.0", "command": "graph",
+  "schema_version": "3.7.0", "command": "graph",
   "roots": ["Home"], "walk": "out", "to": [],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
@@ -447,7 +458,7 @@ where the walk back ends, as in `nav-path` (`{name, kind, module, location, host
 
 ```json
 {
-  "schema_version": "3.6.0", "command": "screens",
+  "schema_version": "3.7.0", "command": "screens",
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
@@ -488,7 +499,7 @@ module then location, truncated to `--limit`; `hidden_by_module` — with `--mod
 
 ```json
 {
-  "schema_version": "3.6.0", "command": "find", "pattern": "Activity",
+  "schema_version": "3.7.0", "command": "find", "pattern": "Activity",
   "total": 15, "synthetic": 0,
   "symbols": [
     { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",

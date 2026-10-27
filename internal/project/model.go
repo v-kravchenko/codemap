@@ -168,20 +168,22 @@ func buildFile(name string) bool {
 
 // modelModules: the modules of the model with classes of the variant; the ones not compiled are
 // named on stderr with the tasks that compile them.
-func ModelModules(root string, m *ProjectModel, variant string) ([]Module, error) {
+// ModelModules: the modules of the variant with class directories, and the missing ones: with sources
+// and no class file, not compiled (in the map, with an empty class directory, or left out).
+func ModelModules(root string, m *ProjectModel, variant string) ([]Module, []Module, error) {
 	if m.Generated.InputsSha1 != buildFilesSha1(root) {
-		return nil, fmt.Errorf("the build files changed since `codemap init` wrote %s: run `codemap init`", modelFile)
+		return nil, nil, fmt.Errorf("the build files changed since `codemap init` wrote %s: run `codemap init`", modelFile)
 	}
 	if !slices.Contains(m.Variants, variant) {
-		return nil, fmt.Errorf("no variant %q in %s (variants: %s): set variant in %s", variant, modelFile,
+		return nil, nil, fmt.Errorf("no variant %q in %s (variants: %s): set variant in %s", variant, modelFile,
 			strings.Join(m.Variants, ", "), config.ConfigFile)
 	}
 	mods := slices.Clone(m.Modules)
 	slices.SortFunc(mods, func(a, b ModelModule) int { // the order of the tree walk
 		return slices.Compare(strings.Split(a.Dir, "/"), strings.Split(b.Dir, "/"))
 	})
-	var out []Module
-	var tasks, missing []string
+	var out, missing []Module
+	var tasks, left []string
 	for _, mm := range mods {
 		v, ok := mm.Variants[variant]
 		if !ok {
@@ -193,22 +195,40 @@ func ModelModules(root string, m *ProjectModel, variant string) ([]Module, error
 			classes = append(classes, filepath.Join(root, c))
 			compiled = compiled || util.IsDir(filepath.Join(root, c))
 		}
+		mod := Module{Name: mm.Dir, Dir: mm.Dir, ClassDirs: classes, Sources: v.Sources, Res: resDirsOf(root, v.Res),
+			Manifests: v.Manifests}
+		if !slices.ContainsFunc(classes, func(d string) bool { return hasFile(d, ".class") }) &&
+			slices.ContainsFunc(v.Sources, func(d string) bool { return hasFile(filepath.Join(root, d), ".kt", ".java") }) {
+			missing = append(missing, mod)
+		}
 		if !compiled {
 			tasks = append(tasks, v.CompileTasks...)
-			missing = append(missing, mm.Path)
+			left = append(left, mm.Path)
 			continue
 		}
-		out = append(out, Module{Name: mm.Dir, Dir: mm.Dir, ClassDirs: classes, Sources: v.Sources, Res: resDirsOf(root, v.Res),
-			Manifests: v.Manifests})
+		out = append(out, mod)
 	}
 	if len(tasks) > 0 {
 		run := "./gradlew " + strings.Join(tasks, " ")
 		if len(out) == 0 {
-			return nil, fmt.Errorf("no compiled %s classes: run %s", variant, run)
+			return nil, nil, fmt.Errorf("no compiled %s classes: run %s", variant, run)
 		}
-		fmt.Fprintf(os.Stderr, "warning: %d modules not compiled, left out of the map: run %s\n", len(missing), run)
+		fmt.Fprintf(os.Stderr, "warning: %d modules not compiled, left out of the map: run %s\n", len(left), run)
 	}
-	return out, nil
+	return out, missing, nil
+}
+
+// hasFile: whether the tree under dir has a file with one of the suffixes; stops at the first.
+func hasFile(dir string, suffixes ...string) bool {
+	found := false
+	filepath.WalkDir(dir, func(p string, e os.DirEntry, err error) error {
+		if err == nil && !e.IsDir() && slices.ContainsFunc(suffixes, func(s string) bool { return strings.HasSuffix(e.Name(), s) }) {
+			found = true
+			return filepath.SkipAll
+		}
+		return nil
+	})
+	return found
 }
 
 // resDirsOf: the resource directories of the model that exist, by name within a source set (res,
@@ -308,6 +328,27 @@ func ModulePathsJSON(modules []Module) string {
 	for i, m := range modules {
 		out[i] = paths{m.Sources, m.Res, m.Manifests}
 	}
+	data, _ := json.Marshal(out)
+	return string(data)
+}
+
+// MissingJSON: the missing modules (ModelModules) and their class directories, sorted: the stale check
+// of a query looks there for classes compiled since.
+func MissingJSON(root string, missing []Module) string {
+	type mod struct {
+		Module    string   `json:"module"`
+		ClassDirs []string `json:"class_dirs"`
+	}
+	out := []mod{}
+	for _, m := range missing {
+		x := mod{Module: m.Name, ClassDirs: []string{}}
+		for _, d := range m.ClassDirs {
+			r, _ := util.RelPath(root, d)
+			x.ClassDirs = append(x.ClassDirs, filepath.ToSlash(r))
+		}
+		out = append(out, x)
+	}
+	slices.SortFunc(out, func(a, b mod) int { return strings.Compare(a.Module, b.Module) })
 	data, _ := json.Marshal(out)
 	return string(data)
 }

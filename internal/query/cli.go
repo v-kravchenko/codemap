@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	schemaVersion = "3.6.0"
+	schemaVersion = "3.7.0"
 	exitOK        = 0
 	exitError     = 2
 )
@@ -195,7 +195,8 @@ func Query(cmd string, args []string) (code int) {
 	if !o.noCheck && cmd != "build" {
 		g.checked, g.stale = true, g.findStale()
 	}
-	if g.stale != nil && o.strict { // the answer is printed only when no changed file is in it
+	missing := cmd != "build" && len(g.missingNames()) > 0
+	if (g.stale != nil || missing) && o.strict { // the answer is printed only when the map is whole and no changed file is in it
 		out := os.Stdout
 		held, err := os.CreateTemp("", "codemap-*")
 		if err != nil {
@@ -213,6 +214,9 @@ func Query(cmd string, args []string) (code int) {
 		}()
 	}
 	code = g.run(cmd, o)
+	if missing {
+		code = g.reportMissing(o.strict, code)
+	}
 	return g.reportStale(o.strict, code)
 }
 
@@ -351,7 +355,7 @@ func (g *Graph) printJSON(command string, result obj) {
 			{"tool_version", ToolVersion},
 			{"index", obj{{"version", m.MetaValue("index_version")}, {"variant", cmp.Or(config.Cfg.Variant, "debug")}, {"commit", commit},
 				{"dirty", m.MetaValue("dirty") == "1"}, {"inputs_sha1", m.MetaValue("inputs_sha1")},
-				{"stale", stale}, {"stale_inputs", g.staleJSON()}}},
+				{"stale", stale}, {"stale_inputs", g.staleJSON()}, {"missing_modules", strs(g.missingNames())}}},
 			{"refs", g.refs},
 			{"run", obj{{"started_at", started.UTC().Format("2006-01-02T15:04:05Z")}, {"duration_s", duration}}},
 		}},

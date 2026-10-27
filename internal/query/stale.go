@@ -37,6 +37,14 @@ func staleInputs(m *snapshot.Map, root string) (changed, added, removed []string
 	}
 	var dirs []string
 	json.Unmarshal([]byte(m.MetaValue("class_dirs")), &dirs)
+	// a missing module's classes compiled since the build: added; a directory the map has once
+	for _, mm := range missingOf(m) {
+		for _, d := range mm.ClassDirs {
+			if !slices.ContainsFunc(dirs, func(x string) bool { return filepath.ToSlash(x) == d }) {
+				dirs = append(dirs, d)
+			}
+		}
+	}
 	var modules []project.Module
 	json.Unmarshal([]byte(m.MetaValue("module_paths")), &modules)
 	lists := make([][]string, len(dirs)+1)
@@ -124,14 +132,14 @@ func inputDiffers(m *snapshot.Map, path string, k int) bool {
 }
 
 // upToDate: whether the map at `snap` was built by this binary from the same modules and inputs.
-func UpToDate(snap, root string, modules []project.Module) bool {
+func UpToDate(snap, root string, modules, missing []project.Module) bool {
 	m, err := snapshot.LoadSnapshot(snap)
 	if err != nil {
 		return false
 	}
 	if m.MetaValue("index_version") != snapshot.IndexVersion || m.MetaValue("tool_sha1") != snapshot.ToolSha1() ||
 		m.MetaValue("root") != root || m.MetaValue("class_dirs") != project.ClassDirsJSON(root, modules) || m.MetaValue("config") != config.Cfg.JSON() ||
-		m.MetaValue("module_paths") != project.ModulePathsJSON(modules) ||
+		m.MetaValue("module_paths") != project.ModulePathsJSON(modules) || m.MetaValue("missing_modules") != project.MissingJSON(root, missing) ||
 		m.Module.Dir.Len() != len(modules) {
 		return false
 	}
@@ -142,6 +150,47 @@ func UpToDate(snap, root string, modules []project.Module) bool {
 	}
 	c, a, r := staleInputs(m, root)
 	return len(c)+len(a)+len(r) == 0
+}
+
+type missingModule struct {
+	Module    string   `json:"module"`
+	ClassDirs []string `json:"class_dirs"`
+}
+
+// missingOf: the modules with sources and no classes when the map was built (project.MissingJSON).
+func missingOf(m *snapshot.Map) []missingModule {
+	var out []missingModule
+	json.Unmarshal([]byte(m.MetaValue("missing_modules")), &out)
+	return out
+}
+
+func (g *Graph) missingNames() []string {
+	out := []string{}
+	for _, mm := range missingOf(g.m) {
+		out = append(out, mm.Module)
+	}
+	return out
+}
+
+// reportMissing: warns of a map without the modules not compiled when it was built: an answer may
+// leave out what is in them; with --strict that is an error (exit 3).
+func (g *Graph) reportMissing(strict bool, code int) int {
+	names := g.missingNames()
+	if len(names) == 0 {
+		return code
+	}
+	more := ""
+	if len(names) > 5 {
+		more = fmt.Sprintf(" and %d more", len(names)-5)
+	}
+	msg := fmt.Sprintf("the code map misses %d modules (not compiled): %s%s; compile their %s classes, then run `codemap build`",
+		len(names), strings.Join(names[:min(5, len(names))], ", "), more, config.Cfg.Variant)
+	if strict {
+		fmt.Fprintln(os.Stderr, "error: "+msg)
+		return exitStale
+	}
+	fmt.Fprintln(os.Stderr, "warning: "+msg)
+	return code
 }
 
 // staleInfo: the changed inputs by kind, and the source and resource files they are or belong to (a

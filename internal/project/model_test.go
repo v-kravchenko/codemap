@@ -43,31 +43,45 @@ func TestBuildFilesSha1(t *testing.T) {
 func TestModelModules(t *testing.T) {
 	root := t.TempDir()
 	writeFiles(t, root, map[string]string{"settings.gradle": "", "b/build.gradle": "", "a/x/build.gradle": "",
-		"a/x/build/classes/C.class": "", "b/build/classes/C.class": "", "a-b/build.gradle": ""})
+		"a/x/build/classes/C.class": "", "b/build/classes/C.class": "", "a-b/build.gradle": "",
+		"a-b/src/main/kotlin/A.kt": "", "c/build.gradle": "", "c/build/classes/.keep": "", "c/src/main/kotlin/C.kt": "",
+		"d/build.gradle": "", "d/src/main/res/values/v.xml": ""})
 	v := func(dir string) map[string]ModelVariant {
 		return map[string]ModelVariant{"debug": {Classes: []string{dir + "/build/classes"},
-			CompileTasks: []string{":" + dir + ":compileDebugKotlin"}, Res: []string{dir + "/src/main/res"}}}
+			CompileTasks: []string{":" + dir + ":compileDebugKotlin"}, Sources: []string{dir + "/src/main/kotlin"},
+			Res: []string{dir + "/src/main/res"}}}
 	}
 	m := &ProjectModel{Version: 1, Variants: []string{"debug"}, Modules: []ModelModule{
 		{Path: ":b", Dir: "b", Variants: v("b")}, {Path: ":a-b", Dir: "a-b", Variants: v("a-b")},
-		{Path: ":a:x", Dir: "a/x", Variants: v("a/x")}}}
+		{Path: ":a:x", Dir: "a/x", Variants: v("a/x")}, {Path: ":c", Dir: "c", Variants: v("c")},
+		{Path: ":d", Dir: "d", Variants: v("d")}}}
 	m.Generated.InputsSha1 = buildFilesSha1(root)
-	mods, err := ModelModules(root, m, "debug")
+	mods, missing, err := ModelModules(root, m, "debug")
 	if err != nil {
 		t.Fatal(err)
 	}
-	var dirs []string
-	for _, x := range mods {
-		dirs = append(dirs, x.Dir)
+	dirs := func(mods []Module) []string {
+		var out []string
+		for _, x := range mods {
+			out = append(out, x.Dir)
+		}
+		return out
 	}
-	if !slices.Equal(dirs, []string{"a/x", "b"}) { // a-b not compiled; the tree walk order
-		t.Errorf("modules %v", dirs)
+	if !slices.Equal(dirs(mods), []string{"a/x", "b", "c"}) { // a-b, d not compiled; the tree walk order
+		t.Errorf("modules %v", dirs(mods))
 	}
-	if _, err := ModelModules(root, m, "release"); err == nil || !strings.Contains(err.Error(), `no variant "release"`) {
+	// a-b and c have sources and no class file; d has none to compile
+	if !slices.Equal(dirs(missing), []string{"a-b", "c"}) {
+		t.Errorf("missing %v", dirs(missing))
+	}
+	if got := MissingJSON(root, missing); got != `[{"module":"a-b","class_dirs":["a-b/build/classes"]},{"module":"c","class_dirs":["c/build/classes"]}]` {
+		t.Errorf("MissingJSON %s", got)
+	}
+	if _, _, err := ModelModules(root, m, "release"); err == nil || !strings.Contains(err.Error(), `no variant "release"`) {
 		t.Errorf("unknown variant: %v", err)
 	}
 	writeFiles(t, root, map[string]string{"b/build.gradle": "changed"})
-	if _, err := ModelModules(root, m, "debug"); err == nil || !strings.Contains(err.Error(), "run `codemap init`") {
+	if _, _, err := ModelModules(root, m, "debug"); err == nil || !strings.Contains(err.Error(), "run `codemap init`") {
 		t.Errorf("changed build files: %v", err)
 	}
 }

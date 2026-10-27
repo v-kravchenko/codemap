@@ -82,3 +82,41 @@ func TestSnapshotDir(t *testing.T) {
 		}
 	}
 }
+
+// TestMissingModules: a module of the model with sources and no classes is named by the build, warned
+// of by every query (an error with --strict), and its classes compiled since make the map stale.
+func TestMissingModules(t *testing.T) {
+	root := fixture.FixtureRoot(t)
+	model := `{"version": 1, "variants": ["debug"], "modules": [
+	  {"path": ":app", "dir": "app", "variants": {"debug": {"classes": ["app/classes"], "sources": ["app/src/main/java"],
+	    "res": ["app/src/main/res"], "manifests": ["app/src/main/AndroidManifest.xml"]}}},
+	  {"path": ":lib", "dir": "lib", "variants": {"debug": {"classes": ["lib/classes"], "sources": ["lib/src/main/kotlin"]}}}]}`
+	for rel, text := range map[string]string{"build/codemap/gradle-model.json": model, "lib/src/main/kotlin/L.kt": "class L"} {
+		os.MkdirAll(filepath.Join(root, filepath.Dir(rel)), 0o755)
+		os.WriteFile(filepath.Join(root, rel), []byte(text), 0o644)
+	}
+	run := func(args ...string) (string, error) {
+		cmd := exec.Command(os.Args[0], args...)
+		cmd.Dir, cmd.Env = root, append(os.Environ(), "CODEMAP_AS_MAIN=1")
+		out, err := cmd.CombinedOutput()
+		return string(out), err
+	}
+	if out, err := run("build"); err != nil || !strings.Contains(out, "code map: 1 of 2 modules compiled") {
+		t.Fatalf("build: %v\n%s", err, out)
+	}
+	if out, err := run("screens", "--json"); err != nil || !strings.Contains(out, `"missing_modules": [
+        "lib"
+      ]`) || !strings.Contains(out, "warning: the code map misses 1 modules (not compiled): lib;") {
+		t.Errorf("screens: %v\n%.1500s", err, out)
+	}
+	out, err := run("screens", "--strict")
+	if e, ok := err.(*exec.ExitError); !ok || e.ExitCode() != 3 || !strings.Contains(out, "error: the code map misses") ||
+		strings.Contains(out, "Screens") {
+		t.Errorf("screens --strict: %v\n%.400s", err, out)
+	}
+	os.MkdirAll(filepath.Join(root, "lib/classes"), 0o755)
+	os.WriteFile(filepath.Join(root, "lib/classes/L.class"), nil, 0o644)
+	if out, _ := run("screens", "--json"); !strings.Contains(out, `"classes": 1,`) {
+		t.Errorf("classes of lib compiled since: not stale\n%.1500s", out)
+	}
+}

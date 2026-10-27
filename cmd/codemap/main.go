@@ -139,9 +139,9 @@ func buildCmd(args []string) {
 		c.Variant = *variant
 	}
 	config.ApplyConfig(c)
-	var modules []project.Module
+	var modules, missing []project.Module
 	if pm, err := project.LoadModel(abs); err == nil {
-		if modules, err = project.ModelModules(abs, pm, c.Variant); err != nil {
+		if modules, missing, err = project.ModelModules(abs, pm, c.Variant); err != nil {
 			util.Fail("%v", err)
 		}
 	} else if !os.IsNotExist(err) {
@@ -152,7 +152,7 @@ func buildCmd(args []string) {
 	if len(modules) == 0 {
 		util.Fail("No compiled %s classes under %s: compile the %s variant first.", c.Variant, abs, c.Variant)
 	}
-	if !*force && query.UpToDate(*out, abs, modules) {
+	if !*force && query.UpToDate(*out, abs, modules, missing) {
 		r, _ := filepath.Rel(abs, *out)
 		fmt.Fprintf(os.Stderr, "code map is up to date: %s (--force rebuilds it)\n", r)
 		return
@@ -168,7 +168,7 @@ func buildCmd(args []string) {
 	m := b.Map(map[string]string{"index_version": snapshot.IndexVersion, "tool_sha1": snapshot.ToolSha1(), "git_head": head,
 		"dirty": dirty, "inputs_sha1": inputsSha1(b), "built_at": fmt.Sprint(time.Now().Unix()), "root": abs,
 		"class_dirs": project.ClassDirsJSON(abs, modules), "config": c.JSON(),
-		"module_paths": project.ModulePathsJSON(modules)})
+		"module_paths": project.ModulePathsJSON(modules), "missing_modules": project.MissingJSON(abs, missing)})
 	b.Timed("columns", t)
 	t = time.Now()
 	_, capped := query.PrecomputeOpenedBy(m, abs, b.Jobs)
@@ -183,6 +183,14 @@ func buildCmd(args []string) {
 	}
 	b.Timed("write snapshot", t)
 	r, _ := filepath.Rel(abs, *out)
-	fmt.Fprintf(os.Stderr, "code map: %d modules, %s classes, %d nodes, %d edges, %d screens, %.1fs -> %s\n",
-		len(modules), b.Stats["class_files"], len(b.Nodes), len(b.Edges), len(b.Screens), time.Since(t0).Seconds(), r)
+	mods := fmt.Sprintf("%d modules", len(modules))
+	if len(missing) > 0 {
+		all := map[string]bool{}
+		for _, m := range slices.Concat(modules, missing) {
+			all[m.Dir] = true
+		}
+		mods = fmt.Sprintf("%d of %d modules compiled", len(all)-len(missing), len(all))
+	}
+	fmt.Fprintf(os.Stderr, "code map: %s, %s classes, %d nodes, %d edges, %d screens, %.1fs -> %s\n",
+		mods, b.Stats["class_files"], len(b.Nodes), len(b.Edges), len(b.Screens), time.Since(t0).Seconds(), r)
 }

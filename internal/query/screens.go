@@ -184,13 +184,19 @@ func (g *Graph) cmdBuildInfo(o opts) int {
 			json.Unmarshal([]byte(v), &dirs)
 			v = fmt.Sprintf("%d directories", len(dirs))
 		}
+		if k == "missing_modules" {
+			v = fmt.Sprintf("%d", len(g.missingNames()))
+			if names := g.missingNames(); len(names) > 0 {
+				v += ": " + strings.Join(names, ", ")
+			}
+		}
 		if k == "config" || k == "module_paths" {
 			continue // long JSON: `codemap config print`, codemap.model.json
 		}
-		fmt.Printf("%-14s %s\n", k, v)
+		fmt.Printf("%-15s %s\n", k, v)
 	}
 	for _, k := range util.SortedKeys(screens) {
-		fmt.Printf("screens.%-6s %d\n", k, screens[k])
+		fmt.Printf("screens.%-7s %d\n", k, screens[k])
 	}
 	return exitOK
 }

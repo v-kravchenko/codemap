@@ -36,7 +36,7 @@ var (
 	commonFlags = []flagSpec{
 		optJSON, optDB, optVariant,
 		{name: "no-check", help: "skip the check that the map is newer than its inputs"},
-		{name: "strict", help: "exit 3 when the map is stale and the answer uses a changed file"},
+		{name: "strict", help: "exit 3 when the map misses modules not compiled, or is stale and the answer uses a changed file"},
 	}
 )
 
