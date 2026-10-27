@@ -277,12 +277,25 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 		{"changed", objs(changed)},
 		{"affected", objs(affected)},
 		{"screens", list(screens)},
+	}
+	if command == "changes" {
+		var removed any
+		if g.statusKnown {
+			rows := []any{}
+			for _, r := range g.removed {
+				rows = append(rows, obj{{"kind", r.kind}, {"name", r.name}, {"target", r.target}, {"module", r.module}, {"location", r.location}})
+			}
+			removed = rows
+		}
+		result = append(result, kv{"removed", removed})
+	}
+	result = append(result, obj{
 		{"hidden", countsObj(a.hidden)},
 		{"modules", countsObj(a.modules)},
 		{"packages", countsObj(a.packages)},
 		{"not_covered", list(ncJSON)},
 		{"warnings", strs(a.warnings)},
-	}
+	}...)
 	if a.mf != nil {
 		result = append(result, kv{"hidden_by_module", obj{{"screens", a.outScreens}, {"affected", len(a.outSymbols)}}})
 	}
@@ -332,6 +345,12 @@ func (g *Graph) impactText(a *impactAnswer, o opts) {
 	}
 	if len(a.hidden) > 0 {
 		fmt.Println("\n" + hiddenLine(a.hidden))
+	}
+	if len(g.removed) > 0 {
+		fmt.Printf("\nRemoved: %d\n", len(g.removed))
+		for _, r := range g.removed {
+			fmt.Printf("  %-9s %-50s %-29s %s\n", r.kind, r.name, r.module, r.location)
+		}
 	}
 	if a.outScreens+len(a.outSymbols) > 0 {
 		fmt.Println("\n" + outsideLine(fmt.Sprintf("%d screens", a.outScreens), fmt.Sprintf("%d symbols", len(a.outSymbols))))

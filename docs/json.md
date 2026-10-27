@@ -293,6 +293,11 @@ Result: the shape of `impact` (it calls the same `reportImpactWith`), plus since
 - `changed[].qualifiers` — for a resource, the qualifiers of the directories of its changed files,
   sorted (`["night"]` for `values-night/`); `[]` when an unqualified file changed (every
   configuration); `null` for code.
+- `removed` — the screens the change removes, `{kind, name, target, module, location}` with the
+  location in the base, sorted by kind, module, name: top-level activities, fragments, dialogs and
+  previews the base's text of a deleted or changed source declares and neither the map nor the
+  head's text has (docs/decisions/0021). A `--diff` without `--base` sees only deleted files;
+  `null` for `--files` without `--base`.
 - `screens[].qualifiers` — the qualifiers whose changes alone reach the screen (`["night"]`: only the
   night render changes); `null` when code or an unqualified resource reaches it.
 
@@ -314,6 +319,7 @@ resolved head commit or `"WORKTREE"`.
   ],
   "affected": ["... same shape as impact ..."],
   "screens": ["..."],
+  "removed": null,
   "hidden": {}, "modules": { "app": 26 }, "packages": { "navapp.impact": 23, "navapp.views": 1 },
   "not_covered": [], "warnings": []
 }

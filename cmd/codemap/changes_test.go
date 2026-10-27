@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -285,5 +286,69 @@ func TestChangesDiffMismatch(t *testing.T) {
 	}
 	if out, code := run("changes", "--diff", "mr.diff", "--no-check", "--strict"); code != 3 || !strings.Contains(out, "error: "+warn) {
 		t.Errorf("a diff of another revision, --strict: want exit 3, got %d\n%s", code, out)
+	}
+}
+
+// TestChangesRemoved: the screens the base's text declares and the head has not, from a deleted
+// file and from one that lost a class; a --diff alone has the deleted file's text only, --files
+// without --base nothing.
+func TestChangesRemoved(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("no git")
+	}
+	root := fixture.FixtureRoot(t)
+	removeGitLate(t, root)
+	run := func(name string, args ...string) string {
+		cmd := exec.Command(name, args...)
+		cmd.Dir, cmd.Env = root, append(os.Environ(), gitTestEnv...)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("%s %s: %v\n%s", name, strings.Join(args, " "), err, out)
+		}
+		return string(out)
+	}
+	dir := "app/src/main/java/navapp/impact/"
+	gone := "package navapp.impact\n\nimport androidx.compose.runtime.Composable\nimport navapp.sections.Preview\n\n" +
+		"class GoneActivity : BaseActivity() {\n    override fun observeLogout() = Unit\n}\n\n" +
+		"@Preview\n@Composable\nfun GonePreview() = Unit\n\n@Composable\nfun GoneContent() = Unit\n"
+	overrides, _ := os.ReadFile(filepath.Join(root, dir+"Overrides.kt"))
+	os.WriteFile(filepath.Join(root, dir+"Gone.kt"), []byte(gone), 0o644)
+	os.WriteFile(filepath.Join(root, dir+"Overrides.kt"), append(slices.Clone(overrides), "\nclass OldActivity(x: Int) : navapp.impact.BaseActivity()\n"...), 0o644)
+	run("git", "init", "-q", "-b", "main")
+	run("git", "add", ".")
+	run("git", "commit", "-qm", "base")
+	os.Remove(filepath.Join(root, dir+"Gone.kt"))
+	os.WriteFile(filepath.Join(root, dir+"Overrides.kt"), overrides, 0o644)
+	run("git", "commit", "-qam", "remove screens")
+	run(os.Args[0], "build")
+	removed := func(args ...string) []string {
+		var a struct {
+			Removed *[]struct{ Kind, Name, Target, Module, Location string }
+		}
+		if err := json.Unmarshal([]byte(run(os.Args[0], append([]string{"changes", "--json", "--no-check"}, args...)...)), &a); err != nil {
+			t.Fatal(err)
+		}
+		if a.Removed == nil {
+			return nil
+		}
+		out := []string{}
+		for _, r := range *a.Removed {
+			out = append(out, strings.Join([]string{r.Kind, r.Name, r.Target, r.Module, r.Location}, " "))
+		}
+		return out
+	}
+	gonePreview := "preview Gone.GonePreview navapp.impact.GoneKt.GonePreview app " + dir + "Gone.kt:12"
+	goneActivity := "activity GoneActivity navapp.impact.GoneActivity app " + dir + "Gone.kt:6"
+	oldActivity := "activity OldActivity navapp.impact.OldActivity app " + dir + "Overrides.kt:" + strconv.Itoa(strings.Count(string(overrides), "\n")+2)
+	if got, want := removed("--base", "HEAD~1"), []string{goneActivity, oldActivity, gonePreview}; !slices.Equal(got, want) {
+		t.Errorf("changes --base HEAD~1: removed\n%v\nwant\n%v", strings.Join(got, "\n"), strings.Join(want, "\n"))
+	}
+	os.WriteFile(filepath.Join(root, "mr.diff"), []byte(run("git", "diff", "HEAD~1", "HEAD")), 0o644)
+	if got, want := removed("--diff", "mr.diff"), []string{goneActivity, gonePreview}; !slices.Equal(got, want) {
+		t.Errorf("changes --diff alone: removed %v, want %v", got, want)
+	}
+	os.WriteFile(filepath.Join(root, "files.txt"), []byte(dir+"Gone.kt\n"), 0o644)
+	if got := removed("--files", "files.txt"); got != nil {
+		t.Errorf("changes --files without --base: removed %v, want null", got)
 	}
 }

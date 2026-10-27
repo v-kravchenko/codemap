@@ -92,6 +92,7 @@ type Graph struct {
 	bases                      map[string]*fileBase  // changes: the changed files as the base had them
 	statusKnown                bool                  // changes: whether the input tells added from modified
 	resChanges                 map[int32][]resChange // changes: the changed files of each resource seed
+	removed                    []removedScreen       // changes: the screens it removes, nil when nothing tells
 }
 
 func NewGraph(m *snapshot.Map, root string) *Graph {

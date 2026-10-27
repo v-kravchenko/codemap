@@ -86,12 +86,19 @@ func splitLines(text string) []string {
 	return lines
 }
 
-// parseDiff: ({path: new-side lines, nil for a new file}, deleted paths, {moved path: old path},
-// {path: the added lines alone}, {path: {line: text}} of the new side's context and added lines)
-// of a unified diff.
-func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map[string]string, map[string]lineSet, map[string]map[int]string) {
+// diffInput: a unified diff read.
+type diffInput struct {
+	lines   map[string]lineSet        // path: new-side lines, nil for a new file
+	deleted map[string]bool           // the deleted paths
+	moved   map[string]string         // moved path: old path
+	plus    map[string]lineSet        // path: the added lines alone
+	post    map[string]map[int]string // path: {line: text} of the new side's context and added lines
+	minus   map[string][]string       // path: its removed lines, the whole text of a deleted file
+}
+
+func (g *Graph) parseDiff(text string) diffInput {
 	out, deleted, moved, plus := map[string]lineSet{}, map[string]bool{}, map[string]string{}, map[string]lineSet{}
-	post := map[string]map[int]string{}
+	post, minus := map[string]map[int]string{}, map[string][]string{}
 	var path, oldPath string
 	hasPath, hasOld := false, false
 	oldLeft, newLeft, newLine := 0, 0, 0
@@ -144,6 +151,9 @@ func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map
 			case "-":
 				removed = true
 				oldLeft--
+				if hasOld {
+					minus[oldPath] = append(minus[oldPath], line[1:])
+				}
 			case "\\":
 			default:
 				if removed {
@@ -213,7 +223,7 @@ func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map
 			}
 		}
 	}
-	return out, deleted, moved, plus, post
+	return diffInput{out, deleted, moved, plus, post, minus}
 }
 
 // diffMismatches: the files of a diff whose context and added lines are not those of the sources
@@ -331,6 +341,7 @@ func (g *Graph) cmdChanges(o opts) int {
 	}
 	var linesByPath, plus map[string]lineSet
 	var mismatched []string
+	var gone map[string][]string
 	deleted, moved := map[string]bool{}, map[string]string{}
 	files := o.files != "" // a whole file listed is not a new one
 	var base any
@@ -344,9 +355,9 @@ func (g *Graph) cmdChanges(o opts) int {
 		input := "files"
 		if o.diff != "" {
 			input = "diff"
-			var post map[string]map[int]string
-			linesByPath, deleted, moved, plus, post = g.parseDiff(readInput(o.diff))
-			mismatched = g.diffMismatches(post, deleted, head)
+			d := g.parseDiff(readInput(o.diff))
+			linesByPath, deleted, moved, plus, gone = d.lines, d.deleted, d.moved, d.plus, d.minus
+			mismatched = g.diffMismatches(d.post, deleted, head)
 		} else {
 			linesByPath = g.parseFileList(readInput(o.files))
 		}
@@ -363,7 +374,8 @@ func (g *Graph) cmdChanges(o opts) int {
 		if head != "" {
 			args = append(args, head)
 		}
-		linesByPath, deleted, moved, plus, _ = g.parseDiff(g.git(append(args, "--")...))
+		d := g.parseDiff(g.git(append(args, "--")...))
+		linesByPath, deleted, moved, plus = d.lines, d.deleted, d.moved, d.plus
 		if head == "" {
 			for _, f := range splitLines(g.git("ls-files", "--others", "--exclude-standard")) {
 				linesByPath[f] = nil
@@ -433,6 +445,33 @@ func (g *Graph) cmdChanges(o opts) int {
 		if source {
 			analysed = append(analysed, path)
 		}
+	}
+	g.removed = nil
+	if g.statusKnown {
+		var sources []string
+		for _, p := range util.SortedKeys(linesByPath) {
+			if (strings.HasSuffix(p, ".kt") || strings.HasSuffix(p, ".java")) && !strings.Contains(p, "/src/test") && !strings.Contains(p, "/src/androidTest") {
+				sources = append(sources, p)
+			}
+		}
+		g.removed = g.removedScreens(sources, func(path string) (string, string, string, bool) {
+			if deleted[path] || head == "" && !exists(filepath.Join(g.root, path)) {
+				if baseRev != "" {
+					text, ok := g.readAt(path, baseRev)
+					return text, path, "", ok
+				}
+				lines, ok := gone[path]
+				return strings.Join(lines, "\n"), path, "", ok
+			}
+			if b := g.bases[path]; b != nil && b.hasOld {
+				old, has := moved[path]
+				if !has {
+					old = path
+				}
+				return b.old, old, b.cur, true
+			}
+			return "", "", "", false
+		})
 	}
 	if head == "" {
 		builtAt, _ := strconv.ParseInt(g.m.MetaValue("built_at"), 10, 64)
