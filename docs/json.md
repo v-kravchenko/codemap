@@ -465,7 +465,7 @@ codemap screens [FILTER] [--kind KIND] [--no-preview] [--module GLOB]... [--host
   class (`base`: every screen extending it opens the screen, such as a popup `BaseActivity` shows)
   counts as reached. A dead-screen audit, as far as the code map sees.
 - `--no-preview` — only activities, fragments, dialogs and routes no preview draws (`previews`
-  empty): screens no screenshot checks. Also in `impact` and `changes`.
+  empty): screens no preview shows. Also in `impact` and `changes`.
 - `--kind KIND`, `--json`.
 
 Result fields: `screens` — every matching screen, `{kind, module, name, target, host, hosts,

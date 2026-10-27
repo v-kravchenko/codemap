@@ -14,16 +14,16 @@ notes from its section here (`tools/release-notes.sh`).
   from `build`; their classes compiled since make the map stale. Such a map used to answer as if
   whole. `schema_version` 3.7.0.
 - `changes` tells what the change adds: `changed[].status` `added` or `modified`, `screens[].status`
-  `new`, `changed` (depth 0) or `affected`, and `(added)`/`new` in the text. A screenshot job no
-  longer needs the base's sources to know which previews have no before.
+  `new`, `changed` (depth 0) or `affected`, and `(added)`/`new` in the text, so a
+  consumer knows what has no before without the base's sources.
 - Screens name their previews: `previews` in `screens`, `impact` and `changes`, a preview's
   `content` (the composables it draws), and `--no-preview` for the screens no preview shows. A
   preview goes with the screen whose own composables it draws, not a theme or a shared component.
   The map format changes (index 10): run `codemap build`.
 - `changes` names the resource qualifiers of a change: `changed[].location` is the changed file
   (`values-night/colors.xml:12`, not `values/`), `changed[].qualifiers` its qualifiers and
-  `screens[].qualifiers` those a screen is reached by alone, `only night` in the text, so a
-  night-only change needs only the night screenshots.
+  `screens[].qualifiers` those a screen is reached by alone, `only night` in the text: a
+  night-only change touches only the night configuration of its screens.
 
 ## [0.4.2] - 2026-10-27
 

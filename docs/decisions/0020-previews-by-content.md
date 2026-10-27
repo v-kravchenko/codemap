@@ -5,8 +5,8 @@
 
 ## Context
 
-A screenshot job renders previews; a reviewer wants to know which screen each shows and which
-changed screens no preview shows. The map related a screen to the previews in the files of the
+A review of a change wants to know which screen each preview shows and which changed screens no
+preview shows. The map related a screen to the previews in the files of the
 composables it calls, but no query read it, and a file often holds several screens (a NavHost
 file with its destinations, the fixture's `SectionsApp.kt`): each preview went with all of them.
 
