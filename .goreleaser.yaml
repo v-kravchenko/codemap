@@ -22,8 +22,7 @@ archives:
 checksum:
   name_template: checksums.txt
 
-changelog:
-  disable: true
+# no changelog section: the notes are --release-notes (CHANGELOG.md); changelog.disable would drop them too
 
 release:
   github: # named here, not read from the git remote, so a local check works too
