@@ -82,9 +82,9 @@ itself.
   be answered; `codemap init`'s Gradle model would need to capture the resolved classpath and
   module graph, not just each module's own class directories.
 - **Split `internal/query` into sub-packages** (one per command: impact, nav-path, graph,
-  changes) now that it's ~7,000 lines all on one `*Graph` type — tech debt, not a feature, but
-  it's becoming the main cost of making a precision fix without regressing an unrelated
-  command.
+  changes): it's ~7,500 lines all on one `*Graph` type, a file per command since the split of
+  cli.go and nav.go; packages would mean exporting the ~80 `Graph` helpers the commands share —
+  tech debt, not a feature.
 - **Less memory in `build`.** A 34,500-class project builds in 3.2s at 2.4 GB peak RSS for an
   82 MB map; the profile shows small map and slice churn (map hashing, memmove, GC), no single
   hotspot. Fine on a developer machine; worth trimming (release per-class structures sooner, fewer

@@ -104,10 +104,10 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   no way to hold two different configs (e.g. two variants, or a project and a lookup project)
   loaded in the same process, which also means the config can't easily be made per-goroutine
   if a future command wanted to analyse several variants in one run.
-- `internal/query` is a single ~7,000-line package with every query (`used-by`, `impact`,
-  `changes`, `nav-path`, `graph`, `screens`) implemented as a method on one `*Graph` type; there
-  is no sub-package boundary between, say, the nav-path walk and the impact walk, so a change
-  to shared helpers can affect every command at once.
+- `internal/query` is a single ~7,500-line package with every query (`used-by`, `impact`,
+  `changes`, `nav-path`, `graph`, `screens`) implemented as a method on one `*Graph` type; each
+  command has a file of its own, but there is no sub-package boundary between, say, the nav-path
+  walk and the impact walk, so a change to shared helpers can affect every command at once.
 - `codemap init`'s project model (`codemap.model.json`) only tracks what Gradle reports for
   modules, class directories, source sets, resources and manifests; it does not capture the
   module dependency graph or the classpath of library dependencies, so nothing downstream can
