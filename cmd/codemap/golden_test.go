@@ -95,6 +95,7 @@ var goldenText = [][]string{
 	{"nav-path", "Settings", "--via", "Profile"},
 	{"graph", "MainActivity", "--to", "InfoDialog"},
 	{"changes", "--files", "changed.txt"},
+	{"changes", "--files", "changed.txt", "--format", "targets"},
 }
 
 // TestGolden: the --json of goldenCalls on the fixture, without the run's meta, against

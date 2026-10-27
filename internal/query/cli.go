@@ -38,6 +38,7 @@ var (
 type opts struct {
 	db, variant, to, base, head, diff, files, from, entry, direction, host string
 	json, all, noPaths, noSelf, noDI, noCheck, nav                         bool
+	format                                                                 string
 	strict, verbose, info, ways, in, unreachable, noPreview                bool
 	depth, limit                                                           int
 	kinds, pos, via, avoid, modules, types                                 []string
@@ -51,7 +52,7 @@ func (o *opts) fields() (map[string]*bool, map[string]*string, map[string]*[]str
 		"no-check": &o.noCheck, "strict": &o.strict, "nav": &o.nav, "ways": &o.ways, "in": &o.in,
 		"no-preview": &o.noPreview}
 	values := map[string]*string{"db": &o.db, "variant": &o.variant, "to": &o.to, "base": &o.base, "head": &o.head, "diff": &o.diff,
-		"files": &o.files, "host": &o.host, "from": &o.from, "entry": &o.entry, "direction": &o.direction}
+		"files": &o.files, "format": &o.format, "host": &o.host, "from": &o.from, "entry": &o.entry, "direction": &o.direction}
 	lists := map[string]*[]string{"kind": &o.kinds, "type": &o.types, "via": &o.via, "avoid": &o.avoid,
 		"module": &o.modules}
 	numbers := map[string]*int{"depth": &o.depth, "limit": &o.limit}

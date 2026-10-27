@@ -26,6 +26,8 @@ notes from its section here (`tools/release-notes.sh`).
   night-only change touches only the night configuration of its screens.
 - `changes` names the screens a change removes: `removed[]`, the activities, fragments, dialogs and
   previews the base's text declares and the head no longer has, and `Removed:` in the text.
+- `changes --format targets`: a tab-separated line per screen (status, depth, target, module,
+  qualifiers), new first, for a script that needs no JSON parser.
 - `changes --diff` checks the diff against the sources of the map: a diff of another revision, whose
   lines would name other symbols, gives a warning, and exit 3 with `--strict`.
 

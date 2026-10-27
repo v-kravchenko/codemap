@@ -67,6 +67,7 @@ var commands = []command{
 			{name: "head", arg: "REF", help: "the commit to compare instead of the working tree; the map must be built from it"},
 			{name: "diff", arg: "-|FILE", help: "a unified diff from stdin or a file instead of git diff"},
 			{name: "files", arg: "-|FILE", help: "lines of path, path:N or path:N-M instead of a diff"},
+			{name: "format", arg: "targets", help: "a line per screen: status, depth, target, module, qualifiers, tab-separated, new first (not with --json)"},
 			optNav, optDepth, optKind, optNoPrev, optNoPaths, optModule}},
 	{name: "nav-path", args: "SCREEN", query: true, about: "How a user gets to a screen: the cheapest way from an entry, and the branches.",
 		flags: []flagSpec{

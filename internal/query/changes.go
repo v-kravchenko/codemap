@@ -329,6 +329,12 @@ func (g *Graph) cmdChanges(o opts) int {
 	if o.diff != "" && o.files != "" {
 		panic(util.UserError("--diff and --files cannot be combined"))
 	}
+	if o.format != "" && o.format != "targets" {
+		panic(util.UserError("--format: " + o.format + " is not a format (targets)"))
+	}
+	if o.format != "" && o.json {
+		panic(util.UserError("--format and --json cannot be combined"))
+	}
 	checkRef("--base", o.base)
 	checkRef("--head", o.head)
 	head := ""

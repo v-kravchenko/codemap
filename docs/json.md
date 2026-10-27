@@ -270,6 +270,9 @@ codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--na
 - `--diff -|FILE` — read a unified diff from stdin (`-`) or a file instead of running `git diff`.
 - `--files -|FILE` — read a list of `path`, `path:N` or `path:N-M` lines instead of a diff.
 - `--depth`, `--kind`, `--nav`, `--no-paths`, `--module`, `--json` — as in `impact`.
+- `--format targets` — instead of the text, a line per screen for a script: status, depth, target,
+  module and qualifiers (comma-separated, empty for every configuration), tab-separated, sorted by
+  status (`new`, `changed`, `affected`), depth, target; warnings go to stderr. Not with `--json`.
 
 `--diff` and `--files` are mutually exclusive. Without either, `changes` runs `git diff` itself
 between the resolved base and `--head` (or the working tree).

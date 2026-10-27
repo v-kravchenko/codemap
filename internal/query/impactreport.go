@@ -4,6 +4,7 @@ package query
 
 import (
 	"fmt"
+	"os"
 	"sort"
 	"strings"
 	"time"
@@ -118,7 +119,9 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 		a.seedIDs[s.N] = true
 	}
 	g.impactSymbols(a)
-	if o.json {
+	if o.format == "targets" {
+		g.impactTargets(a)
+	} else if o.json {
 		g.impactJSON(a, command)
 	} else {
 		g.impactText(a, o)
@@ -412,6 +415,42 @@ func (g *Graph) impactScreenText(a *impactAnswer, o opts, kind string, it screen
 	}
 	if !o.noPaths {
 		fmt.Println("      " + g.formatPath(g.path(a.w, a.w.Screens[it.n])))
+	}
+}
+
+// impactTargets: the screens of changes as tab-separated lines for a script, new first, then
+// changed, then affected, each by depth and target: status, depth, target, module, qualifiers
+// (comma-separated, empty for every configuration).
+func (g *Graph) impactTargets(a *impactAnswer) {
+	rank := map[string]int{"new": 0, "changed": 1, "affected": 2}
+	type row struct {
+		status string
+		it     screenItem
+	}
+	var rows []row
+	for _, kind := range util.SortedKeys(a.byKind) {
+		for _, it := range a.byKind[kind] {
+			rows = append(rows, row{g.screenStatus(it.n, it.depth), it})
+		}
+	}
+	sort.SliceStable(rows, func(i, j int) bool {
+		a, b := rows[i], rows[j]
+		if a.status != b.status {
+			return rank[a.status] < rank[b.status]
+		}
+		if a.it.depth != b.it.depth {
+			return a.it.depth < b.it.depth
+		}
+		if a.it.target != b.it.target {
+			return a.it.target < b.it.target
+		}
+		return a.it.mod < b.it.mod
+	})
+	for _, r := range rows {
+		fmt.Printf("%s\t%d\t%s\t%s\t%s\n", r.status, r.it.depth, r.it.target, r.it.mod, strings.Join(a.qualifiers[r.it.n], ","))
+	}
+	for _, w := range a.warnings {
+		fmt.Fprintln(os.Stderr, "warning: "+w)
 	}
 }
 
