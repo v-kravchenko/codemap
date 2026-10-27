@@ -24,6 +24,8 @@ notes from its section here (`tools/release-notes.sh`).
   (`values-night/colors.xml:12`, not `values/`), `changed[].qualifiers` its qualifiers and
   `screens[].qualifiers` those a screen is reached by alone, `only night` in the text: a
   night-only change touches only the night configuration of its screens.
+- `changes --diff` checks the diff against the sources of the map: a diff of another revision, whose
+  lines would name other symbols, gives a warning, and exit 3 with `--strict`.
 
 ## [0.4.2] - 2026-10-27
 

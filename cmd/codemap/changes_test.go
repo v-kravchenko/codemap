@@ -255,3 +255,35 @@ func TestChangesQualifiers(t *testing.T) {
 		}
 	}
 }
+
+// TestChangesDiffMismatch: a diff whose lines are not those of the map's sources (another
+// revision) is answered with a warning, and refused with --strict.
+func TestChangesDiffMismatch(t *testing.T) {
+	root := fixture.FixtureRoot(t)
+	run := func(args ...string) (string, int) {
+		cmd := exec.Command(os.Args[0], args...)
+		cmd.Dir, cmd.Env = root, append(os.Environ(), "CODEMAP_AS_MAIN=1")
+		out, _ := cmd.CombinedOutput()
+		return string(out), cmd.ProcessState.ExitCode()
+	}
+	run("build")
+	rel := "app/src/main/java/navapp/impact/Overrides.kt"
+	data, _ := os.ReadFile(filepath.Join(root, rel))
+	line := strings.Split(string(data), "\n")[8]
+	hunk := func(added string) {
+		diff := "--- a/" + rel + "\n+++ b/" + rel + "\n@@ -9 +9 @@\n-old\n+" + added + "\n"
+		os.WriteFile(filepath.Join(root, "mr.diff"), []byte(diff), 0o644)
+	}
+	const warn = "the diff does not match the sources of the code map"
+	hunk(line)
+	if out, code := run("changes", "--diff", "mr.diff", "--json", "--no-check", "--strict"); code != 0 || strings.Contains(out, warn) {
+		t.Errorf("a diff of the map's sources: exit %d\n%s", code, out)
+	}
+	hunk(line + " // another revision")
+	if out, code := run("changes", "--diff", "mr.diff", "--json", "--no-check"); code != 0 || !strings.Contains(out, warn+", its lines may name other symbols: "+rel) {
+		t.Errorf("a diff of another revision: want a warning, exit %d\n%s", code, out)
+	}
+	if out, code := run("changes", "--diff", "mr.diff", "--no-check", "--strict"); code != 3 || !strings.Contains(out, "error: "+warn) {
+		t.Errorf("a diff of another revision, --strict: want exit 3, got %d\n%s", code, out)
+	}
+}

@@ -87,9 +87,11 @@ func splitLines(text string) []string {
 }
 
 // parseDiff: ({path: new-side lines, nil for a new file}, deleted paths, {moved path: old path},
-// {path: the added lines alone}) of a unified diff.
-func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map[string]string, map[string]lineSet) {
+// {path: the added lines alone}, {path: {line: text}} of the new side's context and added lines)
+// of a unified diff.
+func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map[string]string, map[string]lineSet, map[string]map[int]string) {
 	out, deleted, moved, plus := map[string]lineSet{}, map[string]bool{}, map[string]string{}, map[string]lineSet{}
+	post := map[string]map[int]string{}
 	var path, oldPath string
 	hasPath, hasOld := false, false
 	oldLeft, newLeft, newLine := 0, 0, 0
@@ -108,6 +110,18 @@ func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map
 		mark(newLine - 1)
 		mark(newLine)
 	}
+	keep := func(line string) {
+		if !hasPath {
+			return
+		}
+		if post[path] == nil {
+			post[path] = map[int]string{}
+		}
+		if line != "" {
+			line = line[1:]
+		}
+		post[path][newLine] = line
+	}
 	for _, line := range splitLines(text) {
 		if oldLeft > 0 || newLeft > 0 {
 			tag := ""
@@ -118,6 +132,7 @@ func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map
 			case "+":
 				removed = false
 				mark(newLine)
+				keep(line)
 				if hasPath && out[path] != nil {
 					if plus[path] == nil {
 						plus[path] = lineSet{}
@@ -135,6 +150,7 @@ func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map
 					gap()
 					removed = false
 				}
+				keep(line)
 				newLine++
 				newLeft--
 				oldLeft--
@@ -197,7 +213,28 @@ func (g *Graph) parseDiff(text string) (map[string]lineSet, map[string]bool, map
 			}
 		}
 	}
-	return out, deleted, moved, plus
+	return out, deleted, moved, plus, post
+}
+
+// diffMismatches: the files of a diff whose context and added lines are not those of the sources
+// the map was built from (the working tree or head): a diff of another revision, whose lines would
+// name other symbols.
+func (g *Graph) diffMismatches(post map[string]map[int]string, deleted map[string]bool, head string) []string {
+	var out []string
+	for _, path := range util.SortedKeys(post) {
+		text, ok := g.readAt(path, head)
+		if deleted[path] || !ok {
+			continue
+		}
+		lines := splitLines(text)
+		for n, want := range post[path] {
+			if n < 1 || n > len(lines) || strings.TrimRight(lines[n-1], " \t") != strings.TrimRight(want, " \t") {
+				out = append(out, path)
+				break
+			}
+		}
+	}
+	return out
 }
 
 // parseFileList: {path: lines, nil for the whole file} of `path`, `path:N` or `path:N-M` lines.
@@ -293,6 +330,7 @@ func (g *Graph) cmdChanges(o opts) int {
 		headRef = "WORKTREE"
 	}
 	var linesByPath, plus map[string]lineSet
+	var mismatched []string
 	deleted, moved := map[string]bool{}, map[string]string{}
 	files := o.files != "" // a whole file listed is not a new one
 	var base any
@@ -306,7 +344,9 @@ func (g *Graph) cmdChanges(o opts) int {
 		input := "files"
 		if o.diff != "" {
 			input = "diff"
-			linesByPath, deleted, moved, plus = g.parseDiff(readInput(o.diff))
+			var post map[string]map[int]string
+			linesByPath, deleted, moved, plus, post = g.parseDiff(readInput(o.diff))
+			mismatched = g.diffMismatches(post, deleted, head)
 		} else {
 			linesByPath = g.parseFileList(readInput(o.files))
 		}
@@ -323,7 +363,7 @@ func (g *Graph) cmdChanges(o opts) int {
 		if head != "" {
 			args = append(args, head)
 		}
-		linesByPath, deleted, moved, plus = g.parseDiff(g.git(append(args, "--")...))
+		linesByPath, deleted, moved, plus, _ = g.parseDiff(g.git(append(args, "--")...))
 		if head == "" {
 			for _, f := range splitLines(g.git("ls-files", "--others", "--exclude-standard")) {
 				linesByPath[f] = nil
@@ -334,6 +374,19 @@ func (g *Graph) cmdChanges(o opts) int {
 	var seeds []Seed
 	var nc []notCovered
 	var warnings, analysed []string
+	if len(mismatched) > 0 {
+		more := ""
+		if len(mismatched) > 5 {
+			more = fmt.Sprintf(" and %d more", len(mismatched)-5)
+		}
+		msg := "the diff does not match the sources of the code map, its lines may name other symbols: " +
+			strings.Join(mismatched[:min(5, len(mismatched))], ", ") + more
+		if o.strict {
+			fmt.Fprintln(os.Stderr, "error: "+msg)
+			return exitStale
+		}
+		warnings = append(warnings, msg)
+	}
 	g.bases, g.statusKnown, g.resChanges = map[string]*fileBase{}, !files || baseRev != "", map[int32][]resChange{}
 	for _, path := range util.SortedKeys(linesByPath) {
 		lines := linesByPath[path]

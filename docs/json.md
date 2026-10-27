@@ -274,6 +274,10 @@ codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--na
 `--diff` and `--files` are mutually exclusive. Without either, `changes` runs `git diff` itself
 between the resolved base and `--head` (or the working tree).
 
+A `--diff` whose context and added lines differ from the files the map was built from (the working
+tree, or `--head`) is of another revision, and its line numbers may name other symbols: `warnings`
+says so and names the files; with `--strict` it is an error, exit 3, with no answer.
+
 Result: the shape of `impact` (it calls the same `reportImpactWith`), plus since 3.7.0:
 
 - `changed[].status` — `"added"` when the change adds the symbol (its file is new, or the base's text
