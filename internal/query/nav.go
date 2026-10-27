@@ -369,6 +369,18 @@ func statesOf(sids []int32) []navState {
 	return out
 }
 
+// navWalker is the state of one navWalk.
+type navWalker struct {
+	g        *Graph
+	lim      navLimits
+	r        *navResult
+	h        *navHeap
+	done     map[navState]bool
+	seen     map[int32]bool
+	roots    map[int32]bool
+	branchAt map[int32]int
+}
+
 // navWalk: the Dijkstra walk of nav-path over states (screen, host), from the states `starts` to the
 // screens that open them, back to entry screens.
 func (g *Graph) navWalk(starts []navState, lim navLimits) *navResult {
@@ -383,124 +395,151 @@ func (g *Graph) navWalk(starts []navState, lim navLimits) *navResult {
 		*h = append(*h, heapItem{0, g.screenName(st.sid), st.sid, g.hostStr(st.host), st.host})
 	}
 	heap.Init(h)
-	done, seen := map[navState]bool{}, map[int32]bool{}
-	roots := map[int32]bool{}
-	branchAt := map[int32]int{}
+	nw := &navWalker{g: g, lim: lim, r: r, h: h, done: map[navState]bool{}, seen: map[int32]bool{},
+		roots: map[int32]bool{}, branchAt: map[int32]int{}}
 	for h.Len() > 0 {
-		it := heap.Pop(h).(heapItem)
-		c, sid, host := it.c, it.sid, it.host
-		st := navState{sid, host}
-		if done[st] {
-			continue
-		}
-		done[st] = true
-		if lim.reached[sid] && host.none() {
-			r.known = &st
+		if nw.visit(heap.Pop(h).(heapItem)) {
 			break
 		}
-		if e := g.rootsOf(sid, host, lim); len(e) > 0 {
-			if !roots[sid] {
-				roots[sid] = true
-				r.roots = append(r.roots, navRoot{sid, st, e})
-			}
-			if lim.launcherOnly && e[0].kind == "launcher" ||
-				lim.anyEntry && slices.ContainsFunc(e, func(x navEntry) bool { return slices.Contains(entryKinds, x.kind) }) {
-				break
-			}
-			if r.depth[st] != 0 {
-				continue
-			}
+	}
+	nw.finish()
+	return r
+}
+
+// visit: the ways to a state popped from the heap; true: the walk is over.
+func (nw *navWalker) visit(it heapItem) bool {
+	g, r, lim := nw.g, nw.r, nw.lim
+	sid, host := it.sid, it.host
+	st := navState{sid, host}
+	if nw.done[st] {
+		return false
+	}
+	nw.done[st] = true
+	if lim.reached[sid] && host.none() {
+		r.known = &st
+		return true
+	}
+	if e := g.rootsOf(sid, host, lim); len(e) > 0 {
+		if !nw.roots[sid] {
+			nw.roots[sid] = true
+			r.roots = append(r.roots, navRoot{sid, st, e})
 		}
-		if lim.maxDepth >= 0 && r.depth[st] >= lim.maxDepth {
-			continue
+		if lim.launcherOnly && e[0].kind == "launcher" ||
+			lim.anyEntry && slices.ContainsFunc(e, func(x navEntry) bool { return slices.Contains(entryKinds, x.kind) }) {
+			return true
 		}
-		first := !seen[sid]
-		seen[sid] = true
-		ways, found := g.openedBy(sid)
-		if first {
-			for _, b := range found {
-				r.bases = append(r.bases, navHub{sid, b.Base, b.Below})
-			}
-			byHub := map[int32][]int32{}
-			for _, w := range ways {
-				if w.Hub >= 0 {
-					byHub[w.Hub] = append(byHub[w.Hub], w.Src)
-				}
-			}
-			for _, hub := range util.SortedKeys(byHub) {
-				r.hubs = append(r.hubs, navHub{sid, hub, sortedInts(byHub[hub])})
-			}
-		}
-		if len(ways) == 0 && !roots[sid] && host.none() && !lim.restricted() {
-			how := navEntry{"unknown", ""}
-			if len(found) > 0 {
-				how = navEntry{"base", g.label(found[0].Base)}
-			} else if len(g.openers(sid)) > 0 {
-				how = navEntry{"outside", ""}
-			}
-			roots[sid] = true
-			r.roots = append(r.roots, navRoot{sid, st, []navEntry{how}})
-			if lim.anyEntry && how.kind == "base" {
-				break
-			}
-		}
-		for _, w := range ways {
-			src, need := w.Src, w.host()
-			if lim.avoid[src] || lim.direct && r.depth[st] == 0 && !lim.from[src] {
-				continue
-			}
-			if !host.none() { // a shared screen: opened in its host, or on the shared way
-				switch {
-				case src == host.node || host.mod != "" && g.module(src) == host.mod ||
-					host.node >= 0 && containsInt(g.hosts(src), host.node):
-				case g.screens[src][0].Kind == "activity" && host.node >= 0 && g.screenTops[host.node]:
-					continue // another Activity cannot be the host the way needs
-				case g.module(src) == g.module(sid):
-					if need.none() {
-						need = host
-					}
-				default:
-					continue
-				}
-			}
-			if need.mod != "" && need.mod == g.module(src) || need.node >= 0 && need.node == src {
-				need = noHost
-			}
-			nst := navState{src, need}
-			push := g.pushWay(w.Via)
-			sc := c + config.StepOwn
-			if w.Hub >= 0 {
-				sc = c + config.StepShared
-			}
-			if push {
-				sc += config.StepPush
-			}
-			key := sid
-			if w.Hub >= 0 {
-				key = w.Hub
-			}
-			if need.none() && !push && g.isLauncher(src) && !lim.restricted() {
-				if i, ok := branchAt[key]; !ok {
-					branchAt[key] = len(r.branches)
-					r.branches = append(r.branches, navBranch{sc, st, src, w.Hub})
-				} else if sc < r.branches[i].cost {
-					r.branches[i] = navBranch{sc, st, src, w.Hub}
-				}
-			}
-			if old, ok := r.cost[nst]; done[nst] || ok && old <= sc {
-				continue
-			}
-			r.cost[nst], r.depth[nst] = sc, r.depth[st]+1
-			if _, ok := r.step[nst]; !ok {
-				r.stepOrder = append(r.stepOrder, nst)
-			}
-			r.step[nst] = &navStep{st, w.Via, w.Hub, push}
-			heap.Push(h, heapItem{sc, g.screenName(src), src, g.hostStr(need), need})
+		if r.depth[st] != 0 {
+			return false
 		}
 	}
+	if lim.maxDepth >= 0 && r.depth[st] >= lim.maxDepth {
+		return false
+	}
+	first := !nw.seen[sid]
+	nw.seen[sid] = true
+	ways, found := g.openedBy(sid)
+	if first {
+		nw.hubsOf(sid, ways, found)
+	}
+	if len(ways) == 0 && !nw.roots[sid] && host.none() && !lim.restricted() {
+		how := navEntry{"unknown", ""}
+		if len(found) > 0 {
+			how = navEntry{"base", g.label(found[0].Base)}
+		} else if len(g.openers(sid)) > 0 {
+			how = navEntry{"outside", ""}
+		}
+		nw.roots[sid] = true
+		r.roots = append(r.roots, navRoot{sid, st, []navEntry{how}})
+		if lim.anyEntry && how.kind == "base" {
+			return true
+		}
+	}
+	for _, w := range ways {
+		nw.way(st, it.c, w)
+	}
+	return false
+}
+
+// hubsOf: the bases and hubs a screen is opened through, listed once.
+func (nw *navWalker) hubsOf(sid int32, ways []srcWay, found []baseBelow) {
+	r := nw.r
+	for _, b := range found {
+		r.bases = append(r.bases, navHub{sid, b.Base, b.Below})
+	}
+	byHub := map[int32][]int32{}
+	for _, w := range ways {
+		if w.Hub >= 0 {
+			byHub[w.Hub] = append(byHub[w.Hub], w.Src)
+		}
+	}
+	for _, hub := range util.SortedKeys(byHub) {
+		r.hubs = append(r.hubs, navHub{sid, hub, sortedInts(byHub[hub])})
+	}
+}
+
+// way: the state of the screen opening `st` by the way `w`, pushed when it costs less than known.
+func (nw *navWalker) way(st navState, c int, w srcWay) {
+	g, r, lim := nw.g, nw.r, nw.lim
+	sid, host := st.sid, st.host
+	src, need := w.Src, w.host()
+	if lim.avoid[src] || lim.direct && r.depth[st] == 0 && !lim.from[src] {
+		return
+	}
+	if !host.none() { // a shared screen: opened in its host, or on the shared way
+		switch {
+		case src == host.node || host.mod != "" && g.module(src) == host.mod ||
+			host.node >= 0 && containsInt(g.hosts(src), host.node):
+		case g.screens[src][0].Kind == "activity" && host.node >= 0 && g.screenTops[host.node]:
+			return // another Activity cannot be the host the way needs
+		case g.module(src) == g.module(sid):
+			if need.none() {
+				need = host
+			}
+		default:
+			return
+		}
+	}
+	if need.mod != "" && need.mod == g.module(src) || need.node >= 0 && need.node == src {
+		need = noHost
+	}
+	nst := navState{src, need}
+	push := g.pushWay(w.Via)
+	sc := c + config.StepOwn
+	if w.Hub >= 0 {
+		sc = c + config.StepShared
+	}
+	if push {
+		sc += config.StepPush
+	}
+	key := sid
+	if w.Hub >= 0 {
+		key = w.Hub
+	}
+	if need.none() && !push && g.isLauncher(src) && !lim.restricted() {
+		if i, ok := nw.branchAt[key]; !ok {
+			nw.branchAt[key] = len(r.branches)
+			r.branches = append(r.branches, navBranch{sc, st, src, w.Hub})
+		} else if sc < r.branches[i].cost {
+			r.branches[i] = navBranch{sc, st, src, w.Hub}
+		}
+	}
+	if old, ok := r.cost[nst]; nw.done[nst] || ok && old <= sc {
+		return
+	}
+	r.cost[nst], r.depth[nst] = sc, r.depth[st]+1
+	if _, ok := r.step[nst]; !ok {
+		r.stepOrder = append(r.stepOrder, nst)
+	}
+	r.step[nst] = &navStep{st, w.Via, w.Hub, push}
+	heap.Push(nw.h, heapItem{sc, g.screenName(src), src, g.hostStr(need), need})
+}
+
+// finish: only the states the walk reached, the roots by kind, cost and name.
+func (nw *navWalker) finish() {
+	g, r := nw.g, nw.r
 	kept := r.stepOrder[:0]
 	for _, st := range r.stepOrder {
-		if done[st] {
+		if nw.done[st] {
 			kept = append(kept, st)
 		} else {
 			delete(r.step, st)
@@ -517,7 +556,6 @@ func (g *Graph) navWalk(starts []navState, lim navLimits) *navResult {
 		}
 		return g.screenName(a.sid) < g.screenName(b.sid)
 	})
-	return r
 }
 
 func containsInt(s []int32, x int32) bool {
@@ -876,11 +914,19 @@ type branchWay struct {
 }
 
 func (g *Graph) navReport(o opts, targets []int32, r *navResult, elapsed time.Duration) {
-	limit := o.limit
-	if limit < 0 {
-		limit = 20
+	branchWays := g.branchWays(r)
+	switch {
+	case o.json:
+		g.navJSON(o, targets, r, branchWays)
+	case !o.verbose:
+		g.navCheapest(targets, r, branchWays, elapsed)
+	default:
+		g.navVerbose(o, targets, r, branchWays, elapsed)
 	}
-	// the cheapest way through each screen a launcher opens (not one coming back to the launcher)
+}
+
+// branchWays: the cheapest way through each screen a launcher opens (not one coming back to the launcher).
+func (g *Graph) branchWays(r *navResult) []branchWay {
 	var branchWays []branchWay
 	for _, b := range r.branches {
 		back := false
@@ -901,159 +947,168 @@ func (g *Graph) navReport(o opts, targets []int32, r *navResult, elapsed time.Du
 		}
 		return a.through < b.through
 	})
+	return branchWays
+}
+
+func (g *Graph) navJSON(o opts, targets []int32, r *navResult, branchWays []branchWay) {
+	onWays := map[navState]bool{}
+	if o.verbose {
+		for st := range r.step {
+			onWays[st] = true
+		}
+	} else {
+		for _, root := range r.roots {
+			for _, x := range r.chain(root.st) {
+				onWays[x] = true
+			}
+		}
+		for _, b := range branchWays {
+			for _, x := range r.chain(b.st) {
+				onWays[x] = true
+			}
+		}
+	}
+	type item struct {
+		o                  obj
+		cost               int
+		name, mod, hostStr string
+	}
+	var items []item
+	for _, st := range r.stepOrder {
+		s := r.step[st]
+		if s == nil || !onWays[st] {
+			continue
+		}
+		hs, _ := g.hosted(st.host).(string)
+		o := g.stepJSON(wayStep{st, s, r.cost[st], r.depth[st]})
+		items = append(items, item{o, r.cost[st], g.screenName(st.sid), g.module(st.sid), hs})
+	}
+	sort.SliceStable(items, func(i, j int) bool {
+		a, b := items[i], items[j]
+		if a.cost != b.cost {
+			return a.cost < b.cost
+		}
+		if a.name != b.name {
+			return a.name < b.name
+		}
+		if a.mod != b.mod {
+			return a.mod < b.mod
+		}
+		return a.hostStr < b.hostStr
+	})
+	screens := make([]any, len(items))
+	for i, it := range items {
+		screens[i] = it.o
+	}
+	targetsJSON := make([]any, len(targets))
+	for i, s := range targets {
+		targetsJSON[i] = g.navScreenJSON(s)
+	}
+	var entries, paths []any
+	for _, root := range r.roots {
+		entries = append(entries, g.entryJSON(root.sid, root.how))
+		paths = append(paths, strs(g.chainNames(r, root.st)))
+	}
+	var branches []any
+	for _, b := range branchWays {
+		branches = append(branches, obj{{"entry", b.entry}, {"through", b.through}, {"cost", b.c},
+			{"shared", g.qualifiedOrNil(b.hub)}, {"path", strs(append([]string{b.entry}, g.chainNames(r, b.st)...))}})
+	}
+	result := obj{{"targets", list(targetsJSON)}, {"screens", list(screens)}, {"entries", list(entries)},
+		{"paths", list(paths)}, {"branches", list(branches)}}
+	if o.verbose {
+		var hubs, bases []obj
+		for _, h := range r.hubs {
+			from := make([]string, len(h.below))
+			for i, s := range h.below {
+				from[i] = g.screenName(s)
+			}
+			sort.Strings(from)
+			hubs = append(hubs, obj{{"opens", g.screenName(h.sid)}, {"via", g.qualified(h.hub)}, {"from", strs(from)}})
+		}
+		sortObjs(hubs, "opens", "via")
+		for _, b := range r.bases {
+			bases = append(bases, obj{{"opens", g.screenName(b.sid)}, {"base", g.qualified(b.hub)},
+				{"subclasses", g.subclassCount(b.hub)}, {"screens", len(b.below)}})
+		}
+		sortObjs(bases, "opens", "base")
+		result = append(result, kv{"hubs", objs(hubs)}, kv{"bases", objs(bases)})
+	}
+	g.printJSON("nav-path", result)
+}
+
+// navCheapest: the text of nav-path: the cheapest way and where others join it.
+func (g *Graph) navCheapest(targets []int32, r *navResult, branchWays []branchWay, elapsed time.Duration) {
 	targetNames := make([]string, len(targets))
 	for i, s := range targets {
 		targetNames[i] = g.screenName(s)
 	}
-
-	if o.json {
-		onWays := map[navState]bool{}
-		if o.verbose {
-			for st := range r.step {
-				onWays[st] = true
-			}
-		} else {
-			for _, root := range r.roots {
-				for _, x := range r.chain(root.st) {
-					onWays[x] = true
-				}
-			}
-			for _, b := range branchWays {
-				for _, x := range r.chain(b.st) {
-					onWays[x] = true
-				}
-			}
-		}
-		type item struct {
-			o                  obj
-			cost               int
-			name, mod, hostStr string
-		}
-		var items []item
-		for _, st := range r.stepOrder {
-			s := r.step[st]
-			if s == nil || !onWays[st] {
-				continue
-			}
-			hs, _ := g.hosted(st.host).(string)
-			o := g.stepJSON(wayStep{st, s, r.cost[st], r.depth[st]})
-			items = append(items, item{o, r.cost[st], g.screenName(st.sid), g.module(st.sid), hs})
-		}
-		sort.SliceStable(items, func(i, j int) bool {
-			a, b := items[i], items[j]
-			if a.cost != b.cost {
-				return a.cost < b.cost
-			}
-			if a.name != b.name {
-				return a.name < b.name
-			}
-			if a.mod != b.mod {
-				return a.mod < b.mod
-			}
-			return a.hostStr < b.hostStr
-		})
-		screens := make([]any, len(items))
-		for i, it := range items {
-			screens[i] = it.o
-		}
-		targetsJSON := make([]any, len(targets))
-		for i, s := range targets {
-			targetsJSON[i] = g.navScreenJSON(s)
-		}
-		var entries, paths []any
-		for _, root := range r.roots {
-			entries = append(entries, g.entryJSON(root.sid, root.how))
-			paths = append(paths, strs(g.chainNames(r, root.st)))
-		}
-		var branches []any
-		for _, b := range branchWays {
-			branches = append(branches, obj{{"entry", b.entry}, {"through", b.through}, {"cost", b.c},
-				{"shared", g.qualifiedOrNil(b.hub)}, {"path", strs(append([]string{b.entry}, g.chainNames(r, b.st)...))}})
-		}
-		result := obj{{"targets", list(targetsJSON)}, {"screens", list(screens)}, {"entries", list(entries)},
-			{"paths", list(paths)}, {"branches", list(branches)}}
-		if o.verbose {
-			var hubs, bases []obj
-			for _, h := range r.hubs {
-				from := make([]string, len(h.below))
-				for i, s := range h.below {
-					from[i] = g.screenName(s)
-				}
-				sort.Strings(from)
-				hubs = append(hubs, obj{{"opens", g.screenName(h.sid)}, {"via", g.qualified(h.hub)}, {"from", strs(from)}})
-			}
-			sortObjs(hubs, "opens", "via")
-			for _, b := range r.bases {
-				bases = append(bases, obj{{"opens", g.screenName(b.sid)}, {"base", g.qualified(b.hub)},
-					{"subclasses", g.subclassCount(b.hub)}, {"screens", len(b.below)}})
-			}
-			sortObjs(bases, "opens", "base")
-			result = append(result, kv{"hubs", objs(hubs)}, kv{"bases", objs(bases)})
-		}
-		g.printJSON("nav-path", result)
-		return
-	}
-
 	arrows := func(st navState) string { return g.navArrows(r, st) }
-	if !o.verbose {
-		if len(r.roots) == 0 {
-			fmt.Printf("No way to %s found (as far as the code map sees).\n", strings.Join(targetNames, ", "))
-			return
-		}
-		root := r.roots[0]
-		st := root.st
-		fmt.Printf("Cheapest way to %s%s:\n", strings.Join(targetNames, ", "), g.entrySuffix(root.sid, root.how))
-		g.printWay(r.way(st))
-		names := g.chainNames(r, st)
-		var joinOrder []string
-		joins := map[string][]string{} // join screen -> [first screen of the branch (screens before the join)]
-		for _, b := range branchWays {
-			path := append([]string{b.entry}, g.chainNames(r, b.st)...)
-			if slicesEqual(path, names) || b.c > r.cost[st]+config.BranchSlack {
-				continue
-			}
-			before, join := joined(names, path)
-			if len(before) > 1 && before[0] == names[0] {
-				if _, ok := joins[join]; !ok {
-					joinOrder = append(joinOrder, join)
-				}
-				s := ""
-				if len(before) > 2 {
-					s = "s"
-				}
-				joins[join] = append(joins[join], fmt.Sprintf("%s (%d screen%s)", before[1], len(before)-1, s))
-			} else {
-				fmt.Println("  also: " + b.entry + " -> " + arrows(b.st))
-			}
-		}
-		for _, join := range joinOrder {
-			fmt.Printf("  %s also after: %s\n", join, strings.Join(joins[join], ", "))
-		}
-		// the deep link or intent filter that joins this way soonest, up to the screen it joins at
-		best, bestN, bestC := -1, 0, 0
-		var bestJoin string
-		for i, root := range r.roots[1:] {
-			i++
-			if k := root.how[0].kind; k == "deeplink" || k == "intent" {
-				before, join := joined(names, g.chainNames(r, root.st))
-				if n, c := len(before), r.cost[root.st]; best < 0 || n < bestN || n == bestN && c < bestC {
-					best, bestN, bestC, bestJoin = i, n, c, join
-				}
-			}
-		}
-		if best >= 0 && len(names) > 1 && root.how[0].kind != "from" {
-			root := r.roots[best]
-			text := entryText(root.how[0])
-			if len(root.how) > 1 {
-				text += fmt.Sprintf(" (+%d)", len(root.how)-1)
-			}
-			parts := strings.Split(arrows(root.st), " ")
-			fmt.Printf("  %s also from %s: %s\n", bestJoin, text, strings.Join(parts[:min(2*bestN+1, len(parts))], " "))
-		}
-		fmt.Printf("(%.1fs; ~push~>: only for a notification or a deep link; every way and the code of each step: --verbose)\n",
-			elapsed.Seconds())
+	if len(r.roots) == 0 {
+		fmt.Printf("No way to %s found (as far as the code map sees).\n", strings.Join(targetNames, ", "))
 		return
 	}
+	root := r.roots[0]
+	st := root.st
+	fmt.Printf("Cheapest way to %s%s:\n", strings.Join(targetNames, ", "), g.entrySuffix(root.sid, root.how))
+	g.printWay(r.way(st))
+	names := g.chainNames(r, st)
+	var joinOrder []string
+	joins := map[string][]string{} // join screen -> [first screen of the branch (screens before the join)]
+	for _, b := range branchWays {
+		path := append([]string{b.entry}, g.chainNames(r, b.st)...)
+		if slicesEqual(path, names) || b.c > r.cost[st]+config.BranchSlack {
+			continue
+		}
+		before, join := joined(names, path)
+		if len(before) > 1 && before[0] == names[0] {
+			if _, ok := joins[join]; !ok {
+				joinOrder = append(joinOrder, join)
+			}
+			s := ""
+			if len(before) > 2 {
+				s = "s"
+			}
+			joins[join] = append(joins[join], fmt.Sprintf("%s (%d screen%s)", before[1], len(before)-1, s))
+		} else {
+			fmt.Println("  also: " + b.entry + " -> " + arrows(b.st))
+		}
+	}
+	for _, join := range joinOrder {
+		fmt.Printf("  %s also after: %s\n", join, strings.Join(joins[join], ", "))
+	}
+	// the deep link or intent filter that joins this way soonest, up to the screen it joins at
+	best, bestN, bestC := -1, 0, 0
+	var bestJoin string
+	for i, root := range r.roots[1:] {
+		i++
+		if k := root.how[0].kind; k == "deeplink" || k == "intent" {
+			before, join := joined(names, g.chainNames(r, root.st))
+			if n, c := len(before), r.cost[root.st]; best < 0 || n < bestN || n == bestN && c < bestC {
+				best, bestN, bestC, bestJoin = i, n, c, join
+			}
+		}
+	}
+	if best >= 0 && len(names) > 1 && root.how[0].kind != "from" {
+		root := r.roots[best]
+		text := entryText(root.how[0])
+		if len(root.how) > 1 {
+			text += fmt.Sprintf(" (+%d)", len(root.how)-1)
+		}
+		parts := strings.Split(arrows(root.st), " ")
+		fmt.Printf("  %s also from %s: %s\n", bestJoin, text, strings.Join(parts[:min(2*bestN+1, len(parts))], " "))
+	}
+	fmt.Printf("(%.1fs; ~push~>: only for a notification or a deep link; every way and the code of each step: --verbose)\n",
+		elapsed.Seconds())
+}
+
+// navVerbose: the text of nav-path --verbose: every way found and the code of each step.
+func (g *Graph) navVerbose(o opts, targets []int32, r *navResult, branchWays []branchWay, elapsed time.Duration) {
+	limit := o.limit
+	if limit < 0 {
+		limit = 20
+	}
+	arrows := func(st navState) string { return g.navArrows(r, st) }
 	for _, sid := range targets {
 		fmt.Printf("%s  %s  %s\n", g.screenName(sid), g.screens[sid][0].Kind, g.module(sid))
 	}
@@ -1133,6 +1188,12 @@ func (g *Graph) navReport(o opts, targets []int32, r *navResult, elapsed time.Du
 			fmt.Println("        " + strings.Join(labels, " <- "))
 		}
 	}
+	g.navHubsText(r)
+	fmt.Printf("(%.2fs)\n", elapsed.Seconds())
+}
+
+// navHubsText: the shared code and the base classes the ways go through.
+func (g *Graph) navHubsText(r *navResult) {
 	byScreenLabel := func(s []navHub) []navHub {
 		s = append([]navHub(nil), s...)
 		sort.SliceStable(s, func(i, j int) bool {
@@ -1166,7 +1227,6 @@ func (g *Graph) navReport(o opts, targets []int32, r *navResult, elapsed time.Du
 			fmt.Printf("  %s <- %s: %d classes, %d screens\n", g.screenName(b.sid), g.label(b.hub), g.subclassCount(b.hub), len(b.below))
 		}
 	}
-	fmt.Printf("(%.2fs)\n", elapsed.Seconds())
 }
 
 // entrySuffix: how the way starts, after "Cheapest way to X": ` (launcher)`, ` from Y`.
@@ -1440,7 +1500,44 @@ func (g *Graph) cmdGraph(o opts) int {
 		}
 		return g.graphIn(o, roots)
 	}
-	avoid, inside := g.screensMatching(o.avoid), g.inModules(o.modules)
+	forward, hiddenDebug := g.forwardWays(roots, g.screensMatching(o.avoid))
+	d := &gdraw{roots: roots, isRoot: map[int32]bool{}, ids: map[gnode]string{}, more: map[int32][]int32{},
+		hiddenDebug: hiddenDebug, depth: o.depth}
+	gw := &graphOut{g: g, d: d, forward: forward, inside: g.inModules(o.modules), rootModules: map[string]bool{},
+		known: map[int32]map[hostKey]bool{}, unsure: map[int32]bool{}, seen: map[int32]bool{}, fanned: map[int32]bool{}}
+	if o.to != "" {
+		gw.toward(g.screensOf(o.to, o.all))
+	}
+	if d.depth <= 0 {
+		d.depth = 1
+	}
+	for _, r := range roots {
+		gw.rootModules[g.module(r)] = true
+		d.isRoot[r] = true
+	}
+	for _, r := range roots {
+		gw.known[r] = gw.context(r, map[hostKey]bool{})
+		gw.unsure[r] = true
+	}
+	level := append([]int32(nil), roots...)
+	for _, r := range roots {
+		gw.seen[r] = true
+		gw.node(gnode{n: r})
+	}
+	for step := range d.depth {
+		var nxt []int32
+		for _, src := range level {
+			nxt = append(nxt, gw.expand(src, step)...)
+		}
+		level = nxt
+	}
+	g.printGraph(o, d)
+	return exitOK
+}
+
+// forwardWays: the ways each screen opens others, without those to debug screens (unless a root is
+// one) and to avoided ones.
+func (g *Graph) forwardWays(roots []int32, avoid map[int32]bool) (map[int32][]fwdWay, int) {
 	debug := true
 	for _, r := range roots {
 		debug = debug && g.isDebug(r)
@@ -1460,236 +1557,245 @@ func (g *Graph) cmdGraph(o opts) int {
 			forward[w.Src] = append(forward[w.Src], fwdWay{t, w.Hub, w.Via, w.host()})
 		}
 	}
-	depth := o.depth
-	// --to: the fewest steps from each screen to a target; a way is drawn only when it gets there in time
-	var to []int32
-	var toDist map[int32]int
-	noWay := false
-	if o.to != "" {
-		to = g.screensOf(o.to, o.all)
-		toDist = g.stepsTo(forward, to)
-		fewest := -1
-		for _, r := range roots {
-			if d, ok := toDist[r]; ok && (fewest < 0 || d < fewest) {
-				fewest = d
-			}
-		}
-		if depth <= 0 && fewest >= 0 {
-			depth = fewest + 2 // the shortest ways and a detour or two
-		}
-		noWay = fewest < 0 || depth > 0 && fewest > depth
-	}
-	if depth <= 0 {
-		depth = 1
-	}
-	rootModules := map[string]bool{}
-	isRoot := map[int32]bool{}
-	for _, r := range roots {
-		rootModules[g.module(r)] = true
-		isRoot[r] = true
-	}
-	context := func(t int32, parent map[hostKey]bool) map[hostKey]bool {
-		hosts := g.hosts(t)
-		var both []int32
-		for _, h := range hosts {
-			if parent[hostKey{h, ""}] {
-				both = append(both, h)
-			}
-		}
-		if len(both) > 0 {
-			hosts = both
-		}
-		out := map[hostKey]bool{{t, ""}: true, {-1, g.module(t)}: true}
-		for k := range parent {
-			out[k] = true
-		}
-		for _, h := range hosts {
-			out[hostKey{h, ""}], out[hostKey{-1, g.module(h)}] = true, true
-		}
-		return out
-	}
-	known := map[int32]map[hostKey]bool{}
-	unsure := map[int32]bool{}
-	for _, r := range roots {
-		known[r] = context(r, map[hostKey]bool{})
-		unsure[r] = true
-	}
-	dropped := 0
-	runs := func(src int32, need hostKey) (bool, string) {
-		if need.none() || known[src][need] {
-			return true, ""
-		}
-		if unsure[src] {
-			if need.node >= 0 {
-				return true, g.label(need.node)
-			}
-			return true, need.mod
-		}
-		dropped++
-		return false, ""
-	}
-	reach := func(src, t int32) {
-		if _, ok := known[t]; !ok {
-			known[t] = context(t, known[src])
-			unsure[t] = unsure[src] && rootModules[g.module(t)]
+	return forward, hiddenDebug
+}
+
+// graphOut is the state of drawing graph forward from its roots.
+type graphOut struct {
+	g           *Graph
+	d           *gdraw
+	forward     map[int32][]fwdWay
+	toDist      map[int32]int // --to: the fewest steps from each screen to a target
+	inside      func(int32) bool
+	rootModules map[string]bool
+	known       map[int32]map[hostKey]bool // the hosts a screen is known to run in
+	unsure      map[int32]bool             // reached in the roots' modules only: its hosts may be any
+	seen        map[int32]bool
+	fanned      map[int32]bool
+}
+
+// toward: --to: a way is drawn only when it gets to a target in time.
+func (gw *graphOut) toward(to []int32) {
+	d := gw.d
+	d.to = to
+	gw.toDist = gw.g.stepsTo(gw.forward, to)
+	fewest := -1
+	for _, r := range d.roots {
+		if n, ok := gw.toDist[r]; ok && (fewest < 0 || n < fewest) {
+			fewest = n
 		}
 	}
-	ids := map[gnode]string{}
-	var order []gnode
-	var edges []gedge
-	more := map[int32][]int32{}
-	node := func(n gnode) string {
-		if id, ok := ids[n]; ok {
-			return id
+	if d.depth <= 0 && fewest >= 0 {
+		d.depth = fewest + 2 // the shortest ways and a detour or two
+	}
+	d.noWay = fewest < 0 || d.depth > 0 && fewest > d.depth
+}
+
+func (gw *graphOut) context(t int32, parent map[hostKey]bool) map[hostKey]bool {
+	g := gw.g
+	hosts := g.hosts(t)
+	var both []int32
+	for _, h := range hosts {
+		if parent[hostKey{h, ""}] {
+			both = append(both, h)
 		}
-		id := "n" + strconv.Itoa(len(ids)+1)
-		ids[n] = id
-		order = append(order, n)
+	}
+	if len(both) > 0 {
+		hosts = both
+	}
+	out := map[hostKey]bool{{t, ""}: true, {-1, g.module(t)}: true}
+	for k := range parent {
+		out[k] = true
+	}
+	for _, h := range hosts {
+		out[hostKey{h, ""}], out[hostKey{-1, g.module(h)}] = true, true
+	}
+	return out
+}
+
+// runs: whether a way needing the host `need` runs from `src`, and the host it is shown under when unsure.
+func (gw *graphOut) runs(src int32, need hostKey) (bool, string) {
+	if need.none() || gw.known[src][need] {
+		return true, ""
+	}
+	if gw.unsure[src] {
+		if need.node >= 0 {
+			return true, gw.g.label(need.node)
+		}
+		return true, need.mod
+	}
+	gw.d.dropped++
+	return false, ""
+}
+
+func (gw *graphOut) reach(src, t int32) {
+	if _, ok := gw.known[t]; !ok {
+		gw.known[t] = gw.context(t, gw.known[src])
+		gw.unsure[t] = gw.unsure[src] && gw.rootModules[gw.g.module(t)]
+	}
+}
+
+func (gw *graphOut) node(n gnode) string {
+	d := gw.d
+	if id, ok := d.ids[n]; ok {
 		return id
 	}
-	action := g.stepAction
-	level := append([]int32(nil), roots...)
-	seen, fanned := map[int32]bool{}, map[int32]bool{}
-	for _, r := range roots {
-		seen[r] = true
-		node(gnode{n: r})
+	id := "n" + strconv.Itoa(len(d.ids)+1)
+	d.ids[n] = id
+	d.order = append(d.order, n)
+	return id
+}
+
+// graphTarget: a screen a way opens, the code on the way and the host it needs, shown when unsure.
+type graphTarget struct {
+	t    int32
+	via  []int32
+	cond string
+}
+
+type graphFan struct {
+	hub    int32
+	opened []graphTarget
+}
+
+// expand: the edges from `src` at step `step`; returns the screens to expand next.
+func (gw *graphOut) expand(src int32, step int) []int32 {
+	g := gw.g
+	byHub := map[int32][]graphTarget{}
+	var hubs []int32 // first-met order: ties of the sort below keep it
+	fw := append([]fwdWay(nil), gw.forward[src]...)
+	sort.SliceStable(fw, func(i, j int) bool { return g.screenName(fw[i].t) < g.screenName(fw[j].t) })
+	for _, w := range fw {
+		if n, ok := gw.toDist[w.t]; gw.toDist != nil && (!ok || n > gw.d.depth-step-1 || gw.d.isRoot[w.t]) { // back to the start: a loop
+			continue
+		}
+		if ok, cond := gw.runs(src, w.need); ok {
+			if _, has := byHub[w.hub]; !has {
+				hubs = append(hubs, w.hub)
+			}
+			byHub[w.hub] = append(byHub[w.hub], graphTarget{w.t, w.via, cond})
+		}
 	}
-	for step := range depth {
-		var nxt []int32
-		for _, src := range level {
-			type tv struct {
-				t    int32
-				via  []int32
-				cond string
+	sort.SliceStable(hubs, func(i, j int) bool {
+		a, b := hubs[i], hubs[j]
+		if (a >= 0) != (b >= 0) {
+			return a < 0
+		}
+		if a < 0 {
+			return false
+		}
+		return g.label(a) < g.label(b)
+	})
+	var ways []gway
+	var fans []graphFan
+	for _, hub := range hubs {
+		if hub < 0 {
+			for _, x := range byHub[hub] {
+				h := g.stepHint(x.via)
+				ways = append(ways, gway{g.stepAction(h, -1), x.t, h, "own", x.cond})
 			}
-			byHub := map[int32][]tv{}
-			var hubs []int32 // first-met order: ties of the sort below keep it
-			fw := append([]fwdWay(nil), forward[src]...)
-			sort.SliceStable(fw, func(i, j int) bool { return g.screenName(fw[i].t) < g.screenName(fw[j].t) })
-			for _, w := range fw {
-				if d, ok := toDist[w.t]; toDist != nil && (!ok || d > depth-step-1 || isRoot[w.t]) { // back to the start: a loop
-					continue
-				}
-				if ok, cond := runs(src, w.need); ok {
-					if _, has := byHub[w.hub]; !has {
-						hubs = append(hubs, w.hub)
-					}
-					byHub[w.hub] = append(byHub[w.hub], tv{w.t, w.via, cond})
-				}
+			continue
+		}
+		h := g.stepHint(byHub[hub][0].via)
+		ways = append(ways, gway{g.stepAction(h, hub), hub, h, "shared", ""})
+		if gw.fanned[hub] {
+			continue // the navigator's screens are drawn once
+		}
+		gw.fanned[hub] = true
+		fans = append(fans, graphFan{hub, byHub[hub]})
+	}
+	nxt := gw.drawWays(src, ways)
+	for _, f := range fans {
+		nxt = append(nxt, gw.drawFan(src, f)...)
+	}
+	return nxt
+}
+
+// drawWays: the edges of the ways from `src`; one method opening several screens (onFopRemindClick
+// choosing by state) is a node of its own.
+func (gw *graphOut) drawWays(src int32, ways []gway) []int32 {
+	g, d := gw.g, gw.d
+	var acts []string
+	byAction := map[string][]gway{}
+	for _, w := range ways {
+		if _, ok := byAction[w.act]; !ok {
+			acts = append(acts, w.act)
+		}
+		byAction[w.act] = append(byAction[w.act], w)
+	}
+	minName := func(a string) string {
+		best := ""
+		for i, w := range byAction[a] {
+			var n string
+			if _, ok := g.screens[w.t]; ok {
+				n = g.screenName(w.t)
+			} else {
+				n = g.label(w.t)
 			}
-			sort.SliceStable(hubs, func(i, j int) bool {
-				a, b := hubs[i], hubs[j]
-				if (a >= 0) != (b >= 0) {
-					return a < 0
-				}
-				if a < 0 {
-					return false
-				}
-				return g.label(a) < g.label(b)
-			})
-			var ways []gway
-			type fan struct {
-				hub    int32
-				opened []tv
-			}
-			var fans []fan
-			for _, hub := range hubs {
-				if hub < 0 {
-					for _, x := range byHub[hub] {
-						h := g.stepHint(x.via)
-						ways = append(ways, gway{action(h, -1), x.t, h, "own", x.cond})
-					}
-					continue
-				}
-				h := g.stepHint(byHub[hub][0].via)
-				ways = append(ways, gway{action(h, hub), hub, h, "shared", ""})
-				if fanned[hub] {
-					continue // the navigator's screens are drawn once
-				}
-				fanned[hub] = true
-				fans = append(fans, fan{hub, byHub[hub]})
-			}
-			// one method opening several screens (onFopRemindClick choosing by state) is a node of its own
-			var acts []string
-			byAction := map[string][]gway{}
-			for _, w := range ways {
-				if _, ok := byAction[w.act]; !ok {
-					acts = append(acts, w.act)
-				}
-				byAction[w.act] = append(byAction[w.act], w)
-			}
-			minName := func(a string) string {
-				best := ""
-				for i, w := range byAction[a] {
-					var n string
-					if _, ok := g.screens[w.t]; ok {
-						n = g.screenName(w.t)
-					} else {
-						n = g.label(w.t)
-					}
-					if i == 0 || n < best {
-						best = n
-					}
-				}
-				return best
-			}
-			sort.SliceStable(acts, func(i, j int) bool { return minName(acts[i]) < minName(acts[j]) })
-			for _, act := range acts {
-				group := byAction[act]
-				short := ""
-				if act != "" {
-					short = shortAction(act)
-				}
-				if len(group) > 1 && act != "" {
-					a := node(gnode{src, act, true})
-					edges = append(edges, gedge{node(gnode{n: src}), a, "", act, "act"})
-					for _, w := range group {
-						edges = append(edges, gedge{a, node(gnode{n: w.t}), inHost("", w.cond), w.hint, w.style})
-					}
-				} else {
-					for _, w := range group {
-						edges = append(edges, gedge{node(gnode{n: src}), node(gnode{n: w.t}), inHost(short, w.cond), w.hint, w.style})
-					}
-				}
-				for _, w := range group {
-					if w.style != "own" {
-						continue
-					}
-					reach(src, w.t)
-					if !seen[w.t] && inside(w.t) {
-						nxt = append(nxt, w.t)
-					}
-					seen[w.t] = true
-				}
-			}
-			for _, f := range fans {
-				if len(f.opened) > config.GraphFanout {
-					for _, x := range f.opened {
-						more[f.hub] = append(more[f.hub], x.t)
-					}
-					continue
-				}
-				for _, x := range f.opened {
-					edges = append(edges, gedge{node(gnode{n: f.hub}), node(gnode{n: x.t}), inHost("", x.cond), "", "fan"})
-				}
-				for _, x := range f.opened {
-					reach(src, x.t)
-				}
-				for _, x := range f.opened {
-					if !seen[x.t] && inside(x.t) {
-						nxt = append(nxt, x.t)
-					}
-				}
-				for _, x := range f.opened {
-					seen[x.t] = true
-				}
+			if i == 0 || n < best {
+				best = n
 			}
 		}
-		level = nxt
+		return best
 	}
-	g.printGraph(o, &gdraw{roots: roots, isRoot: isRoot, order: order, ids: ids, edges: edges, more: more,
-		dropped: dropped, hiddenDebug: hiddenDebug, to: to, noWay: noWay, depth: depth})
-	return exitOK
+	sort.SliceStable(acts, func(i, j int) bool { return minName(acts[i]) < minName(acts[j]) })
+	var nxt []int32
+	for _, act := range acts {
+		group := byAction[act]
+		short := ""
+		if act != "" {
+			short = shortAction(act)
+		}
+		if len(group) > 1 && act != "" {
+			a := gw.node(gnode{src, act, true})
+			d.edges = append(d.edges, gedge{gw.node(gnode{n: src}), a, "", act, "act"})
+			for _, w := range group {
+				d.edges = append(d.edges, gedge{a, gw.node(gnode{n: w.t}), inHost("", w.cond), w.hint, w.style})
+			}
+		} else {
+			for _, w := range group {
+				d.edges = append(d.edges, gedge{gw.node(gnode{n: src}), gw.node(gnode{n: w.t}), inHost(short, w.cond), w.hint, w.style})
+			}
+		}
+		for _, w := range group {
+			if w.style != "own" {
+				continue
+			}
+			gw.reach(src, w.t)
+			if !gw.seen[w.t] && gw.inside(w.t) {
+				nxt = append(nxt, w.t)
+			}
+			gw.seen[w.t] = true
+		}
+	}
+	return nxt
+}
+
+// drawFan: the screens shared code opens, or a "+N screens" node for more than graphFanout.
+func (gw *graphOut) drawFan(src int32, f graphFan) []int32 {
+	d := gw.d
+	if len(f.opened) > config.GraphFanout {
+		for _, x := range f.opened {
+			d.more[f.hub] = append(d.more[f.hub], x.t)
+		}
+		return nil
+	}
+	for _, x := range f.opened {
+		d.edges = append(d.edges, gedge{gw.node(gnode{n: f.hub}), gw.node(gnode{n: x.t}), inHost("", x.cond), "", "fan"})
+	}
+	for _, x := range f.opened {
+		gw.reach(src, x.t)
+	}
+	var nxt []int32
+	for _, x := range f.opened {
+		if !gw.seen[x.t] && gw.inside(x.t) {
+			nxt = append(nxt, x.t)
+		}
+	}
+	for _, x := range f.opened {
+		gw.seen[x.t] = true
+	}
+	return nxt
 }
 
 // stepAction: the method on the screen a step starts from, from its hint; for a step through shared
