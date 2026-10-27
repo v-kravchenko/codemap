@@ -44,7 +44,11 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   its previews.
 - `changes` tells what a change adds and removes only from a map of the base (`--base-db`,
   docs/decisions/0022), so the base must be compiled too; without one the status and `removed`
-  are `null`. A screen moved to another class name is removed and added.
+  are `null`. A screen moved to another class name is removed and added, except a top-level Kotlin
+  function moved to another file of its package (`moved_from`); two of one package, name and
+  parameters moved at once, one also changing its parameters, or one in a facade renamed by
+  `@file:JvmName` stay removed and added. `codemap diff` compares by node id: a move is a screen
+  removed and one added there.
 - Dead code (a reachable-looking branch nobody actually triggers, e.g. a `when` branch keyed on
   a string your code never constructs) is not detected — the walk cannot tell statically
   unreachable branches from live ones.

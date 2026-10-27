@@ -8,12 +8,12 @@ import "slices"
 type removedScreen struct{ kind, name, target, module, location string }
 
 // removedFromBase: the screens of the base's map that are not screens in the map's revision, with
-// their location in the base.
+// their location in the base; a moved one is the head's screen (movedFrom).
 func (g *Graph) removedFromBase() []removedScreen {
 	out := []removedScreen{}
 	b := g.base
 	for _, n := range b.screenOrder {
-		if h := g.m.Index(b.m.Node.ID[n]); h >= 0 && len(g.screens[h]) > 0 {
+		if h := g.m.Index(b.m.Node.ID[n]); h >= 0 && len(g.screens[h]) > 0 || g.moved().to[n] {
 			continue
 		}
 		r := b.screens[n][0]

@@ -474,6 +474,7 @@ const (
 
 const (
 	AccEnum      = 0x4000
+	AccStatic    = 0x0008
 	AccAbstract  = 0x0400
 	AccInterface = 0x0200
 	ConstantFlag = 0x10000

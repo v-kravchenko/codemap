@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.0.0",
+  "schema_version": "4.1.0",
   "command": "screens",
   "screens": [
     {
@@ -16,11 +16,12 @@
         "SectionsAppKt.WelcomeScreen()"
       ],
       "previews": [
-        "navapp.sections.SectionsAppKt.WelcomeScreenPreview"
+        "navapp.sections.SectionsAppKt.WelcomeScreenPreview",
+        "navapp.sections.WelcomePreviewsKt.ScreenPreview"
       ]
     }
   ],
   "hidden": {
-    "preview": 1
+    "preview": 2
   }
 }

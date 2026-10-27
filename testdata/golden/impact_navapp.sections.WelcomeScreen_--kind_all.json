@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.0.0",
+  "schema_version": "4.1.0",
   "command": "impact",
   "changed": [
     {
@@ -41,6 +41,17 @@
       "path": [
         "navapp.sections.SectionsAppKt.WelcomeScreen",
         "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1.invoke"
+      ]
+    },
+    {
+      "symbol": "navapp.sections.WelcomePreviewsKt.ScreenPreview",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/WelcomePreviews.kt:8",
+      "depth": 1,
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.WelcomePreviewsKt.ScreenPreview"
       ]
     },
     {
@@ -148,6 +159,22 @@
   "screens": [
     {
       "kind": "preview",
+      "name": "WelcomePreviews.ScreenPreview",
+      "target": "navapp.sections.WelcomePreviewsKt.ScreenPreview",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/WelcomePreviews.kt:8",
+      "host": null,
+      "hosts": [],
+      "depth": 1,
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.sections.SectionsAppKt.WelcomeScreen",
+        "navapp.sections.WelcomePreviewsKt.ScreenPreview"
+      ]
+    },
+    {
+      "kind": "preview",
       "name": "SectionsApp.WelcomeScreenPreview",
       "target": "navapp.sections.SectionsAppKt.WelcomeScreenPreview",
       "module": "app",
@@ -176,7 +203,8 @@
       "depth": 7,
       "opened_from": [],
       "previews": [
-        "navapp.sections.SectionsAppKt.WelcomeScreenPreview"
+        "navapp.sections.SectionsAppKt.WelcomeScreenPreview",
+        "navapp.sections.WelcomePreviewsKt.ScreenPreview"
       ],
       "path": [
         "navapp.sections.SectionsAppKt.WelcomeScreen",
@@ -187,10 +215,10 @@
   ],
   "hidden": {},
   "modules": {
-    "app": 13
+    "app": 14
   },
   "packages": {
-    "navapp.sections": 12
+    "navapp.sections": 13
   },
   "not_covered": [],
   "warnings": []

@@ -1,22 +1,7 @@
 {
-  "schema_version": "4.0.0",
+  "schema_version": "4.1.0",
   "command": "screens",
   "screens": [
-    {
-      "kind": "route",
-      "module": "app",
-      "name": "About",
-      "target": "navapp.sections.About",
-      "host": "MainActivity",
-      "hosts": [
-        "MainActivity"
-      ],
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
-      "content": [
-        "SectionsAppKt.AboutScreen()"
-      ],
-      "previews": []
-    },
     {
       "kind": "route",
       "module": "app",
@@ -64,6 +49,6 @@
     }
   ],
   "hidden": {
-    "preview": 2
+    "preview": 7
   }
 }

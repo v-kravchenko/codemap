@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.0.0",
+  "schema_version": "4.1.0",
   "command": "screens",
   "screens": [
     {
@@ -256,7 +256,10 @@
       "content": [
         "SectionsAppKt.AboutScreen()"
       ],
-      "previews": []
+      "previews": [
+        "navapp.sections.AboutPreviewsKt.AboutPreview",
+        "navapp.sections.AboutScreenPreviewsKt.AboutPreview"
+      ]
     },
     {
       "kind": "route",
@@ -408,7 +411,9 @@
         "SectionsAppKt.TermsScreen()"
       ],
       "previews": [
-        "navapp.sections.SectionsAppKt.TermsScreenPreview"
+        "navapp.sections.AboutScreenPreviewsKt.ScreenPreview",
+        "navapp.sections.SectionsAppKt.TermsScreenPreview",
+        "navapp.sections.TermsPreviewsKt.ScreenPreview"
       ]
     },
     {
@@ -425,7 +430,8 @@
         "SectionsAppKt.WelcomeScreen()"
       ],
       "previews": [
-        "navapp.sections.SectionsAppKt.WelcomeScreenPreview"
+        "navapp.sections.SectionsAppKt.WelcomeScreenPreview",
+        "navapp.sections.WelcomePreviewsKt.ScreenPreview"
       ]
     },
     {
@@ -482,7 +488,7 @@
     }
   ],
   "hidden": {
-    "preview": 2
+    "preview": 7
   },
   "hidden_by_module": {
     "screens": 0

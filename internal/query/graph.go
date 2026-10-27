@@ -92,6 +92,7 @@ type Graph struct {
 	resChanges                 map[int32][]resChange // changes: the changed files of each resource seed
 	removed                    []removedScreen       // changes: the screens it removes, nil when nothing tells
 	base                       *Graph                // changes: the map of the base (--base-db), nil without
+	moves                      *moves                // moved(), nil not made yet
 }
 
 func NewGraph(m *snapshot.Map, root string) *Graph {

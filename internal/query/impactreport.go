@@ -264,7 +264,7 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 				if q, ok := a.qualifiers[it.n]; ok {
 					qs = strs(q)
 				}
-				s = append(s, kv{"added", g.screenAdded(it.n)}, kv{"qualifiers", qs})
+				s = append(s, kv{"added", g.screenAdded(it.n)}, kv{"moved_from", g.movedFrom(it.n)}, kv{"qualifiers", qs})
 			}
 			screens = append(screens, s)
 		}
@@ -385,6 +385,10 @@ func (g *Graph) impactScreenText(a *impactAnswer, o opts, kind string, it screen
 	}
 	if g.isAdded(it.n) {
 		extra += "  new"
+	} else if g.base != nil {
+		if from, ok := g.moved().from[it.n]; ok {
+			extra += "  moved from " + g.base.location(from)
+		}
 	}
 	if q := a.qualifiers[it.n]; len(q) > 0 {
 		extra += "  only " + strings.Join(q, ", ")

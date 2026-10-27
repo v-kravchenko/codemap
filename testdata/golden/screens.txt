@@ -29,6 +29,7 @@ Dialog fragments (1)
 Compose routes (17)
   About                                              app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
       content SectionsAppKt.AboutScreen()
+      previews navapp.sections.AboutPreviewsKt.AboutPreview, navapp.sections.AboutScreenPreviewsKt.AboutPreview
   Catalog                                            app                          app/src/main/java/navapp/nav3when/Nav3WhenApp.kt  host MainActivity
   Compose                                            app                          app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt  host MainActivity
   Confirm                                            app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
@@ -44,13 +45,13 @@ Compose routes (17)
   Settings                                           app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
   Terms                                              app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
       content SectionsAppKt.TermsScreen()
-      previews navapp.sections.SectionsAppKt.TermsScreenPreview
+      previews navapp.sections.AboutScreenPreviewsKt.ScreenPreview, navapp.sections.SectionsAppKt.TermsScreenPreview, navapp.sections.TermsPreviewsKt.ScreenPreview
   Welcome                                            app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
       content SectionsAppKt.WelcomeScreen()
-      previews navapp.sections.SectionsAppKt.WelcomeScreenPreview
+      previews navapp.sections.SectionsAppKt.WelcomeScreenPreview, navapp.sections.WelcomePreviewsKt.ScreenPreview
   comments/{postId}                                  app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
   feed                                               app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
   post/{id}                                          app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
   signin                                             app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
 
-Not shown: preview 2 (--kind KIND, --kind all)
+Not shown: preview 7 (--kind KIND, --kind all)

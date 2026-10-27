@@ -11,7 +11,7 @@ strips it since `meta.run` is never reproducible).
 
 ```json
 {
-  "schema_version": "4.0.0",
+  "schema_version": "4.1.0",
   "command": "impact",
   "meta": {
     "tool_version": "0.3.0",
@@ -32,7 +32,7 @@ strips it since `meta.run` is never reproducible).
 }
 ```
 
-- `schema_version` — the shape of the JSON output (`"4.0.0"`, `internal/query/cli.go`). Independent
+- `schema_version` — the shape of the JSON output (`"4.1.0"`, `internal/query/cli.go`). Independent
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
   `"changes"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
@@ -158,7 +158,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.0.0",
+  "schema_version": "4.1.0",
   "command": "used-by",
   "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
   "items": [
@@ -220,7 +220,7 @@ Result fields (full `impact`, no `--to`):
 
 ```json
 {
-  "schema_version": "4.0.0",
+  "schema_version": "4.1.0",
   "command": "impact",
   "changed": [
     {
@@ -292,14 +292,19 @@ Result: the shape of `impact` (it calls the same `reportImpactWith`), plus:
 - `screens[].added` — with `--base-db`, `true` when the base's map has no node of the screen's id (a
   route too), else `false`; `null` without. Whether a screen changed itself or through what it uses
   is its `depth`: 0 or more. Since 4.0.0, in place of `status`.
+- `screens[].moved_from` — with `--base-db`, for a top-level Kotlin function (a preview) moved to
+  another file of its package, the screen it was in the base's map: `{name, location}`, the
+  location in the base; such a screen is not `added` and not in `removed`. Only when it is the one
+  function of its package, name and parameters the other map lacks on each side.
+  `null` otherwise and without `--base-db`. docs/decisions/0025. Since 4.1.0.
 - `changed[].location` — for a resource, the changed file defining it, at the resource's line in a
   `values*/` file: `values-night/colors.xml:12`, not the default `values/`; an unqualified file
   first when several changed. Other symbols: their own location.
 - `changed[].qualifiers` — for a resource, the qualifiers of the directories of its changed files,
   sorted (`["night"]` for `values-night/`); `[]` when an unqualified file changed (every
   configuration); `null` for code.
-- `removed` — with `--base-db`, every screen of the base's map that is not a screen in the head's,
-  wherever its source (routes and nested classes included), `{kind, name, target, module,
+- `removed` — with `--base-db`, every screen of the base's map that is not a screen in the head's
+  and did not move (`screens[].moved_from`), wherever its source (routes and nested classes included), `{kind, name, target, module,
   location}` with the location in the base, sorted by kind, module, name; `null` without.
 - `screens[].qualifiers` — the qualifiers whose changes alone reach the screen (`["night"]`: only the
   night render changes); `null` when code or an unqualified resource reaches it.
@@ -313,7 +318,7 @@ a dirty tree or of another variant than the head's adds and removes what the cha
 
 ```json
 {
-  "schema_version": "4.0.0",
+  "schema_version": "4.1.0",
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
@@ -361,7 +366,7 @@ Result: `screens`, `entries` and `opens`, each `{added, removed}`: `added` what 
 
 ```json
 {
-  "schema_version": "4.0.0",
+  "schema_version": "4.1.0",
   "command": "diff",
   "screens": {
     "added": [{ "name": "LinkActivity", "kind": "activity", "module": "app",
@@ -431,7 +436,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.0.0", "command": "nav-path",
+  "schema_version": "4.1.0", "command": "nav-path",
   "targets": [{ "name": "Login", "kind": "route", "module": "app",
     "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
   "screens": [
@@ -495,7 +500,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.0.0", "command": "graph",
+  "schema_version": "4.1.0", "command": "graph",
   "roots": ["Home"], "walk": "out", "to": [],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
@@ -551,7 +556,7 @@ where the walk back ends, as in `nav-path` (`{name, kind, module, location, host
 
 ```json
 {
-  "schema_version": "4.0.0", "command": "screens",
+  "schema_version": "4.1.0", "command": "screens",
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
@@ -593,7 +598,7 @@ module then location, truncated to `--limit`; `hidden_by_module` — with `--mod
 
 ```json
 {
-  "schema_version": "4.0.0", "command": "find", "pattern": "Activity",
+  "schema_version": "4.1.0", "command": "find", "pattern": "Activity",
   "total": 15, "synthetic": 0,
   "symbols": [
     { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",

@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -288,6 +289,80 @@ func TestChangesBaseDB(t *testing.T) {
 	}
 	if text := run("changes", "--files", "files.txt", "--base-db", "base.snap", "--no-check"); !strings.Contains(text, "Removed: 1") {
 		t.Errorf("changes text: no Removed: 1\n%s", text)
+	}
+}
+
+// TestChangesMovedPreview: a top-level preview moved to another file of its package is neither
+// added nor removed but moved from the base's; one of two the base lacks is added.
+func TestChangesMovedPreview(t *testing.T) {
+	root := fixture.FixtureRoot(t)
+	run := func(args ...string) string {
+		cmd := exec.Command(os.Args[0], args...)
+		cmd.Dir, cmd.Env = root, append(os.Environ(), "CODEMAP_AS_MAIN=1")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("codemap %s: %v\n%s", strings.Join(args, " "), err, out)
+		}
+		return string(out)
+	}
+	classes := filepath.Join(root, "app/classes/navapp/sections")
+	hide := func(facades ...string) func() {
+		saved := map[string][]byte{}
+		ents, _ := os.ReadDir(classes)
+		for _, e := range ents {
+			for _, f := range facades { // the facade and the classes made for its lambdas
+				if strings.HasPrefix(e.Name(), f) || strings.HasPrefix(e.Name(), "ComposableSingletons$"+f) {
+					p := filepath.Join(classes, e.Name())
+					saved[p], _ = os.ReadFile(p)
+					os.Remove(p)
+				}
+			}
+		}
+		return func() {
+			for p, data := range saved {
+				os.WriteFile(p, data, 0o644)
+			}
+		}
+	}
+	restore := hide("AboutScreenPreviewsKt", "WelcomePreviewsKt")
+	run("build", "--out", "base.snap")
+	restore()
+	hide("AboutPreviewsKt", "TermsPreviewsKt")
+	run("build")
+	dir := "app/src/main/java/navapp/sections/"
+	os.WriteFile(filepath.Join(root, "files.txt"), []byte(dir+"AboutScreenPreviews.kt:10\n"+dir+"AboutScreenPreviews.kt:16\n"), 0o644)
+	var a struct {
+		Screens []struct {
+			Kind, Name string
+			Added      bool
+			MovedFrom  *struct{ Name, Location string } `json:"moved_from"`
+		}
+		Removed []struct{ Name, Location string }
+	}
+	out := run("changes", "--files", "files.txt", "--base-db", "base.snap", "--kind", "all", "--json", "--no-check")
+	if err := json.Unmarshal([]byte(out), &a); err != nil {
+		t.Fatal(err)
+	}
+	var got, removed []string
+	for _, s := range a.Screens {
+		if s.Kind == "preview" {
+			from := ""
+			if s.MovedFrom != nil {
+				from = " from " + s.MovedFrom.Name + " " + s.MovedFrom.Location
+			}
+			got = append(got, fmt.Sprintf("%s added=%v%s", s.Name, s.Added, from))
+		}
+	}
+	for _, r := range a.Removed {
+		removed = append(removed, r.Name+" "+r.Location)
+	}
+	want := []string{"AboutScreenPreviews.AboutPreview added=false from AboutPreviews.AboutPreview " + dir + "AboutPreviews.kt:8",
+		"AboutScreenPreviews.ScreenPreview added=true"}
+	if !slices.Equal(got, want) {
+		t.Errorf("previews\n%s\nwant\n%s", strings.Join(got, "\n"), strings.Join(want, "\n"))
+	}
+	if want := []string{"TermsPreviews.ScreenPreview " + dir + "TermsPreviews.kt:8"}; !slices.Equal(removed, want) {
+		t.Errorf("removed %v, want %v", removed, want)
 	}
 }
 

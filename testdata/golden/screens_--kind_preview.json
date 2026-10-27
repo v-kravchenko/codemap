@@ -1,7 +1,46 @@
 {
-  "schema_version": "4.0.0",
+  "schema_version": "4.1.0",
   "command": "screens",
   "screens": [
+    {
+      "kind": "preview",
+      "module": "app",
+      "name": "AboutPreviews.AboutPreview",
+      "target": "navapp.sections.AboutPreviewsKt.AboutPreview",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/AboutPreviews.kt:8",
+      "content": [
+        "SectionsAppKt.AboutScreen()"
+      ],
+      "previews": []
+    },
+    {
+      "kind": "preview",
+      "module": "app",
+      "name": "AboutScreenPreviews.AboutPreview",
+      "target": "navapp.sections.AboutScreenPreviewsKt.AboutPreview",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/AboutScreenPreviews.kt:9",
+      "content": [
+        "SectionsAppKt.AboutScreen()"
+      ],
+      "previews": []
+    },
+    {
+      "kind": "preview",
+      "module": "app",
+      "name": "AboutScreenPreviews.ScreenPreview",
+      "target": "navapp.sections.AboutScreenPreviewsKt.ScreenPreview",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/AboutScreenPreviews.kt:15",
+      "content": [
+        "SectionsAppKt.TermsScreen()"
+      ],
+      "previews": []
+    },
     {
       "kind": "preview",
       "module": "app",
@@ -25,6 +64,32 @@
       "location": "app/src/main/java/navapp/sections/SectionsApp.kt:82",
       "content": [
         "SectionsAppKt.SectionsTheme()",
+        "SectionsAppKt.WelcomeScreen()"
+      ],
+      "previews": []
+    },
+    {
+      "kind": "preview",
+      "module": "app",
+      "name": "TermsPreviews.ScreenPreview",
+      "target": "navapp.sections.TermsPreviewsKt.ScreenPreview",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/TermsPreviews.kt:8",
+      "content": [
+        "SectionsAppKt.TermsScreen()"
+      ],
+      "previews": []
+    },
+    {
+      "kind": "preview",
+      "module": "app",
+      "name": "WelcomePreviews.ScreenPreview",
+      "target": "navapp.sections.WelcomePreviewsKt.ScreenPreview",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/WelcomePreviews.kt:8",
+      "content": [
         "SectionsAppKt.WelcomeScreen()"
       ],
       "previews": []

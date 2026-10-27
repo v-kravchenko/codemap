@@ -7,6 +7,12 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Added
+
+- `changes --base-db`: a top-level Kotlin function (a preview) moved to another file of its package
+  is no longer a screen added and one removed: `screens[].moved_from` names it and its location in
+  the base (schema 4.1.0).
+
 ### Changed
 
 - A module no app depends on (a test helper, `testImplementation` only) is no longer missing from

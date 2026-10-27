@@ -16,16 +16,24 @@ func (g *Graph) addedToBase(n int32) bool {
 	if g.base.m.Index(g.m.Node.ID[n]) >= 0 {
 		return false
 	}
+	mv := g.moved()
+	if _, ok := mv.from[n]; ok {
+		return false
+	}
+	// a member of a function moved to this file: in the base, in the other file
+	declared := func(cls, method string) bool {
+		return g.base.declares(cls, method) || mv.members[[2]string{cls, method}]
+	}
 	switch g.kind(n) {
 	case "C":
 		cls, method, _ := g.enclosing(g.name(n))
-		return !g.base.declares(sourceClass(cls), method)
+		return !declared(sourceClass(cls), method)
 	case "M", "F":
 		cls, method, made := g.enclosing(g.name(g.owner(n)))
 		if !made && sourceClass(cls) == cls {
 			method = memberName(g.sname(n))
 		}
-		return !g.base.declares(sourceClass(cls), method)
+		return !declared(sourceClass(cls), method)
 	}
 	return true
 }
