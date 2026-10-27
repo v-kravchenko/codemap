@@ -51,7 +51,22 @@ func inputsSha1(b *build.Builder) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
+// version: set by the release build (-ldflags "-X main.version=0.3.0"); empty in other builds.
+var version string
+
+// toolVersion: the release build's version, else the module's (go install ...@v0.3.0), else dev.
+func toolVersion() string {
+	if version != "" {
+		return strings.TrimPrefix(version, "v")
+	}
+	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" && info.Main.Version != "(devel)" {
+		return strings.TrimPrefix(info.Main.Version, "v")
+	}
+	return "dev"
+}
+
 func main() {
+	query.ToolVersion = toolVersion()
 	if len(os.Args) < 2 {
 		fmt.Fprintln(os.Stderr, query.Usage())
 		os.Exit(2)
@@ -63,6 +78,9 @@ func main() {
 		return
 	case cmd == "help":
 		cmd, args = args[0], []string{"--help"}
+	case cmd == "--version" || cmd == "version" && len(args) == 0:
+		fmt.Println("codemap " + query.ToolVersion)
+		return
 	}
 	if slices.Contains(args, "--help") || slices.Contains(args, "-h") {
 		help, ok := query.Help(cmd)

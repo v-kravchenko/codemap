@@ -97,6 +97,7 @@ var commands = []command{
 			{name: "limit", arg: "N", help: "how many matches to show"},
 			{name: "type", arg: "TYPE", many: true, help: "only symbols of this type: class, method, field or resource"},
 			optModule}},
+	{name: "version", about: "Print the version of codemap."},
 	{name: "init", about: "Run Gradle once (configuration only) and write the project model, codemap.model.json.",
 		flags: []flagSpec{
 			{name: "root", arg: "DIR", help: "project root (default: found from the working directory)"},

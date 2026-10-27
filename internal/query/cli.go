@@ -22,7 +22,6 @@ import (
 )
 
 const (
-	toolVersion   = "0.2.0"
 	schemaVersion = "3.6.0"
 	exitOK        = 0
 	exitError     = 2
@@ -33,6 +32,7 @@ var (
 	findTypes      = []string{"class", "method", "field", "resource"} // find --type: find lists no routes
 	syntheticClass = regexp.MustCompile(`\$(\d|\$|DefaultImpls$|WhenMappings$)|_HiltModules_\w+$`)
 	started        = time.Now()
+	ToolVersion    = "dev" // set by the command from the release build or the module version
 )
 
 type opts struct {
@@ -348,7 +348,7 @@ func (g *Graph) printJSON(command string, result obj) {
 		{"schema_version", schemaVersion},
 		{"command", command},
 		{"meta", obj{
-			{"tool_version", toolVersion},
+			{"tool_version", ToolVersion},
 			{"index", obj{{"version", m.MetaValue("index_version")}, {"variant", cmp.Or(config.Cfg.Variant, "debug")}, {"commit", commit},
 				{"dirty", m.MetaValue("dirty") == "1"}, {"inputs_sha1", m.MetaValue("inputs_sha1")},
 				{"stale", stale}, {"stale_inputs", g.staleJSON()}}},

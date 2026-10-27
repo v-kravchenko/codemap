@@ -13,6 +13,7 @@ codemap init [--gradle CMD]                        # once, and after build files
 codemap build [--variant V] [--out SNAPSHOT] [--jobs N] [--force]  # default: <variant>.snap in snapshot_dir
 codemap used-by|uses|impact|changes|nav-path|graph|screens|find|build --info ... [--variant V] [--json]
 codemap COMMAND --help                             # its options; one it does not take is an error
+codemap version                                    # the release, or dev for a build from a checkout
 CODEMAP_TIMES=1 codemap build                      # time of each stage on stderr
 CODEMAP_PROFILE=/tmp/cpu.prof codemap impact X     # CPU profile of a build or a query
 ```

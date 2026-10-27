@@ -14,7 +14,7 @@ strips it since `meta.run` is never reproducible).
   "schema_version": "3.6.0",
   "command": "impact",
   "meta": {
-    "tool_version": "0.2.0",
+    "tool_version": "0.3.0",
     "index": {
       "version": "...",
       "variant": "debug",
@@ -35,7 +35,8 @@ strips it since `meta.run` is never reproducible).
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
   `"changes"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
-- `meta.tool_version` — the codemap binary's own version (`"0.2.0"`).
+- `meta.tool_version` — the codemap binary's own version (`"0.3.0"`, `codemap version`): the release's
+  tag without `v`, `dev` for a build from a checkout.
 - `meta.index.version` — the snapshot format version the map was built with (`index_version`);
   queries refuse to run against a map from a different one (see Exit codes).
 - `meta.index.variant` — the build variant whose classes the map was built from (`codemap build
