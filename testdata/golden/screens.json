@@ -38,6 +38,19 @@
     {
       "kind": "activity",
       "module": "app",
+      "name": "HelpActivity",
+      "target": "navapp.sections.HelpActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/HelpActivity.kt:10",
+      "content": [],
+      "previews": [
+        "navapp.sections.HelpActivityKt.HelpPreview"
+      ]
+    },
+    {
+      "kind": "activity",
+      "module": "app",
       "name": "LabelledCopyActivity",
       "target": "navapp.impact.LabelledCopyActivity",
       "host": null,
@@ -533,6 +546,6 @@
     }
   ],
   "hidden": {
-    "preview": 9
+    "preview": 10
   }
 }

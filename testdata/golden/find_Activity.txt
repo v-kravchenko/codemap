@@ -10,11 +10,14 @@ C     navapp.impact.LimitActivity                                            app
 C     navapp.impact.QuietActivity                                            app                          app/src/main/java/navapp/impact/Overrides.kt:22
 C     navapp.impact.AvatarActivity                                           app                          app/src/main/java/navapp/impact/DataClasses.kt:18
 C     navapp.impact.SecondActivity                                           app                          app/src/main/java/navapp/impact/Constructors.kt:18
+C     navapp.sections.HelpActivity                                           app                          app/src/main/java/navapp/sections/HelpActivity.kt:10
 C     navapp.impact.CounterActivity                                          app                          app/src/main/java/navapp/impact/Constructors.kt:8
 C     navapp.sections.GuideActivity                                          app                          app/src/main/java/navapp/sections/GuideActivity.kt:18
 C     navapp.views.LicensesActivity                                          app                          app/src/main/java/navapp/views/ViewsActivity.kt:56
 C     navapp.impact.NicknameActivity                                         app                          app/src/main/java/navapp/impact/DataClasses.kt:11
+C     navapp.sections.HelpActivityKt                                         app                          app/src/main/java/navapp/sections/HelpActivity.kt:19
 C     navapp.impact.PlainCopyActivity                                        app                          app/src/main/java/navapp/impact/Defaults.kt:16
 C     navapp.impact.LabelledCopyActivity                                     app                          app/src/main/java/navapp/impact/Defaults.kt:23
+C     navapp.sections.ComposableSingletons.HelpActivityKt                    app                          app/src/main/java/navapp/sections/HelpActivity.kt:13
 C     navapp.sections.ComposableSingletons.GuideActivityKt                   app                          app/src/main/java/navapp/sections/GuideActivity.kt:24
 (2 synthetic hidden: Hilt glue, lambdas, DefaultImpls; --all shows them)

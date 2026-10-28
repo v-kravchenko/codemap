@@ -548,7 +548,7 @@ other kinds and for a route drawing only library composables; `previews` — the
 previews drawing the screen's own composables, sorted (since 3.7.0): a preview goes with the screens
 drawing a composable of its own file (else module) that the screen draws itself or through a
 composable of its own module calling it, those the fewest screens draw when there are several, of
-those the screens drawing a composable of the preview's file when there are any; what a route draws is
+those the screens drawing a composable of the preview's file (or an Activity, fragment of it) when there are any; what a route draws is
 not its host Activity's or fragment's (docs/decisions/0026);
 so a theme or a design system's component links no screen; empty for
 previews and layouts; `hidden` — counts of screens

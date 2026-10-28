@@ -57,6 +57,19 @@
     {
       "kind": "preview",
       "module": "app",
+      "name": "HelpActivity.HelpPreview",
+      "target": "navapp.sections.HelpActivityKt.HelpPreview",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/HelpActivity.kt:19",
+      "content": [
+        "GuideBodyKt.GuideBody()"
+      ],
+      "previews": []
+    },
+    {
+      "kind": "preview",
+      "module": "app",
       "name": "PhotoGuideScreen.PhotoGuidePreview",
       "target": "navapp.sections.PhotoGuideScreenKt.PhotoGuidePreview",
       "host": null,
@@ -122,7 +135,7 @@
     }
   ],
   "hidden": {
-    "activity": 15,
+    "activity": 16,
     "dialog": 1,
     "fragment": 6,
     "route": 19

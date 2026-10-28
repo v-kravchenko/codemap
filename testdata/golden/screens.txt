@@ -1,8 +1,10 @@
 
-Activities (15)
+Activities (16)
   AvatarActivity                                     app                          app/src/main/java/navapp/impact/DataClasses.kt:18
   FirstActivity                                      app                          app/src/main/java/navapp/impact/Constructors.kt:12
   GuideActivity                                      app                          app/src/main/java/navapp/sections/GuideActivity.kt:18
+  HelpActivity                                       app                          app/src/main/java/navapp/sections/HelpActivity.kt:10
+      previews navapp.sections.HelpActivityKt.HelpPreview
   LabelledCopyActivity                               app                          app/src/main/java/navapp/impact/Defaults.kt:23
   LicensesActivity                                   app                          app/src/main/java/navapp/views/ViewsActivity.kt:56
   LimitActivity                                      app                          app/src/main/java/navapp/impact/Constants.kt:10
@@ -61,4 +63,4 @@ Compose routes (19)
   post/{id}                                          app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
   signin                                             app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
 
-Not shown: preview 9 (--kind KIND, --kind all)
+Not shown: preview 10 (--kind KIND, --kind all)

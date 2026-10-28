@@ -2,7 +2,7 @@
   "schema_version": "4.1.0",
   "command": "find",
   "pattern": "Activity",
-  "total": 19,
+  "total": 22,
   "synthetic": 2,
   "symbols": [
     {
@@ -78,6 +78,12 @@
       "location": "app/src/main/java/navapp/impact/Constructors.kt:18"
     },
     {
+      "symbol": "navapp.sections.HelpActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/HelpActivity.kt:10"
+    },
+    {
       "symbol": "navapp.impact.CounterActivity",
       "kind": "class",
       "module": "app",
@@ -102,6 +108,12 @@
       "location": "app/src/main/java/navapp/impact/DataClasses.kt:11"
     },
     {
+      "symbol": "navapp.sections.HelpActivityKt",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/HelpActivity.kt:19"
+    },
+    {
       "symbol": "navapp.impact.PlainCopyActivity",
       "kind": "class",
       "module": "app",
@@ -112,6 +124,12 @@
       "kind": "class",
       "module": "app",
       "location": "app/src/main/java/navapp/impact/Defaults.kt:23"
+    },
+    {
+      "symbol": "navapp.sections.ComposableSingletons.HelpActivityKt",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/HelpActivity.kt:13"
     },
     {
       "symbol": "navapp.sections.ComposableSingletons.GuideActivityKt",

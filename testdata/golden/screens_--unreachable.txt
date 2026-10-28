@@ -1,11 +1,14 @@
 
-Activities (10)
+Activities (11)
   AvatarActivity                                     app                          app/src/main/java/navapp/impact/DataClasses.kt:18
       ends at AvatarActivity: nothing opens it
   FirstActivity                                      app                          app/src/main/java/navapp/impact/Constructors.kt:12
       ends at FirstActivity: nothing opens it
   GuideActivity                                      app                          app/src/main/java/navapp/sections/GuideActivity.kt:18
       ends at GuideActivity: nothing opens it
+  HelpActivity                                       app                          app/src/main/java/navapp/sections/HelpActivity.kt:10
+      previews navapp.sections.HelpActivityKt.HelpPreview
+      ends at HelpActivity: nothing opens it
   LabelledCopyActivity                               app                          app/src/main/java/navapp/impact/Defaults.kt:23
       ends at LabelledCopyActivity: nothing opens it
   LimitActivity                                      app                          app/src/main/java/navapp/impact/Constants.kt:10
@@ -37,6 +40,6 @@ Compose routes (2)
       previews navapp.sections.PhotoGuideScreenKt.PhotoGuidePreview
       ends at GuideActivity: nothing opens it
 
-Not shown: preview 9 (--kind KIND, --kind all)
+Not shown: preview 10 (--kind KIND, --kind all)
 
-(14 screens no entry of the manifest reaches, as far as the code map sees)
+(15 screens no entry of the manifest reaches, as far as the code map sees)

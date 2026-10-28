@@ -1934,8 +1934,9 @@ func (b *Builder) relatedAll() {
 // a shared module), a screen drawing what it calls of its own module and what those call in their
 // module (a screen's private content, a body shared by a few screens); of several, those the fewest
 // screens draw: the screen's own composable, not a component every screen draws. Of screens tied,
-// those whose composable is in the preview's file: a file holding several screens and their
-// previews gives each preview its own screen, a preview of a shared body its file's screen.
+// those whose composable (or Activity, fragment) is in the preview's file: a file holding several
+// screens and their previews gives each preview its own screen, a preview of a shared body its
+// file's screen.
 func (b *Builder) previewsOfScreens(drawnBy map[int64][]int64, outEdges map[int64][]snapshot.Edge, nested func(string) []int64) {
 	// a route's content is the route's: not of the Activity whose NavHost (or an inlined copy of a
 	// wrapper in its classes) registers it
@@ -2011,8 +2012,10 @@ func (b *Builder) previewsOfScreens(drawnBy map[int64][]int64, outEdges map[int6
 				}
 			}
 		}
+		// a route's node has the file of its route class, not of what it draws
 		if inFile := slices.DeleteFunc(slices.Clone(screens), func(screen int64) bool {
-			return !slices.ContainsFunc(drawnBy[screen], func(d int64) bool { return b.Nodes[d].File == p.File })
+			return !(!routes[screen] && b.Nodes[screen].File == p.File) &&
+				!slices.ContainsFunc(drawnBy[screen], func(d int64) bool { return b.Nodes[d].File == p.File })
 		}); len(inFile) > 0 {
 			screens = inFile
 		}
