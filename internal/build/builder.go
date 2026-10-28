@@ -274,6 +274,7 @@ type Builder struct {
 	related       map[[2]int64]struct{}
 	content       map[[2]int64]struct{} // route, a composable its content calls from its own lines
 	entries       map[EntryRow]struct{}
+	components    map[int64]string // class -> component kind
 	callSites     []CallSite
 	paramSwitches map[Triple]struct{}
 	directReads   map[[2]int64]struct{}
@@ -1790,8 +1791,11 @@ func (b *Builder) navGraphs() {
 	}
 }
 
+// entriesAll: the launcher, deep link and intent entries of the activities, and the components
+// the manifests declare, with the workers by worker_bases.
 func (b *Builder) entriesAll() {
 	b.entries = map[EntryRow]struct{}{}
+	b.components = map[int64]string{}
 	for i, m := range b.modules {
 		for _, rel := range m.Manifests {
 			path := filepath.Join(b.root, rel)
@@ -1803,27 +1807,45 @@ func (b *Builder) entriesAll() {
 				continue
 			}
 			for _, e := range android.ParseManifest(string(data)) {
-				jvm := strings.ReplaceAll(e.Cls, ".", "/")
-				cid, ok := b.classID[jvm]
-				if !ok && strings.HasPrefix(e.Cls, ".") {
-					var cands []int64
-					for _, n := range b.classOrder {
-						if strings.HasSuffix(n, jvm) {
-							cands = append(cands, b.classID[n])
-						}
-					}
-					if len(cands) == 1 {
-						cid, ok = cands[0], true
-					}
-				}
-				if ok && b.screenCls[cid] == "activity" {
+				if cid, ok := b.manifestClass(e.Cls); ok && b.screenCls[cid] == "activity" {
 					r, _ := filepath.Rel(b.root, path)
 					fid := b.fileID(r, i+1)
 					b.entries[EntryRow{cid, e.Kind, e.Detail, fid, e.Line}] = struct{}{}
 				}
 			}
+			for _, c := range android.ParseComponents(string(data)) {
+				if cid, ok := b.manifestClass(c.Cls); ok {
+					b.components[cid] = c.Kind
+				}
+			}
 		}
 	}
+	workers := b.subclassesOf(config.WorkerBases)
+	for _, n := range b.parsedNames {
+		if workers[n] && int(b.parsed[n].C.Flags)&(snapshot.AccAbstract|snapshot.AccInterface) == 0 {
+			if cid, ok := b.classID[n]; ok {
+				b.components[cid] = "worker"
+			}
+		}
+	}
+}
+
+// manifestClass: the class a manifest names, a name starting with . by the one class ending in it.
+func (b *Builder) manifestClass(name string) (int64, bool) {
+	jvm := strings.ReplaceAll(name, ".", "/")
+	cid, ok := b.classID[jvm]
+	if !ok && strings.HasPrefix(name, ".") {
+		var cands []int64
+		for _, n := range b.classOrder {
+			if strings.HasSuffix(n, jvm) {
+				cands = append(cands, b.classID[n])
+			}
+		}
+		if len(cands) == 1 {
+			cid, ok = cands[0], true
+		}
+	}
+	return cid, ok
 }
 
 func (b *Builder) relatedAll() {
@@ -2479,6 +2501,10 @@ func (b *Builder) otherColumns(m *snapshot.Map) {
 		m.Entry.Detail.Add(e.Detail)
 		m.Entry.File = append(m.Entry.File, int32(e.File))
 		m.Entry.Line = append(m.Entry.Line, int32(e.Line))
+	}
+	for _, c := range util.SortedKeys(b.components) {
+		m.Component.Node = append(m.Component.Node, c)
+		m.Component.Kind.Add(b.components[c])
 	}
 }
 

@@ -9,6 +9,12 @@ notes from its section here (`tools/release-notes.sh`).
 
 ### Added
 
+- `impact` and `changes` list the components a change reaches next to the screens: the application,
+  services, receivers and providers of the manifests, and the workers by `components.worker_bases`
+  (WorkManager's in the `android` preset); `build --info` counts them. A change reaching only a push
+  service or `Application.onCreate` no longer looks like it reaches nothing (`components`, schema
+  4.2.0). Maps are rebuilt (index version 12).
+
 - A query warns when codemap.yml or its presets give other settings than the map was built with,
   and with `--strict` exits 3: such a map may answer anything differently
   (`meta.index.stale_inputs.config`, schema 4.2.0).

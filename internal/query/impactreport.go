@@ -3,6 +3,7 @@ package query
 // impact: the answer of the walk of impact.go, up to the screens, as text or --json; changes uses it too.
 
 import (
+	"cmp"
 	"fmt"
 	"sort"
 	"strings"
@@ -42,6 +43,12 @@ func (g *Graph) cmdImpact(o opts) int {
 	return g.reportImpact(seeds, o, "impact")
 }
 
+type componentItem struct {
+	depth                    int
+	kind, label, target, mod string
+	n                        int32
+}
+
 type screenItem struct {
 	depth              int
 	label, target, mod string
@@ -76,6 +83,8 @@ type impactAnswer struct {
 	byKind       map[string][]screenItem
 	hidden       map[string]int
 	outScreens   int
+	components   []componentItem
+	outComps     int            // components outside --module
 	outSymbols   map[int32]bool // affected outside --module
 	navs         map[int32]*navOf
 	notCov       []notCovered
@@ -99,6 +108,7 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 	}
 	a.elapsed = time.Since(t)
 	g.impactScreens(a, shownKinds(o), o.noPreview)
+	g.impactComponents(a)
 	if command == "changes" {
 		a.qualifiers = g.screenQualifiers(seeds, o.depth)
 	}
@@ -158,6 +168,23 @@ func (g *Graph) impactScreens(a *impactAnswer, shown map[string]bool, noPreview 
 			return a.mod < b.mod
 		})
 	}
+}
+
+// impactComponents: the components reached, nearest first; those outside --module counted.
+func (g *Graph) impactComponents(a *impactAnswer) {
+	w := a.w
+	for _, n := range w.ComponentOrder {
+		if !a.mf.keeps(g.module(n)) {
+			a.outComps++
+			continue
+		}
+		a.components = append(a.components, componentItem{w.Aff[w.Components[n]].Depth, g.components[n], g.label(n), g.qualified(n), g.module(n), n})
+	}
+	sort.SliceStable(a.components, func(i, j int) bool {
+		x, y := a.components[i], a.components[j]
+		return cmp.Or(cmp.Compare(x.depth, y.depth), cmp.Compare(x.kind, y.kind), cmp.Compare(x.label, y.label),
+			cmp.Compare(x.target, y.target), cmp.Compare(x.mod, y.mod)) < 0
+	})
 }
 
 func uniqueNotCovered(nc []notCovered) []notCovered {
@@ -273,10 +300,16 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 	for _, x := range a.notCov {
 		ncJSON = append(ncJSON, obj{{"path", x.path}, {"reason", x.reason}})
 	}
+	var components []any
+	for _, it := range a.components {
+		components = append(components, obj{{"kind", it.kind}, {"name", it.label}, {"target", it.target}, {"module", it.mod},
+			{"location", g.location(it.n)}, {"depth", it.depth}, {"path", g.qualifiedPath(g.path(w, w.Components[it.n]))}})
+	}
 	result := obj{
 		{"changed", objs(changed)},
 		{"affected", objs(affected)},
 		{"screens", list(screens)},
+		{"components", list(components)},
 	}
 	if command == "changes" {
 		var removed any
@@ -297,7 +330,7 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 		{"warnings", strs(a.warnings)},
 	}...)
 	if a.mf != nil {
-		result = append(result, kv{"hidden_by_module", obj{{"screens", a.outScreens}, {"affected", len(a.outSymbols)}}})
+		result = append(result, kv{"hidden_by_module", obj{{"screens", a.outScreens}, {"components", a.outComps}, {"affected", len(a.outSymbols)}}})
 	}
 	g.printJSON(command, result)
 }
@@ -346,14 +379,27 @@ func (g *Graph) impactText(a *impactAnswer, o opts) {
 	if len(a.hidden) > 0 {
 		fmt.Println("\n" + hiddenLine(a.hidden))
 	}
+	if len(a.components) > 0 {
+		fmt.Printf("\nComponents: %d\n", len(a.components))
+		for _, it := range a.components {
+			fmt.Printf("  %-11s %-50s %s\n", it.kind, it.label, it.mod)
+			if !o.noPaths {
+				fmt.Println("      " + g.formatPath(g.path(a.w, a.w.Components[it.n])))
+			}
+		}
+	}
 	if len(g.removed) > 0 {
 		fmt.Printf("\nRemoved: %d\n", len(g.removed))
 		for _, r := range g.removed {
 			fmt.Printf("  %-9s %-50s %-29s %s\n", r.kind, r.name, r.module, r.location)
 		}
 	}
-	if a.outScreens+len(a.outSymbols) > 0 {
-		fmt.Println("\n" + outsideLine(fmt.Sprintf("%d screens", a.outScreens), fmt.Sprintf("%d symbols", len(a.outSymbols))))
+	if a.outScreens+a.outComps+len(a.outSymbols) > 0 {
+		parts := []string{fmt.Sprintf("%d screens", a.outScreens)}
+		if a.outComps > 0 {
+			parts = append(parts, fmt.Sprintf("%d components", a.outComps))
+		}
+		fmt.Println("\n" + outsideLine(append(parts, fmt.Sprintf("%d symbols", len(a.outSymbols)))...))
 	}
 	if len(a.modules) > 0 {
 		mods := util.SortedKeys(a.modules)

@@ -56,6 +56,9 @@ type Config struct {
 		LayoutPattern      string   `yaml:"layout_pattern,omitempty" json:"layout_pattern,omitempty"`
 		DebugSourceSets    []string `yaml:"debug_source_sets,omitempty" json:"debug_source_sets,omitempty"`
 	} `yaml:"screens,omitempty" json:"screens"`
+	Components struct {
+		WorkerBases []string `yaml:"worker_bases,omitempty" json:"worker_bases,omitempty"`
+	} `yaml:"components,omitempty" json:"components"`
 	Navigation struct {
 		RouteBases       []string `yaml:"route_bases,omitempty" json:"route_bases,omitempty"`
 		ChildBases       []string `yaml:"child_bases,omitempty" json:"child_bases,omitempty"`
@@ -272,6 +275,7 @@ type compiled struct {
 	routeGraph                                *regexp.Regexp
 	routeBases, childBases, routeInterfaces   map[string]bool
 	routeReadOnly                             *regexp.Regexp
+	workerBases                               map[string]bool
 }
 
 func (c *Config) compile() (*compiled, error) {
@@ -298,6 +302,7 @@ func (c *Config) compile() (*compiled, error) {
 		activityBases:     classSet(c.Screens.ActivityBases),
 		fragmentBases:     classSet(slices.Concat(c.Screens.FragmentBases, c.Screens.DialogBases)),
 		dialogBases:       classSet(c.Screens.DialogBases),
+		workerBases:       classSet(c.Components.WorkerBases),
 		previewMarkers:    util.Set(c.Screens.PreviewAnnotations...),
 		routeRegistration: members("navigation.register", c.Navigation.Register),
 		routeByName:       members("navigation.open", c.Navigation.Open),
@@ -363,6 +368,7 @@ func ApplyConfig(c *Config) {
 	}
 	Cfg = c
 	ActivityBases, FragmentBases, DialogBases = k.activityBases, k.fragmentBases, k.dialogBases
+	WorkerBases = k.workerBases
 	PreviewMarkers, ScreenLayout = k.previewMarkers, k.screenLayout
 	RouteRegistration, RouteByName, RouteReadOnly = k.routeRegistration, k.routeByName, k.routeReadOnly
 	RouteGraph = k.routeGraph
@@ -444,6 +450,7 @@ var (
 	Cfg                                       *Config
 	ClassDirs, SourceSets, manifests          []string
 	ActivityBases, DialogBases, FragmentBases map[string]bool
+	WorkerBases                               map[string]bool
 	PreviewMarkers                            map[string]bool
 	ScreenLayout                              *regexp.Regexp
 	RouteRegistration, RouteByName            *regexp.Regexp

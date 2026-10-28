@@ -1,0 +1,215 @@
+{
+  "schema_version": "4.2.0",
+  "command": "impact",
+  "changed": [
+    {
+      "symbol": "navapp.components.Tracker.track",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:20"
+    }
+  ],
+  "affected": [
+    {
+      "symbol": "navapp.components.BootReceiver.onReceive",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:40",
+      "depth": 1,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.BootReceiver.onReceive"
+      ]
+    },
+    {
+      "symbol": "navapp.components.NavApp.onCreate",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:25",
+      "depth": 1,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.NavApp.onCreate"
+      ]
+    },
+    {
+      "symbol": "navapp.components.NotesProvider.query",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:47",
+      "depth": 1,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.NotesProvider.query"
+      ]
+    },
+    {
+      "symbol": "navapp.components.SyncService.onStartCommand",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:34",
+      "depth": 1,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.SyncService.onStartCommand"
+      ]
+    },
+    {
+      "symbol": "navapp.components.TrackedWorker.report",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:58",
+      "depth": 1,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.TrackedWorker.report"
+      ]
+    },
+    {
+      "symbol": "navapp.components.BootReceiver",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:39",
+      "depth": 2,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.BootReceiver.onReceive",
+        "navapp.components.BootReceiver"
+      ]
+    },
+    {
+      "symbol": "navapp.components.NavApp",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:23",
+      "depth": 2,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.NavApp.onCreate",
+        "navapp.components.NavApp"
+      ]
+    },
+    {
+      "symbol": "navapp.components.NotesProvider",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:43",
+      "depth": 2,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.NotesProvider.query",
+        "navapp.components.NotesProvider"
+      ]
+    },
+    {
+      "symbol": "navapp.components.SyncService",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:30",
+      "depth": 2,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.SyncService.onStartCommand",
+        "navapp.components.SyncService"
+      ]
+    },
+    {
+      "symbol": "navapp.components.SyncWorker.doWork",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:63",
+      "depth": 2,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.TrackedWorker.report",
+        "navapp.components.SyncWorker.doWork"
+      ]
+    },
+    {
+      "symbol": "navapp.components.SyncWorker",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:61",
+      "depth": 3,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.TrackedWorker.report",
+        "navapp.components.SyncWorker.doWork",
+        "navapp.components.SyncWorker"
+      ]
+    }
+  ],
+  "screens": [],
+  "components": [
+    {
+      "kind": "application",
+      "name": "NavApp",
+      "target": "navapp.components.NavApp",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:23",
+      "depth": 1,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.NavApp.onCreate"
+      ]
+    },
+    {
+      "kind": "provider",
+      "name": "NotesProvider",
+      "target": "navapp.components.NotesProvider",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:43",
+      "depth": 1,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.NotesProvider.query"
+      ]
+    },
+    {
+      "kind": "receiver",
+      "name": "BootReceiver",
+      "target": "navapp.components.BootReceiver",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:39",
+      "depth": 1,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.BootReceiver.onReceive"
+      ]
+    },
+    {
+      "kind": "service",
+      "name": "SyncService",
+      "target": "navapp.components.SyncService",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:30",
+      "depth": 1,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.SyncService.onStartCommand"
+      ]
+    },
+    {
+      "kind": "worker",
+      "name": "SyncWorker",
+      "target": "navapp.components.SyncWorker",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:61",
+      "depth": 2,
+      "path": [
+        "navapp.components.Tracker.track",
+        "navapp.components.TrackedWorker.report",
+        "navapp.components.SyncWorker.doWork"
+      ]
+    }
+  ],
+  "hidden": {},
+  "modules": {
+    "app": 12
+  },
+  "packages": {
+    "navapp.components": 12
+  },
+  "not_covered": [],
+  "warnings": []
+}

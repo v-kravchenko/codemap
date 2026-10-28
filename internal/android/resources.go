@@ -388,6 +388,26 @@ func ParseManifest(text string) []ManifestEntry {
 	return out
 }
 
+// ManifestComponent: an application, service, receiver or provider class the manifest declares.
+type ManifestComponent struct{ Cls, Kind string }
+
+func ParseComponents(text string) []ManifestComponent {
+	root, err := ParseXML([]byte(text))
+	if err != nil {
+		return nil
+	}
+	var out []ManifestComponent
+	root.Iter(func(el *El) {
+		if el.Tag != "application" && el.Tag != "service" && el.Tag != "receiver" && el.Tag != "provider" {
+			return
+		}
+		if name, _ := el.Get(androidNS + "name"); name != "" {
+			out = append(out, ManifestComponent{name, el.Tag})
+		}
+	})
+	return out
+}
+
 func navID(v string, ok bool) string {
 	if !ok {
 		return ""

@@ -59,6 +59,7 @@ type Graph struct {
 	screens           map[int32][]ScreenRow
 	screenOrder       []int32 // screen nodes in the order of their first row
 	screenTops        map[int32]bool
+	components        map[int32]string // class -> application, service, receiver, provider or worker
 	routeOf           map[int32]int32
 	routeContentNames map[string]int32
 	drawn             map[int32][]int32         // route, preview -> the composables its content draws (ScreenContent)
@@ -98,7 +99,7 @@ type Graph struct {
 func NewGraph(m *snapshot.Map, root string) *Graph {
 	g := &Graph{m: m, root: root, classByName: m.ClassIndex(), supRows: m.SuperRows(),
 		filePath: map[int32]string{}, fileID: map[string]int32{}, screens: map[int32][]ScreenRow{},
-		screenTops: map[int32]bool{}, routeOf: map[int32]int32{}, routeContentNames: map[string]int32{},
+		screenTops: map[int32]bool{}, components: map[int32]string{}, routeOf: map[int32]int32{}, routeContentNames: map[string]int32{},
 		callVia: map[int32]map[int32]int32{}, diGlue: map[int32]bool{},
 		supCache: map[int32]map[int32]bool{}, viewmodels: map[int32]bool{}}
 	n := m.Nodes()
@@ -124,6 +125,9 @@ func NewGraph(m *snapshot.Map, root string) *Graph {
 			g.screenOrder = append(g.screenOrder, n)
 		}
 		g.screens[n] = append(g.screens[n], ScreenRow{s.Kind.At(i), s.Label.At(i), s.Target.At(i), m.Index(s.Host[i])})
+	}
+	for i, c := range m.Component.Node {
+		g.components[m.Index(c)] = m.Component.Kind.At(i)
 	}
 	g.drawn = map[int32][]int32{}
 	for i := range m.ScreenContent.Screen {

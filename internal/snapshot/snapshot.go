@@ -114,6 +114,10 @@ type Map struct {
 		Kind, Detail Strs
 		File, Line   []int32
 	}
+	Component struct { // application, service, receiver, provider (the manifest), worker (worker_bases)
+		Node []int64
+		Kind Strs
+	}
 }
 
 // OpenedRows: the ways each screen is opened (precomputed by build); Hub, HostNode -1: none.
@@ -226,6 +230,8 @@ func (m *Map) columns(c codec) {
 	c.strs(&e.Detail)
 	c.i32(&e.File)
 	c.i32(&e.Line)
+	c.i64(&m.Component.Node)
+	c.strs(&m.Component.Kind)
 }
 
 func (m *Map) Nodes() int { return len(m.Node.ID) }
@@ -480,7 +486,7 @@ const (
 	ConstantFlag = 0x10000
 )
 
-const IndexVersion = "11"
+const IndexVersion = "12"
 
 func ToolSha1() string {
 	exe, err := os.Executable()

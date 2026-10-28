@@ -72,13 +72,24 @@ type Parent struct {
 }
 
 type Walk struct {
-	Aff         map[Key]*Aff
-	Keys        []Key // in the order the walk met them
-	Screens     map[int32]Key
-	ScreenOrder []int32
+	Aff            map[Key]*Aff
+	Keys           []Key // in the order the walk met them
+	Screens        map[int32]Key
+	ScreenOrder    []int32
+	Components     map[int32]Key
+	ComponentOrder []int32
 }
 
-func newWalk() *Walk { return &Walk{Aff: map[Key]*Aff{}, Screens: map[int32]Key{}} }
+func newWalk() *Walk {
+	return &Walk{Aff: map[Key]*Aff{}, Screens: map[int32]Key{}, Components: map[int32]Key{}}
+}
+
+func (w *Walk) component(n int32, k Key) {
+	if _, ok := w.Components[n]; !ok {
+		w.Components[n] = k
+		w.ComponentOrder = append(w.ComponentOrder, n)
+	}
+}
 
 func (w *Walk) screen(n int32, k Key) {
 	if _, ok := w.Screens[n]; !ok {
@@ -133,6 +144,9 @@ func (g *Graph) impact(seeds []Seed, maxDepth int) *Walk {
 		}
 		for _, s := range res.ScreenOrder {
 			out.screen(s, res.Screens[s])
+		}
+		for _, c := range res.ComponentOrder {
+			out.component(c, res.Components[c])
 		}
 	}
 	for _, k := range out.Keys {
@@ -582,6 +596,10 @@ func (wk *walker) visit(key Key) {
 	if wk.skip[nid] {
 		return
 	}
+	// a component is reached, not a sink: what uses it (an Application's getters) is reached too
+	if c := g.componentAt(nid); c >= 0 {
+		w.component(c, key)
+	}
 	if kind == "ROUTE" {
 		w.screen(nid, key)
 		return
@@ -897,4 +915,21 @@ func (g *Graph) holdersIn(caller, receiver int32, holders []int32) []int32 {
 		}
 	}
 	return below
+}
+
+// componentAt: the component a node is in: its class's, else its top-level class's; -1: none.
+func (g *Graph) componentAt(n int32) int32 {
+	c := n
+	if k := g.kind(n); k == "M" || k == "F" {
+		c = g.owner(n)
+	}
+	if _, ok := g.components[c]; ok {
+		return c
+	}
+	if t := g.topOf(n); t != c {
+		if _, ok := g.components[t]; ok {
+			return t
+		}
+	}
+	return -1
 }

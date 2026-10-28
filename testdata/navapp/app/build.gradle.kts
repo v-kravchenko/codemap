@@ -26,4 +26,5 @@ dependencies {
     implementation("androidx.navigation3:navigation3-runtime:1.3.0-alpha02")
     implementation("androidx.navigation3:navigation3-ui:1.3.0-alpha02")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
 }

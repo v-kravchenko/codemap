@@ -169,9 +169,12 @@ func deadEnd(e navEntry) string {
 }
 
 func (g *Graph) cmdBuildInfo(o opts) int {
-	screens := map[string]int{}
+	screens, components := map[string]int{}, map[string]int{}
 	for i := range g.m.Screen.Node {
 		screens[g.m.Screen.Kind.At(i)]++
+	}
+	for _, k := range g.components {
+		components[k]++
 	}
 	meta := map[string]string{}
 	for i := range g.m.Meta.Key.Len() {
@@ -182,7 +185,7 @@ func (g *Graph) cmdBuildInfo(o opts) int {
 		for _, k := range util.SortedKeys(meta) {
 			index = append(index, kv{k, meta[k]})
 		}
-		g.printJSON("build", obj{{"index", index}, {"screens", countsObj(screens)}})
+		g.printJSON("build", obj{{"index", index}, {"screens", countsObj(screens)}, {"components", countsObj(components)}})
 		return exitOK
 	}
 	for _, k := range util.SortedKeys(meta) {
@@ -205,6 +208,9 @@ func (g *Graph) cmdBuildInfo(o opts) int {
 	}
 	for _, k := range util.SortedKeys(screens) {
 		fmt.Printf("screens.%-7s %d\n", k, screens[k])
+	}
+	for _, k := range util.SortedKeys(components) {
+		fmt.Printf("components.%-11s %d\n", k, components[k])
 	}
 	return exitOK
 }

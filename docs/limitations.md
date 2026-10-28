@@ -6,7 +6,7 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
 ## Inputs not analysed
 
 - The map is built from compiled `.class` files, resources and manifests (screens, launcher,
-  deep link and intent filters). Gradle files (`build.gradle*`, `libs.versions.toml`,
+  deep link and intent filters, components). Gradle files (`build.gradle*`, `libs.versions.toml`,
   `gradle.properties`) and ProGuard/R8 rules are not read for behaviour: `codemap init` asks
   Gradle only where the modules, class directories, sources and resources are.
 - One map holds one build variant (`codemap.yml`'s `variant:`, default `debug`; `--variant` for
@@ -21,9 +21,12 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   screen registered solely through a `NavDeepLink` URI pattern shows no opener.
 - No classpath of library `.jar`/`.aar` dependencies: edges stop at the project's own compiled
   classes, so a call into a library's internals (not just the library's public API your code
-  calls) is invisible, and there is no module dependency graph.
-- Changing `codemap.yml` itself does not mark the map stale for queries — only `build` re-reads
-  it. A query against a map built under an old config silently keeps the old settings.
+  calls) is invisible, and no query reads the module dependency graph.
+- A component is a class of the map: a library's service or provider in a module's manifest
+  (`FileProvider`) is not one, and a worker extends a base in `components.worker_bases` through
+  the project's own classes only (a library base not listed there hides its workers). A
+  component's intent filters are not read, and `diff`, `nav-path` and `screens` do not list
+  components (0027).
 
 ## Impact precision
 

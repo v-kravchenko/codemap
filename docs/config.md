@@ -148,6 +148,18 @@ Type: array of dotted class names, add up. A class is an activity/fragment/dialo
 (transitively) extends one of these. `dialog_bases` classes also count as fragment bases (a dialog
 fragment is a fragment too).
 
+### components.worker_bases
+
+```yaml
+components:
+  worker_bases: [androidx.work.CoroutineWorker]
+```
+
+Type: array of dotted class names, add up. A concrete class that (transitively) extends one of
+these is a `worker` component in `impact` and `changes`: a manifest declares the application,
+services, receivers and providers, not the workers. Library classes are not in the map, so list
+every library base a project's workers extend directly (the `android` preset has WorkManager's).
+
 ### screens.preview_annotations
 
 ```yaml

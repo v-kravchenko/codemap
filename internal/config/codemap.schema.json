@@ -114,6 +114,19 @@
         }
       }
     },
+    "components": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "worker_bases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Classes whose subclasses are background workers, components the manifest does not declare."
+        }
+      }
+    },
     "navigation": {
       "type": "object",
       "additionalProperties": false,

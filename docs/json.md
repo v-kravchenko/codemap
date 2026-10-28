@@ -211,6 +211,12 @@ Result fields (full `impact`, no `--to`):
   empty if none found. `previews`: as in `screens` (since 3.7.0); `--no-preview` keeps only the
   activities, fragments, dialogs and routes with none. `nav`: present only with `--nav`, `{entry, detail, cost, path}` (see
   `nav-path`) or `null` if no way was found.
+- `components` — affected components, as `{kind, name, target, module, location, depth, path}`
+  (since 4.2.0): `kind` is `application`, `service`, `receiver`, `provider` (a class the manifest
+  of a module declares) or `worker` (a concrete class below `components.worker_bases`); `path` as
+  in `screens`. A component does not stop the walk the way a screen does, so what uses it (an
+  Application's getters) is in `screens` and `affected` too; `--kind` and `--no-preview` do not
+  apply. docs/decisions/0027.
 - `hidden` — counts of screens hidden by `--kind`, by kind.
 - `modules` — count of affected symbols by module.
 - `packages` — count of affected symbols by package.
@@ -219,8 +225,8 @@ Result fields (full `impact`, no `--to`):
   `test_source`, `release_only`, `not_in_map`, `not_analysed`.
 - `warnings` — free-text warnings (e.g. a changed-but-unbuilt source edited after the map, from
   `changes`).
-- `hidden_by_module` — with `--module` only: `{screens, affected}`, the screens and the affected
-  symbols (seeds aside) outside the modules; `modules` and `packages` count only the ones shown.
+- `hidden_by_module` — with `--module` only: `{screens, components, affected}`, the screens,
+  components (since 4.2.0) and affected symbols (seeds aside) outside the modules; `modules` and `packages` count only the ones shown.
 
 ```json
 {
@@ -628,7 +634,7 @@ Result fields: `index` — every key/value of the snapshot's meta table, sorted 
 `build_s`, `built_at`, `class_dirs`, `class_files`, `config` (the settings the map was built with,
 as a JSON string), `dirty`, `edges`, `git_head`, `index_version`, `inputs_sha1`, `module_paths`,
 `nodes`, `parse_errors`, `parse_s`, `resources`, `root`, `screens`, `source_files`, `tool_sha1`;
-`screens` — counts of screens by kind.
+`screens` — counts of screens by kind; `components` — counts of components by kind (since 4.2.0).
 
 ## Versioning policy
 
