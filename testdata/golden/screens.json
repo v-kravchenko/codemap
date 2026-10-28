@@ -303,6 +303,21 @@
     {
       "kind": "route",
       "module": "app",
+      "name": "DocsGuide",
+      "target": "navapp.sections.DocsGuide",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "content": [
+        "DocsGuideScreenKt.DocsGuideScreen()"
+      ],
+      "previews": []
+    },
+    {
+      "kind": "route",
+      "module": "app",
       "name": "Home",
       "target": "navapp.typed.Home",
       "host": "MainActivity",
@@ -368,6 +383,23 @@
       "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt",
       "content": [],
       "previews": []
+    },
+    {
+      "kind": "route",
+      "module": "app",
+      "name": "PhotoGuide",
+      "target": "navapp.sections.PhotoGuide",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "content": [
+        "PhotoGuideScreenKt.PhotoGuideScreen()"
+      ],
+      "previews": [
+        "navapp.sections.PhotoGuideScreenKt.PhotoGuidePreview"
+      ]
     },
     {
       "kind": "route",
@@ -488,6 +520,6 @@
     }
   ],
   "hidden": {
-    "preview": 7
+    "preview": 8
   }
 }

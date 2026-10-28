@@ -68,6 +68,9 @@ func TestNavigationPresets(t *testing.T) {
 		"Welcome": {"sections/SectionsAppKt.SectionsApp"},
 		"Terms":   {"sections/SectionsAppKt$SectionsApp$1$1$1$1.invoke"},
 		"About":   {"sections/SectionsAppKt$SectionsApp$1$1$1$2.invoke"},
+		// registered, opened by nothing (a body two screens share: GuideBody.kt)
+		"PhotoGuide": nil,
+		"DocsGuide":  nil,
 	}
 	if !reflect.DeepEqual(got, want) {
 		for k, v := range want {

@@ -25,6 +25,15 @@ Fragments (2)
   OrdersFragment                                     app                          app/src/main/java/navapp/impact/GenericDi.kt:38
       ends at OrdersFragment: nothing opens it
 
-Not shown: preview 7 (--kind KIND, --kind all)
+Compose routes (2)
+  DocsGuide                                          app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
+      content DocsGuideScreenKt.DocsGuideScreen()
+      ends at DocsGuide: nothing opens it
+  PhotoGuide                                         app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
+      content PhotoGuideScreenKt.PhotoGuideScreen()
+      previews navapp.sections.PhotoGuideScreenKt.PhotoGuidePreview
+      ends at PhotoGuide: nothing opens it
 
-(11 screens no entry of the manifest reaches, as far as the code map sees)
+Not shown: preview 8 (--kind KIND, --kind all)
+
+(13 screens no entry of the manifest reaches, as far as the code map sees)

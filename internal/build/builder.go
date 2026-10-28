@@ -1921,23 +1921,24 @@ func (b *Builder) relatedAll() {
 
 // previewsOfScreens: a preview's content is the repo composables it draws, its lambdas' included.
 // It goes with the screens drawing one of those of its own file (else of its module: not a theme of
-// a shared module), a screen drawing what it calls of its own module and what those call in their own file (a
-// screen's private content); of several, those the fewest screens draw: the screen's own
-// composable, not a component every screen draws. A file holding several screens and their
-// previews gives each preview its own screen.
+// a shared module), a screen drawing what it calls of its own module and what those call in their
+// module (a screen's private content, a body shared by a few screens); of several, those the fewest
+// screens draw: the screen's own composable, not a component every screen draws. Of screens tied,
+// those whose composable is in the preview's file: a file holding several screens and their
+// previews gives each preview its own screen, a preview of a shared body its file's screen.
 func (b *Builder) previewsOfScreens(drawnBy map[int64][]int64, outEdges map[int64][]snapshot.Edge, nested func(string) []int64) {
-	inFile := map[int64][]int64{} // a composable -> those it draws in its own file
+	inModule := map[int64][]int64{} // a composable -> those it draws in its own module
 	screensOf := map[int64][]int64{}
 	for _, s := range util.SortedKeys(drawnBy) {
 		for _, c := range drawnBy[s] {
-			own, ok := inFile[c]
+			own, ok := inModule[c]
 			if !ok {
 				for _, d := range b.composablesDrawn([]int64{c}, outEdges, nested) {
-					if b.Nodes[d].File == b.Nodes[c].File {
+					if b.Nodes[d].Module == b.Nodes[c].Module {
 						own = append(own, d)
 					}
 				}
-				inFile[c] = own
+				inModule[c] = own
 			}
 			for _, d := range append([]int64{c}, own...) {
 				// a component of another module (a design system's button) is not the screen's
@@ -1974,12 +1975,23 @@ func (b *Builder) previewsOfScreens(drawnBy map[int64][]int64, outEdges map[int6
 				best = n
 			}
 		}
+		var screens []int64
 		for _, c := range near {
 			if len(screensOf[c]) == best {
 				for _, screen := range screensOf[c] {
-					b.related[[2]int64{screen, s.Node}] = struct{}{}
+					if !slices.Contains(screens, screen) {
+						screens = append(screens, screen)
+					}
 				}
 			}
+		}
+		if inFile := slices.DeleteFunc(slices.Clone(screens), func(screen int64) bool {
+			return !slices.ContainsFunc(drawnBy[screen], func(d int64) bool { return b.Nodes[d].File == p.File })
+		}); len(inFile) > 0 {
+			screens = inFile
+		}
+		for _, screen := range screens {
+			b.related[[2]int64{screen, s.Node}] = struct{}{}
 		}
 	}
 }
@@ -2021,8 +2033,9 @@ func (b *Builder) composablesDrawn(methods []int64, outEdges map[int64][]snapsho
 				} else {
 					queue = append(queue, d)
 				}
+			// one returning a value (a theme's colors, remember*) draws nothing
 			case (e.Kind == snapshot.CALL || e.Kind == snapshot.LAMBDA) && dn.Kind == "M" && dn.Module != 0 &&
-				strings.Contains(dn.Desc, "Landroidx/compose/runtime/Composer;"):
+				strings.Contains(dn.Desc, "Landroidx/compose/runtime/Composer;") && strings.HasSuffix(dn.Desc, ")V"):
 				seen[d] = true
 				out = append(out, d)
 			}
@@ -2047,8 +2060,9 @@ func (b *Builder) ownComposableCalls(methods []int64, from map[int]bool) []int64
 				continue
 			}
 			for _, r := range m.Refs {
-				if r.Kind != classfile.RCall || !strings.Contains(r.Desc, "Landroidx/compose/runtime/Composer;") {
-					continue
+				if r.Kind != classfile.RCall || !strings.Contains(r.Desc, "Landroidx/compose/runtime/Composer;") ||
+					!strings.HasSuffix(r.Desc, ")V") {
+					continue // not a composable, or one returning a value
 				}
 				if src := cls.SourceOf(r.Line); src != cls.Name {
 					if id, ok := b.classID[src]; !ok || src == cls.SmapOrigin || !from[b.Nodes[id].File] {

@@ -298,9 +298,77 @@
           ]
         }
       ]
+    },
+    {
+      "kind": "route",
+      "module": "app",
+      "name": "DocsGuide",
+      "target": "navapp.sections.DocsGuide",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "content": [
+        "DocsGuideScreenKt.DocsGuideScreen()"
+      ],
+      "previews": [],
+      "entries": [
+        {
+          "name": "DocsGuide",
+          "kind": "route",
+          "module": "app",
+          "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+          "host": "MainActivity",
+          "hosts": [
+            "MainActivity"
+          ],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "route",
+      "module": "app",
+      "name": "PhotoGuide",
+      "target": "navapp.sections.PhotoGuide",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "content": [
+        "PhotoGuideScreenKt.PhotoGuideScreen()"
+      ],
+      "previews": [
+        "navapp.sections.PhotoGuideScreenKt.PhotoGuidePreview"
+      ],
+      "entries": [
+        {
+          "name": "PhotoGuide",
+          "kind": "route",
+          "module": "app",
+          "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+          "host": "MainActivity",
+          "hosts": [
+            "MainActivity"
+          ],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
     }
   ],
   "hidden": {
-    "preview": 7
+    "preview": 8
   }
 }

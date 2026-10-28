@@ -7,6 +7,13 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Changed
+
+- A preview drawing a body that its screen's composable calls in another file of the module goes
+  with that screen (the one whose composable is in the preview's file, when several draw the body),
+  and a composable returning a value (a theme getter, `remember*`) is no longer in `content` or
+  links a preview to a screen. Maps are rebuilt (index version 11).
+
 ## [0.7.0] - 2026-10-27
 
 ### Added

@@ -542,12 +542,14 @@ Result fields: `screens` — every matching screen, `{kind, module, name, target
 location, content, previews}`, sorted by kind, module, name, target, host, location; `content` — for a route,
 the repo composables its registration draws, by label (`CreateConfirmScreenKt.CreateConfirmScreen()`:
 those called from the code written at the registration, not from an inlined wrapper such as
-`screen<VM> {}`), sorted; for a preview, the repo composables it draws, through its lambdas (since 3.7.0); empty for
+`screen<VM> {}`), sorted; for a preview, the repo composables it draws, through its lambdas (since 3.7.0); a
+composable returning a value (a theme getter, `remember*`) is not drawn; empty for
 other kinds and for a route drawing only library composables; `previews` — the targets of the
 previews drawing the screen's own composables, sorted (since 3.7.0): a preview goes with the screens
 drawing a composable of its own file (else module) that the screen draws itself or through a
-composable of its own module calling it in that composable's file, those the fewest screens draw
-when there are several; so a theme or a design system's component links no screen; empty for
+composable of its own module calling it, those the fewest screens draw when there are several, of
+those the screens drawing a composable of the preview's file when there are any (docs/decisions/0026);
+so a theme or a design system's component links no screen; empty for
 previews and layouts; `hidden` — counts of screens
 excluded by `--kind`, by kind (of those in the modules); `hidden_by_module` — with `--module` only:
 `{screens}`, the screens outside the modules. With `--unreachable` each screen also has `entries`:

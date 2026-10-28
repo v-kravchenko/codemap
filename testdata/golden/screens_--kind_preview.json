@@ -44,11 +44,24 @@
     {
       "kind": "preview",
       "module": "app",
+      "name": "PhotoGuideScreen.PhotoGuidePreview",
+      "target": "navapp.sections.PhotoGuideScreenKt.PhotoGuidePreview",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/PhotoGuideScreen.kt:12",
+      "content": [
+        "GuideBodyKt.GuideBody()"
+      ],
+      "previews": []
+    },
+    {
+      "kind": "preview",
+      "module": "app",
       "name": "SectionsApp.TermsScreenPreview",
       "target": "navapp.sections.SectionsAppKt.TermsScreenPreview",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:88",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:94",
       "content": [
         "SectionsAppKt.TermsScreen()"
       ],
@@ -61,7 +74,7 @@
       "target": "navapp.sections.SectionsAppKt.WelcomeScreenPreview",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:82",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:88",
       "content": [
         "SectionsAppKt.SectionsTheme()",
         "SectionsAppKt.WelcomeScreen()"
@@ -99,6 +112,6 @@
     "activity": 14,
     "dialog": 1,
     "fragment": 6,
-    "route": 17
+    "route": 19
   }
 }

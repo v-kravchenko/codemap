@@ -57,3 +57,4 @@ a stale file path) may be fixed directly in place; a changed decision gets a new
 | [0023](0023-diff-of-two-maps.md) | Two maps compared by node id: `codemap diff --base FILE` | accepted |
 | [0024](0024-missing-modules-by-the-app-graph.md) | Missing modules: those the app depends on | accepted |
 | [0025](0025-moved-top-level-functions.md) | A top-level function moved to another file is the same declaration | accepted |
+| [0026](0026-previews-of-a-shared-body.md) | A preview of a body screens share goes with its file's screen | accepted |

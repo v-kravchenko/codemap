@@ -26,13 +26,15 @@ Fragments (6)
 Dialog fragments (1)
   InfoDialog                                         app                          app/src/main/java/navapp/views/ViewsActivity.kt:54  host ViewsActivity
 
-Compose routes (17)
+Compose routes (19)
   About                                              app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
       content SectionsAppKt.AboutScreen()
       previews navapp.sections.AboutPreviewsKt.AboutPreview, navapp.sections.AboutScreenPreviewsKt.AboutPreview
   Catalog                                            app                          app/src/main/java/navapp/nav3when/Nav3WhenApp.kt  host MainActivity
   Compose                                            app                          app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt  host MainActivity
   Confirm                                            app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
+  DocsGuide                                          app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
+      content DocsGuideScreenKt.DocsGuideScreen()
   Home                                               app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
       content TypedAppKt.HomeScreen()
   Inbox                                              app                          app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt  host MainActivity
@@ -40,6 +42,9 @@ Compose routes (17)
   Login                                              app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
       content TypedAppKt.LoginScreen()
   Message                                            app                          app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt  host MainActivity
+  PhotoGuide                                         app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
+      content PhotoGuideScreenKt.PhotoGuideScreen()
+      previews navapp.sections.PhotoGuideScreenKt.PhotoGuidePreview
   Profile                                            app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
       content TypedAppKt.ProfileScreen()
   Settings                                           app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
@@ -54,4 +59,4 @@ Compose routes (17)
   post/{id}                                          app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
   signin                                             app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
 
-Not shown: preview 7 (--kind KIND, --kind all)
+Not shown: preview 8 (--kind KIND, --kind all)

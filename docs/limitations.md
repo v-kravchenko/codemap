@@ -41,7 +41,8 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
 - A preview goes with a screen by the composables both draw (`screens` `previews`): a preview
   drawing only what no screen of its module draws, or a screen built from composables of another
   module, has none; a screen's own component previews (in its module, drawn by it alone) count as
-  its previews.
+  its previews. A preview in a file of its own drawing a body several screens share goes with all
+  of them; an Activity registering a NavHost itself gets its destinations' previews too.
 - `changes` tells what a change adds and removes only from a map of the base (`--base-db`,
   docs/decisions/0022), so the base must be compiled too; without one the status and `removed`
   are `null`. A screen moved to another class name is removed and added, except a top-level Kotlin
