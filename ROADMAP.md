@@ -68,9 +68,6 @@ itself.
   Only a literal constant or a straightforward string template right before a
   register/open call resolves today; broadening this needs real data-flow tracking, not just
   a wider regex.
-- **Stale-check on `codemap.yml` changes.** A query currently doesn't warn when the config a
-  map was built with differs from the one on disk; `build` already re-resolves correctly, this
-  is only about catching a stale map at query time.
 - **Classpath of library dependencies and a module dependency graph.** Needed before a call
   into a library's internals, or a "which modules does this change ripple through" query, can
   be answered; `codemap init`'s Gradle model has the declared project dependencies of each

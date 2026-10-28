@@ -11,7 +11,7 @@ strips it since `meta.run` is never reproducible).
 
 ```json
 {
-  "schema_version": "4.1.0",
+  "schema_version": "4.2.0",
   "command": "impact",
   "meta": {
     "tool_version": "0.3.0",
@@ -32,7 +32,7 @@ strips it since `meta.run` is never reproducible).
 }
 ```
 
-- `schema_version` — the shape of the JSON output (`"4.1.0"`, `internal/query/cli.go`). Independent
+- `schema_version` — the shape of the JSON output (`"4.2.0"`, `internal/query/cli.go`). Independent
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
   `"changes"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
@@ -51,9 +51,11 @@ strips it since `meta.run` is never reproducible).
 - `meta.index.stale` — `true`/`false` once the stale check ran (always runs unless `--no-check` or
   the command is `build`), `null` when the check did not run.
 - `meta.index.stale_inputs` — `null` when not stale; otherwise an object: `sources`, `resources`,
-  `classes` (counts of changed/added/removed inputs of each kind), `compile` (modules with changed
-  sources but no changed class files — not yet recompiled), `affects_answer` (bool: a changed file
-  is actually used by this answer), `changed_files` (the changed files this answer uses).
+  `classes` (counts of changed/added/removed inputs of each kind), `config` (bool: codemap.yml with
+  its presets gives other settings than the map was built with, for the map's variant; since
+  4.2.0), `compile` (modules with changed sources but no changed class files — not yet
+  recompiled), `affects_answer` (bool: a changed file is actually used by this answer, or `config`:
+  other settings may change any answer), `changed_files` (the changed files this answer uses).
 - `meta.index.missing_modules` — the modules of the project model (`codemap init` or the build
   hook) with sources and no class file of the variant when the map was built, sorted: not
   compiled, so every answer may leave out what is in them; `[]` for a whole map and without a model.
@@ -91,8 +93,10 @@ stale run that would exit 3 prints nothing to stdout, only the warning/error to 
 
 Every query (not `build` without `--info`, and not with `--no-check`) compares the map's recorded
 inputs against the filesystem: changed/added/removed `.class` files under the map's class
-directories and those of its missing modules (compiled since the build), and changed/added/removed
-watched source/resource files. If anything differs:
+directories and those of its missing modules (compiled since the build), changed/added/removed
+watched source/resource files, and the settings codemap.yml with its presets gives now against
+those the map was built with (`stale_inputs.config`; other settings may change any answer, so with
+`--strict` that exits `3` whatever the answer). If anything differs:
 
 - Without `--strict`: a warning goes to stderr (which files changed, by kind, and the fix — compile
   the affected modules then `codemap build`, or just `codemap build` if no source needs
@@ -158,7 +162,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.1.0",
+  "schema_version": "4.2.0",
   "command": "used-by",
   "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
   "items": [
@@ -220,7 +224,7 @@ Result fields (full `impact`, no `--to`):
 
 ```json
 {
-  "schema_version": "4.1.0",
+  "schema_version": "4.2.0",
   "command": "impact",
   "changed": [
     {
@@ -318,7 +322,7 @@ a dirty tree or of another variant than the head's adds and removes what the cha
 
 ```json
 {
-  "schema_version": "4.1.0",
+  "schema_version": "4.2.0",
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
@@ -366,7 +370,7 @@ Result: `screens`, `entries` and `opens`, each `{added, removed}`: `added` what 
 
 ```json
 {
-  "schema_version": "4.1.0",
+  "schema_version": "4.2.0",
   "command": "diff",
   "screens": {
     "added": [{ "name": "LinkActivity", "kind": "activity", "module": "app",
@@ -436,7 +440,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.1.0", "command": "nav-path",
+  "schema_version": "4.2.0", "command": "nav-path",
   "targets": [{ "name": "Login", "kind": "route", "module": "app",
     "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
   "screens": [
@@ -500,7 +504,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.1.0", "command": "graph",
+  "schema_version": "4.2.0", "command": "graph",
   "roots": ["Home"], "walk": "out", "to": [],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
@@ -559,7 +563,7 @@ where the walk back ends, as in `nav-path` (`{name, kind, module, location, host
 
 ```json
 {
-  "schema_version": "4.1.0", "command": "screens",
+  "schema_version": "4.2.0", "command": "screens",
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
@@ -601,7 +605,7 @@ module then location, truncated to `--limit`; `hidden_by_module` — with `--mod
 
 ```json
 {
-  "schema_version": "4.1.0", "command": "find", "pattern": "Activity",
+  "schema_version": "4.2.0", "command": "find", "pattern": "Activity",
   "total": 15, "synthetic": 0,
   "symbols": [
     { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",

@@ -7,6 +7,12 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Added
+
+- A query warns when codemap.yml or its presets give other settings than the map was built with,
+  and with `--strict` exits 3: such a map may answer anything differently
+  (`meta.index.stale_inputs.config`, schema 4.2.0).
+
 ## [0.8.0] - 2026-10-28
 
 ### Changed

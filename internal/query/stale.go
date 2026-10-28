@@ -195,17 +195,20 @@ func (g *Graph) reportMissing(strict bool, code int) int {
 
 // staleInfo: the changed inputs by kind, and the source and resource files they are or belong to (a
 // class file: its source).
+// config: codemap.yml with its presets gives other settings than the map was built with.
 type staleInfo struct {
 	byKind map[string][]string
 	files  map[string]bool
+	config bool
 }
 
 func (g *Graph) findStale() *staleInfo {
 	changed, added, removed := staleInputs(g.m, g.root)
-	if len(changed)+len(added)+len(removed) == 0 {
+	cfg := g.configChanged()
+	if len(changed)+len(added)+len(removed) == 0 && !cfg {
 		return nil
 	}
-	s := &staleInfo{byKind: map[string][]string{}, files: map[string]bool{}}
+	s := &staleInfo{byKind: map[string][]string{}, files: map[string]bool{}, config: cfg}
 	var classDirs []string
 	json.Unmarshal([]byte(g.m.MetaValue("class_dirs")), &classDirs)
 	for _, p := range slices.Concat(changed, added, removed) {
@@ -223,6 +226,17 @@ func (g *Graph) findStale() *staleInfo {
 		}
 	}
 	return s
+}
+
+// configChanged: whether codemap.yml with its presets now gives other settings than the map's, for
+// the map's variant; a codemap.yml that does not load is for build to report.
+func (g *Graph) configChanged() bool {
+	c, err := config.LoadConfig(g.root)
+	if err != nil {
+		return false
+	}
+	c.Variant = config.Cfg.Variant
+	return c.JSON() != g.m.MetaValue("config")
 }
 
 func (g *Graph) sourceOfClass(path string, classDirs []string) string {
@@ -292,7 +306,9 @@ func (g *Graph) staleJSON() any {
 		o = append(o, kv{k[0], len(g.stale.byKind[k[0]])})
 	}
 	hits := g.staleHits()
-	return append(o, kv{"compile", strs(g.toCompile())}, kv{"affects_answer", len(hits) > 0}, kv{"changed_files", strs(hits)})
+	// other settings may change any answer
+	return append(o, kv{"config", g.stale.config}, kv{"compile", strs(g.toCompile())}, kv{"affects_answer", len(hits) > 0 || g.stale.config},
+		kv{"changed_files", strs(hits)})
 }
 
 // reportStale: warns of a map older than its inputs, in detail when the answer uses a changed file;
@@ -311,6 +327,18 @@ func (g *Graph) reportStale(strict bool, code int) int {
 	fix := "run `codemap build`"
 	if dirs := g.toCompile(); len(dirs) > 0 {
 		fix = "compile the " + config.Cfg.Variant + " classes of " + strings.Join(dirs, ", ") + ", then run `codemap build`"
+	}
+	if g.stale.config {
+		if len(counts) > 0 {
+			fix = strings.Join(counts, ", ") + " changed too; " + fix
+		}
+		msg := "the code map was built with other settings than codemap.yml and its presets give now, and any answer may use them; " + fix
+		if strict {
+			fmt.Fprintln(os.Stderr, "error: "+msg)
+			return exitStale
+		}
+		fmt.Fprintln(os.Stderr, "warning: "+msg)
+		return code
 	}
 	if len(hits) > 0 {
 		more := ""

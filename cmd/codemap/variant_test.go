@@ -120,3 +120,38 @@ func TestMissingModules(t *testing.T) {
 		t.Errorf("classes of lib compiled since: not stale\n%.1500s", out)
 	}
 }
+
+// TestConfigStale: a map built with other settings than codemap.yml gives now is stale for any
+// answer; a map of another variant is not stale for its variant alone.
+func TestConfigStale(t *testing.T) {
+	root := fixture.FixtureRoot(t)
+	run := func(args ...string) (string, error) {
+		cmd := exec.Command(os.Args[0], args...)
+		cmd.Dir, cmd.Env = root, append(os.Environ(), "CODEMAP_AS_MAIN=1")
+		out, err := cmd.CombinedOutput()
+		return string(out), err
+	}
+	for _, args := range [][]string{{"build"}, {"build", "--variant", "release"}} {
+		if out, err := run(args...); err != nil {
+			t.Fatalf("%v: %v\n%s", args, err, out)
+		}
+	}
+	if out, _ := run("screens", "--json", "--variant", "release"); !strings.Contains(out, `"stale": false`) {
+		t.Errorf("map of release: stale\n%.1500s", out)
+	}
+	f, _ := os.OpenFile(filepath.Join(root, "codemap.yml"), os.O_APPEND|os.O_WRONLY, 0)
+	f.WriteString("  preview_note: changed\n")
+	f.Close()
+	if out, _ := run("screens", "--json"); !strings.Contains(out, `"config": true,`) || !strings.Contains(out, `"affects_answer": true,`) ||
+		!strings.Contains(out, "warning: the code map was built with other settings") {
+		t.Errorf("codemap.yml changed: not stale\n%.1500s", out)
+	}
+	out, err := run("screens", "--strict")
+	if e, ok := err.(*exec.ExitError); !ok || e.ExitCode() != 3 || strings.Contains(out, "Screens") {
+		t.Errorf("screens --strict: %v\n%.400s", err, out)
+	}
+	run("build")
+	if out, _ := run("screens", "--json"); !strings.Contains(out, `"stale": false`) {
+		t.Errorf("rebuilt: still stale\n%.1500s", out)
+	}
+}

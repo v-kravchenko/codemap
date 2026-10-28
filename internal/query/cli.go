@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	schemaVersion = "4.1.0"
+	schemaVersion = "4.2.0"
 	exitOK        = 0
 	exitError     = 2
 )
