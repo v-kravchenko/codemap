@@ -7,14 +7,16 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-28
+
 ### Changed
 
 - A preview drawing a body that its screen's composable calls in another file of the module goes
-  with that screen (the one whose composable is in the preview's file, when several draw the body),
-  and a composable returning a value (a theme getter, `remember*`) is no longer in `content` or
-  links a preview to a screen. A route's preview no longer goes with the Activity or fragment hosting
-  it too, and a route registered in an Activity's own NavHost without captures gets its `content`.
-  Maps are rebuilt (index version 11).
+  with that screen (the one whose composable, Activity or fragment is in the preview's file, when
+  several draw the body), and a composable returning a value (a theme getter, `remember*`) is no
+  longer in `content` or links a preview to a screen. A route's preview no longer goes with the
+  Activity or fragment hosting it too, and a route registered in an Activity's own NavHost without
+  captures gets its `content`. Maps are rebuilt (index version 11).
 
 ## [0.7.0] - 2026-10-27
 
@@ -138,7 +140,8 @@ The first public release.
   navigation events; anything project-specific goes into `codemap.yml`.
 - `codemap version`.
 
-[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/v-kravchenko/codemap/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/v-kravchenko/codemap/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/v-kravchenko/codemap/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/v-kravchenko/codemap/compare/v0.4.2...v0.5.0
