@@ -59,7 +59,9 @@ which download this release once (to `$CODEMAP_HOME`, default `~/.cache/codemap`
 'gradle/codemap.gradle'`; in `.kts`, `apply(from = "gradle/codemap.gradle")`), it makes each
 build of the project keep the map fresh: the configuration writes the model (no `codemap init`),
 and a build that compiles a variant, even up to date, runs `codemapw build --variant` for it
-before it ends (a failure is a warning, `CODEMAP_SKIP=1` skips it). After a pull, a build is all
+before it ends (a failure is a warning, `CODEMAP_SKIP=1` skips it). A stalled download is cut after
+two minutes, a failed one is not tried again by the hook for 15 minutes, and the build waits on codemap
+3 minutes at most (0018). After a pull, a build is all
 a developer needs before `./codemapw screens`. `--version` picks another release, `--distribution-url` a mirror;
 keep `build/codemap` and `codemap.model.json` out of git.
 

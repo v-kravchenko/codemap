@@ -7,6 +7,14 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-10-28
+
+### Fixed
+
+- A build no longer waits minutes on a stalled download of codemapw: the download has timeouts,
+  the build hook skips a download that failed in the last 15 minutes, and the build waits on codemap
+  3 minutes at most.
+
 ## [0.10.0] - 2026-10-28
 
 ### Added

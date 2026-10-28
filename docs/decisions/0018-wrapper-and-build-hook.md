@@ -41,6 +41,26 @@ way that works with the configuration cache: on a cache hit the configuration, a
 with it, is skipped, which is right, as the build files did not change. The model is written,
 never read, by the configuration: a file it read would become an input of the cache.
 
+### Timeouts and the failed-download marker (0.10.1)
+
+A build must not wait on a download. The defaults do: curl's connect timeout is 300 s, wget's
+read timeout 900 s, PowerShell 5.1 has none (`TimeoutSec` 0 is unlimited). So each step has a cap:
+
+- curl: `--connect-timeout 10 --max-time 120 --speed-limit 1024 --speed-time 30` (a transfer
+  under 1 KiB/s for 30 s is cut); wget: `--timeout=10 --tries=1`; PowerShell:
+  `-TimeoutSec 120`.
+- A failed download writes `$CODEMAP_HOME/<version>/.download-failed`; a successful one removes it.
+  A call with `CODEMAP_HOOK=1` (the hook sets it) that finds the marker younger than 15 minutes
+  does not try the download and fails at once; a manual `./codemapw` always tries. Fifteen minutes
+  is not about the timeouts: while the network is down, a build pays at most one attempt per 15
+  minutes instead of one per build.
+- The hook waits for codemap 3 minutes at most, then stops it. That bounds what the download caps
+  do not: wget has no cap on the whole transfer, and on PowerShell 5.1 `TimeoutSec` bounds the wait
+  for the response. A stopped `build` leaves no partial map: the snapshot is written to a temp file
+  and renamed (`Map.WriteSnapshot`).
+- The hook's output goes to a temp file, not a pipe: a pipe read to its end would hold the build
+  past the wait.
+
 ## Consequences
 
 - A project opts in with the four files and one line in its settings; without them codemap works

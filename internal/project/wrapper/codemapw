@@ -27,8 +27,14 @@ aarch64 | arm64) arch=arm64 ;;
 esac
 home=${CODEMAP_HOME:-${XDG_CACHE_HOME:-$HOME/.cache}/codemap}
 bin=$home/$version/codemap
+marker=$home/$version/.download-failed
 
 if [ ! -x "$bin" ]; then
+	# the build hook runs codemapw after every build: while the network is down, a download that
+	# failed in the last 15 minutes is not tried again there; a manual run always tries
+	if [ "${CODEMAP_HOOK:-}" = 1 ] && [ -n "$(find "$marker" -mmin -15 2>/dev/null)" ]; then
+		fail "a download failed in the last 15 min, the build hook does not try again (./codemapw does)"
+	fi
 	archive=codemap_${version}_${os}_${arch}.tar.gz
 	want=$(prop "sha256_${os}_${arch}")
 	[ -n "$want" ] || fail "no sha256_${os}_${arch} in $props"
@@ -44,10 +50,17 @@ if [ ! -x "$bin" ]; then
 	trap 'rm -rf "$tmp"' EXIT
 	url=$(prop distribution_url)/$archive
 	echo "codemapw: downloading $url" >&2
+	# a stalled network must not hang a build: the connect and the whole transfer are capped, and a
+	# transfer under 1 KiB/s for 30 s is cut; wget has no cap on the whole transfer
+	failed() {
+		: >"$marker"
+		fail "cannot download $url"
+	}
 	if command -v curl >/dev/null; then
-		curl -fsSL -o "$tmp/$archive" "$url" || fail "cannot download $url"
+		curl -fsSL --connect-timeout 10 --max-time 120 --speed-limit 1024 --speed-time 30 \
+			-o "$tmp/$archive" "$url" || failed
 	elif command -v wget >/dev/null; then
-		wget -q -O "$tmp/$archive" "$url" || fail "cannot download $url"
+		wget -q --timeout=10 --tries=1 -O "$tmp/$archive" "$url" || failed
 	else
 		fail "needs curl or wget"
 	fi
@@ -56,6 +69,7 @@ if [ ! -x "$bin" ]; then
 	tar -xzf "$tmp/$archive" -C "$tmp" codemap
 	chmod 755 "$tmp/codemap"
 	mv -f "$tmp/codemap" "$bin" # a rename: two first runs at once both end with a whole binary
+	rm -f "$marker"
 	rm -rf "$tmp"
 	trap - EXIT
 fi

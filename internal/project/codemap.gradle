@@ -15,6 +15,7 @@ import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSuccessResult
+import java.util.concurrent.TimeUnit
 
 // After the build, the map of each variant whose classes a task of the build compiled. A failure is
 // a warning: the map is a help, it must not fail the build. CODEMAP_SKIP=1 turns it off.
@@ -54,16 +55,29 @@ abstract class CodemapRebuild implements BuildService<Params>, OperationCompleti
         def wrapper = new File(root, windows ? 'codemapw.cmd' : 'codemapw')
         def cmd = wrapper.isFile() ? (windows ? ['cmd', '/c', wrapper.path] : [wrapper.path]) : ['codemap']
         for (v in variants) {
+            // the output goes to a file: a pipe read to its end would hold the build past the wait below
+            def outFile = File.createTempFile('codemap', '.log')
             try {
-                def p = new ProcessBuilder(cmd + ['build', '--variant', v]).directory(root).redirectErrorStream(true).start()
-                def out = p.inputStream.text.trim()
-                if (p.waitFor() == 0) {
+                def pb = new ProcessBuilder(cmd + ['build', '--variant', v]).directory(root)
+                        .redirectErrorStream(true).redirectOutput(outFile)
+                pb.environment().put('CODEMAP_HOOK', '1') // codemapw does not retry a download that failed lately
+                def p = pb.start()
+                // codemapw caps its download, this caps the rest: the build never waits on codemap longer
+                if (!p.waitFor(3, TimeUnit.MINUTES)) {
+                    p.destroyForcibly()
+                    log.warn("codemap: the $v map was not rebuilt: codemap ran over 3 minutes, stopped")
+                    continue
+                }
+                def out = outFile.text.trim()
+                if (p.exitValue() == 0) {
                     out.eachLine { if (!it.startsWith('code map is up to date')) log.lifecycle("codemap: $it") }
                 } else {
                     log.warn("codemap: the $v map was not rebuilt (exit ${p.exitValue()}):\n$out")
                 }
             } catch (IOException err) {
                 log.warn("codemap: the $v map was not rebuilt: ${err.message}")
+            } finally {
+                outFile.delete()
             }
         }
     }

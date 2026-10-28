@@ -154,6 +154,9 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   hook out and run `codemap init` and `codemap build`; the fix is a settings plugin (0018).
 - The hook rebuilds the whole map of a variant after any compile of it, even of one module
   (~3 s on 80 modules); there is no incremental build of the map.
+- codemapw's download has no cap on the whole transfer under wget, and on Windows PowerShell 5.1
+  `-TimeoutSec` bounds only the wait for the response; the build's 3-minute wait on codemap is the
+  backstop there (0018). Windows is checked by reading the script only: no PowerShell run here.
 - There is no `export` of the map to a dependency-free, queryable format (the map is read only
   by the CLI's own binary snapshot reader); ad-hoc exploration needs a query flag that already
   exists or a new one, not arbitrary SQL/joins over the map.
