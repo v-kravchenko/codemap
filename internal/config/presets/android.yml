@@ -30,6 +30,7 @@ components:
     - androidx.work.RxWorker
     - androidx.work.rxjava3.RxWorker
 nav_path:
+  push_actions: [com.google.firebase.MESSAGING_EVENT]
   costs: { own: 1, shared: 3, push: 30 }
   branch_slack: 4
   path_limit: 64

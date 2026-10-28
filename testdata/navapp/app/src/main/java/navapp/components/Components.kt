@@ -10,11 +10,14 @@ import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import android.os.IBinder
+import androidx.activity.ComponentActivity
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 
 // Components: an Application, a Service, a BroadcastReceiver and a ContentProvider the manifest
 // declares, and a worker by its base class (an abstract base is not one); each reports to Tracker.
+// PushService takes a push (its intent filter): AlertActivity, which only its code opens, gets the
+// push entry.
 
 object Tracker {
     fun track(event: String) = println(event)
@@ -64,3 +67,18 @@ class SyncWorker(context: Context, params: WorkerParameters) : TrackedWorker(con
         return Result.success()
     }
 }
+
+class PushService : Service() {
+    override fun onBind(intent: Intent?): IBinder? = null
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Alerts.show(this)
+        return START_NOT_STICKY
+    }
+}
+
+object Alerts {
+    fun show(context: Context) = context.startActivity(Intent(context, AlertActivity::class.java))
+}
+
+class AlertActivity : ComponentActivity()

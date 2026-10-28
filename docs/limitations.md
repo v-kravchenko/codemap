@@ -24,9 +24,9 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   calls) is invisible, and no query reads the module dependency graph.
 - A component is a class of the map: a library's service or provider in a module's manifest
   (`FileProvider`) is not one, and a worker extends a base in `components.worker_bases` through
-  the project's own classes only (a library base not listed there hides its workers). A
-  component's intent filters are not read, and `diff`, `nav-path` and `screens` do not list
-  components (0027).
+  the project's own classes only (a library base not listed there hides its workers). Of a
+  component's intent filters only the push actions are read (0028), and `diff`, `nav-path` and
+  `screens` do not list components (0027).
 
 ## Impact precision
 

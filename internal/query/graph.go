@@ -60,6 +60,7 @@ type Graph struct {
 	screenOrder       []int32 // screen nodes in the order of their first row
 	screenTops        map[int32]bool
 	components        map[int32]string // class -> application, service, receiver, provider or worker
+	pushComponents    map[int32]bool   // the components taking a push (nav_path.push_actions)
 	routeOf           map[int32]int32
 	routeContentNames map[string]int32
 	drawn             map[int32][]int32         // route, preview -> the composables its content draws (ScreenContent)
@@ -126,8 +127,14 @@ func NewGraph(m *snapshot.Map, root string) *Graph {
 		}
 		g.screens[n] = append(g.screens[n], ScreenRow{s.Kind.At(i), s.Label.At(i), s.Target.At(i), m.Index(s.Host[i])})
 	}
+	g.pushComponents = map[int32]bool{}
 	for i, c := range m.Component.Node {
 		g.components[m.Index(c)] = m.Component.Kind.At(i)
+		for a := range strings.SplitSeq(m.Component.Actions.At(i), ",") {
+			if config.PushActions[a] {
+				g.pushComponents[m.Index(c)] = true
+			}
+		}
 	}
 	g.drawn = map[int32][]int32{}
 	for i := range m.ScreenContent.Screen {

@@ -2,7 +2,7 @@
   "schema_version": "4.2.0",
   "command": "find",
   "pattern": "Activity",
-  "total": 22,
+  "total": 23,
   "synthetic": 2,
   "symbols": [
     {
@@ -112,6 +112,12 @@
       "kind": "class",
       "module": "app",
       "location": "app/src/main/java/navapp/sections/HelpActivity.kt:19"
+    },
+    {
+      "symbol": "navapp.components.AlertActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:84"
     },
     {
       "symbol": "navapp.impact.PlainCopyActivity",

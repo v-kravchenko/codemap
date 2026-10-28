@@ -388,8 +388,12 @@ func ParseManifest(text string) []ManifestEntry {
 	return out
 }
 
-// ManifestComponent: an application, service, receiver or provider class the manifest declares.
-type ManifestComponent struct{ Cls, Kind string }
+// ManifestComponent: an application, service, receiver or provider class the manifest declares,
+// with the actions of its intent filters.
+type ManifestComponent struct {
+	Cls, Kind string
+	Actions   []string
+}
 
 func ParseComponents(text string) []ManifestComponent {
 	root, err := ParseXML([]byte(text))
@@ -402,7 +406,13 @@ func ParseComponents(text string) []ManifestComponent {
 			return
 		}
 		if name, _ := el.Get(androidNS + "name"); name != "" {
-			out = append(out, ManifestComponent{name, el.Tag})
+			var actions []string
+			el.Iter(func(x *El) {
+				if v, _ := x.Get(androidNS + "name"); x.Tag == "action" && v != "" {
+					actions = append(actions, v)
+				}
+			})
+			out = append(out, ManifestComponent{name, el.Tag, actions})
 		}
 	})
 	return out

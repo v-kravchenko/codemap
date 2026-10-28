@@ -74,6 +74,7 @@ type Config struct {
 	} `yaml:"navigation,omitempty" json:"navigation"`
 	NavPath struct {
 		PushMarkers []string `yaml:"push_markers,omitempty" json:"push_markers,omitempty"`
+		PushActions []string `yaml:"push_actions,omitempty" json:"push_actions,omitempty"`
 		Costs       struct {
 			Own    int `yaml:"own,omitempty" json:"own,omitempty"`
 			Shared int `yaml:"shared,omitempty" json:"shared,omitempty"`
@@ -369,6 +370,10 @@ func ApplyConfig(c *Config) {
 	Cfg = c
 	ActivityBases, FragmentBases, DialogBases = k.activityBases, k.fragmentBases, k.dialogBases
 	WorkerBases = k.workerBases
+	PushActions = map[string]bool{}
+	for _, a := range c.NavPath.PushActions {
+		PushActions[a] = true
+	}
 	PreviewMarkers, ScreenLayout = k.previewMarkers, k.screenLayout
 	RouteRegistration, RouteByName, RouteReadOnly = k.routeRegistration, k.routeByName, k.routeReadOnly
 	RouteGraph = k.routeGraph
@@ -451,6 +456,7 @@ var (
 	ClassDirs, SourceSets, manifests          []string
 	ActivityBases, DialogBases, FragmentBases map[string]bool
 	WorkerBases                               map[string]bool
+	PushActions                               map[string]bool // intent filter actions of a component taking a push
 	PreviewMarkers                            map[string]bool
 	ScreenLayout                              *regexp.Regexp
 	RouteRegistration, RouteByName            *regexp.Regexp

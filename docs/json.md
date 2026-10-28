@@ -364,8 +364,8 @@ Result: `screens`, `entries` and `opens`, each `{added, removed}`: `added` what 
 `removed` what only `--base` has, each named and located as in the map that has it.
 - `screens` — `{name, kind, module, location, host, hosts}` as in `nav-path` (previews and layouts
   too), sorted by kind, module, name.
-- `entries` — the manifest's ways into a screen, `{kind, detail, screen, module}`, sorted by kind,
-  detail, screen; the entries of an added or removed screen are listed too.
+- `entries` — the manifest's ways into a screen and its `push` entries, `{kind, detail, screen,
+  module}`, sorted by kind, detail, screen; the entries of an added or removed screen are listed too.
 - `opens` — a screen opening another, as `graph` draws it: `{from, to, from_module, to_module}`,
   sorted by from, to; every open of an added or removed screen is listed (the text shows only
   those between screens both maps have, and counts the rest).
@@ -398,7 +398,7 @@ Result: `screens`, `entries` and `opens`, each `{added, removed}`: `added` what 
 ## nav-path
 
 ```
-codemap nav-path SCREEN [--via SCREEN]... [--ways] [--from SCREEN | --entry launcher|deeplink|intent]
+codemap nav-path SCREEN [--via SCREEN]... [--ways] [--from SCREEN | --entry launcher|deeplink|intent|push]
                  [--avoid GLOB]... [--verbose] [--limit N] [--depth N] [--no-paths] [--all] [--json]
 ```
 
@@ -419,7 +419,7 @@ codemap nav-path SCREEN [--via SCREEN]... [--ways] [--from SCREEN | --entry laun
   then cost, then `through`), `no_way` (openers of the fork no entry reaches).
 - `--from SCREEN` — ways start at this screen in whatever host instead of at an entry: its `entry`
   is `[{"kind": "from", "detail": null}]`; no `base`/`outside`/`unknown` entries, no `branches`.
-- `--entry KIND` — ways start only at entries of this kind (`launcher`, `deeplink`, `intent`); no
+- `--entry KIND` — ways start only at entries of this kind (`launcher`, `deeplink`, `intent`, `push`); no
   `base`/`outside`/`unknown` entries, no `branches`. Not with `--from`.
 - `--avoid GLOB` (repeatable) — no way goes through a screen whose name or class matches (`*`: any
   run of characters), e.g. `--avoid 'Debug*'`.
@@ -434,9 +434,10 @@ Result fields:
   `shared` is the qualified name of the shared "hub" code when `way` is shared, else `null`;
   `hint` is the step's human label (`stepHint`); `via` is the qualified code path of the step.
 - `entries` — how the target is first reached: screen object plus `entry`, an array of
-  `{kind, detail}` (`kind` one of `launcher`, `deeplink`, `intent`, `base`, `outside`, `unknown`,
-  `from` with `--from`;
-  `detail` extra text or `null`).
+  `{kind, detail}` (`kind` one of `launcher`, `deeplink`, `intent`, `push`, `base`, `outside`,
+  `unknown`, `from` with `--from`; `detail` extra text or `null`). `push` (since 4.2.0): the code
+  of a service or receiver whose intent filter takes a push (`nav_path.push_actions`) opens the
+  screen without a screen on the way; `detail` is the component's name (docs/decisions/0028).
 - `paths` — array of arrays of screen names, one per entry point, from the entry to the target.
 - `branches` — other launcher branches within `nav_path.branch_slack`: `{entry, through, cost,
   shared, path}`.

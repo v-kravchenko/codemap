@@ -115,8 +115,8 @@ type Map struct {
 		File, Line   []int32
 	}
 	Component struct { // application, service, receiver, provider (the manifest), worker (worker_bases)
-		Node []int64
-		Kind Strs
+		Node          []int64
+		Kind, Actions Strs // Actions: of its intent filters, sorted, comma-separated
 	}
 }
 
@@ -232,6 +232,7 @@ func (m *Map) columns(c codec) {
 	c.i32(&e.Line)
 	c.i64(&m.Component.Node)
 	c.strs(&m.Component.Kind)
+	c.strs(&m.Component.Actions)
 }
 
 func (m *Map) Nodes() int { return len(m.Node.ID) }

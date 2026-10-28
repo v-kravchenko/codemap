@@ -78,7 +78,7 @@ var commands = []command{
 			{name: "via", arg: "SCREEN", many: true, help: "the cheapest way through these screens, in order"},
 			{name: "ways", help: "the cheapest way through each screen that opens the fork (not with --via)"},
 			{name: "from", arg: "SCREEN", help: "ways from this screen instead of from an entry"},
-			{name: "entry", arg: "KIND", help: "ways only from entries of this kind: launcher, deeplink or intent (not with --from)"},
+			{name: "entry", arg: "KIND", help: "ways only from entries of this kind: launcher, deeplink, intent or push (not with --from)"},
 			optAvoid,
 			{name: "verbose", help: "every way found and the code of each step, not only the cheapest"},
 			{name: "limit", arg: "N", help: "how many branches to show (default 20)"},

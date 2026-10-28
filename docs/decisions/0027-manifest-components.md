@@ -31,5 +31,5 @@ member of the class, or of the top-level class holding it, lists the component w
   repositories gave the same `screens[]` and `affected` as before.
 - `components` is a new field of `impact` and `changes` and of `build --info` (schema 4.2.0); the
   map has a new column, so the index version moved to 12.
-- `diff`, `nav-path` and `screens` do not read components yet; a push entry (`--entry push`) and a
-  stack trace input build on them.
+- `diff`, `nav-path` and `screens` do not list components; the push entry (0028) and a stack
+  trace input build on them.

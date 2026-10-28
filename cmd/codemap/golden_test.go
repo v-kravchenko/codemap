@@ -52,7 +52,8 @@ var goldenCalls = [][]string{
 	{"screens", "--unreachable"},
 	{"screens", "WelcomeScreen"}, // by the composable the route draws
 	{"nav-path", "AboutFragment"},
-	{"nav-path", "Terms"}, // registered in a section an inline navigation wrapper runs
+	{"nav-path", "AlertActivity"}, // opened only by a service taking a push
+	{"nav-path", "Terms"},         // registered in a section an inline navigation wrapper runs
 	{"nav-path", "LicensesActivity"},
 	{"nav-path", "PickActivity"}, // through the ActivityResultContract SettingsFragment makes
 	{"nav-path", "InfoDialog"},

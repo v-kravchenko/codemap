@@ -6,7 +6,7 @@
       "symbol": "navapp.components.Tracker.track",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:20"
+      "location": "app/src/main/java/navapp/components/Components.kt:23"
     }
   ],
   "affected": [
@@ -14,7 +14,7 @@
       "symbol": "navapp.components.BootReceiver.onReceive",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:40",
+      "location": "app/src/main/java/navapp/components/Components.kt:43",
       "depth": 1,
       "path": [
         "navapp.components.Tracker.track",
@@ -25,7 +25,7 @@
       "symbol": "navapp.components.NavApp.onCreate",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:25",
+      "location": "app/src/main/java/navapp/components/Components.kt:28",
       "depth": 1,
       "path": [
         "navapp.components.Tracker.track",
@@ -36,7 +36,7 @@
       "symbol": "navapp.components.NotesProvider.query",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:47",
+      "location": "app/src/main/java/navapp/components/Components.kt:50",
       "depth": 1,
       "path": [
         "navapp.components.Tracker.track",
@@ -47,7 +47,7 @@
       "symbol": "navapp.components.SyncService.onStartCommand",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:34",
+      "location": "app/src/main/java/navapp/components/Components.kt:37",
       "depth": 1,
       "path": [
         "navapp.components.Tracker.track",
@@ -58,7 +58,7 @@
       "symbol": "navapp.components.TrackedWorker.report",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:58",
+      "location": "app/src/main/java/navapp/components/Components.kt:61",
       "depth": 1,
       "path": [
         "navapp.components.Tracker.track",
@@ -69,7 +69,7 @@
       "symbol": "navapp.components.BootReceiver",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:39",
+      "location": "app/src/main/java/navapp/components/Components.kt:42",
       "depth": 2,
       "path": [
         "navapp.components.Tracker.track",
@@ -81,7 +81,7 @@
       "symbol": "navapp.components.NavApp",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:23",
+      "location": "app/src/main/java/navapp/components/Components.kt:26",
       "depth": 2,
       "path": [
         "navapp.components.Tracker.track",
@@ -93,7 +93,7 @@
       "symbol": "navapp.components.NotesProvider",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:43",
+      "location": "app/src/main/java/navapp/components/Components.kt:46",
       "depth": 2,
       "path": [
         "navapp.components.Tracker.track",
@@ -105,7 +105,7 @@
       "symbol": "navapp.components.SyncService",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:30",
+      "location": "app/src/main/java/navapp/components/Components.kt:33",
       "depth": 2,
       "path": [
         "navapp.components.Tracker.track",
@@ -117,7 +117,7 @@
       "symbol": "navapp.components.SyncWorker.doWork",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:63",
+      "location": "app/src/main/java/navapp/components/Components.kt:66",
       "depth": 2,
       "path": [
         "navapp.components.Tracker.track",
@@ -129,7 +129,7 @@
       "symbol": "navapp.components.SyncWorker",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:61",
+      "location": "app/src/main/java/navapp/components/Components.kt:64",
       "depth": 3,
       "path": [
         "navapp.components.Tracker.track",
@@ -146,7 +146,7 @@
       "name": "NavApp",
       "target": "navapp.components.NavApp",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:23",
+      "location": "app/src/main/java/navapp/components/Components.kt:26",
       "depth": 1,
       "path": [
         "navapp.components.Tracker.track",
@@ -158,7 +158,7 @@
       "name": "NotesProvider",
       "target": "navapp.components.NotesProvider",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:43",
+      "location": "app/src/main/java/navapp/components/Components.kt:46",
       "depth": 1,
       "path": [
         "navapp.components.Tracker.track",
@@ -170,7 +170,7 @@
       "name": "BootReceiver",
       "target": "navapp.components.BootReceiver",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:39",
+      "location": "app/src/main/java/navapp/components/Components.kt:42",
       "depth": 1,
       "path": [
         "navapp.components.Tracker.track",
@@ -182,7 +182,7 @@
       "name": "SyncService",
       "target": "navapp.components.SyncService",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:30",
+      "location": "app/src/main/java/navapp/components/Components.kt:33",
       "depth": 1,
       "path": [
         "navapp.components.Tracker.track",
@@ -194,7 +194,7 @@
       "name": "SyncWorker",
       "target": "navapp.components.SyncWorker",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:61",
+      "location": "app/src/main/java/navapp/components/Components.kt:64",
       "depth": 2,
       "path": [
         "navapp.components.Tracker.track",

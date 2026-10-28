@@ -1,5 +1,6 @@
 
-Activities (16)
+Activities (17)
+  AlertActivity                                      app                          app/src/main/java/navapp/components/Components.kt:84
   AvatarActivity                                     app                          app/src/main/java/navapp/impact/DataClasses.kt:18
   FirstActivity                                      app                          app/src/main/java/navapp/impact/Constructors.kt:12
   GuideActivity                                      app                          app/src/main/java/navapp/sections/GuideActivity.kt:18

@@ -56,10 +56,6 @@ itself.
   singleton** (e.g. `Application.getInstance()` read from a base class's lifecycle callback) —
   today it fans out to every screen reachable from that lifecycle callback, which is correct
   but maximally unhelpful.
-- **Push as a nav-path entry (`--entry push`).** A `Service` whose intent filter takes a push
-  (`com.google.firebase.MESSAGING_EVENT`, in a preset) becomes an entry, and the screens its code
-  opens get `entry: push` instead of `outside`. The map has the services (0027), not yet their
-  intent filters.
 - **nav-path through a DI multibinding** (a Hilt `@IntoSet`/map-multibinding of navigation
   destinations, a Navigation-3-style scene registry) — currently reported as "No way" because
   there's no static call edge from the registering code to the host that reads the set/map at

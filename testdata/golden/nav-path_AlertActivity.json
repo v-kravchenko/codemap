@@ -1,0 +1,37 @@
+{
+  "schema_version": "4.2.0",
+  "command": "nav-path",
+  "targets": [
+    {
+      "name": "AlertActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:84",
+      "host": null,
+      "hosts": []
+    }
+  ],
+  "screens": [],
+  "entries": [
+    {
+      "name": "AlertActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:84",
+      "host": null,
+      "hosts": [],
+      "entry": [
+        {
+          "kind": "push",
+          "detail": "PushService"
+        }
+      ]
+    }
+  ],
+  "paths": [
+    [
+      "AlertActivity"
+    ]
+  ],
+  "branches": []
+}

@@ -555,8 +555,9 @@ func (g *Graph) navVerbose(o opts, targets []int32, r *navResult, branchWays []b
 		}
 		fmt.Printf("  [%s] %s\n", text, arrows(root.st))
 	}
-	fmt.Println("  entry kinds: launcher, deeplink, intent (manifest); base: only a base class of many screens\n" +
-		"  opens it; outside: opened from code that is not a screen (a service, push); unknown: the map\n" +
+	fmt.Println("  entry kinds: launcher, deeplink, intent (manifest); push: the code of a service taking a push\n" +
+		"  opens it; base: only a base class of many screens opens it; outside: opened from code that is not\n" +
+		"  a screen; unknown: the map\n" +
 		"  sees nothing that opens it. ~push~>: the step goes through push or deep link handling; (in M): a shared\n" +
 		"  screen, this way only when a screen of module M hosts it")
 	if len(branchWays) > 0 {

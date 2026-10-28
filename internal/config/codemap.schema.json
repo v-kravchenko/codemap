@@ -212,6 +212,13 @@
           },
           "description": "Parts of method names that mark push or deep link handling."
         },
+        "push_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Intent filter actions of a service or receiver taking a push: the screens its code opens get the push entry."
+        },
         "costs": {
           "type": "object",
           "additionalProperties": false,

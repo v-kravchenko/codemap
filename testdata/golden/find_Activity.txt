@@ -16,6 +16,7 @@ C     navapp.sections.GuideActivity                                          app
 C     navapp.views.LicensesActivity                                          app                          app/src/main/java/navapp/views/ViewsActivity.kt:56
 C     navapp.impact.NicknameActivity                                         app                          app/src/main/java/navapp/impact/DataClasses.kt:11
 C     navapp.sections.HelpActivityKt                                         app                          app/src/main/java/navapp/sections/HelpActivity.kt:19
+C     navapp.components.AlertActivity                                        app                          app/src/main/java/navapp/components/Components.kt:84
 C     navapp.impact.PlainCopyActivity                                        app                          app/src/main/java/navapp/impact/Defaults.kt:16
 C     navapp.impact.LabelledCopyActivity                                     app                          app/src/main/java/navapp/impact/Defaults.kt:23
 C     navapp.sections.ComposableSingletons.HelpActivityKt                    app                          app/src/main/java/navapp/sections/HelpActivity.kt:13

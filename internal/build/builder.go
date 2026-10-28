@@ -274,7 +274,7 @@ type Builder struct {
 	related       map[[2]int64]struct{}
 	content       map[[2]int64]struct{} // route, a composable its content calls from its own lines
 	entries       map[EntryRow]struct{}
-	components    map[int64]string // class -> component kind
+	components    map[int64][2]string // class -> component kind, actions of its intent filters
 	callSites     []CallSite
 	paramSwitches map[Triple]struct{}
 	directReads   map[[2]int64]struct{}
@@ -1795,7 +1795,7 @@ func (b *Builder) navGraphs() {
 // the manifests declare, with the workers by worker_bases.
 func (b *Builder) entriesAll() {
 	b.entries = map[EntryRow]struct{}{}
-	b.components = map[int64]string{}
+	b.components = map[int64][2]string{}
 	for i, m := range b.modules {
 		for _, rel := range m.Manifests {
 			path := filepath.Join(b.root, rel)
@@ -1815,7 +1815,8 @@ func (b *Builder) entriesAll() {
 			}
 			for _, c := range android.ParseComponents(string(data)) {
 				if cid, ok := b.manifestClass(c.Cls); ok {
-					b.components[cid] = c.Kind
+					slices.Sort(c.Actions)
+					b.components[cid] = [2]string{c.Kind, strings.Join(slices.Compact(c.Actions), ",")}
 				}
 			}
 		}
@@ -1824,7 +1825,7 @@ func (b *Builder) entriesAll() {
 	for _, n := range b.parsedNames {
 		if workers[n] && int(b.parsed[n].C.Flags)&(snapshot.AccAbstract|snapshot.AccInterface) == 0 {
 			if cid, ok := b.classID[n]; ok {
-				b.components[cid] = "worker"
+				b.components[cid] = [2]string{"worker", ""}
 			}
 		}
 	}
@@ -2504,7 +2505,8 @@ func (b *Builder) otherColumns(m *snapshot.Map) {
 	}
 	for _, c := range util.SortedKeys(b.components) {
 		m.Component.Node = append(m.Component.Node, c)
-		m.Component.Kind.Add(b.components[c])
+		m.Component.Kind.Add(b.components[c][0])
+		m.Component.Actions.Add(b.components[c][1])
 	}
 }
 

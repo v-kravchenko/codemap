@@ -5,6 +5,17 @@
     {
       "kind": "activity",
       "module": "app",
+      "name": "AlertActivity",
+      "target": "navapp.components.AlertActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/components/Components.kt:84",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
       "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity",
       "host": null,

@@ -5,8 +5,9 @@ Screens on the way: 5, entry screens: 2
 Ways from entry screens, cheapest first:
   [launcher] MainActivity -> ViewsActivity -> ListFragment -> DetailFragment -> InfoDialog
   [deeplink https://navapp.example/views] LinkActivity -> ViewsActivity -> ListFragment -> DetailFragment -> InfoDialog
-  entry kinds: launcher, deeplink, intent (manifest); base: only a base class of many screens
-  opens it; outside: opened from code that is not a screen (a service, push); unknown: the map
+  entry kinds: launcher, deeplink, intent (manifest); push: the code of a service taking a push
+  opens it; base: only a base class of many screens opens it; outside: opened from code that is not
+  a screen; unknown: the map
   sees nothing that opens it. ~push~>: the step goes through push or deep link handling; (in M): a shared
   screen, this way only when a screen of module M hosts it
 

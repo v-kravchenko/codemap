@@ -14,6 +14,9 @@ notes from its section here (`tools/release-notes.sh`).
   (WorkManager's in the `android` preset); `build --info` counts them. A change reaching only a push
   service or `Application.onCreate` no longer looks like it reaches nothing (`components`, schema
   4.2.0). Maps are rebuilt (index version 12).
+- `nav-path` starts a way at a push too: a screen the code of a service or receiver taking a push
+  opens (`nav_path.push_actions`, Firebase's in the `android` preset) gets a `push` entry instead of
+  `outside`, and `--entry push` starts there.
 
 - A query warns when codemap.yml or its presets give other settings than the map was built with,
   and with `--strict` exits 3: such a map may answer anything differently

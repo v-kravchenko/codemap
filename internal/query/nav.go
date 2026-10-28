@@ -15,13 +15,14 @@ import (
 	"github.com/v-kravchenko/codemap/internal/util"
 )
 
-var entryOrder = map[string]int{"launcher": 0, "deeplink": 1, "intent": 2, "base": 3, "outside": 4, "unknown": 5}
+var entryOrder = map[string]int{"launcher": 0, "deeplink": 1, "intent": 2, "push": 3, "base": 4, "outside": 5, "unknown": 6}
 
 // mermaidDirections: how a Mermaid flowchart runs, what graph --direction takes (TD is TB).
 var mermaidDirections = []string{"LR", "RL", "TB", "TD", "BT"}
 
-// entryKinds: the entries of the manifest, what nav-path --entry takes.
-var entryKinds = []string{"launcher", "deeplink", "intent"}
+// entryKinds: the entries of the manifest and push (a component taking a push opens the screen),
+// what nav-path --entry takes.
+var entryKinds = []string{"launcher", "deeplink", "intent", "push"}
 
 // hostKey: the host a way needs: a node (an Activity hosting a route), a module, or neither.
 type hostKey struct {
@@ -72,7 +73,7 @@ func (g *Graph) openedBy(sid int32) ([]srcWay, []baseBelow) {
 			r.bases = append(r.bases, baseBelow{b.Base[i], b.Below.Node[b.Below.Start[i]:b.Below.Start[i+1]]})
 		}
 	} else {
-		ways, bases, _ := g.walkOpenedBy(sid)
+		ways, bases, _, _ := g.walkOpenedBy(sid)
 		for _, src := range util.SortedKeys(ways) {
 			r.ways = append(r.ways, srcWay{src, ways[src]})
 		}

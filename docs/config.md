@@ -332,6 +332,17 @@ Type: array of strings, add up. Parts of method names that mark push/deep-link h
 `nav-path` way (a step whose code runs through one of these is a "push" step, costed at
 `nav_path.costs.push`).
 
+### nav_path.push_actions
+
+```yaml
+nav_path:
+  push_actions: [com.google.firebase.MESSAGING_EVENT]
+```
+
+Type: array of intent filter actions, add up. A service or receiver of a manifest with an intent
+filter taking one of these takes a push: a screen its code opens (with no screen on the way) gets a
+`push` entry in `nav-path`, which `--entry push` starts from.
+
 ### nav_path.costs.own / nav_path.costs.shared / nav_path.costs.push
 
 ```yaml

@@ -4,6 +4,7 @@ package query
 // for every screen a user sees.
 
 import (
+	"cmp"
 	"slices"
 	"sort"
 	"strings"
@@ -94,19 +95,28 @@ func (g *Graph) openers(sid int32) []int32 {
 
 // walkOpenedBy: ways = {screen: way}, bases = {class: [screens]}; capped:
 // the pairs left out after pathLimit shortest ways.
-func (g *Graph) walkOpenedBy(sid int32) (ways map[int32]Way, bases map[int32][]int32, capped int) {
+// pushes: the components taking a push whose code reaches an opener without a screen on the way.
+func (g *Graph) walkOpenedBy(sid int32) (ways map[int32]Way, bases map[int32][]int32, pushes []int32, capped int) {
 	ways = map[int32]Way{}
 	var seeds []Seed
 	for _, src := range g.openers(sid) {
 		seeds = append(seeds, Seed{src, modeMember})
 	}
 	if len(seeds) == 0 {
-		return ways, map[int32][]int32{}, 0
+		return ways, map[int32][]int32{}, nil, 0
 	}
 	baseSet, skip := map[int32]bool{}, map[int32]bool{}
-	for range hubRounds {
+	for round := range hubRounds {
 		alt := map[Key][]Parent{}
 		w := g.walk(seeds, -1, nil, skip, baseSet, alt)
+		if round == 0 { // later rounds skip the hubs, not the code a push runs
+			for _, c := range w.ComponentOrder {
+				if g.pushComponents[c] {
+					pushes = append(pushes, c)
+				}
+			}
+			slices.Sort(pushes)
+		}
 		var screens []int32
 		inScreens := map[int32]bool{}
 		for _, s := range w.ScreenOrder {
@@ -171,7 +181,7 @@ func (g *Graph) walkOpenedBy(sid int32) (ways map[int32]Way, bases map[int32][]i
 			bases[b] = g.screenSubclasses(b)
 		}
 	}
-	return ways, bases, capped
+	return ways, bases, pushes, capped
 }
 
 // hubs: the lowest nodes of the walk tree with hubMin or more screens below, in first-met order.
@@ -393,6 +403,7 @@ func PrecomputeOpenedBy(m *snapshot.Map, root string, jobs int) (int, int) {
 	type result struct {
 		ways   map[int32]Way
 		bases  map[int32][]int32
+		pushes []int32
 		capped int
 	}
 	results := make([]result, len(targets))
@@ -406,8 +417,8 @@ func PrecomputeOpenedBy(m *snapshot.Map, root string, jobs int) (int, int) {
 				if i >= len(targets) {
 					return
 				}
-				w, b, c := g.walkOpenedBy(targets[i])
-				results[i] = result{w, b, c}
+				w, b, p, c := g.walkOpenedBy(targets[i])
+				results[i] = result{w, b, p, c}
 			}
 		})
 	}
@@ -442,7 +453,46 @@ func PrecomputeOpenedBy(m *snapshot.Map, root string, jobs int) (int, int) {
 			ob.Below.Start = append(ob.Below.Start, int32(len(ob.Below.Node)))
 		}
 	}
+	addPushEntries(m, targets, func(i int) []int32 { return results[i].pushes })
 	return len(targets), capped
+}
+
+// addPushEntries: a push entry of each target screen for each component taking a push that opens
+// it, the component's name as its detail; the entries stay sorted as build wrote them.
+func addPushEntries(m *snapshot.Map, targets []int32, pushes func(int) []int32) {
+	g := NewGraph(m, "")
+	type row struct {
+		node         int64
+		kind, detail string
+		file, line   int32
+	}
+	e := &m.Entry
+	var rows []row
+	for i := range e.Node {
+		rows = append(rows, row{e.Node[i], e.Kind.At(i), e.Detail.At(i), e.File[i], e.Line[i]})
+	}
+	n := len(rows)
+	for i, s := range targets {
+		for _, c := range pushes(i) {
+			rows = append(rows, row{m.Node.ID[s], "push", g.label(c), g.fileOf(c), g.m.Node.LMin[c]})
+		}
+	}
+	if len(rows) == n {
+		return
+	}
+	slices.SortFunc(rows, func(a, b row) int {
+		return cmp.Or(cmp.Compare(a.node, b.node), cmp.Compare(a.kind, b.kind), cmp.Compare(a.detail, b.detail),
+			cmp.Compare(a.file, b.file), cmp.Compare(a.line, b.line))
+	})
+	rows = slices.Compact(rows)
+	*e = snapshot.Map{}.Entry
+	for _, r := range rows {
+		e.Node = append(e.Node, r.node)
+		e.Kind.Add(r.kind)
+		e.Detail.Add(r.detail)
+		e.File = append(e.File, r.file)
+		e.Line = append(e.Line, r.line)
+	}
 }
 
 // openedFrom: the screens that open `sid` (through shared code too), from the build's walk.
