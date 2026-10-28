@@ -7,6 +7,8 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-10-28
+
 ### Added
 
 - `crash [FILE]` reads a crash's stack trace, as Crashlytics exports it, logcat prints it or Java
@@ -164,7 +166,8 @@ The first public release.
   navigation events; anything project-specific goes into `codemap.yml`.
 - `codemap version`.
 
-[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/v-kravchenko/codemap/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/v-kravchenko/codemap/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/v-kravchenko/codemap/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/v-kravchenko/codemap/compare/v0.6.0...v0.7.0
