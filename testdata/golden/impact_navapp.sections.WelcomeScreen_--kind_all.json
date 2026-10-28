@@ -6,7 +6,7 @@
       "symbol": "navapp.sections.SectionsAppKt.WelcomeScreen",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:63"
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:57"
     }
   ],
   "affected": [
@@ -14,7 +14,7 @@
       "symbol": "navapp.sections.ComposableSingletons.SectionsAppKt.lambda__1408756015$lambda$0",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:89",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:83",
       "depth": 1,
       "path": [
         "navapp.sections.SectionsAppKt.WelcomeScreen",
@@ -36,7 +36,7 @@
       "symbol": "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1.invoke",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:29",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:25",
       "depth": 1,
       "path": [
         "navapp.sections.SectionsAppKt.WelcomeScreen",
@@ -69,7 +69,7 @@
       "symbol": "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1.invoke",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:29",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:25",
       "depth": 2,
       "path": [
         "navapp.sections.SectionsAppKt.WelcomeScreen",
@@ -91,7 +91,7 @@
       "symbol": "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.1",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:29",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:25",
       "depth": 3,
       "path": [
         "navapp.sections.SectionsAppKt.WelcomeScreen",
@@ -102,7 +102,7 @@
       "symbol": "navapp.sections.SectionsAppKt.WelcomeScreenPreview",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:88",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:82",
       "depth": 4,
       "path": [
         "navapp.sections.SectionsAppKt.WelcomeScreen",
@@ -114,7 +114,7 @@
       "symbol": "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.invoke",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:29",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:25",
       "depth": 4,
       "path": [
         "navapp.sections.SectionsAppKt.WelcomeScreen",
@@ -125,7 +125,7 @@
       "symbol": "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1.invoke",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:29",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:25",
       "depth": 5,
       "path": [
         "navapp.sections.SectionsAppKt.WelcomeScreen",
@@ -136,7 +136,7 @@
       "symbol": "navapp.sections.SectionsAppKt.onboardingSteps..inlined.screen.1",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:29",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:25",
       "depth": 6,
       "path": [
         "navapp.sections.SectionsAppKt.WelcomeScreen",
@@ -178,7 +178,7 @@
       "name": "SectionsApp.WelcomeScreenPreview",
       "target": "navapp.sections.SectionsAppKt.WelcomeScreenPreview",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:88",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:82",
       "host": null,
       "hosts": [],
       "depth": 4,

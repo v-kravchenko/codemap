@@ -44,6 +44,19 @@
     {
       "kind": "preview",
       "module": "app",
+      "name": "DocsGuidePreviews.DocsGuidePreview",
+      "target": "navapp.sections.DocsGuidePreviewsKt.DocsGuidePreview",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/DocsGuidePreviews.kt:9",
+      "content": [
+        "DocsGuideScreenKt.DocsGuideScreen()"
+      ],
+      "previews": []
+    },
+    {
+      "kind": "preview",
+      "module": "app",
       "name": "PhotoGuideScreen.PhotoGuidePreview",
       "target": "navapp.sections.PhotoGuideScreenKt.PhotoGuidePreview",
       "host": null,
@@ -61,7 +74,7 @@
       "target": "navapp.sections.SectionsAppKt.TermsScreenPreview",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:94",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:88",
       "content": [
         "SectionsAppKt.TermsScreen()"
       ],
@@ -74,7 +87,7 @@
       "target": "navapp.sections.SectionsAppKt.WelcomeScreenPreview",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:88",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:82",
       "content": [
         "SectionsAppKt.SectionsTheme()",
         "SectionsAppKt.WelcomeScreen()"
@@ -109,7 +122,7 @@
     }
   ],
   "hidden": {
-    "activity": 14,
+    "activity": 15,
     "dialog": 1,
     "fragment": 6,
     "route": 19

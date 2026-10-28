@@ -68,9 +68,9 @@ func TestNavigationPresets(t *testing.T) {
 		"Welcome": {"sections/SectionsAppKt.SectionsApp"},
 		"Terms":   {"sections/SectionsAppKt$SectionsApp$1$1$1$1.invoke"},
 		"About":   {"sections/SectionsAppKt$SectionsApp$1$1$1$2.invoke"},
-		// registered, opened by nothing (a body two screens share: GuideBody.kt)
-		"PhotoGuide": nil,
-		"DocsGuide":  nil,
+		// a NavHost of the Activity's own, either the start
+		"PhotoGuide": {"sections/GuideActivity.onCreate$lambda$0"},
+		"DocsGuide":  {"sections/GuideActivity.onCreate$lambda$0"},
 	}
 	if !reflect.DeepEqual(got, want) {
 		for k, v := range want {

@@ -8,6 +8,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.ViewsActivity" />
+        <activity android:name=".sections.GuideActivity" />
         <activity android:name=".views.LicensesActivity" />
         <activity android:name=".views.PickActivity" />
         <activity android:name=".views.LinkActivity" android:exported="true">

@@ -21,10 +21,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable data object About
 
-@Serializable data object PhotoGuide
-
-@Serializable data object DocsGuide
-
 inline fun <reified T : Any> NavGraphBuilder.screen(crossinline content: @Composable () -> Unit) {
     composable<T> { Frame { content() } }
 }
@@ -44,8 +40,6 @@ fun SectionsApp() {
             onboardingSteps(onNext = { nav.navigate(Terms) }, onAbout = { nav.navigate(About) })
         }
         composable<About> { AboutScreen() }
-        composable<PhotoGuide> { PhotoGuideScreen() }
-        composable<DocsGuide> { DocsGuideScreen() }
     }
 }
 

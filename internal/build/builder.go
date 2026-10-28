@@ -1229,6 +1229,9 @@ func (s *methodEdges) member(ref *classfile.Ref) {
 		}
 	default:
 		s.add(snapshot.Edge{Src: s.mid, Dst: target, Kind: snapshot.READ})
+		if owner == name && strings.HasPrefix(n, "lambda$") && strings.HasPrefix(shortName(owner), "ComposableSingletons$") {
+			s.cont = append(s.cont, content{target, snapshot.READ}) // its own field, read without the getter
+		}
 		if ref.Kind == classfile.RRead && b.enumClasses[owner] && b.Nodes[target].Flags&snapshot.AccEnum != 0 {
 			s.directReads.add([2]int64{s.mid, target})
 		}
@@ -1896,14 +1899,21 @@ func (b *Builder) relatedAll() {
 				case snapshot.ROUTE_HOST:
 					from[b.Nodes[e.Dst].File] = true
 				case snapshot.ROUTE_CONTENT:
-					add(e.Dst)
-					// a ComposableSingletons getter: the lambda its field holds
-					for _, r := range outEdges[e.Dst] {
-						if r.Kind == snapshot.READ && b.Nodes[r.Dst].Owner == b.Nodes[e.Dst].Owner {
-							for _, l := range outEdges[r.Dst] {
-								if l.Kind == snapshot.LAMBDA || l.Kind == snapshot.TYPE {
-									add(l.Dst)
-								}
+					// a ComposableSingletons field, or its getter: the lambda the field holds
+					fields := []int64{e.Dst}
+					if b.Nodes[e.Dst].Kind != "F" {
+						add(e.Dst)
+						fields = nil
+						for _, r := range outEdges[e.Dst] {
+							if r.Kind == snapshot.READ && b.Nodes[r.Dst].Owner == b.Nodes[e.Dst].Owner {
+								fields = append(fields, r.Dst)
+							}
+						}
+					}
+					for _, f := range fields {
+						for _, l := range outEdges[f] {
+							if l.Kind == snapshot.LAMBDA || l.Kind == snapshot.TYPE {
+								add(l.Dst)
 							}
 						}
 					}
@@ -1927,6 +1937,22 @@ func (b *Builder) relatedAll() {
 // those whose composable is in the preview's file: a file holding several screens and their
 // previews gives each preview its own screen, a preview of a shared body its file's screen.
 func (b *Builder) previewsOfScreens(drawnBy map[int64][]int64, outEdges map[int64][]snapshot.Edge, nested func(string) []int64) {
+	// a route's content is the route's: not of the Activity whose NavHost (or an inlined copy of a
+	// wrapper in its classes) registers it
+	routes, ofRoute := map[int64]bool{}, map[int64]bool{}
+	for _, s := range b.Screens {
+		if s.Kind == "route" {
+			routes[s.Node] = true
+			for _, c := range drawnBy[s.Node] {
+				ofRoute[c] = true
+			}
+		}
+	}
+	for s, cs := range drawnBy {
+		if !routes[s] {
+			drawnBy[s] = slices.DeleteFunc(cs, func(c int64) bool { return ofRoute[c] })
+		}
+	}
 	inModule := map[int64][]int64{} // a composable -> those it draws in its own module
 	screensOf := map[int64][]int64{}
 	for _, s := range util.SortedKeys(drawnBy) {
@@ -1942,7 +1968,7 @@ func (b *Builder) previewsOfScreens(drawnBy map[int64][]int64, outEdges map[int6
 			}
 			for _, d := range append([]int64{c}, own...) {
 				// a component of another module (a design system's button) is not the screen's
-				if b.Nodes[d].Module == b.Nodes[s].Module && !slices.Contains(screensOf[d], s) {
+				if b.Nodes[d].Module == b.Nodes[s].Module && !slices.Contains(screensOf[d], s) && (routes[s] || !ofRoute[d]) {
 					screensOf[d] = append(screensOf[d], s)
 				}
 			}

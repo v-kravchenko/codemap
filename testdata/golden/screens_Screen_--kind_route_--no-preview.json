@@ -5,21 +5,6 @@
     {
       "kind": "route",
       "module": "app",
-      "name": "DocsGuide",
-      "target": "navapp.sections.DocsGuide",
-      "host": "MainActivity",
-      "hosts": [
-        "MainActivity"
-      ],
-      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
-      "content": [
-        "DocsGuideScreenKt.DocsGuideScreen()"
-      ],
-      "previews": []
-    },
-    {
-      "kind": "route",
-      "module": "app",
       "name": "Home",
       "target": "navapp.typed.Home",
       "host": "MainActivity",
@@ -64,6 +49,6 @@
     }
   ],
   "hidden": {
-    "preview": 8
+    "preview": 9
   }
 }

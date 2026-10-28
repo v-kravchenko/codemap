@@ -1,9 +1,11 @@
 
-Activities (9)
+Activities (10)
   AvatarActivity                                     app                          app/src/main/java/navapp/impact/DataClasses.kt:18
       ends at AvatarActivity: nothing opens it
   FirstActivity                                      app                          app/src/main/java/navapp/impact/Constructors.kt:12
       ends at FirstActivity: nothing opens it
+  GuideActivity                                      app                          app/src/main/java/navapp/sections/GuideActivity.kt:18
+      ends at GuideActivity: nothing opens it
   LabelledCopyActivity                               app                          app/src/main/java/navapp/impact/Defaults.kt:23
       ends at LabelledCopyActivity: nothing opens it
   LimitActivity                                      app                          app/src/main/java/navapp/impact/Constants.kt:10
@@ -26,14 +28,15 @@ Fragments (2)
       ends at OrdersFragment: nothing opens it
 
 Compose routes (2)
-  DocsGuide                                          app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
+  DocsGuide                                          app                          app/src/main/java/navapp/sections/GuideActivity.kt  host GuideActivity
       content DocsGuideScreenKt.DocsGuideScreen()
-      ends at DocsGuide: nothing opens it
-  PhotoGuide                                         app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
+      previews navapp.sections.DocsGuidePreviewsKt.DocsGuidePreview
+      ends at GuideActivity: nothing opens it
+  PhotoGuide                                         app                          app/src/main/java/navapp/sections/GuideActivity.kt  host GuideActivity
       content PhotoGuideScreenKt.PhotoGuideScreen()
       previews navapp.sections.PhotoGuideScreenKt.PhotoGuidePreview
-      ends at PhotoGuide: nothing opens it
+      ends at GuideActivity: nothing opens it
 
-Not shown: preview 8 (--kind KIND, --kind all)
+Not shown: preview 9 (--kind KIND, --kind all)
 
-(13 screens no entry of the manifest reaches, as far as the code map sees)
+(14 screens no entry of the manifest reaches, as far as the code map sees)

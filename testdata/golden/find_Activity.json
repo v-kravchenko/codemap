@@ -2,8 +2,8 @@
   "schema_version": "4.1.0",
   "command": "find",
   "pattern": "Activity",
-  "total": 17,
-  "synthetic": 0,
+  "total": 19,
+  "synthetic": 2,
   "symbols": [
     {
       "symbol": "navapp.MainActivity",
@@ -84,6 +84,12 @@
       "location": "app/src/main/java/navapp/impact/Constructors.kt:8"
     },
     {
+      "symbol": "navapp.sections.GuideActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/GuideActivity.kt:18"
+    },
+    {
       "symbol": "navapp.views.LicensesActivity",
       "kind": "class",
       "module": "app",
@@ -106,6 +112,12 @@
       "kind": "class",
       "module": "app",
       "location": "app/src/main/java/navapp/impact/Defaults.kt:23"
+    },
+    {
+      "symbol": "navapp.sections.ComposableSingletons.GuideActivityKt",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/GuideActivity.kt:24"
     }
   ]
 }
