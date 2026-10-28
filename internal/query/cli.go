@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	schemaVersion = "4.2.0"
+	schemaVersion = "4.3.0"
 	exitOK        = 0
 	exitError     = 2
 )
@@ -36,11 +36,11 @@ var (
 )
 
 type opts struct {
-	db, variant, to, base, baseDB, head, diff, files, from, entry, direction, host string
-	json, all, noPaths, noSelf, noDI, noCheck, nav                                 bool
-	strict, verbose, info, ways, in, unreachable, noPreview                        bool
-	depth, limit                                                                   int
-	kinds, pos, via, avoid, modules, types                                         []string
+	db, variant, to, base, baseDB, head, diff, files, from, entry, direction, host, mapping string
+	json, all, noPaths, noSelf, noDI, noCheck, nav                                          bool
+	strict, verbose, info, ways, in, unreachable, noPreview                                 bool
+	depth, limit                                                                            int
+	kinds, pos, via, avoid, modules, types                                                  []string
 }
 
 // fields: where each option goes: a switch sets its bool, a value its string, a repeatable one
@@ -51,7 +51,8 @@ func (o *opts) fields() (map[string]*bool, map[string]*string, map[string]*[]str
 		"no-check": &o.noCheck, "strict": &o.strict, "nav": &o.nav, "ways": &o.ways, "in": &o.in,
 		"no-preview": &o.noPreview}
 	values := map[string]*string{"db": &o.db, "variant": &o.variant, "to": &o.to, "base": &o.base, "base-db": &o.baseDB, "head": &o.head, "diff": &o.diff,
-		"files": &o.files, "host": &o.host, "from": &o.from, "entry": &o.entry, "direction": &o.direction}
+		"files": &o.files, "host": &o.host, "from": &o.from, "entry": &o.entry, "direction": &o.direction,
+		"mapping": &o.mapping}
 	lists := map[string]*[]string{"kind": &o.kinds, "type": &o.types, "via": &o.via, "avoid": &o.avoid,
 		"module": &o.modules}
 	numbers := map[string]*int{"depth": &o.depth, "limit": &o.limit}
@@ -247,6 +248,8 @@ func (g *Graph) run(cmd string, o opts) int {
 		return g.cmdChanges(o)
 	case "diff":
 		return g.cmdDiff(o)
+	case "crash":
+		return g.cmdCrash(o)
 	case "nav-path":
 		need(1, "SCREEN")
 		return g.cmdNavPath(o)

@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.2.0",
+  "schema_version": "4.3.0",
   "command": "screens",
   "screens": [
     {
@@ -331,6 +331,33 @@
     {
       "kind": "fragment",
       "module": "app",
+      "name": "InvoiceFragment",
+      "target": "navapp.crash.InvoiceFragment",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/crash/Crash.kt:32",
+      "content": [],
+      "previews": [],
+      "entries": [
+        {
+          "name": "InvoiceFragment",
+          "kind": "fragment",
+          "module": "app",
+          "location": "app/src/main/java/navapp/crash/Crash.kt:32",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "fragment",
+      "module": "app",
       "name": "OrdersFragment",
       "target": "navapp.impact.OrdersFragment",
       "host": null,
@@ -344,6 +371,33 @@
           "kind": "fragment",
           "module": "app",
           "location": "app/src/main/java/navapp/impact/GenericDi.kt:38",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "fragment",
+      "module": "app",
+      "name": "ReceiptFragment",
+      "target": "navapp.crash.ReceiptFragment",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/crash/Crash.kt:38",
+      "content": [],
+      "previews": [],
+      "entries": [
+        {
+          "name": "ReceiptFragment",
+          "kind": "fragment",
+          "module": "app",
+          "location": "app/src/main/java/navapp/crash/Crash.kt:38",
           "host": null,
           "hosts": [],
           "entry": [

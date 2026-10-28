@@ -19,12 +19,14 @@ Activities (17)
   SecondActivity                                     app                          app/src/main/java/navapp/impact/Constructors.kt:18
   ViewsActivity                                      app                          app/src/main/java/navapp/views/ViewsActivity.kt:16
 
-Fragments (6)
+Fragments (8)
   AboutFragment                                      app                          app/src/main/java/navapp/views/ViewsActivity.kt:46  host ViewsActivity
   CartFragment                                       app                          app/src/main/java/navapp/impact/GenericDi.kt:29
   DetailFragment                                     app                          app/src/main/java/navapp/views/ViewsActivity.kt:24  host ViewsActivity
+  InvoiceFragment                                    app                          app/src/main/java/navapp/crash/Crash.kt:32
   ListFragment                                       app                          app/src/main/java/navapp/views/ViewsActivity.kt:18  host ViewsActivity
   OrdersFragment                                     app                          app/src/main/java/navapp/impact/GenericDi.kt:38
+  ReceiptFragment                                    app                          app/src/main/java/navapp/crash/Crash.kt:38
   SettingsFragment                                   app                          app/src/main/java/navapp/views/ViewsActivity.kt:34  host ViewsActivity
 
 Dialog fragments (1)

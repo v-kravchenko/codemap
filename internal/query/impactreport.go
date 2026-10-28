@@ -268,43 +268,11 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 		}
 		return a.get("location") < b.get("location")
 	})
-	var screens []any
-	for _, kind := range util.SortedKeys(a.byKind) {
-		for _, it := range a.byKind[kind] {
-			hostNames := []string{}
-			for _, h := range it.hosts {
-				hostNames = append(hostNames, g.label(h))
-			}
-			var host any
-			if len(hostNames) > 0 {
-				host = hostNames[0]
-			}
-			s := obj{{"kind", kind}, {"name", it.label}, {"target", it.target}, {"module", it.mod},
-				{"location", g.location(it.n)}, {"host", host}, {"hosts", strs(hostNames)}, {"depth", it.depth},
-				{"opened_from", strs(g.openedFromNames(it.n))}, {"previews", strs(g.previewNames(it.n))},
-				{"path", g.qualifiedPath(g.path(w, w.Screens[it.n]))}}
-			if nav, ok := a.navs[it.n]; ok {
-				s = append(s, kv{"nav", nav.json()})
-			}
-			if command == "changes" {
-				var qs any
-				if q, ok := a.qualifiers[it.n]; ok {
-					qs = strs(q)
-				}
-				s = append(s, kv{"added", g.screenAdded(it.n)}, kv{"moved_from", g.movedFrom(it.n)}, kv{"qualifiers", qs})
-			}
-			screens = append(screens, s)
-		}
-	}
 	var ncJSON []any
 	for _, x := range a.notCov {
 		ncJSON = append(ncJSON, obj{{"path", x.path}, {"reason", x.reason}})
 	}
-	var components []any
-	for _, it := range a.components {
-		components = append(components, obj{{"kind", it.kind}, {"name", it.label}, {"target", it.target}, {"module", it.mod},
-			{"location", g.location(it.n)}, {"depth", it.depth}, {"path", g.qualifiedPath(g.path(w, w.Components[it.n]))}})
-	}
+	screens, components := g.screensJSON(a, command), g.componentsJSON(a)
 	result := obj{
 		{"changed", objs(changed)},
 		{"affected", objs(affected)},
@@ -335,6 +303,51 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 	g.printJSON(command, result)
 }
 
+// screensJSON: the screens of the answer, as impact and changes list them.
+func (g *Graph) screensJSON(a *impactAnswer, command string) []any {
+	var screens []any
+	w := a.w
+	for _, kind := range util.SortedKeys(a.byKind) {
+		for _, it := range a.byKind[kind] {
+			hostNames := []string{}
+			for _, h := range it.hosts {
+				hostNames = append(hostNames, g.label(h))
+			}
+			var host any
+			if len(hostNames) > 0 {
+				host = hostNames[0]
+			}
+			s := obj{{"kind", kind}, {"name", it.label}, {"target", it.target}, {"module", it.mod},
+				{"location", g.location(it.n)}, {"host", host}, {"hosts", strs(hostNames)}, {"depth", it.depth},
+				{"opened_from", strs(g.openedFromNames(it.n))}, {"previews", strs(g.previewNames(it.n))},
+				{"path", g.qualifiedPath(g.path(w, w.Screens[it.n]))}}
+			if nav, ok := a.navs[it.n]; ok {
+				s = append(s, kv{"nav", nav.json()})
+			}
+			if command == "changes" {
+				var qs any
+				if q, ok := a.qualifiers[it.n]; ok {
+					qs = strs(q)
+				}
+				s = append(s, kv{"added", g.screenAdded(it.n)}, kv{"moved_from", g.movedFrom(it.n)}, kv{"qualifiers", qs})
+			}
+			screens = append(screens, s)
+		}
+	}
+	return screens
+}
+
+// componentsJSON: the components of the answer.
+func (g *Graph) componentsJSON(a *impactAnswer) []any {
+	var components []any
+	w := a.w
+	for _, it := range a.components {
+		components = append(components, obj{{"kind", it.kind}, {"name", it.label}, {"target", it.target}, {"module", it.mod},
+			{"location", g.location(it.n)}, {"depth", it.depth}, {"path", g.qualifiedPath(g.path(w, w.Components[it.n]))}})
+	}
+	return components
+}
+
 func (g *Graph) impactText(a *impactAnswer, o opts) {
 	if len(a.seeds) > 0 {
 		fmt.Println("Changed:")
@@ -357,6 +370,41 @@ func (g *Graph) impactText(a *impactAnswer, o opts) {
 	for _, w := range a.warnings {
 		fmt.Println("  warning: " + w)
 	}
+	g.screensText(a, o)
+	if len(g.removed) > 0 {
+		fmt.Printf("\nRemoved: %d\n", len(g.removed))
+		for _, r := range g.removed {
+			fmt.Printf("  %-9s %-50s %-29s %s\n", r.kind, r.name, r.module, r.location)
+		}
+	}
+	if a.outScreens+a.outComps+len(a.outSymbols) > 0 {
+		parts := []string{fmt.Sprintf("%d screens", a.outScreens)}
+		if a.outComps > 0 {
+			parts = append(parts, fmt.Sprintf("%d components", a.outComps))
+		}
+		fmt.Println("\n" + outsideLine(append(parts, fmt.Sprintf("%d symbols", len(a.outSymbols)))...))
+	}
+	if len(a.modules) > 0 {
+		mods := util.SortedKeys(a.modules)
+		sort.SliceStable(mods, func(i, j int) bool { return a.modules[mods[i]] > a.modules[mods[j]] })
+		var parts []string
+		for _, m := range mods {
+			parts = append(parts, fmt.Sprintf("%s %d", m, a.modules[m]))
+		}
+		fmt.Println("\nModules (affected symbols): " + strings.Join(parts, ", "))
+	}
+	if len(a.notCov) > 0 {
+		notCoveredText(a.notCov)
+	}
+	nav := ""
+	if o.nav {
+		nav = fmt.Sprintf(", nav %.2fs", a.elapsedNav.Seconds())
+	}
+	fmt.Printf("(%d symbols affected, %.2fs%s)\n", len(a.w.Keys), a.elapsed.Seconds(), nav)
+}
+
+// screensText: the screens by kind and the components, as impact and changes print them.
+func (g *Graph) screensText(a *impactAnswer, o opts) {
 	total := 0
 	var counts []string
 	for _, t := range config.ScreenTitles {
@@ -388,36 +436,6 @@ func (g *Graph) impactText(a *impactAnswer, o opts) {
 			}
 		}
 	}
-	if len(g.removed) > 0 {
-		fmt.Printf("\nRemoved: %d\n", len(g.removed))
-		for _, r := range g.removed {
-			fmt.Printf("  %-9s %-50s %-29s %s\n", r.kind, r.name, r.module, r.location)
-		}
-	}
-	if a.outScreens+a.outComps+len(a.outSymbols) > 0 {
-		parts := []string{fmt.Sprintf("%d screens", a.outScreens)}
-		if a.outComps > 0 {
-			parts = append(parts, fmt.Sprintf("%d components", a.outComps))
-		}
-		fmt.Println("\n" + outsideLine(append(parts, fmt.Sprintf("%d symbols", len(a.outSymbols)))...))
-	}
-	if len(a.modules) > 0 {
-		mods := util.SortedKeys(a.modules)
-		sort.SliceStable(mods, func(i, j int) bool { return a.modules[mods[i]] > a.modules[mods[j]] })
-		var parts []string
-		for _, m := range mods {
-			parts = append(parts, fmt.Sprintf("%s %d", m, a.modules[m]))
-		}
-		fmt.Println("\nModules (affected symbols): " + strings.Join(parts, ", "))
-	}
-	if len(a.notCov) > 0 {
-		notCoveredText(a.notCov)
-	}
-	nav := ""
-	if o.nav {
-		nav = fmt.Sprintf(", nav %.2fs", a.elapsedNav.Seconds())
-	}
-	fmt.Printf("(%d symbols affected, %.2fs%s)\n", len(a.w.Keys), a.elapsed.Seconds(), nav)
 }
 
 func (g *Graph) impactScreenText(a *impactAnswer, o opts, kind string, it screenItem) {

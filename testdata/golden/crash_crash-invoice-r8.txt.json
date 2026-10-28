@@ -1,0 +1,112 @@
+{
+  "schema_version": "4.3.0",
+  "command": "crash",
+  "exceptions": [
+    {
+      "class": "java.lang.IllegalArgumentException",
+      "message": "negative amount: -1"
+    }
+  ],
+  "crashed_at": null,
+  "entry": null,
+  "screens_of": null,
+  "frames": [
+    {
+      "exception": 0,
+      "class": "jg0",
+      "method": "a",
+      "file": "SourceFile",
+      "line": 40,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    },
+    {
+      "exception": 0,
+      "class": "g80$a",
+      "method": "r",
+      "file": "SourceFile",
+      "line": 17,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    },
+    {
+      "exception": 0,
+      "class": "kj",
+      "method": "e",
+      "file": "SourceFile",
+      "line": 9,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    },
+    {
+      "exception": 0,
+      "class": "ft",
+      "method": "run",
+      "file": "SourceFile",
+      "line": 113,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    },
+    {
+      "exception": 0,
+      "class": "android.os.Handler",
+      "method": "handleCallback",
+      "file": "Handler.java",
+      "line": 1070,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    },
+    {
+      "exception": 0,
+      "class": "android.os.Looper",
+      "method": "loop",
+      "file": "Looper.java",
+      "line": 392,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    },
+    {
+      "exception": 0,
+      "class": "android.app.ActivityThread",
+      "method": "main",
+      "file": "ActivityThread.java",
+      "line": 10346,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    }
+  ],
+  "screens": [],
+  "components": [],
+  "hidden": {},
+  "warnings": [
+    "the trace is obfuscated (SourceFile): give the build's mapping.txt with --mapping"
+  ]
+}

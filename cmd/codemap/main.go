@@ -103,7 +103,7 @@ func main() {
 		os.Exit(project.WrapperCmd(args, query.ToolVersion))
 	case "config":
 		os.Exit(config.ConfigCmd(args))
-	case "used-by", "uses", "impact", "find", "changes", "diff", "nav-path", "graph", "screens":
+	case "used-by", "uses", "impact", "find", "changes", "diff", "crash", "nav-path", "graph", "screens":
 		os.Exit(query.Query(cmd, args))
 	default:
 		fmt.Fprintf(os.Stderr, "error: unknown command %s\n%s\n", cmd, query.Usage())

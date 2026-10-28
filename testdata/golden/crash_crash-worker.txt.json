@@ -1,0 +1,121 @@
+{
+  "schema_version": "4.3.0",
+  "command": "crash",
+  "exceptions": [
+    {
+      "class": "java.lang.IllegalStateException",
+      "message": "report failed"
+    },
+    {
+      "class": "java.lang.IllegalArgumentException",
+      "message": "negative amount: -1"
+    }
+  ],
+  "crashed_at": {
+    "frame": 2,
+    "symbol": "navapp.crash.Money.format",
+    "module": "app",
+    "location": "app/src/main/java/navapp/crash/Crash.kt:19",
+    "in_kind": null,
+    "in": null
+  },
+  "entry": {
+    "frame": 3,
+    "symbol": "navapp.crash.ReportWorker.doWork",
+    "module": "app",
+    "location": "app/src/main/java/navapp/crash/Crash.kt:46",
+    "in_kind": "worker",
+    "in": "ReportWorker"
+  },
+  "screens_of": {
+    "frame": 3,
+    "symbol": "navapp.crash.ReportWorker.doWork",
+    "module": "app",
+    "location": "app/src/main/java/navapp/crash/Crash.kt:46",
+    "in_kind": "worker",
+    "in": "ReportWorker"
+  },
+  "frames": [
+    {
+      "exception": 0,
+      "class": "androidx.work.impl.WorkerWrapper",
+      "method": "runWorker",
+      "file": "WorkerWrapper.kt",
+      "line": 120,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    },
+    {
+      "exception": 0,
+      "class": "androidx.work.impl.WorkerWrapper",
+      "method": "run",
+      "file": "WorkerWrapper.kt",
+      "line": 90,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    },
+    {
+      "exception": 1,
+      "class": "navapp.crash.Money",
+      "method": "format",
+      "file": "Crash.kt",
+      "line": 19,
+      "obfuscated": null,
+      "status": "resolved",
+      "symbol": "navapp.crash.Money.format",
+      "module": "app",
+      "location": "app/src/main/java/navapp/crash/Crash.kt:19",
+      "reach": 3
+    },
+    {
+      "exception": 1,
+      "class": "navapp.crash.ReportWorker",
+      "method": "doWork",
+      "file": "Crash.kt",
+      "line": 46,
+      "obfuscated": null,
+      "status": "resolved",
+      "symbol": "navapp.crash.ReportWorker.doWork",
+      "module": "app",
+      "location": "app/src/main/java/navapp/crash/Crash.kt:46",
+      "reach": 1
+    },
+    {
+      "exception": 1,
+      "class": "androidx.work.CoroutineWorker$startWork$1",
+      "method": "invokeSuspend",
+      "file": "CoroutineWorker.kt",
+      "line": 68,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    }
+  ],
+  "screens": [],
+  "components": [
+    {
+      "kind": "worker",
+      "name": "ReportWorker",
+      "target": "navapp.crash.ReportWorker",
+      "module": "app",
+      "location": "app/src/main/java/navapp/crash/Crash.kt:44",
+      "depth": 0,
+      "path": [
+        "navapp.crash.ReportWorker.doWork"
+      ]
+    }
+  ],
+  "hidden": {},
+  "warnings": []
+}

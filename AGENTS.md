@@ -10,7 +10,7 @@ project's `codemap.yml` and in the built-in presets (`internal/config/presets/*.
 `cmd/codemap` is the CLI; `internal/` holds the packages, each importing only those above it:
 `util` (helpers), `classfile` (the class file parser), `config` (codemap.yml, presets, settings),
 `project` (modules, `codemap init` and its Gradle model), `android` (resources, manifests,
-navigation XML), `snapshot` (the map's format), `build` (classes and resources into a map),
+navigation XML), `stack` (stack traces, R8 mapping), `snapshot` (the map's format), `build` (classes and resources into a map),
 `query` (the walks and the commands over a map). `internal/fixture` gives tests a copy of
 `testdata/navapp`.
 

@@ -13,6 +13,13 @@ android {
         targetSdk = 36
     }
     buildFeatures { compose = true }
+    buildTypes {
+        release {
+            applicationIdSuffix = ".release" // a release application id needs a dot
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
 }
 
 dependencies {

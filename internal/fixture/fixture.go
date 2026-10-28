@@ -19,7 +19,8 @@ func FixtureRoot(t *testing.T) string {
 	err := filepath.WalkDir(src, func(path string, d os.DirEntry, err error) error {
 		rel, _ := filepath.Rel(src, path)
 		if err != nil || d.IsDir() || !(rel == "settings.gradle.kts" || rel == "codemap.yml" ||
-			strings.HasPrefix(rel, filepath.Join("app", "src")+string(filepath.Separator))) {
+			strings.HasPrefix(rel, filepath.Join("app", "src")+string(filepath.Separator)) ||
+			strings.HasPrefix(rel, "crash"+string(filepath.Separator))) {
 			return err
 		}
 		data, err := os.ReadFile(path)

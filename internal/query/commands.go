@@ -69,6 +69,10 @@ var commands = []command{
 			{name: "diff", arg: "-|FILE", help: "a unified diff from stdin or a file instead of git diff"},
 			{name: "files", arg: "-|FILE", help: "lines of path, path:N or path:N-M instead of a diff"},
 			optNav, optDepth, optKind, optNoPrev, optNoPaths, optModule}},
+	{name: "crash", args: "[-|FILE]", query: true, about: "Where a crash's stack trace ran, and the screens and components it ran for.",
+		flags: []flagSpec{
+			{name: "mapping", arg: "FILE", help: "the R8/ProGuard mapping.txt of the build, for an obfuscated trace"},
+			optNav, optDepth, optKind, optNoPrev, optNoPaths, optModule}},
 	{name: "diff", query: true, about: "What this map has and another has not: screens, manifest entries, the screens that open them.",
 		flags: []flagSpec{
 			{name: "base", arg: "FILE", help: "the other code map: another variant's (build/codemap/release.snap) or another revision's"},

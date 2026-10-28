@@ -1,0 +1,8 @@
+Exception in thread "WM.task-1" java.lang.IllegalStateException: report failed
+	at androidx.work.impl.WorkerWrapper.runWorker(WorkerWrapper.kt:120)
+	at androidx.work.impl.WorkerWrapper.run(WorkerWrapper.kt:90)
+Caused by: java.lang.IllegalArgumentException: negative amount: -1
+	at navapp.crash.Money.format(Crash.kt:19)
+	at navapp.crash.ReportWorker.doWork(Crash.kt:46)
+	at androidx.work.CoroutineWorker$startWork$1.invokeSuspend(CoroutineWorker.kt:68)
+	... 2 more

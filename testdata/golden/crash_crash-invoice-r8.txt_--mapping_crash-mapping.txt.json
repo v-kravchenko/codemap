@@ -1,0 +1,159 @@
+{
+  "schema_version": "4.3.0",
+  "command": "crash",
+  "exceptions": [
+    {
+      "class": "java.lang.IllegalArgumentException",
+      "message": "negative amount: -1"
+    }
+  ],
+  "crashed_at": {
+    "frame": 0,
+    "symbol": "navapp.crash.Money.format",
+    "module": "app",
+    "location": "app/src/main/java/navapp/crash/Crash.kt:19",
+    "in_kind": null,
+    "in": null
+  },
+  "entry": {
+    "frame": 1,
+    "symbol": "navapp.crash.InvoiceViewModel.load.1.invokeSuspend",
+    "module": "app",
+    "location": "app/src/main/java/navapp/crash/Crash.kt:28",
+    "in_kind": null,
+    "in": null
+  },
+  "screens_of": {
+    "frame": 1,
+    "symbol": "navapp.crash.InvoiceViewModel.load.1.invokeSuspend",
+    "module": "app",
+    "location": "app/src/main/java/navapp/crash/Crash.kt:28",
+    "in_kind": null,
+    "in": null
+  },
+  "frames": [
+    {
+      "exception": 0,
+      "class": "navapp.crash.Money",
+      "method": "format",
+      "file": "Crash.kt",
+      "line": 19,
+      "obfuscated": {
+        "class": "jg0",
+        "method": "a",
+        "file": "SourceFile",
+        "line": 40
+      },
+      "status": "resolved",
+      "symbol": "navapp.crash.Money.format",
+      "module": "app",
+      "location": "app/src/main/java/navapp/crash/Crash.kt:19",
+      "reach": 3
+    },
+    {
+      "exception": 0,
+      "class": "navapp.crash.InvoiceViewModel$load$1",
+      "method": "invokeSuspend",
+      "file": "Crash.kt",
+      "line": 28,
+      "obfuscated": {
+        "class": "g80$a",
+        "method": "r",
+        "file": "SourceFile",
+        "line": 17
+      },
+      "status": "resolved",
+      "symbol": "navapp.crash.InvoiceViewModel.load.1.invokeSuspend",
+      "module": "app",
+      "location": "app/src/main/java/navapp/crash/Crash.kt:28",
+      "reach": 1
+    },
+    {
+      "exception": 0,
+      "class": "kj",
+      "method": "e",
+      "file": "SourceFile",
+      "line": 9,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    },
+    {
+      "exception": 0,
+      "class": "ft",
+      "method": "run",
+      "file": "SourceFile",
+      "line": 113,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    },
+    {
+      "exception": 0,
+      "class": "android.os.Handler",
+      "method": "handleCallback",
+      "file": "Handler.java",
+      "line": 1070,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    },
+    {
+      "exception": 0,
+      "class": "android.os.Looper",
+      "method": "loop",
+      "file": "Looper.java",
+      "line": 392,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    },
+    {
+      "exception": 0,
+      "class": "android.app.ActivityThread",
+      "method": "main",
+      "file": "ActivityThread.java",
+      "line": 10346,
+      "obfuscated": null,
+      "status": "library",
+      "symbol": null,
+      "module": null,
+      "location": null,
+      "reach": null
+    }
+  ],
+  "screens": [
+    {
+      "kind": "fragment",
+      "name": "InvoiceFragment",
+      "target": "navapp.crash.InvoiceFragment",
+      "module": "app",
+      "location": "app/src/main/java/navapp/crash/Crash.kt:32",
+      "host": null,
+      "hosts": [],
+      "depth": 5,
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.crash.InvoiceViewModel.load.1.invokeSuspend",
+        "navapp.crash.InvoiceViewModel.load",
+        "navapp.crash.InvoiceFragment.onViewCreated"
+      ]
+    }
+  ],
+  "components": [],
+  "hidden": {},
+  "warnings": []
+}

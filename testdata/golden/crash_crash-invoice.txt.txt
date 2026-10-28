@@ -1,0 +1,14 @@
+Crash: java.lang.IllegalArgumentException: negative amount: -1
+Crashed at:  Money.format()  app  app/src/main/java/navapp/crash/Crash.kt:19
+Entry:       InvoiceViewModel.load()  app  app/src/main/java/navapp/crash/Crash.kt:28
+Screens of:  InvoiceViewModel.load()  (the own frame reaching the fewest)
+
+Screens: 1  (fragment 1)
+
+Fragments
+  InvoiceFragment                                    app
+      InvoiceViewModel.load() -> InvoiceFragment.onViewCreated()
+
+Own frames: 2  (5 library and generated frames not shown)
+  Money.format()                                     3  app/src/main/java/navapp/crash/Crash.kt:19
+  InvoiceViewModel.load()                            1  app/src/main/java/navapp/crash/Crash.kt:28

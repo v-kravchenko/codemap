@@ -1,7 +1,7 @@
 # --json contract
 
-Every query command (`used-by`, `uses`, `impact`, `changes`, `nav-path`, `graph`, `screens`,
-`find`, `build --info`) accepts `--json` and writes one JSON object to stdout, indented two spaces,
+Every query command (`used-by`, `uses`, `impact`, `changes`, `diff`, `crash`, `nav-path`, `graph`,
+`screens`, `find`, `build --info`) accepts `--json` and writes one JSON object to stdout, indented two spaces,
 with keys in a fixed order (`internal/query/json.go`: `writeJSON`, object keys keep insertion
 order, never alphabetized by a generic marshaler). The examples below are trimmed from
 `testdata/golden/*.json`, which hold the exact output **without** the `meta` block (the golden test
@@ -11,7 +11,7 @@ strips it since `meta.run` is never reproducible).
 
 ```json
 {
-  "schema_version": "4.2.0",
+  "schema_version": "4.3.0",
   "command": "impact",
   "meta": {
     "tool_version": "0.3.0",
@@ -32,10 +32,10 @@ strips it since `meta.run` is never reproducible).
 }
 ```
 
-- `schema_version` — the shape of the JSON output (`"4.2.0"`, `internal/query/cli.go`). Independent
+- `schema_version` — the shape of the JSON output (`"4.3.0"`, `internal/query/cli.go`). Independent
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
-  `"changes"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
+  `"changes"`, `"diff"`, `"crash"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
 - `meta.tool_version` — the codemap binary's own version (`"0.3.0"`, `codemap version`): the release's
   tag without `v`, `dev` for a build from a checkout.
 - `meta.index.version` — the snapshot format version the map was built with (`index_version`);
@@ -162,7 +162,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.2.0",
+  "schema_version": "4.3.0",
   "command": "used-by",
   "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
   "items": [
@@ -230,7 +230,7 @@ Result fields (full `impact`, no `--to`):
 
 ```json
 {
-  "schema_version": "4.2.0",
+  "schema_version": "4.3.0",
   "command": "impact",
   "changed": [
     {
@@ -328,7 +328,7 @@ a dirty tree or of another variant than the head's adds and removes what the cha
 
 ```json
 {
-  "schema_version": "4.2.0",
+  "schema_version": "4.3.0",
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
@@ -376,7 +376,7 @@ Result: `screens`, `entries` and `opens`, each `{added, removed}`: `added` what 
 
 ```json
 {
-  "schema_version": "4.2.0",
+  "schema_version": "4.3.0",
   "command": "diff",
   "screens": {
     "added": [{ "name": "LinkActivity", "kind": "activity", "module": "app",
@@ -391,6 +391,69 @@ Result: `screens`, `entries` and `opens`, each `{added, removed}`: `added` what 
     "added": [{ "from": "LinkActivity", "to": "ViewsActivity", "from_module": "app", "to_module": "app" }],
     "removed": []
   },
+  "warnings": []
+}
+```
+
+## crash
+
+```
+codemap crash [-|FILE] [--mapping FILE] [--nav] [--depth N] [--kind KIND]... [--no-preview] [--no-paths] [--module GLOB]... [--json]
+```
+
+Where a crash's stack trace ran in the map, and the screens and components it ran for
+(docs/decisions/0029). The trace comes from FILE or stdin (`-`, the default) as Crashlytics
+exports it, logcat prints it or Java writes it; only the crashing thread is read (`Caused by`
+included, `Suppressed` not). Since 4.3.0.
+
+- `--mapping FILE` — the R8/ProGuard `mapping.txt` of the build that crashed: frames it renames
+  are read by their source names and lines; an inlined frame becomes the chain it stands for.
+- `--nav`, `--depth`, `--kind`, `--no-preview`, `--module` — as in `impact`, on the screens.
+
+Result:
+- `exceptions` — `{class, message}` of the exception and its causes, outermost first.
+- `frames` — every frame of the chain, deepest first within an exception: `{exception, class,
+  method, file, line, obfuscated, status, symbol, module, location, reach}`. `exception` indexes
+  `exceptions`; `obfuscated` is the frame as the trace had it (`{class, method, file, line}`)
+  when `--mapping` renamed it, else `null`; `status` is `resolved` (its method, or its class, is in
+  the map), `not_found` (its package is in the map, its class is not: removed or made by R8),
+  `generated` (DI code the map leaves out) or `library`. For a resolved frame `symbol`, `module`,
+  `location` (the trace's line in the method's file) and `reach` (the screens and components a
+  walk from it reaches, as `impact` walks); `null` otherwise. `line` is `null` when the trace has none.
+- `crashed_at` — the deepest resolved frame of the innermost cause that has one; `entry` — the
+  outermost resolved frame of the outermost exception that has one; `screens_of` — the resolved
+  frame with the smallest non-zero `reach`, the nearest the crash on a tie. Each `{frame, symbol,
+  module, location, in_kind, in}`, `frame` indexing `frames`, `in_kind`/`in` the component
+  (`application`, `service`, `receiver`, `provider`, `worker`) or screen class (`activity`,
+  `fragment`, `dialog`) the frame's code is in; `null` when there is no such frame.
+- `screens`, `components`, `hidden` — as in `impact`, from the walk of `screens_of`; empty
+  without it.
+- `warnings` — no frame in the map (obfuscated without `--mapping`, a library's crash, another
+  app's map), no own frame reaching a screen or component, a mapping that renames nothing.
+- `hidden_by_module: {screens, components}` with `--module`.
+
+```json
+{
+  "schema_version": "4.3.0",
+  "command": "crash",
+  "exceptions": [{ "class": "java.lang.IllegalArgumentException", "message": "negative amount: -1" }],
+  "crashed_at": { "frame": 0, "symbol": "navapp.crash.Money.format", "module": "app",
+    "location": "app/src/main/java/navapp/crash/Crash.kt:19", "in_kind": null, "in": null },
+  "entry": { "frame": 1, "symbol": "navapp.crash.InvoiceViewModel.load.1.invokeSuspend", "...": "..." },
+  "screens_of": { "frame": 1, "symbol": "navapp.crash.InvoiceViewModel.load.1.invokeSuspend", "...": "..." },
+  "frames": [
+    { "exception": 0, "class": "navapp.crash.Money", "method": "format", "file": "Crash.kt", "line": 19,
+      "obfuscated": { "class": "jg0", "method": "a", "file": "SourceFile", "line": 40 },
+      "status": "resolved", "symbol": "navapp.crash.Money.format", "module": "app",
+      "location": "app/src/main/java/navapp/crash/Crash.kt:19", "reach": 3 },
+    { "exception": 0, "class": "kj", "method": "e", "file": "SourceFile", "line": 9, "obfuscated": null,
+      "status": "library", "symbol": null, "module": null, "location": null, "reach": null }
+  ],
+  "screens": [{ "kind": "fragment", "name": "InvoiceFragment", "...": "... as in impact ...",
+    "path": ["navapp.crash.InvoiceViewModel.load.1.invokeSuspend", "navapp.crash.InvoiceViewModel.load",
+      "navapp.crash.InvoiceFragment.onViewCreated"] }],
+  "components": [],
+  "hidden": {},
   "warnings": []
 }
 ```
@@ -447,7 +510,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.2.0", "command": "nav-path",
+  "schema_version": "4.3.0", "command": "nav-path",
   "targets": [{ "name": "Login", "kind": "route", "module": "app",
     "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
   "screens": [
@@ -511,7 +574,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.2.0", "command": "graph",
+  "schema_version": "4.3.0", "command": "graph",
   "roots": ["Home"], "walk": "out", "to": [],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
@@ -570,7 +633,7 @@ where the walk back ends, as in `nav-path` (`{name, kind, module, location, host
 
 ```json
 {
-  "schema_version": "4.2.0", "command": "screens",
+  "schema_version": "4.3.0", "command": "screens",
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
@@ -612,7 +675,7 @@ module then location, truncated to `--limit`; `hidden_by_module` — with `--mod
 
 ```json
 {
-  "schema_version": "4.2.0", "command": "find", "pattern": "Activity",
+  "schema_version": "4.3.0", "command": "find", "pattern": "Activity",
   "total": 15, "synthetic": 0,
   "symbols": [
     { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",

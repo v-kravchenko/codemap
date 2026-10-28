@@ -1,0 +1,17 @@
+# Crashlytics - 
+# Application: navapp
+# Platform: android
+# Version: 1.0 (1)
+
+Fatal Exception: java.lang.IllegalArgumentException: negative amount: -1
+       at navapp.crash.Money.format(Crash.kt:19)
+       at navapp.crash.InvoiceViewModel$load$1.invokeSuspend(Crash.kt:28)
+       at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+       at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+       at android.os.Handler.handleCallback(Handler.java:1070)
+       at android.os.Looper.loop(Looper.java:392)
+       at android.app.ActivityThread.main(ActivityThread.java:10346)
+
+DefaultDispatcher-worker-1:
+       at jdk.internal.misc.Unsafe.park(Unsafe.java)
+       at navapp.crash.Money.format(Crash.kt:20)

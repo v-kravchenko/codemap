@@ -14,8 +14,8 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   fields the variant does not take is invisible in its map. `codemap build --variant
   release` next to the debug map and `codemap diff --base build/codemap/release.snap` shows what
   only one of them has.
-- A release map is built from the classes before R8: code R8 strips as unused is still in it, and
-  an obfuscated stack trace cannot be read against it (no `mapping.txt` support).
+- A release map is built from the classes before R8: code R8 strips as unused is still in it; an
+  obfuscated stack trace is read against it through the build's `mapping.txt` (`crash --mapping`).
 - Reflection (`Class.forName`, method handles) and deep links resolved from a URI at run time
   are not followed — a destination reached only that way has no edge into it. Example: a
   screen registered solely through a `NavDeepLink` URI pattern shows no opener.
@@ -115,6 +115,21 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   screens); a screen opened only by reflection, a library or a framework callback the map does not
   see is listed as unreachable, with the end of its way (`unknown`, `outside`) saying why; one
   opened through a base class counts as reached even when no screen extending it is.
+
+## Crash traces
+
+- `crash` names the screens by the own frame reaching the fewest (0029). A trace whose own code
+  starts in a coroutine or a callback another class posted (`Handler`, a `Flow` collector) has no
+  frame of the screen that launched it: a shared helper there reaches every screen using it (806
+  on a 78-module project for a logout coroutine), honest but wide.
+- A frame is found by its class and the method whose lines hold its line, else by its name: code
+  kotlinc inlined reports the inline function's file and line, so such a frame gets its method by
+  name only, and a method name several overloads share gives the first.
+- R8 mapping: inline chains, renamed classes and members and line ranges are read; R8's outlines,
+  synthesized frames to drop (`com.android.tools.r8.rewriteFrame`) and residual signatures are
+  not, so an outlined frame stays as R8 named it (`library`).
+- Only the crashing thread is read; the other threads of a dump and `Suppressed` exceptions are
+  skipped. An ANR's main-thread trace is read as any trace.
 
 ## Build & config
 

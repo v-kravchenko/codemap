@@ -69,7 +69,7 @@ keep `build/codemap` and `codemap.model.json` out of git.
 codemap init [--gradle CMD]                        # once, and after build files change
 codemap wrapper [--version V]                      # codemapw and the build hook for the project
 codemap build [--variant V] [--out SNAPSHOT] [--jobs N] [--force]  # default: <variant>.snap in snapshot_dir
-codemap used-by|uses|impact|changes|diff|nav-path|graph|screens|find|build --info ... [--variant V] [--json]
+codemap used-by|uses|impact|changes|diff|crash|nav-path|graph|screens|find|build --info ... [--variant V] [--json]
 codemap COMMAND --help                             # its options; one it does not take is an error
 codemap version                                    # the release, or dev for a build from a checkout
 CODEMAP_TIMES=1 codemap build                      # time of each stage on stderr
@@ -94,6 +94,12 @@ draws a composable; `find --type class` one kind of symbol;
 
 `changes --base-db base.snap` tells what the change adds and removes, from the map of the base
 (`build --out base.snap` on a checkout of it): routes and nested screens included.
+
+`crash trace.txt` reads a crash's stack trace (Crashlytics, logcat or Java; stdin with `-`) and
+answers where it threw, where the trace entered the app's code, and the screens and components it
+ran for: those of the own frame reaching the fewest, so a shared helper that threw does not list
+every screen using it (docs/decisions/0029). `--mapping mapping.txt` reads an obfuscated trace
+by the build's R8 mapping.
 
 `build --variant release` builds the map of another variant next to the configured one
 (`build/codemap/release.snap`); a query reads it with `--variant release`.

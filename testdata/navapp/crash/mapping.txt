@@ -1,0 +1,1306 @@
+# compiler: R8
+# compiler_version: 9.1.31
+# min_api: 24
+# common_typos_disable
+# {"id":"com.android.tools.r8.mapping","version":"2.2"}
+# pg_map_id: dc2e53e62561a53ccb452616002b6c1c6fdfe995c1d243a2f6a64b20a99c2298
+# pg_map_hash: SHA-256 dc2e53e62561a53ccb452616002b6c1c6fdfe995c1d243a2f6a64b20a99c2298
+navapp.MainActivity -> navapp.MainActivity:
+# {"id":"sourceFile","fileName":"MainActivity.kt"}
+    int $r8$clinit -> x
+      # {"id":"com.android.tools.r8.synthesized"}
+    1:4:void <init>():14:14 -> <init>
+    1:3:void onCreate(android.os.Bundle):16:16 -> onCreate
+    4:9:void onCreate(android.os.Bundle):17:17 -> onCreate
+    10:18:androidx.compose.runtime.internal.ComposableLambda androidx.compose.runtime.internal.ComposableLambdaKt.composableLambdaInstance(int,boolean,java.lang.Object):1373:1373 -> onCreate
+    10:18:void onCreate(android.os.Bundle):17 -> onCreate
+    19:22:void onCreate(android.os.Bundle):17:17 -> onCreate
+navapp.components.AlertActivity -> navapp.components.AlertActivity:
+# {"id":"sourceFile","fileName":"Components.kt"}
+    1:4:void <init>():84:84 -> <init>
+navapp.components.Alerts -> R8$$REMOVED$$CLASS$$549:
+# {"id":"sourceFile","fileName":"Components.kt"}
+navapp.components.BootReceiver -> navapp.components.BootReceiver:
+# {"id":"sourceFile","fileName":"Components.kt"}
+    1:4:void <init>():42:42 -> <init>
+    7:8:void onReceive(android.content.Context,android.content.Intent):43:43 -> onReceive
+    9:14:void navapp.components.Tracker.track(java.lang.String):23:23 -> onReceive
+    9:14:void onReceive(android.content.Context,android.content.Intent):43 -> onReceive
+navapp.components.NavApp -> navapp.components.NavApp:
+# {"id":"sourceFile","fileName":"Components.kt"}
+    1:4:void <init>():26:26 -> <init>
+    1:3:void onCreate():28:28 -> onCreate
+    4:5:void onCreate():29:29 -> onCreate
+    6:11:void navapp.components.Tracker.track(java.lang.String):23:23 -> onCreate
+    6:11:void onCreate():29 -> onCreate
+navapp.components.NotesProvider -> navapp.components.NotesProvider:
+# {"id":"sourceFile","fileName":"Components.kt"}
+    1:4:void <init>():46:46 -> <init>
+    1:5:int delete(android.net.Uri,java.lang.String,java.lang.String[]):0:0 -> delete
+    1:5:java.lang.String getType(android.net.Uri):0:0 -> getType
+    1:5:android.net.Uri insert(android.net.Uri,android.content.ContentValues):0:0 -> insert
+    1:2:boolean onCreate():0:0 -> onCreate
+    4:5:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String):50:50 -> query
+    6:12:void navapp.components.Tracker.track(java.lang.String):23:23 -> query
+    6:12:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String):50 -> query
+    1:5:int update(android.net.Uri,android.content.ContentValues,java.lang.String,java.lang.String[]):0:0 -> update
+navapp.components.PushService -> navapp.components.PushService:
+# {"id":"sourceFile","fileName":"Components.kt"}
+    1:4:void <init>():71:71 -> <init>
+    1:2:android.os.IBinder onBind(android.content.Intent):0:0 -> onBind
+    1:12:void navapp.components.Alerts.show(android.content.Context):81:81 -> onStartCommand
+    1:12:int onStartCommand(android.content.Intent,int,int):75 -> onStartCommand
+navapp.components.SyncService -> navapp.components.SyncService:
+# {"id":"sourceFile","fileName":"Components.kt"}
+    1:4:void <init>():33:33 -> <init>
+    1:2:android.os.IBinder onBind(android.content.Intent):0:0 -> onBind
+    1:2:int onStartCommand(android.content.Intent,int,int):37:37 -> onStartCommand
+    3:9:void navapp.components.Tracker.track(java.lang.String):23:23 -> onStartCommand
+    3:9:int onStartCommand(android.content.Intent,int,int):37 -> onStartCommand
+navapp.components.Tracker -> R8$$REMOVED$$CLASS$$550:
+# {"id":"sourceFile","fileName":"Components.kt"}
+navapp.crash.InvoiceFragment -> f80:
+# {"id":"sourceFile","fileName":"Crash.kt"}
+    navapp.crash.InvoiceViewModel viewModel -> p0
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lg80;"}
+    int $stable -> q0
+    1:3:void <init>():32:32 -> <init>
+    4:11:void <init>():33:33 -> <init>
+    4:11:void onViewCreated(android.view.View,android.os.Bundle):35:35 -> d1
+navapp.crash.InvoiceViewModel -> g80:
+# {"id":"sourceFile","fileName":"Crash.kt"}
+    java.lang.String total -> b
+    int $stable -> c
+    1:3:void <init>():24:24 -> <init>
+    4:8:void <init>():25:25 -> <init>
+    1:3:java.lang.String getTotal():25:25 -> g
+    1:2:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):226:226 -> h
+    1:2:void load(long):28 -> h
+    3:3:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):236:236 -> h
+    3:3:void load(long):28 -> h
+    4:14:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):227:227 -> h
+    4:14:void load(long):28 -> h
+    15:16:androidx.lifecycle.viewmodel.internal.CloseableCoroutineScope androidx.lifecycle.viewmodel.internal.CloseableCoroutineScopeKt.createViewModelScope():53:53 -> h
+    15:16:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):228 -> h
+    15:16:void load(long):28 -> h
+    17:18:androidx.lifecycle.viewmodel.internal.CloseableCoroutineScope androidx.lifecycle.viewmodel.internal.CloseableCoroutineScopeKt.createViewModelScope():61:61 -> h
+    17:18:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):228 -> h
+    17:18:void load(long):28 -> h
+    19:20:kotlinx.coroutines.MainCoroutineDispatcher kotlinx.coroutines.Dispatchers.getMain():20:20 -> h
+    19:20:androidx.lifecycle.viewmodel.internal.CloseableCoroutineScope androidx.lifecycle.viewmodel.internal.CloseableCoroutineScopeKt.createViewModelScope():61 -> h
+    19:20:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):228 -> h
+    19:20:void load(long):28 -> h
+    21:22:kotlinx.coroutines.android.HandlerContext kotlinx.coroutines.android.HandlerContext.getImmediate():126:126 -> h
+    21:22:kotlinx.coroutines.MainCoroutineDispatcher kotlinx.coroutines.android.HandlerContext.getImmediate():110 -> h
+    21:22:androidx.lifecycle.viewmodel.internal.CloseableCoroutineScope androidx.lifecycle.viewmodel.internal.CloseableCoroutineScopeKt.createViewModelScope():61 -> h
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(2)"]}
+    21:22:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):228 -> h
+    21:22:void load(long):28 -> h
+    23:24:androidx.lifecycle.viewmodel.internal.CloseableCoroutineScope androidx.lifecycle.viewmodel.internal.CloseableCoroutineScopeKt.createViewModelScope():69:69 -> h
+    23:24:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):228 -> h
+    23:24:void load(long):28 -> h
+    25:26:kotlinx.coroutines.CompletableJob kotlinx.coroutines.SupervisorKt.SupervisorJob(kotlinx.coroutines.Job):27:27 -> h
+    25:26:kotlinx.coroutines.CompletableJob kotlinx.coroutines.SupervisorKt.SupervisorJob$default(kotlinx.coroutines.Job,int,java.lang.Object):26 -> h
+    25:26:androidx.lifecycle.viewmodel.internal.CloseableCoroutineScope androidx.lifecycle.viewmodel.internal.CloseableCoroutineScopeKt.createViewModelScope():69 -> h
+    25:26:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):228 -> h
+    25:26:void load(long):28 -> h
+    27:29:void kotlinx.coroutines.SupervisorJobImpl.<init>(kotlinx.coroutines.Job):60:60 -> h
+    27:29:kotlinx.coroutines.CompletableJob kotlinx.coroutines.SupervisorKt.SupervisorJob(kotlinx.coroutines.Job):27 -> h
+    27:29:kotlinx.coroutines.CompletableJob kotlinx.coroutines.SupervisorKt.SupervisorJob$default(kotlinx.coroutines.Job,int,java.lang.Object):26 -> h
+    27:29:androidx.lifecycle.viewmodel.internal.CloseableCoroutineScope androidx.lifecycle.viewmodel.internal.CloseableCoroutineScopeKt.createViewModelScope():69 -> h
+    27:29:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):228 -> h
+    27:29:void load(long):28 -> h
+    30:36:androidx.lifecycle.viewmodel.internal.CloseableCoroutineScope androidx.lifecycle.viewmodel.internal.CloseableCoroutineScopeKt.createViewModelScope():69:69 -> h
+    30:36:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):228 -> h
+    30:36:void load(long):28 -> h
+    37:45:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):229:229 -> h
+    37:45:void load(long):28 -> h
+    46:46:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):236:236 -> h
+    46:46:void load(long):28 -> h
+    47:56:void load(long):28:28 -> h
+    57:58:kotlinx.coroutines.CoroutineScope androidx.lifecycle.ViewModelKt.getViewModelScope(androidx.lifecycle.ViewModel):236:236 -> h
+    57:58:void load(long):28 -> h
+    4:6:void setTotal(java.lang.String):25:25 -> i
+navapp.crash.InvoiceViewModel$load$1 -> g80$a:
+# {"id":"sourceFile","fileName":"Crash.kt"}
+    int label -> h
+    navapp.crash.InvoiceViewModel this$0 -> i
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lg80;"}
+    long $cents -> j
+    1:9:void <init>(navapp.crash.InvoiceViewModel,long,kotlin.coroutines.Continuation):0:0 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lg80;JLol;)V"}
+    1:9:java.lang.Object invoke(java.lang.Object,java.lang.Object):0:0 -> g
+    1:10:kotlin.coroutines.Continuation create(java.lang.Object,kotlin.coroutines.Continuation):0:0 -> n
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/lang/Object;Lol;)Lol;"}
+    1:30:java.lang.Object invokeSuspend(java.lang.Object):28:28 -> r
+    1:13:java.lang.Object invoke(kotlinx.coroutines.CoroutineScope,kotlin.coroutines.Continuation):0:0 -> u
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ldm;Lol;)Ljava/lang/Object;"}
+navapp.crash.Money -> jg0:
+# {"id":"sourceFile","fileName":"Crash.kt"}
+    navapp.crash.Money INSTANCE -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Ljg0;"}
+    int $stable -> b
+    1:8:void <clinit>():0:0 -> <clinit>
+    1:4:void <init>():17:17 -> <init>
+    9:32:java.lang.String format(long):20:20 -> a
+    33:56:java.lang.String format(long):19:19 -> a
+navapp.crash.ReceiptFragment -> tv0:
+# {"id":"sourceFile","fileName":"Crash.kt"}
+    int $stable -> p0
+    1:4:void <init>():38:38 -> <init>
+    4:15:void onViewCreated(android.view.View,android.os.Bundle):40:40 -> d1
+navapp.crash.ReportWorker -> navapp.crash.ReportWorker:
+# {"id":"sourceFile","fileName":"Crash.kt"}
+    int $stable -> g
+    7:10:void <init>(android.content.Context,androidx.work.WorkerParameters):44:44 -> <init>
+    1:7:java.lang.Object doWork(kotlin.coroutines.Continuation):46:46 -> v
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lol;)Ljava/lang/Object;"}
+    8:13:androidx.work.ListenableWorker$Result androidx.work.ListenableWorker$Result.success():366:366 -> v
+    8:13:java.lang.Object doWork(kotlin.coroutines.Continuation):47 -> v
+navapp.nav3dsl.Compose -> xh:
+# {"id":"sourceFile","fileName":"Nav3DslApp.kt"}
+    navapp.nav3dsl.Compose INSTANCE -> INSTANCE
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lxh;"}
+    kotlin.Lazy $cachedSerializer$delegate -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lma0;"}
+    3:5:void <init>():18:18 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:23:void <clinit>():18:18 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:9:kotlinx.serialization.KSerializer get$cachedSerializer():18:18 -> serializer
+    1:9:kotlinx.serialization.KSerializer serializer():18 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.nav3dsl.Inbox -> s40:
+# {"id":"sourceFile","fileName":"Nav3DslApp.kt"}
+    navapp.nav3dsl.Inbox INSTANCE -> INSTANCE
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Ls40;"}
+    kotlin.Lazy $cachedSerializer$delegate -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lma0;"}
+    3:5:void <init>():14:14 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:23:void <clinit>():14:14 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:9:kotlinx.serialization.KSerializer get$cachedSerializer():14:14 -> serializer
+    1:9:kotlinx.serialization.KSerializer serializer():14 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.nav3dsl.Message -> qf0:
+# {"id":"sourceFile","fileName":"Nav3DslApp.kt"}
+    navapp.nav3dsl.Message$Companion Companion -> Companion
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lpf0;"}
+    int id -> a
+    3:5:void navapp.nav3dsl.Message$Companion.<init>():16:16 -> <clinit>
+    3:5:void navapp.nav3dsl.Message$Companion.<init>(kotlin.jvm.internal.DefaultConstructorMarker):0 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:8:void <clinit>():0:0 -> <clinit>
+    6:22:void <init>(int,int,kotlinx.serialization.internal.SerializationConstructorMarker):16:16 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(II)V"}
+    23:23:void <init>(int):16:16 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()V"}
+    5:20:boolean equals(java.lang.Object):0:0 -> equals
+    1:7:int hashCode():0:0 -> hashCode
+    5:11:java.lang.String toString():0:0 -> toString
+    5:11:java.lang.String Message.toString():0 -> toString
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.outlineCallsite","positions":{"1":12,"3":14,"6":17,"9":21,"12":26},"outline":"Ldq0;j(ILjava/lang/String;Ljava/lang/String;)Ljava/lang/String;"}
+    12:12:java.lang.String toString():0:0 -> toString
+    14:14:java.lang.String toString():0:0 -> toString
+    17:17:java.lang.String toString():0:0 -> toString
+    21:21:java.lang.String toString():0:0 -> toString
+    26:26:java.lang.String toString():0:0 -> toString
+navapp.nav3dsl.Message$$serializer -> of0:
+# {"id":"sourceFile","fileName":"Nav3DslApp.kt"}
+    navapp.nav3dsl.Message$$serializer INSTANCE -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lof0;"}
+    kotlinx.serialization.descriptors.SerialDescriptor descriptor -> descriptor
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lr31;"}
+    3:5:void <init>():16:16 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:23:void <clinit>():16:16 -> <clinit>
+    2:9:kotlinx.serialization.KSerializer[] childSerializers():16:16 -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()[Ld90;"}
+    1:22:navapp.nav3dsl.Message deserialize(kotlinx.serialization.encoding.Decoder):16:16 -> b
+    1:22:java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder):16 -> b
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lol1;)Ljava/lang/Object;"}
+    23:28:int kotlinx.serialization.encoding.AbstractDecoder.decodeIntElement(kotlinx.serialization.descriptors.SerialDescriptor,int):53:53 -> b
+    23:28:navapp.nav3dsl.Message deserialize(kotlinx.serialization.encoding.Decoder):16 -> b
+    23:28:java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder):16 -> b
+    29:42:navapp.nav3dsl.Message deserialize(kotlinx.serialization.encoding.Decoder):16:16 -> b
+    29:42:java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder):16 -> b
+    1:5:void serialize(kotlinx.serialization.encoding.Encoder,java.lang.Object):16:16 -> d
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lan1;Ljava/lang/Object;)V"}
+    6:11:void serialize(kotlinx.serialization.encoding.Encoder,navapp.nav3dsl.Message):16:16 -> d
+    6:11:void serialize(kotlinx.serialization.encoding.Encoder,java.lang.Object):16 -> d
+    12:14:void navapp.nav3dsl.Message.write$Self$app(navapp.nav3dsl.Message,kotlinx.serialization.encoding.CompositeEncoder,kotlinx.serialization.descriptors.SerialDescriptor):16:16 -> d
+    12:14:void serialize(kotlinx.serialization.encoding.Encoder,navapp.nav3dsl.Message):16 -> d
+    12:14:void serialize(kotlinx.serialization.encoding.Encoder,java.lang.Object):16 -> d
+    15:21:void kotlinx.serialization.encoding.AbstractEncoder.encodeIntElement(kotlinx.serialization.descriptors.SerialDescriptor,int,int):60:60 -> d
+    15:21:void navapp.nav3dsl.Message.write$Self$app(navapp.nav3dsl.Message,kotlinx.serialization.encoding.CompositeEncoder,kotlinx.serialization.descriptors.SerialDescriptor):16 -> d
+    15:21:void serialize(kotlinx.serialization.encoding.Encoder,navapp.nav3dsl.Message):16 -> d
+    15:21:void serialize(kotlinx.serialization.encoding.Encoder,java.lang.Object):16 -> d
+    1:3:kotlinx.serialization.descriptors.SerialDescriptor getDescriptor():0:0 -> e
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Lr31;"}
+navapp.nav3dsl.Message$Companion -> pf0:
+# {"id":"sourceFile","fileName":"Nav3DslApp.kt"}
+    1:3:kotlinx.serialization.KSerializer serializer():16:16 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+navapp.nav3dsl.Nav3DslAppKt$$ExternalSyntheticLambda0 -> vi0:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    int Nav3DslAppKt$$ExternalSyntheticLambda0.$r8$classId -> d
+      # {"id":"com.android.tools.r8.synthesized"}
+    androidx.navigation3.runtime.NavBackStack navapp.nav3dsl.Nav3DslAppKt$$InternalSyntheticLambda$2$6b1e0a18b7ea7e1d8ff042e0ef43217301523c2c988f7e5acc4fcd9bcc810c65$0.f$0 -> e
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Ldj0;"}
+      # {"id":"com.android.tools.r8.synthesized"}
+    1:8:void Nav3DslAppKt$$ExternalSyntheticLambda0.<init>(NavBackStack,int):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ldj0;I)V"}
+    10:11:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$1$0$0(androidx.navigation3.runtime.NavBackStack):32:32 -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ljava/lang/Object;"}
+    12:17:boolean androidx.navigation3.runtime.NavBackStack.add(androidx.navigation3.runtime.NavKey):0:0 -> a
+    12:17:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$1$0$0(androidx.navigation3.runtime.NavBackStack):32 -> a
+    18:22:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$0$0$0(androidx.navigation3.runtime.NavBackStack):29:29 -> a
+    23:28:boolean androidx.navigation3.runtime.NavBackStack.add(androidx.navigation3.runtime.NavKey):0:0 -> a
+    23:28:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$0$0$0(androidx.navigation3.runtime.NavBackStack):29 -> a
+    29:32:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$0$0(androidx.navigation3.runtime.NavBackStack):25:25 -> a
+navapp.nav3dsl.Nav3DslAppKt$$ExternalSyntheticLambda1 -> wi0:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    int Nav3DslAppKt$$ExternalSyntheticLambda1.$r8$classId -> d
+      # {"id":"com.android.tools.r8.synthesized"}
+    androidx.navigation3.runtime.NavBackStack navapp.nav3dsl.Nav3DslAppKt$$InternalSyntheticLambda$2$6b1e0a18b7ea7e1d8ff042e0ef43217301523c2c988f7e5acc4fcd9bcc810c65$1.f$0 -> e
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Ldj0;"}
+      # {"id":"com.android.tools.r8.synthesized"}
+    1:8:void Nav3DslAppKt$$ExternalSyntheticLambda1.<init>(NavBackStack,int):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ldj0;I)V"}
+    32:64:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$1(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Message,androidx.compose.runtime.Composer,int):0:0 -> f
+    32:64:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+      # {"id":"com.android.tools.r8.synthesized"}
+    65:68:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$1(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Message,androidx.compose.runtime.Composer,int):32:32 -> f
+    65:68:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+    69:76:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$1(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Message,androidx.compose.runtime.Composer,int):78:78 -> f
+    69:76:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+    77:81:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$1(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Message,androidx.compose.runtime.Composer,int):32:32 -> f
+    77:81:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+    82:84:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$1(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Message,androidx.compose.runtime.Composer,int):81:81 -> f
+    82:84:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+    85:111:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$1(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Message,androidx.compose.runtime.Composer,int):32:32 -> f
+    85:111:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+    112:115:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$1(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Message,androidx.compose.runtime.Composer,int):31:31 -> f
+    112:115:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+    116:131:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0:0 -> f
+    132:149:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$0(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Inbox,androidx.compose.runtime.Composer,int):0:0 -> f
+    132:149:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+    150:153:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$0(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Inbox,androidx.compose.runtime.Composer,int):29:29 -> f
+    150:153:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+    154:161:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$0(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Inbox,androidx.compose.runtime.Composer,int):72:72 -> f
+    154:161:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+    162:166:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$0(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Inbox,androidx.compose.runtime.Composer,int):29:29 -> f
+    162:166:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+    167:169:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$0(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Inbox,androidx.compose.runtime.Composer,int):75:75 -> f
+    167:169:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+    170:186:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$0(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Inbox,androidx.compose.runtime.Composer,int):29:29 -> f
+    170:186:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+    187:190:kotlin.Unit navapp.nav3dsl.Nav3DslAppKt.Nav3DslApp$lambda$1$0(androidx.navigation3.runtime.NavBackStack,navapp.nav3dsl.Inbox,androidx.compose.runtime.Composer,int):28:28 -> f
+    187:190:java.lang.Object Nav3DslAppKt$$ExternalSyntheticLambda1.invoke(java.lang.Object,java.lang.Object,java.lang.Object):0 -> f
+navapp.nav3dsl.Nav3DslAppKt$Nav3DslApp$$inlined$entryProvider$default$1 -> R8$$REMOVED$$CLASS$$551:
+# {"id":"sourceFile","fileName":"EntryProvider.kt"}
+navapp.nav3when.Catalog -> cd:
+# {"id":"sourceFile","fileName":"Nav3WhenApp.kt"}
+    navapp.nav3when.Catalog INSTANCE -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lcd;"}
+    3:5:void <init>():13:13 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:8:void <clinit>():0:0 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.nav3when.Item -> i80:
+# {"id":"sourceFile","fileName":"Nav3WhenApp.kt"}
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    2:6:int hashCode():0:0 -> hashCode
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.nav3when.Nav3WhenAppKt$$ExternalSyntheticLambda0 -> xi0:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    int Nav3WhenAppKt$$ExternalSyntheticLambda0.$r8$classId -> d
+      # {"id":"com.android.tools.r8.synthesized"}
+    androidx.compose.runtime.snapshots.SnapshotStateList navapp.nav3when.Nav3WhenAppKt$$InternalSyntheticLambda$2$5f66c7598d260a06769b5cda5b06f7a9a14c91cdb3a21fbdbf9a10dea4f1f236$0.f$0 -> e
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lq61;"}
+      # {"id":"com.android.tools.r8.synthesized"}
+    1:8:void Nav3WhenAppKt$$ExternalSyntheticLambda0.<init>(SnapshotStateList,int):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lq61;I)V"}
+    10:11:kotlin.Unit navapp.nav3when.Nav3WhenAppKt.Nav3WhenApp$lambda$2$0$0$0$0(androidx.compose.runtime.snapshots.SnapshotStateList):27:27 -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ljava/lang/Object;"}
+    12:14:void navapp.nav3when.Item.<init>(int):15:15 -> a
+    12:14:kotlin.Unit navapp.nav3when.Nav3WhenAppKt.Nav3WhenApp$lambda$2$0$0$0$0(androidx.compose.runtime.snapshots.SnapshotStateList):27 -> a
+    15:18:kotlin.Unit navapp.nav3when.Nav3WhenAppKt.Nav3WhenApp$lambda$2$0$0$0$0(androidx.compose.runtime.snapshots.SnapshotStateList):27:27 -> a
+    19:22:kotlin.Unit navapp.nav3when.Nav3WhenAppKt.Nav3WhenApp$lambda$1$0(androidx.compose.runtime.snapshots.SnapshotStateList):22:22 -> a
+navapp.sections.About -> c:
+# {"id":"sourceFile","fileName":"SectionsApp.kt"}
+    navapp.sections.About INSTANCE -> INSTANCE
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lc;"}
+    kotlin.Lazy $cachedSerializer$delegate -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lma0;"}
+    3:5:void <init>():22:22 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:22:void <clinit>():22:22 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:9:kotlinx.serialization.KSerializer get$cachedSerializer():22:22 -> serializer
+    1:9:kotlinx.serialization.KSerializer serializer():22 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.sections.About$$ExternalSyntheticLambda0 -> b:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    int About$$ExternalSyntheticLambda0.$r8$classId -> d
+      # {"id":"com.android.tools.r8.synthesized"}
+    1:7:void About$$ExternalSyntheticLambda0.<init>(BrushKt$ShaderBrush$1,long):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Leb;J)V"}
+    8:8:void About$$ExternalSyntheticLambda0.<init>(int):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+    9:9:void About$$ExternalSyntheticLambda0.<init>(InvalidationTracker,int):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Le80;I)V"}
+    10:11:androidx.savedstate.SavedStateRegistryOwner androidx.savedstate.compose.LocalSavedStateRegistryOwnerKt.LocalSavedStateRegistryOwner$lambda$0$1():0:0 -> a
+    10:11:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+      # {"id":"com.android.tools.r8.synthesized"}
+    12:17:androidx.savedstate.SavedStateRegistryOwner androidx.savedstate.compose.LocalSavedStateRegistryOwnerKt.LocalSavedStateRegistryOwner$lambda$0$1():65:65 -> a
+    12:17:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    18:22:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0:0 -> a
+    23:24:androidx.compose.animation.AnimatedContentScope androidx.navigation3.ui.LocalNavAnimatedContentScopeKt.LocalNavAnimatedContentScope$lambda$0():35:35 -> a
+    23:24:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    25:26:androidx.compose.animation.AnimatedContentScope androidx.navigation3.ui.LocalNavAnimatedContentScopeKt.LocalNavAnimatedContentScope$lambda$0():36:36 -> a
+    25:26:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    27:30:androidx.compose.animation.AnimatedContentScope androidx.navigation3.ui.LocalNavAnimatedContentScopeKt.LocalNavAnimatedContentScope$lambda$0():35:35 -> a
+    27:30:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    31:32:androidx.lifecycle.LifecycleOwner androidx.lifecycle.compose.LocalLifecycleOwnerKt.LocalLifecycleOwner$lambda$0():0:0 -> a
+    31:32:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    33:39:androidx.lifecycle.LifecycleOwner androidx.lifecycle.compose.LocalLifecycleOwnerKt.LocalLifecycleOwner$lambda$0():28:28 -> a
+    33:39:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    40:47:androidx.compose.ui.unit.Dp androidx.compose.ui.unit.Dp.box-impl(float):0:0 -> a
+    40:47:androidx.compose.ui.unit.Dp androidx.compose.material3.InteractiveComponentSizeKt.LocalMinimumInteractiveComponentSize$lambda$0():269 -> a
+    40:47:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    48:52:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0:0 -> a
+    53:60:kotlinx.serialization.KSerializer androidx.savedstate.serialization.serializers.IntListValue._childSerializers$_anonymous_():0:0 -> a
+    53:60:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    61:68:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0:0 -> a
+    69:80:kotlinx.serialization.KSerializer navapp.nav3dsl.Inbox._init_$_anonymous_():14:14 -> a
+    69:80:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    81:82:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0:0 -> a
+    83:88:androidx.compose.runtime.HostDefaultProvider androidx.compose.runtime.HostDefaultProviderKt.LocalHostDefaultProvider$lambda$0():27:27 -> a
+    83:88:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    89:100:kotlinx.serialization.KSerializer navapp.typed.Home._init_$_anonymous_():20:20 -> a
+    89:100:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    101:102:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase.beginTransactionMethod_delegate$lambda$8():354:354 -> a
+    101:102:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    103:104:kotlin.Lazy androidx.sqlite.db.framework.FrameworkSQLiteDatabase.access$getGetThreadSessionMethod$delegate$cp():45:45 -> a
+    103:104:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase$Companion.getGetThreadSessionMethod():341 -> a
+    103:104:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase$Companion.access$getGetThreadSessionMethod(androidx.sqlite.db.framework.FrameworkSQLiteDatabase$Companion):335 -> a
+    103:104:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase.beginTransactionMethod_delegate$lambda$8():354 -> a
+    103:104:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    105:112:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase$Companion.getGetThreadSessionMethod():341:341 -> a
+    105:112:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase$Companion.access$getGetThreadSessionMethod(androidx.sqlite.db.framework.FrameworkSQLiteDatabase$Companion):335 -> a
+    105:112:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase.beginTransactionMethod_delegate$lambda$8():354 -> a
+    105:112:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    113:118:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase.beginTransactionMethod_delegate$lambda$8():355:355 -> a
+    113:118:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    119:120:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase.beginTransactionMethod_delegate$lambda$8():357:357 -> a
+    119:120:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    121:122:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase.beginTransactionMethod_delegate$lambda$8():358:358 -> a
+    121:122:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    123:124:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase.beginTransactionMethod_delegate$lambda$8():359:359 -> a
+    123:124:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    125:130:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase.beginTransactionMethod_delegate$lambda$8():361:361 -> a
+    125:130:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    131:135:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase.beginTransactionMethod_delegate$lambda$8():356:356 -> a
+    131:135:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    136:144:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase.getThreadSessionMethod_delegate$lambda$7():343:343 -> a
+    136:144:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    145:149:java.lang.reflect.Method androidx.sqlite.db.framework.FrameworkSQLiteDatabase.getThreadSessionMethod_delegate$lambda$7():344:344 -> a
+    145:149:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    150:154:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0:0 -> a
+    155:166:kotlinx.serialization.KSerializer navapp.sections.DocsGuide._init_$_anonymous_():13:13 -> a
+    155:166:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    167:178:kotlinx.serialization.KSerializer navapp.typed.Confirm._init_$_anonymous_():26:26 -> a
+    167:178:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    179:185:java.lang.Object androidx.compose.runtime.ComputedProvidableCompositionLocal._init_$lambda$0():307:307 -> a
+    179:185:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    186:188:void kotlin.KotlinNothingValueException.<init>():127:127 -> a
+    186:188:java.lang.Object androidx.compose.runtime.ComputedProvidableCompositionLocal._init_$lambda$0():307 -> a
+    186:188:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    189:189:java.lang.Object androidx.compose.runtime.ComputedProvidableCompositionLocal._init_$lambda$0():307:307 -> a
+    189:189:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    190:192:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0:0 -> a
+    193:204:kotlinx.serialization.KSerializer navapp.nav3dsl.Compose._init_$_anonymous_():18:18 -> a
+    193:204:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    205:209:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0:0 -> a
+    210:217:kotlinx.serialization.KSerializer androidx.savedstate.serialization.serializers.CharSequenceListValue._childSerializers$_anonymous_():0:0 -> a
+    210:217:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    218:231:kotlinx.serialization.KSerializer androidx.savedstate.serialization.serializers.CharSequenceArrayValue._childSerializers$_anonymous_():0:0 -> a
+    218:231:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    232:234:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0:0 -> a
+    235:246:kotlinx.serialization.KSerializer navapp.typed.AuthGraph._init_$_anonymous_():28:28 -> a
+    235:246:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    247:247:android.graphics.Shader androidx.compose.ui.graphics.BrushKt$ShaderBrush$1.createShader-uvyYCjk(long):821:821 -> a
+    247:247:android.graphics.Shader androidx.compose.ui.text.platform.AndroidTextPaint.setBrush_12SF9DM$lambda$0(androidx.compose.ui.graphics.Brush,long):140 -> a
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    247:247:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    248:249:java.lang.Integer androidx.activity.result.ActivityResultRegistry.generateRandomNumber$lambda$0():378:378 -> a
+    248:249:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    250:251:kotlin.random.Random kotlin.random.Random.access$getDefaultRandom$cp():21:21 -> a
+    250:251:int kotlin.random.Random$Default.nextInt(int):289 -> a
+    250:251:java.lang.Integer androidx.activity.result.ActivityResultRegistry.generateRandomNumber$lambda$0():378 -> a
+    250:251:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    252:257:int kotlin.random.AbstractPlatformRandom.nextInt(int):42:42 -> a
+    252:257:int kotlin.random.Random$Default.nextInt(int):289 -> a
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    252:257:java.lang.Integer androidx.activity.result.ActivityResultRegistry.generateRandomNumber$lambda$0():378 -> a
+    252:257:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    258:264:int kotlin.random.AbstractPlatformRandom.nextInt(int):42:42 -> a
+    258:264:int kotlin.random.Random$Default.nextInt(int):289 -> a
+    258:264:java.lang.Integer androidx.activity.result.ActivityResultRegistry.generateRandomNumber$lambda$0():378 -> a
+    258:264:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    265:269:java.lang.Integer androidx.activity.result.ActivityResultRegistry.generateRandomNumber$lambda$0():378:378 -> a
+    265:269:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+    270:282:kotlinx.serialization.KSerializer navapp.sections.About._init_$_anonymous_():22:22 -> a
+    270:282:java.lang.Object About$$ExternalSyntheticLambda0.invoke():0 -> a
+navapp.sections.DocsGuide -> hr:
+# {"id":"sourceFile","fileName":"GuideActivity.kt"}
+    navapp.sections.DocsGuide INSTANCE -> INSTANCE
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lhr;"}
+    kotlin.Lazy $cachedSerializer$delegate -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lma0;"}
+    3:5:void <init>():13:13 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:23:void <clinit>():13:13 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:9:kotlinx.serialization.KSerializer get$cachedSerializer():13:13 -> serializer
+    1:9:kotlinx.serialization.KSerializer serializer():13 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.sections.GuideActivity -> navapp.sections.GuideActivity:
+# {"id":"sourceFile","fileName":"GuideActivity.kt"}
+    int $r8$clinit -> x
+      # {"id":"com.android.tools.r8.synthesized"}
+    1:4:void <init>():18:18 -> <init>
+    1:3:void onCreate(android.os.Bundle):20:20 -> onCreate
+    4:9:void onCreate(android.os.Bundle):21:21 -> onCreate
+    10:18:androidx.compose.runtime.internal.ComposableLambda androidx.compose.runtime.internal.ComposableLambdaKt.composableLambdaInstance(int,boolean,java.lang.Object):1373:1373 -> onCreate
+    10:18:void onCreate(android.os.Bundle):21 -> onCreate
+    19:22:void onCreate(android.os.Bundle):21:21 -> onCreate
+navapp.sections.GuideActivity$onCreate$lambda$0$0$0$$inlined$screen$1 -> j30:
+# {"id":"sourceFile","fileName":"SectionsApp.kt"}
+    1:17:java.lang.Object invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):25:25 -> l
+    18:20:void invoke(androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):25:25 -> l
+    18:20:java.lang.Object invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):25 -> l
+    21:26:void navapp.sections.GuideActivity$onCreate$lambda$0$0$0$$inlined$screen$1$1.<init>():0:0 -> l
+    21:26:void invoke(androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):25 -> l
+    21:26:java.lang.Object invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):25 -> l
+    27:34:void invoke(androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):25:25 -> l
+    27:34:java.lang.Object invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):25 -> l
+    35:37:java.lang.Object invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):25:25 -> l
+navapp.sections.GuideBodyKt$$ExternalSyntheticLambda0 -> k30:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    int GuideBodyKt$$ExternalSyntheticLambda0.$r8$classId -> d
+      # {"id":"com.android.tools.r8.synthesized"}
+    int navapp.sections.GuideBodyKt$$InternalSyntheticLambda$3$8ae61b1df970fa152e1c2d5cbce287b10d1d7482e8cc8fb8d8404bffdb9cde31$0.f$1 -> e
+      # {"id":"com.android.tools.r8.synthesized"}
+    java.lang.String navapp.sections.GuideBodyKt$$InternalSyntheticLambda$3$8ae61b1df970fa152e1c2d5cbce287b10d1d7482e8cc8fb8d8404bffdb9cde31$0.f$0 -> f
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Ljava/lang/Object;"}
+      # {"id":"com.android.tools.r8.synthesized"}
+    1:10:void GuideBodyKt$$ExternalSyntheticLambda0.<init>(int,int,java.lang.Object):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+    23:30:kotlin.Unit navapp.sections.SectionsAppKt.WelcomeScreen$lambda$0(kotlin.jvm.functions.Function0,int,androidx.compose.runtime.Composer,int):0:0 -> g
+    23:30:java.lang.Object GuideBodyKt$$ExternalSyntheticLambda0.invoke(java.lang.Object,java.lang.Object):0 -> g
+      # {"id":"com.android.tools.r8.synthesized"}
+    31:41:java.lang.Object GuideBodyKt$$ExternalSyntheticLambda0.invoke(java.lang.Object,java.lang.Object):0:0 -> g
+    42:49:kotlin.Unit androidx.navigation3.runtime.NavEntry.Content$lambda$0(androidx.navigation3.runtime.NavEntry,int,androidx.compose.runtime.Composer,int):0:0 -> g
+    42:49:java.lang.Object GuideBodyKt$$ExternalSyntheticLambda0.invoke(java.lang.Object,java.lang.Object):0 -> g
+    50:60:java.lang.Object GuideBodyKt$$ExternalSyntheticLambda0.invoke(java.lang.Object,java.lang.Object):0:0 -> g
+    61:68:kotlin.Unit navapp.sections.GuideBodyKt.GuideBody$lambda$0(java.lang.String,int,androidx.compose.runtime.Composer,int):0:0 -> g
+    61:68:java.lang.Object GuideBodyKt$$ExternalSyntheticLambda0.invoke(java.lang.Object,java.lang.Object):0 -> g
+navapp.sections.HelpActivity -> navapp.sections.HelpActivity:
+# {"id":"sourceFile","fileName":"HelpActivity.kt"}
+    1:4:void <init>():10:10 -> <init>
+    1:3:void onCreate(android.os.Bundle):12:12 -> onCreate
+    4:9:void onCreate(android.os.Bundle):13:13 -> onCreate
+navapp.sections.Onboarding -> po0:
+# {"id":"sourceFile","fileName":"SectionsApp.kt"}
+    navapp.sections.Onboarding INSTANCE -> INSTANCE
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lpo0;"}
+    kotlin.Lazy $cachedSerializer$delegate -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lma0;"}
+    3:5:void <init>():16:16 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:22:void <clinit>():16:16 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:9:kotlinx.serialization.KSerializer get$cachedSerializer():16:16 -> serializer
+    1:9:kotlinx.serialization.KSerializer serializer():16 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.sections.PhotoGuide -> fs0:
+# {"id":"sourceFile","fileName":"GuideActivity.kt"}
+    navapp.sections.PhotoGuide INSTANCE -> INSTANCE
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lfs0;"}
+    kotlin.Lazy $cachedSerializer$delegate -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lma0;"}
+    3:5:void <init>():11:11 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:23:void <clinit>():11:11 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:9:kotlinx.serialization.KSerializer get$cachedSerializer():11:11 -> serializer
+    1:9:kotlinx.serialization.KSerializer serializer():11 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.sections.SectionsAppKt$$ExternalSyntheticLambda0 -> a21:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    int SectionsAppKt$$ExternalSyntheticLambda0.$r8$classId -> d
+      # {"id":"com.android.tools.r8.synthesized"}
+    androidx.navigation.NavHostController navapp.sections.SectionsAppKt$$InternalSyntheticLambda$2$2d9853b618d24326d0e2ef598a507d0208312c89831749fd22d336f04bde5913$0.f$0 -> e
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lnk0;"}
+      # {"id":"com.android.tools.r8.synthesized"}
+    1:8:void SectionsAppKt$$ExternalSyntheticLambda0.<init>(NavHostController,int):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lnk0;I)V"}
+    14:16:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):0:0 -> i
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/lang/Object;)Ljava/lang/Object;"}
+    17:22:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):36:36 -> i
+    23:30:androidx.compose.runtime.internal.ComposableLambda androidx.compose.runtime.internal.ComposableLambdaKt.composableLambdaInstance(int,boolean,java.lang.Object):1373:1373 -> i
+    23:30:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):36 -> i
+    31:39:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):178:178 -> i
+    40:44:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):43:43 -> i
+    45:52:androidx.compose.runtime.internal.ComposableLambda androidx.compose.runtime.internal.ComposableLambdaKt.composableLambdaInstance(int,boolean,java.lang.Object):1373:1373 -> i
+    45:52:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):43 -> i
+    53:61:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):215:215 -> i
+    62:63:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):46:46 -> i
+    64:72:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):252:252 -> i
+    73:77:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):267:267 -> i
+    78:83:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):270:270 -> i
+    84:85:void androidx.navigation.compose.NavGraphBuilderKt.dialog(androidx.navigation.NavGraphBuilder,kotlin.reflect.KClass,java.util.Map,java.util.List,androidx.compose.ui.window.DialogProperties,kotlin.jvm.functions.Function3):723:723 -> i
+    84:85:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):270 -> i
+    86:87:androidx.navigation.NavigatorProvider androidx.navigation.NavGraphBuilder.getProvider():74:74 -> i
+    86:87:void androidx.navigation.compose.NavGraphBuilderKt.dialog(androidx.navigation.NavGraphBuilder,kotlin.reflect.KClass,java.util.Map,java.util.List,androidx.compose.ui.window.DialogProperties,kotlin.jvm.functions.Function3):724 -> i
+    86:87:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):270 -> i
+    88:90:void androidx.navigation.compose.NavGraphBuilderKt.dialog(androidx.navigation.NavGraphBuilder,kotlin.reflect.KClass,java.util.Map,java.util.List,androidx.compose.ui.window.DialogProperties,kotlin.jvm.functions.Function3):765:765 -> i
+    88:90:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):270 -> i
+    91:96:androidx.navigation.Navigator androidx.navigation.NavigatorProvider.getNavigator(java.lang.Class):47:47 -> i
+    91:96:void androidx.navigation.compose.NavGraphBuilderKt.dialog(androidx.navigation.NavGraphBuilder,kotlin.reflect.KClass,java.util.Map,java.util.List,androidx.compose.ui.window.DialogProperties,kotlin.jvm.functions.Function3):765 -> i
+    91:96:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):270 -> i
+    97:100:androidx.navigation.Navigator androidx.navigation.NavigatorProvider.getNavigator(java.lang.Class):48:48 -> i
+    97:100:void androidx.navigation.compose.NavGraphBuilderKt.dialog(androidx.navigation.NavGraphBuilder,kotlin.reflect.KClass,java.util.Map,java.util.List,androidx.compose.ui.window.DialogProperties,kotlin.jvm.functions.Function3):765 -> i
+    97:100:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):270 -> i
+    101:102:void androidx.navigation.compose.NavGraphBuilderKt.dialog(androidx.navigation.NavGraphBuilder,kotlin.reflect.KClass,java.util.Map,java.util.List,androidx.compose.ui.window.DialogProperties,kotlin.jvm.functions.Function3):765:765 -> i
+    101:102:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):270 -> i
+    103:105:void androidx.navigation.compose.NavGraphBuilderKt.dialog(androidx.navigation.NavGraphBuilder,kotlin.reflect.KClass,java.util.Map,java.util.List,androidx.compose.ui.window.DialogProperties,kotlin.jvm.functions.Function3):723:723 -> i
+    103:105:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):270 -> i
+    106:114:void androidx.navigation.NavGraphBuilder.destination(androidx.navigation.NavDestinationBuilder):137:137 -> i
+    106:114:void androidx.navigation.compose.NavGraphBuilderKt.dialog(androidx.navigation.NavGraphBuilder,kotlin.reflect.KClass,java.util.Map,java.util.List,androidx.compose.ui.window.DialogProperties,kotlin.jvm.functions.Function3):722 -> i
+    106:114:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):270 -> i
+    115:120:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):48:48 -> i
+    121:127:void navapp.typed.TypedAppKt.authSection(androidx.navigation.NavGraphBuilder,kotlin.jvm.functions.Function0):53:53 -> i
+    121:127:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):48 -> i
+    128:133:void navapp.typed.TypedAppKt.authSection(androidx.navigation.NavGraphBuilder,kotlin.jvm.functions.Function0):116:116 -> i
+    128:133:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):48 -> i
+    134:137:void navapp.typed.TypedAppKt.authSection(androidx.navigation.NavGraphBuilder,kotlin.jvm.functions.Function0):115:115 -> i
+    134:137:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):48 -> i
+    138:140:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):0:0 -> i
+    141:146:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):21:21 -> i
+    147:154:androidx.compose.runtime.internal.ComposableLambda androidx.compose.runtime.internal.ComposableLambdaKt.composableLambdaInstance(int,boolean,java.lang.Object):1373:1373 -> i
+    147:154:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):21 -> i
+    155:162:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):21:21 -> i
+    163:164:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt__NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):27:27 -> i
+    163:164:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):1 -> i
+    163:164:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):27 -> i
+    165:166:void androidx.navigation.NavArgumentBuilder.<init>():218:218 -> i
+    165:166:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt__NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):27 -> i
+    165:166:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):1 -> i
+    165:166:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):27 -> i
+    167:169:void androidx.navigation.NavArgument$Builder.<init>():131:131 -> i
+    167:169:void androidx.navigation.NavArgumentBuilder.<init>():218 -> i
+    167:169:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt__NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):27 -> i
+    167:169:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):1 -> i
+    167:169:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):27 -> i
+    170:171:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$1(androidx.navigation.NavArgumentBuilder):27:27 -> i
+    170:171:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt__NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):27 -> i
+    170:171:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):1 -> i
+    170:171:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):27 -> i
+    172:173:androidx.navigation.NavArgument$Builder androidx.navigation.NavArgument$Builder.setType(androidx.navigation.NavType):146:146 -> i
+    172:173:void androidx.navigation.NavArgumentBuilder.setType(androidx.navigation.NavType):230 -> i
+    172:173:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$1(androidx.navigation.NavArgumentBuilder):27 -> i
+    172:173:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt__NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):27 -> i
+    172:173:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):1 -> i
+    172:173:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):27 -> i
+    174:177:androidx.navigation.NavArgument androidx.navigation.NavArgumentBuilder.build():271:271 -> i
+    174:177:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt__NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):27 -> i
+    174:177:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):1 -> i
+    174:177:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):27 -> i
+    178:182:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt__NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):27:27 -> i
+    178:182:androidx.navigation.NamedNavArgument androidx.navigation.NamedNavArgumentKt.navArgument(java.lang.String,kotlin.jvm.functions.Function1):1 -> i
+    178:182:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):27 -> i
+    183:186:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):27:27 -> i
+    187:191:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):28:28 -> i
+    192:201:androidx.compose.runtime.internal.ComposableLambda androidx.compose.runtime.internal.ComposableLambdaKt.composableLambdaInstance(int,boolean,java.lang.Object):1373:1373 -> i
+    192:201:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):28 -> i
+    202:206:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):25:25 -> i
+    207:213:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):32:32 -> i
+    214:215:void androidx.navigation.compose.NavGraphBuilderKt.navigation(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1):399:399 -> i
+    214:215:void androidx.navigation.compose.NavGraphBuilderKt.navigation$default(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,int,java.lang.Object):371 -> i
+    214:215:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):33 -> i
+    216:217:androidx.navigation.NavigatorProvider androidx.navigation.NavGraphBuilder.getProvider():74:74 -> i
+    216:217:void androidx.navigation.compose.NavGraphBuilderKt.navigation(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1):399 -> i
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    216:217:void androidx.navigation.compose.NavGraphBuilderKt.navigation$default(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,int,java.lang.Object):371 -> i
+    216:217:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):33 -> i
+    218:224:void androidx.navigation.compose.NavGraphBuilderKt.navigation(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1):399:399 -> i
+    218:224:void androidx.navigation.compose.NavGraphBuilderKt.navigation$default(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,int,java.lang.Object):371 -> i
+    218:224:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):33 -> i
+    225:230:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$3(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):34:34 -> i
+    225:230:void androidx.navigation.compose.NavGraphBuilderKt.navigation(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1):399 -> i
+    225:230:void androidx.navigation.compose.NavGraphBuilderKt.navigation$default(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,int,java.lang.Object):371 -> i
+    225:230:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):33 -> i
+    231:238:androidx.compose.runtime.internal.ComposableLambda androidx.compose.runtime.internal.ComposableLambdaKt.composableLambdaInstance(int,boolean,java.lang.Object):1373:1373 -> i
+    231:238:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$3(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):34 -> i
+    231:238:void androidx.navigation.compose.NavGraphBuilderKt.navigation(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1):399 -> i
+    231:238:void androidx.navigation.compose.NavGraphBuilderKt.navigation$default(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,int,java.lang.Object):371 -> i
+    231:238:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):33 -> i
+    239:241:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$3(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):34:34 -> i
+    239:241:void androidx.navigation.compose.NavGraphBuilderKt.navigation(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1):399 -> i
+    239:241:void androidx.navigation.compose.NavGraphBuilderKt.navigation$default(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,int,java.lang.Object):371 -> i
+    239:241:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):33 -> i
+    242:245:void androidx.navigation.compose.NavGraphBuilderKt.navigation(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1):399:399 -> i
+    242:245:void androidx.navigation.compose.NavGraphBuilderKt.navigation$default(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,int,java.lang.Object):371 -> i
+    242:245:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):33 -> i
+    246:251:void androidx.navigation.NavGraphBuilder.addDestination(androidx.navigation.NavDestination):145:145 -> i
+    246:251:void androidx.navigation.compose.NavGraphBuilderKt.navigation(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1):398 -> i
+    246:251:void androidx.navigation.compose.NavGraphBuilderKt.navigation$default(androidx.navigation.NavGraphBuilder,java.lang.String,java.lang.String,java.util.List,java.util.List,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,int,java.lang.Object):371 -> i
+    246:251:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):33 -> i
+    252:254:kotlin.Unit navapp.sections.SectionsAppKt.SectionsApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):0:0 -> i
+    255:256:kotlin.Unit navapp.sections.SectionsAppKt.SectionsApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):39:39 -> i
+    257:261:kotlin.Unit navapp.sections.SectionsAppKt.SectionsApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):258:258 -> i
+    262:267:kotlin.Unit navapp.sections.SectionsAppKt.SectionsApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):286:286 -> i
+    268:270:kotlin.Unit navapp.sections.SectionsAppKt.SectionsApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):285:285 -> i
+    271:272:kotlin.Unit navapp.sections.SectionsAppKt.SectionsApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):42:42 -> i
+    273:282:kotlin.Unit navapp.sections.SectionsAppKt.SectionsApp$lambda$0$0(androidx.navigation.NavHostController,androidx.navigation.NavGraphBuilder):324:324 -> i
+navapp.sections.SectionsAppKt$SectionsApp$1$1$1$1 -> b21:
+# {"id":"sourceFile","fileName":"SectionsApp.kt"}
+    int SectionsAppKt$SectionsApp$1$1$1$1.$r8$classId -> d
+      # {"id":"com.android.tools.r8.synthesized"}
+    androidx.navigation.NavHostController $nav -> e
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lnk0;"}
+    1:8:void SectionsAppKt$SectionsApp$1$1$1$1.<init>(NavHostController,int):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lnk0;I)V"}
+    10:15:void navapp.sections.SectionsAppKt$SectionsApp$1$1$1$2.invoke():40:40 -> a
+    10:15:java.lang.Object navapp.sections.SectionsAppKt$SectionsApp$1$1$1$2.invoke():40 -> a
+    16:22:void invoke():40:40 -> a
+    16:22:java.lang.Object invoke():40 -> a
+navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$1 -> d21:
+# {"id":"sourceFile","fileName":"SectionsApp.kt"}
+    int SectionsAppKt$onboardingSteps$$inlined$screen$1.$r8$classId -> d
+      # {"id":"com.android.tools.r8.synthesized"}
+    kotlin.jvm.functions.Function0 $onNext$inlined -> e
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Ls00;"}
+    1:8:void SectionsAppKt$onboardingSteps$$inlined$screen$1.<init>(int,Function0):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(ILs00;)V"}
+    14:30:java.lang.Object navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):25:25 -> l
+    31:46:void navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$2.invoke(androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):25:25 -> l
+    31:46:java.lang.Object navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):25 -> l
+    47:63:java.lang.Object invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):25:25 -> l
+    64:80:void invoke(androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):25:25 -> l
+    64:80:java.lang.Object invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):25 -> l
+navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$1$1 -> c21:
+# {"id":"sourceFile","fileName":"SectionsApp.kt"}
+    int SectionsAppKt$onboardingSteps$$inlined$screen$1$1.$r8$classId -> d
+      # {"id":"com.android.tools.r8.synthesized"}
+    kotlin.jvm.functions.Function0 $onNext$inlined -> e
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Ls00;"}
+    1:8:void SectionsAppKt$onboardingSteps$$inlined$screen$1$1.<init>(int,Function0):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(ILs00;)V"}
+    13:28:java.lang.Object navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$2$1.invoke(java.lang.Object,java.lang.Object):25:25 -> g
+    29:37:void navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$2$1.invoke(androidx.compose.runtime.Composer,int):0:0 -> g
+    29:37:java.lang.Object navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$2$1.invoke(java.lang.Object,java.lang.Object):25 -> g
+    38:45:void navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$2$1.invoke(androidx.compose.runtime.Composer,int):26:26 -> g
+    38:45:java.lang.Object navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$2$1.invoke(java.lang.Object,java.lang.Object):25 -> g
+    46:49:void androidx.compose.runtime.GapComposer.endGroup():673:673 -> g
+    46:49:void androidx.compose.runtime.GapComposer.endReplaceGroup():407 -> g
+    46:49:void navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$2$1.invoke(androidx.compose.runtime.Composer,int):26 -> g
+    46:49:java.lang.Object navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$2$1.invoke(java.lang.Object,java.lang.Object):25 -> g
+    50:53:void navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$2$1.invoke(androidx.compose.runtime.Composer,int):25:25 -> g
+    50:53:java.lang.Object navapp.sections.SectionsAppKt$onboardingSteps$$inlined$screen$2$1.invoke(java.lang.Object,java.lang.Object):25 -> g
+    54:69:java.lang.Object invoke(java.lang.Object,java.lang.Object):25:25 -> g
+    70:78:void invoke(androidx.compose.runtime.Composer,int):0:0 -> g
+    70:78:java.lang.Object invoke(java.lang.Object,java.lang.Object):25 -> g
+    79:86:void invoke(androidx.compose.runtime.Composer,int):26:26 -> g
+    79:86:java.lang.Object invoke(java.lang.Object,java.lang.Object):25 -> g
+    87:90:void androidx.compose.runtime.GapComposer.endGroup():673:673 -> g
+    87:90:void androidx.compose.runtime.GapComposer.endReplaceGroup():407 -> g
+    87:90:void invoke(androidx.compose.runtime.Composer,int):26 -> g
+    87:90:java.lang.Object invoke(java.lang.Object,java.lang.Object):25 -> g
+    91:94:void invoke(androidx.compose.runtime.Composer,int):25:25 -> g
+    91:94:java.lang.Object invoke(java.lang.Object,java.lang.Object):25 -> g
+navapp.sections.Terms -> xa1:
+# {"id":"sourceFile","fileName":"SectionsApp.kt"}
+    navapp.sections.Terms INSTANCE -> INSTANCE
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lxa1;"}
+    kotlin.Lazy $cachedSerializer$delegate -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lma0;"}
+    3:5:void <init>():20:20 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:23:void <clinit>():20:20 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:9:kotlinx.serialization.KSerializer get$cachedSerializer():20:20 -> serializer
+    1:9:kotlinx.serialization.KSerializer serializer():20 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.sections.Welcome -> cj1:
+# {"id":"sourceFile","fileName":"SectionsApp.kt"}
+    navapp.sections.Welcome INSTANCE -> INSTANCE
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lcj1;"}
+    kotlin.Lazy $cachedSerializer$delegate -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lma0;"}
+    3:5:void <init>():18:18 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:22:void <clinit>():18:18 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:9:kotlinx.serialization.KSerializer get$cachedSerializer():18:18 -> serializer
+    1:9:kotlinx.serialization.KSerializer serializer():18 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.strings.StringAppKt$$ExternalSyntheticLambda2 -> j81:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    int StringAppKt$$ExternalSyntheticLambda2.$r8$classId -> d
+      # {"id":"com.android.tools.r8.synthesized"}
+    androidx.navigation.NavHostController navapp.strings.StringAppKt$$InternalSyntheticLambda$3$31931ac483068376ac93aa21feb4dc349b106cb38eb0b27c417e23ceb109e468$0.f$0 -> e
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lnk0;"}
+      # {"id":"com.android.tools.r8.synthesized"}
+    1:8:void StringAppKt$$ExternalSyntheticLambda2.<init>(NavHostController,int):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lnk0;I)V"}
+    37:42:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146:146 -> l
+    37:42:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+      # {"id":"com.android.tools.r8.synthesized"}
+    43:48:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):316:316 -> l
+    43:48:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    43:48:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    43:48:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    49:50:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):328:328 -> l
+    49:50:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    49:50:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    49:50:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    51:60:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):346:346 -> l
+    51:60:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    51:60:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    51:60:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    61:62:androidx.navigation.NavDestination androidx.navigation.NavBackStackEntry.getDestination():68:68 -> l
+    61:62:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):317 -> l
+    61:62:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    61:62:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    61:62:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    63:66:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):317:317 -> l
+    63:66:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    63:66:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    63:66:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    67:79:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):350:350 -> l
+    67:79:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    67:79:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    67:79:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    80:85:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):351:351 -> l
+    80:85:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    80:85:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    80:85:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    86:99:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):352:352 -> l
+    86:99:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    86:99:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    86:99:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    100:101:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):353:353 -> l
+    100:101:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    100:101:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    100:101:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    102:105:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):351:351 -> l
+    102:105:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    102:105:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    102:105:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    106:111:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):317:317 -> l
+    106:111:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    106:111:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    106:111:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    112:113:androidx.navigation.NavType androidx.navigation.NavArgument.getType():41:41 -> l
+    112:113:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):317 -> l
+    112:113:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    112:113:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    112:113:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    114:117:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):353:353 -> l
+    114:117:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    114:117:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    114:117:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    118:121:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):318:318 -> l
+    118:121:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    118:121:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    118:121:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    122:128:java.lang.Object androidx.navigation.serialization.RouteDeserializerKt.decodeArguments(kotlinx.serialization.KSerializer,android.os.Bundle,java.util.Map):30:30 -> l
+    122:128:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):318 -> l
+    122:128:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    122:128:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    122:128:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    129:132:java.lang.Object kotlinx.serialization.encoding.Decoder.decodeSerializableValue(kotlinx.serialization.DeserializationStrategy):258:258 -> l
+    129:132:java.lang.Object androidx.navigation.serialization.RouteDecoder.decodeRouteWithArgs$navigation_common(kotlinx.serialization.DeserializationStrategy):122 -> l
+    129:132:java.lang.Object androidx.navigation.serialization.RouteDeserializerKt.decodeArguments(kotlinx.serialization.KSerializer,android.os.Bundle,java.util.Map):30 -> l
+    129:132:java.lang.Object androidx.navigation.NavBackStackEntryKt__NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):318 -> l
+    129:132:java.lang.Object androidx.navigation.NavBackStackEntryKt.toRoute(androidx.navigation.NavBackStackEntry,kotlin.reflect.KClass):1 -> l
+    129:132:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146 -> l
+    129:132:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    133:134:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):146:146 -> l
+    133:134:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    135:136:java.lang.String navapp.typed.Profile.getId():22:22 -> l
+    135:136:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):44 -> l
+    135:136:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    137:140:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):44:44 -> l
+    137:140:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    141:148:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):147:147 -> l
+    141:148:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    149:154:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):44:44 -> l
+    149:154:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    155:157:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):150:150 -> l
+    155:157:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    158:163:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$1(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):44:44 -> l
+    158:163:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    164:187:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0:0 -> l
+    188:191:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):38:38 -> l
+    188:191:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    192:199:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):128:128 -> l
+    192:199:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    200:205:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):38:38 -> l
+    200:205:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    206:208:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):131:131 -> l
+    206:208:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    209:210:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):38:38 -> l
+    209:210:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    211:214:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):39:39 -> l
+    211:214:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    215:222:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):134:134 -> l
+    215:222:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    223:229:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):39:39 -> l
+    223:229:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    230:232:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):137:137 -> l
+    230:232:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    233:234:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):39:39 -> l
+    233:234:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    235:238:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):40:40 -> l
+    235:238:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    239:246:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):140:140 -> l
+    239:246:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    247:253:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):40:40 -> l
+    247:253:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    254:256:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):143:143 -> l
+    254:256:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    257:258:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):40:40 -> l
+    257:258:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    259:262:kotlin.Unit navapp.typed.TypedAppKt.TypedApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):37:37 -> l
+    259:262:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    263:286:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0:0 -> l
+    287:290:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$3$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):36:36 -> l
+    287:290:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    291:298:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$3$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):51:51 -> l
+    291:298:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    299:304:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$3$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):36:36 -> l
+    299:304:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    305:307:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$3$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):54:54 -> l
+    305:307:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    308:320:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$3$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):36:36 -> l
+    308:320:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    321:324:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$3$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):35:35 -> l
+    321:324:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    325:348:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0:0 -> l
+    349:362:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$2(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):29:29 -> l
+    349:362:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    363:371:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$2(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):30:30 -> l
+    363:371:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    372:379:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$2(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):69:69 -> l
+    372:379:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    380:386:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$2(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):30:30 -> l
+    380:386:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    387:389:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$2(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):72:72 -> l
+    387:389:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    390:405:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$2(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):30:30 -> l
+    390:405:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    406:429:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0:0 -> l
+    430:433:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):22:22 -> l
+    430:433:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    434:441:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):57:57 -> l
+    434:441:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    442:447:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):22:22 -> l
+    442:447:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    448:450:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):60:60 -> l
+    448:450:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    451:466:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):22:22 -> l
+    451:466:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    467:470:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):23:23 -> l
+    467:470:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    471:478:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):63:63 -> l
+    471:478:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    479:484:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):23:23 -> l
+    479:484:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    485:487:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):66:66 -> l
+    485:487:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+    488:504:kotlin.Unit navapp.strings.StringAppKt.StringApp$lambda$0$0$0(androidx.navigation.NavHostController,androidx.compose.animation.AnimatedContentScope,androidx.navigation.NavBackStackEntry,androidx.compose.runtime.Composer,int):23:23 -> l
+    488:504:java.lang.Object StringAppKt$$ExternalSyntheticLambda2.invoke(java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object):0 -> l
+navapp.typed.AuthGraph -> t8:
+# {"id":"sourceFile","fileName":"TypedApp.kt"}
+    navapp.typed.AuthGraph INSTANCE -> INSTANCE
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lt8;"}
+    kotlin.Lazy $cachedSerializer$delegate -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lma0;"}
+    3:5:void <init>():28:28 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:22:void <clinit>():28:28 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:9:kotlinx.serialization.KSerializer get$cachedSerializer():28:28 -> serializer
+    1:9:kotlinx.serialization.KSerializer serializer():28 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.typed.Confirm -> pj:
+# {"id":"sourceFile","fileName":"TypedApp.kt"}
+    navapp.typed.Confirm INSTANCE -> INSTANCE
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lpj;"}
+    kotlin.Lazy $cachedSerializer$delegate -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lma0;"}
+    3:5:void <init>():26:26 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:23:void <clinit>():26:26 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:9:kotlinx.serialization.KSerializer get$cachedSerializer():26:26 -> serializer
+    1:9:kotlinx.serialization.KSerializer serializer():26 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.typed.Home -> y30:
+# {"id":"sourceFile","fileName":"TypedApp.kt"}
+    navapp.typed.Home INSTANCE -> INSTANCE
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Ly30;"}
+    kotlin.Lazy $cachedSerializer$delegate -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lma0;"}
+    3:5:void <init>():20:20 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:23:void <clinit>():20:20 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:9:kotlinx.serialization.KSerializer get$cachedSerializer():20:20 -> serializer
+    1:9:kotlinx.serialization.KSerializer serializer():20 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.typed.Login -> qd0:
+# {"id":"sourceFile","fileName":"TypedApp.kt"}
+    navapp.typed.Login INSTANCE -> INSTANCE
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lqd0;"}
+    kotlin.Lazy $cachedSerializer$delegate -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lma0;"}
+    3:5:void <init>():30:30 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:22:void <clinit>():30:30 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:9:kotlinx.serialization.KSerializer get$cachedSerializer():30:30 -> serializer
+    1:9:kotlinx.serialization.KSerializer serializer():30 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.typed.Login$$ExternalSyntheticLambda0 -> pd0:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    int Login$$ExternalSyntheticLambda0.$r8$classId -> d
+      # {"id":"com.android.tools.r8.synthesized"}
+    1:6:void Login$$ExternalSyntheticLambda0.<init>(int):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+    13:15:androidx.compose.ui.text.TextStyle androidx.compose.material3.tokens.TypographyTokensKt.getDefaultTextStyle():273:273 -> a
+    13:15:androidx.compose.ui.text.TextStyle androidx.compose.material3.TextKt.LocalTextStyle$lambda$0():654 -> a
+    13:15:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+      # {"id":"com.android.tools.r8.synthesized"}
+    16:27:kotlinx.serialization.KSerializer navapp.sections.Terms._init_$_anonymous_():20:20 -> a
+    16:27:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    28:34:androidx.compose.ui.unit.Dp androidx.compose.ui.unit.Dp.box-impl(float):0:0 -> a
+    28:34:androidx.compose.ui.unit.Dp androidx.compose.material3.SurfaceKt.LocalAbsoluteTonalElevation$lambda$0():790 -> a
+    28:34:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    35:42:kotlinx.serialization.KSerializer androidx.savedstate.serialization.serializers.StringListValue._childSerializers$_anonymous_():0:0 -> a
+    35:42:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    43:56:kotlinx.serialization.KSerializer androidx.savedstate.serialization.serializers.StringArrayValue._childSerializers$_anonymous_():0:0 -> a
+    43:56:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    57:64:kotlinx.serialization.KSerializer androidx.savedstate.serialization.serializers.SparseArraySerializer$SparseArraySurrogate._childSerializers$_anonymous_():0:0 -> a
+    57:64:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    65:66:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpTransformOrigin_delegate$lambda$0():331:331 -> a
+    65:66:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    67:68:long androidx.compose.ui.graphics.TransformOrigin.access$getCenter$cp():32:32 -> a
+    67:68:long androidx.compose.ui.graphics.TransformOrigin$Companion.getCenter-SzJe1aQ():71 -> a
+    67:68:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpTransformOrigin_delegate$lambda$0():331 -> a
+    67:68:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    69:73:androidx.compose.ui.graphics.TransformOrigin androidx.compose.ui.graphics.TransformOrigin.box-impl(long):0:0 -> a
+    69:73:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpTransformOrigin_delegate$lambda$0():331 -> a
+    69:73:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    74:79:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpTransformOrigin_delegate$lambda$0():331:331 -> a
+    74:79:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    80:81:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpVeil_delegate$lambda$0():327:327 -> a
+    80:81:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    82:83:long androidx.compose.ui.graphics.Color.access$getTransparent$cp():113:113 -> a
+    82:83:long androidx.compose.ui.graphics.Color$Companion.getTransparent-0d7_KjU():282 -> a
+    82:83:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpVeil_delegate$lambda$0():327 -> a
+    82:83:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    84:88:androidx.compose.ui.graphics.Color androidx.compose.ui.graphics.Color.box-impl(long):0:0 -> a
+    84:88:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpVeil_delegate$lambda$0():327 -> a
+    84:88:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    89:90:androidx.compose.ui.graphics.colorspace.Rgb androidx.compose.ui.graphics.colorspace.ColorSpaces.getSrgb():64:64 -> a
+    89:90:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpVeil_delegate$lambda$0():327 -> a
+    89:90:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    91:97:androidx.compose.animation.core.TwoWayConverter androidx.compose.animation.ColorVectorConverterKt.ColorToVector$lambda$0(androidx.compose.ui.graphics.colorspace.ColorSpace):33:33 -> a
+    91:97:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpVeil_delegate$lambda$0():327 -> a
+    91:97:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    98:104:androidx.compose.animation.core.TwoWayConverter androidx.compose.animation.core.VectorConvertersKt.TwoWayConverter(kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1):62:62 -> a
+    98:104:androidx.compose.animation.core.TwoWayConverter androidx.compose.animation.ColorVectorConverterKt.ColorToVector$lambda$0(androidx.compose.ui.graphics.colorspace.ColorSpace):33 -> a
+    98:104:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpVeil_delegate$lambda$0():327 -> a
+    98:104:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    105:108:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpVeil_delegate$lambda$0():327:327 -> a
+    105:108:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    109:110:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpSlide_delegate$lambda$0():324:324 -> a
+    109:110:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    111:117:androidx.compose.ui.unit.IntOffset androidx.compose.ui.unit.IntOffset.box-impl(long):0:0 -> a
+    111:117:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpSlide_delegate$lambda$0():324 -> a
+    111:117:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    118:123:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpSlide_delegate$lambda$0():324:324 -> a
+    118:123:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    124:128:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpScale_delegate$lambda$0():322:322 -> a
+    124:128:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    129:133:androidx.compose.animation.core.Animatable androidx.compose.animation.SharedMutableTransformState.catchUpAlpha_delegate$lambda$0():321:321 -> a
+    129:133:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    134:136:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0:0 -> a
+    137:142:androidx.compose.material3.Shapes androidx.compose.material3.ShapesKt.LocalShapes$lambda$0():409:409 -> a
+    137:142:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    143:154:kotlinx.serialization.KSerializer navapp.typed.Settings._init_$_anonymous_():24:24 -> a
+    143:154:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    155:157:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0:0 -> a
+    158:163:java.util.Set androidx.navigation3.scene.SceneSetupNavEntryDecoratorKt.LocalEntriesToExcludeFromCurrentScene$lambda$0():95:95 -> a
+    158:163:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    164:171:kotlinx.serialization.KSerializer androidx.savedstate.serialization.serializers.SavedStateListValue._childSerializers$_anonymous_():0:0 -> a
+    164:171:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    172:185:kotlinx.serialization.KSerializer androidx.savedstate.serialization.serializers.SavedStateArrayValue._childSerializers$_anonymous_():0:0 -> a
+    172:185:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    186:188:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0:0 -> a
+    189:190:androidx.compose.runtime.saveable.SaveableStateHolderImpl androidx.compose.runtime.saveable.SaveableStateHolderKt.rememberSaveableStateHolder$lambda$0$0():71:71 -> a
+    189:190:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    191:195:void androidx.compose.runtime.saveable.SaveableStateHolderImpl.<init>(java.util.Map,int,kotlin.jvm.internal.DefaultConstructorMarker):75:75 -> a
+    191:195:androidx.compose.runtime.saveable.SaveableStateHolderImpl androidx.compose.runtime.saveable.SaveableStateHolderKt.rememberSaveableStateHolder$lambda$0$0():71 -> a
+    191:195:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    196:199:void androidx.compose.runtime.saveable.SaveableStateHolderImpl.<init>(java.util.Map,int,kotlin.jvm.internal.DefaultConstructorMarker):74:74 -> a
+    196:199:androidx.compose.runtime.saveable.SaveableStateHolderImpl androidx.compose.runtime.saveable.SaveableStateHolderKt.rememberSaveableStateHolder$lambda$0$0():71 -> a
+    196:199:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    200:205:androidx.compose.material3.RippleConfiguration androidx.compose.material3.RippleKt.LocalRippleConfiguration$lambda$0():157:157 -> a
+    200:205:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    206:217:kotlinx.serialization.KSerializer navapp.sections.PhotoGuide._init_$_anonymous_():11:11 -> a
+    206:217:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    218:229:kotlinx.serialization.KSerializer navapp.sections.Onboarding._init_$_anonymous_():16:16 -> a
+    218:229:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    230:241:kotlinx.serialization.KSerializer androidx.savedstate.serialization.serializers.NullValue._init_$_anonymous_():216:216 -> a
+    230:241:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    242:244:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0:0 -> a
+    245:249:androidx.lifecycle.ViewModelProvider$Factory androidx.navigation.NavBackStackEntry.navResultSavedStateFactory_delegate$lambda$0():352:352 -> a
+    245:249:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    250:256:androidx.lifecycle.ViewModelProvider$Factory androidx.navigation.NavBackStackEntry.navResultSavedStateFactory_delegate$lambda$0():88:88 -> a
+    250:256:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    257:265:androidx.lifecycle.ViewModelProvider$Factory androidx.navigation.NavBackStackEntry.navResultSavedStateFactory_delegate$lambda$0():353:353 -> a
+    257:265:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    266:270:androidx.lifecycle.ViewModelProvider$Factory androidx.navigation.NavBackStackEntry.navResultSavedStateFactory_delegate$lambda$0():352:352 -> a
+    266:270:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    271:276:androidx.lifecycle.SavedStateViewModelFactory androidx.navigation.NavBackStackEntry.defaultFactory_delegate$lambda$0():82:82 -> a
+    271:276:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    277:282:androidx.compose.material3.MaterialTheme$Values androidx.compose.material3.MaterialThemeKt._localMaterialTheme$lambda$0():311:311 -> a
+    277:282:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+    283:287:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0:0 -> a
+    288:300:kotlinx.serialization.KSerializer navapp.typed.Login._init_$_anonymous_():30:30 -> a
+    288:300:java.lang.Object Login$$ExternalSyntheticLambda0.invoke():0 -> a
+navapp.typed.Profile -> yu0:
+# {"id":"sourceFile","fileName":"TypedApp.kt"}
+    navapp.typed.Profile$Companion Companion -> Companion
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lxu0;"}
+    java.lang.String id -> a
+    3:5:void navapp.typed.Profile$Companion.<init>():22:22 -> <clinit>
+    3:5:void navapp.typed.Profile$Companion.<init>(kotlin.jvm.internal.DefaultConstructorMarker):0 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:8:void <clinit>():0:0 -> <clinit>
+    6:22:void <init>(int,java.lang.String,kotlinx.serialization.internal.SerializationConstructorMarker):22:22 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Ljava/lang/String;I)V"}
+    23:23:void <init>(java.lang.String):22:22 -> <init>
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()V"}
+    5:24:boolean equals(java.lang.Object):0:0 -> equals
+    1:7:int hashCode():0:0 -> hashCode
+    5:11:java.lang.String toString():0:0 -> toString
+    5:11:java.lang.String Profile.toString():0 -> toString
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.outlineCallsite","positions":{"1":12,"3":14,"6":17,"9":21,"12":26},"outline":"Ldq0;m(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;"}
+    12:12:java.lang.String toString():0:0 -> toString
+    14:14:java.lang.String toString():0:0 -> toString
+    17:17:java.lang.String toString():0:0 -> toString
+    21:21:java.lang.String toString():0:0 -> toString
+    26:26:java.lang.String toString():0:0 -> toString
+navapp.typed.Profile$$serializer -> wu0:
+# {"id":"sourceFile","fileName":"TypedApp.kt"}
+    navapp.typed.Profile$$serializer INSTANCE -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lwu0;"}
+    kotlinx.serialization.descriptors.SerialDescriptor descriptor -> descriptor
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lr31;"}
+    3:5:void <init>():22:22 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:23:void <clinit>():22:22 -> <clinit>
+    2:9:kotlinx.serialization.KSerializer[] childSerializers():22:22 -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()[Ld90;"}
+    1:22:navapp.typed.Profile deserialize(kotlinx.serialization.encoding.Decoder):22:22 -> b
+    1:22:java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder):22 -> b
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lol1;)Ljava/lang/Object;"}
+    23:28:java.lang.String kotlinx.serialization.encoding.AbstractDecoder.decodeStringElement(kotlinx.serialization.descriptors.SerialDescriptor,int):58:58 -> b
+    23:28:navapp.typed.Profile deserialize(kotlinx.serialization.encoding.Decoder):22 -> b
+    23:28:java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder):22 -> b
+    29:42:navapp.typed.Profile deserialize(kotlinx.serialization.encoding.Decoder):22:22 -> b
+    29:42:java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder):22 -> b
+    1:5:void serialize(kotlinx.serialization.encoding.Encoder,java.lang.Object):22:22 -> d
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Lan1;Ljava/lang/Object;)V"}
+    6:11:void serialize(kotlinx.serialization.encoding.Encoder,navapp.typed.Profile):22:22 -> d
+    6:11:void serialize(kotlinx.serialization.encoding.Encoder,java.lang.Object):22 -> d
+    12:17:void navapp.typed.Profile.write$Self$app(navapp.typed.Profile,kotlinx.serialization.encoding.CompositeEncoder,kotlinx.serialization.descriptors.SerialDescriptor):22:22 -> d
+    12:17:void serialize(kotlinx.serialization.encoding.Encoder,navapp.typed.Profile):22 -> d
+    12:17:void serialize(kotlinx.serialization.encoding.Encoder,java.lang.Object):22 -> d
+    1:3:kotlinx.serialization.descriptors.SerialDescriptor getDescriptor():0:0 -> e
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Lr31;"}
+navapp.typed.Profile$Companion -> xu0:
+# {"id":"sourceFile","fileName":"TypedApp.kt"}
+    1:3:kotlinx.serialization.KSerializer serializer():22:22 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+navapp.typed.Settings -> i41:
+# {"id":"sourceFile","fileName":"TypedApp.kt"}
+    navapp.typed.Settings INSTANCE -> INSTANCE
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Li41;"}
+    kotlin.Lazy $cachedSerializer$delegate -> a
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lma0;"}
+    3:5:void <init>():24:24 -> <clinit>
+    3:5:void <clinit>():0 -> <clinit>
+    6:7:void <clinit>():0:0 -> <clinit>
+    8:23:void <clinit>():24:24 -> <clinit>
+    5:11:boolean equals(java.lang.Object):0:0 -> equals
+    1:4:int hashCode():0:0 -> hashCode
+    1:9:kotlinx.serialization.KSerializer get$cachedSerializer():24:24 -> serializer
+    1:9:kotlinx.serialization.KSerializer serializer():24 -> serializer
+      # {"id":"com.android.tools.r8.residualsignature","signature":"()Ld90;"}
+    1:3:java.lang.String toString():0:0 -> toString
+navapp.views.AboutFragment -> navapp.views.AboutFragment:
+# {"id":"sourceFile","fileName":"ViewsActivity.kt"}
+    2:5:void <init>():46:46 -> <init>
+    4:13:void onViewCreated(android.view.View,android.os.Bundle):48:48 -> d1
+navapp.views.AboutFragment$$ExternalSyntheticLambda0 -> d:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    int AboutFragment$$ExternalSyntheticLambda0.$r8$classId -> a
+      # {"id":"com.android.tools.r8.synthesized"}
+    navapp.views.AboutFragment navapp.views.AboutFragment$$InternalSyntheticLambda$1$a6b2d1b434d8a5b6a07e4f8221eec847583159b8a8dbb9ed2629dab8b725428a$0.f$0 -> b
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Landroidx/fragment/app/m;"}
+      # {"id":"com.android.tools.r8.synthesized"}
+    1:8:void AboutFragment$$ExternalSyntheticLambda0.<init>(androidx.fragment.app.Fragment,int):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Landroidx/fragment/app/m;I)V"}
+    10:20:void navapp.views.SettingsFragment.onViewCreated$lambda$0(navapp.views.SettingsFragment,android.view.View):38:38 -> onClick
+    10:20:void AboutFragment$$ExternalSyntheticLambda0.onClick(android.view.View):0 -> onClick
+      # {"id":"com.android.tools.r8.synthesized"}
+    21:22:void AboutFragment$$ExternalSyntheticLambda0.onClick(android.view.View):0:0 -> onClick
+    23:33:void navapp.views.ListFragment.onViewCreated$lambda$0(navapp.views.ListFragment,android.view.View):20:20 -> onClick
+    23:33:void AboutFragment$$ExternalSyntheticLambda0.onClick(android.view.View):0 -> onClick
+    34:35:void AboutFragment$$ExternalSyntheticLambda0.onClick(android.view.View):0:0 -> onClick
+    36:46:void navapp.views.DetailFragment.onViewCreated$lambda$0(navapp.views.DetailFragment,android.view.View):26:26 -> onClick
+    36:46:void AboutFragment$$ExternalSyntheticLambda0.onClick(android.view.View):0 -> onClick
+    47:48:void AboutFragment$$ExternalSyntheticLambda0.onClick(android.view.View):0:0 -> onClick
+    49:64:void navapp.views.AboutFragment.onViewCreated$lambda$0(navapp.views.AboutFragment,android.view.View):49:49 -> onClick
+    49:64:void AboutFragment$$ExternalSyntheticLambda0.onClick(android.view.View):0 -> onClick
+navapp.views.DetailFragment -> navapp.views.DetailFragment:
+# {"id":"sourceFile","fileName":"ViewsActivity.kt"}
+    2:5:void <init>():24:24 -> <init>
+    4:12:void onViewCreated(android.view.View,android.os.Bundle):26:26 -> d1
+    13:22:void onViewCreated(android.view.View,android.os.Bundle):27:27 -> d1
+navapp.views.DetailFragment$$ExternalSyntheticLambda1 -> jp:
+# {"id":"sourceFile","fileName":"R8$$SyntheticClass"}
+# {"id":"com.android.tools.r8.synthesized"}
+    int DetailFragment$$ExternalSyntheticLambda1.$r8$classId -> a
+      # {"id":"com.android.tools.r8.synthesized"}
+    navapp.views.DetailFragment navapp.views.DetailFragment$$InternalSyntheticLambda$1$a4015a589d34ddfb057144ecb407967bc8c3651997b23e0f07cde351dfa282b8$1.f$0 -> b
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Landroidx/fragment/app/m;"}
+      # {"id":"com.android.tools.r8.synthesized"}
+    1:8:void DetailFragment$$ExternalSyntheticLambda1.<init>(androidx.fragment.app.Fragment,int):0:0 -> <init>
+      # {"id":"com.android.tools.r8.synthesized"}
+      # {"id":"com.android.tools.r8.residualsignature","signature":"(Landroidx/fragment/app/m;I)V"}
+    11:14:boolean navapp.views.SettingsFragment.onViewCreated$lambda$1(navapp.views.SettingsFragment,android.view.View):40:40 -> onLongClick
+    11:14:boolean DetailFragment$$ExternalSyntheticLambda1.onLongClick(android.view.View):0 -> onLongClick
+      # {"id":"com.android.tools.r8.synthesized"}
+    15:18:void androidx.activity.result.ActivityResultLauncher.launch(java.lang.Object):40:40 -> onLongClick
+    15:18:boolean navapp.views.SettingsFragment.onViewCreated$lambda$1(navapp.views.SettingsFragment,android.view.View):40 -> onLongClick
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    15:18:boolean DetailFragment$$ExternalSyntheticLambda1.onLongClick(android.view.View):0 -> onLongClick
+    19:20:boolean DetailFragment$$ExternalSyntheticLambda1.onLongClick(android.view.View):0:0 -> onLongClick
+    21:32:boolean navapp.views.DetailFragment.onViewCreated$lambda$1(navapp.views.DetailFragment,android.view.View):28:28 -> onLongClick
+    21:32:boolean DetailFragment$$ExternalSyntheticLambda1.onLongClick(android.view.View):0 -> onLongClick
+navapp.views.InfoDialog -> navapp.views.InfoDialog:
+# {"id":"sourceFile","fileName":"ViewsActivity.kt"}
+    1:4:void <init>():54:54 -> <init>
+navapp.views.LicensesActivity -> navapp.views.LicensesActivity:
+# {"id":"sourceFile","fileName":"ViewsActivity.kt"}
+    1:4:void <init>():56:56 -> <init>
+navapp.views.LinkActivity -> navapp.views.LinkActivity:
+# {"id":"sourceFile","fileName":"ViewsActivity.kt"}
+    1:4:void <init>():59:59 -> <init>
+    1:3:void onCreate(android.os.Bundle):61:61 -> onCreate
+    4:14:void onCreate(android.os.Bundle):62:62 -> onCreate
+navapp.views.ListFragment -> navapp.views.ListFragment:
+# {"id":"sourceFile","fileName":"ViewsActivity.kt"}
+    2:5:void <init>():18:18 -> <init>
+    4:13:void onViewCreated(android.view.View,android.os.Bundle):20:20 -> d1
+navapp.views.PickActivity -> navapp.views.PickActivity:
+# {"id":"sourceFile","fileName":"Contracts.kt"}
+    1:4:void <init>():16:16 -> <init>
+navapp.views.SettingsFragment -> navapp.views.SettingsFragment:
+# {"id":"sourceFile","fileName":"ViewsActivity.kt"}
+    androidx.activity.result.ActivityResultLauncher pick -> p0
+      # {"id":"com.android.tools.r8.residualsignature","signature":"Lh2;"}
+    2:4:void <init>():34:34 -> <init>
+    5:7:void <init>():35:35 -> <init>
+    8:10:void androidx.activity.result.contract.ActivityResultContract.<init>():29:29 -> <init>
+    8:10:void navapp.views.PickContract.<init>():10 -> <init>
+    8:10:void <init>():35 -> <init>
+    11:26:void <init>():35:35 -> <init>
+    4:12:void onViewCreated(android.view.View,android.os.Bundle):38:38 -> d1
+    13:22:void onViewCreated(android.view.View,android.os.Bundle):39:39 -> d1
+navapp.views.ViewsActivity -> navapp.views.ViewsActivity:
+# {"id":"sourceFile","fileName":"ViewsActivity.kt"}
+    2:5:void <init>():16:16 -> <init>

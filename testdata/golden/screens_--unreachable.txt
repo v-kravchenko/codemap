@@ -24,11 +24,15 @@ Activities (11)
   SecondActivity                                     app                          app/src/main/java/navapp/impact/Constructors.kt:18
       ends at SecondActivity: nothing opens it
 
-Fragments (2)
+Fragments (4)
   CartFragment                                       app                          app/src/main/java/navapp/impact/GenericDi.kt:29
       ends at CartFragment: nothing opens it
+  InvoiceFragment                                    app                          app/src/main/java/navapp/crash/Crash.kt:32
+      ends at InvoiceFragment: nothing opens it
   OrdersFragment                                     app                          app/src/main/java/navapp/impact/GenericDi.kt:38
       ends at OrdersFragment: nothing opens it
+  ReceiptFragment                                    app                          app/src/main/java/navapp/crash/Crash.kt:38
+      ends at ReceiptFragment: nothing opens it
 
 Compose routes (2)
   DocsGuide                                          app                          app/src/main/java/navapp/sections/GuideActivity.kt  host GuideActivity
@@ -42,4 +46,4 @@ Compose routes (2)
 
 Not shown: preview 10 (--kind KIND, --kind all)
 
-(15 screens no entry of the manifest reaches, as far as the code map sees)
+(17 screens no entry of the manifest reaches, as far as the code map sees)

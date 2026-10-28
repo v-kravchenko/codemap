@@ -78,6 +78,10 @@ var goldenCalls = [][]string{
 	{"screens", "--kind", "preview"},
 	{"screens", "Screen", "--kind", "route", "--no-preview"},
 	{"impact", "navapp.sections.WelcomeScreen", "--kind", "all"},
+	{"crash", "crash/invoice.txt"}, // the frame of the ViewModel's coroutine, not the shared one that threw
+	{"crash", "crash/invoice-r8.txt", "--mapping", "crash/mapping.txt"},
+	{"crash", "crash/invoice-r8.txt"}, // obfuscated, no mapping
+	{"crash", "crash/worker.txt"},     // a cause, its entry a worker
 }
 
 // goldenText: the queries whose text is kept too, one per way of printing an answer.
@@ -97,6 +101,7 @@ var goldenText = [][]string{
 	{"nav-path", "Settings", "--via", "Profile"},
 	{"graph", "MainActivity", "--to", "InfoDialog"},
 	{"changes", "--files", "changed.txt"},
+	{"crash", "crash/invoice.txt"},
 }
 
 // TestGolden: the --json of goldenCalls on the fixture, without the run's meta, against

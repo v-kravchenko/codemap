@@ -7,6 +7,14 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Added
+
+- `crash [FILE]` reads a crash's stack trace, as Crashlytics exports it, logcat prints it or Java
+  writes it, and answers where it threw, the entry into the app's code and the screens and
+  components it ran for: those of the own frame reaching the fewest, so a shared helper that threw
+  no longer stands for every screen using it. `--mapping` reads an obfuscated trace by the build's
+  R8/ProGuard `mapping.txt`, inline chains and line ranges included (schema 4.3.0).
+
 ## [0.9.0] - 2026-10-28
 
 ### Added

@@ -6,15 +6,6 @@ itself.
 
 ## Next
 
-- **Stack trace input, with R8/ProGuard `mapping.txt`.** Feed a crash's stack trace (from a
-  debug or release build) and get back the affected screens/zones, the same way `impact`
-  does for a symbol name. Without `mapping.txt` support, an obfuscated release stack trace
-  can't be mapped back to real class/method names at all, so this is useless for the builds
-  that actually crash in production. Screens alone are not the answer: a crash in
-  `Application.onCreate`, a `Service`, a `BroadcastReceiver` or a `Worker` has no screen, so the
-  answer leads with where it crashed (deepest own frame, its module and zone) and the entry
-  point (lowest own frame), with screens only when the entry point reaches one; the map has the
-  manifest components and workers for those entry points (0027).
 - **Zones, with owners and a sensitive-zone exit code.** Group packages into named zones (e.g.
   "payments", "auth") with an owning team, a `zones check` that fails CI when a package has no
   zone or zones overlap, and a distinct exit code when a change touches a zone marked
