@@ -123,10 +123,11 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   `changes`, `nav-path`, `graph`, `screens`) implemented as a method on one `*Graph` type; each
   command has a file of its own, but there is no sub-package boundary between, say, the nav-path
   walk and the impact walk, so a change to shared helpers can affect every command at once.
-- `codemap init`'s project model (`codemap.model.json`) only tracks what Gradle reports for
-  modules, class directories, source sets, resources and manifests; it does not capture the
-  module dependency graph or the classpath of library dependencies, so nothing downstream can
-  reason about which module depends on which, or which library class backs an interface.
+- `codemap init`'s project model (`codemap.model.json`) has the modules, class directories, source
+  sets, resources, manifests and the declared project dependencies of each variant (0024), but not
+  the resolved classpath of library dependencies, so nothing can tell which library class backs an
+  interface; and only the missing modules read the module graph, no query answers which modules a
+  change ripples through.
 
 ## Tooling
 
