@@ -7,6 +7,8 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-28
+
 ### Added
 
 - `impact` and `changes` list the components a change reaches next to the screens: the application,
@@ -17,7 +19,6 @@ notes from its section here (`tools/release-notes.sh`).
 - `nav-path` starts a way at a push too: a screen the code of a service or receiver taking a push
   opens (`nav_path.push_actions`, Firebase's in the `android` preset) gets a `push` entry instead of
   `outside`, and `--entry push` starts there.
-
 - A query warns when codemap.yml or its presets give other settings than the map was built with,
   and with `--strict` exits 3: such a map may answer anything differently
   (`meta.index.stale_inputs.config`, schema 4.2.0).
@@ -155,7 +156,8 @@ The first public release.
   navigation events; anything project-specific goes into `codemap.yml`.
 - `codemap version`.
 
-[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/v-kravchenko/codemap/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/v-kravchenko/codemap/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/v-kravchenko/codemap/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/v-kravchenko/codemap/compare/v0.5.0...v0.6.0
