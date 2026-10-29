@@ -7,6 +7,8 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-10-29
+
 ### Added
 
 - `impact`, `changes` and `crash` say for each screen what the change reaches it through, in
@@ -201,7 +203,8 @@ The first public release.
   navigation events; anything project-specific goes into `codemap.yml`.
 - `codemap version`.
 
-[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/v-kravchenko/codemap/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/v-kravchenko/codemap/compare/v0.10.2...v0.11.0
 [0.10.2]: https://github.com/v-kravchenko/codemap/compare/v0.10.1...v0.10.2
 [0.10.1]: https://github.com/v-kravchenko/codemap/compare/v0.10.0...v0.10.1
