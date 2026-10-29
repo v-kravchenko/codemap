@@ -7,6 +7,8 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+## [0.12.1] - 2026-10-29
+
 ### Fixed
 
 - `via: opener` takes the whole navigator class, not only the method screens share: a screen calling
@@ -210,7 +212,8 @@ The first public release.
   navigation events; anything project-specific goes into `codemap.yml`.
 - `codemap version`.
 
-[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.12.1...HEAD
+[0.12.1]: https://github.com/v-kravchenko/codemap/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/v-kravchenko/codemap/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/v-kravchenko/codemap/compare/v0.10.2...v0.11.0
 [0.10.2]: https://github.com/v-kravchenko/codemap/compare/v0.10.1...v0.10.2
