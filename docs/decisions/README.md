@@ -61,3 +61,4 @@ a stale file path) may be fixed directly in place; a changed decision gets a new
 | [0027](0027-manifest-components.md) | Manifest components and workers: reached, listed apart from screens | accepted |
 | [0028](0028-push-entry.md) | A screen a push service opens has a push entry | accepted |
 | [0029](0029-crash-screens-by-the-narrowest-frame.md) | A crash's screens are those of its own frame reaching the fewest | accepted |
+| [0030](0030-uncompiled-classes-checked-by-sources.md) | Classes not compiled: the map is checked by its sources | accepted |

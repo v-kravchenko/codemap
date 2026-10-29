@@ -7,6 +7,13 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Fixed
+
+- A query no longer calls the map out of date where its classes are not compiled, as in a CI job
+  using a map built by another job from the same commit: a class directory with no class file is
+  not compiled rather than changed, and the map is checked by the sources, resources and manifests
+  alone; `meta.index.uncompiled` names those modules (schema 4.4.0).
+
 ## [0.10.1] - 2026-10-28
 
 ### Fixed

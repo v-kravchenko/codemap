@@ -29,8 +29,10 @@ var staleKinds = [][2]string{{"sources", "source files"}, {"resources", "resourc
 
 // staleInputs: the inputs that differ from the ones the map was built from, as (changed, added,
 // removed) relative paths, sorted. A file counts as changed when its size or mtime moved and its
-// content hash differs too.
-func staleInputs(m *snapshot.Map, root string) (changed, added, removed []string) {
+// content hash differs too. A class directory of the map with no class file now (a fresh checkout,
+// a clean) is not compiled rather than changed: its classes are left out of removed and the
+// directory is in absent, so the map is checked by the sources, resources and manifests alone.
+func staleInputs(m *snapshot.Map, root string) (changed, added, removed, absent []string) {
 	known := map[string]int{}
 	for i := range m.Input.Path.Len() {
 		known[m.Input.Path.At(i)] = i
@@ -102,15 +104,27 @@ func staleInputs(m *snapshot.Map, root string) (changed, added, removed []string
 			changed = append(changed, rel)
 		}
 	}
+	var empty []string // the class directories with no class file now, with /
+	for i, d := range dirs {
+		if len(lists[i]) == 0 {
+			empty = append(empty, filepath.ToSlash(d)+"/")
+		}
+	}
+	absentSet := map[string]bool{}
 	for p := range known {
-		if !seen[p] {
+		if seen[p] {
+			continue
+		}
+		if j := slices.IndexFunc(empty, func(d string) bool { return strings.HasPrefix(p, d) }); j >= 0 {
+			absentSet[strings.TrimSuffix(empty[j], "/")] = true
+		} else {
 			removed = append(removed, p)
 		}
 	}
 	slices.Sort(changed)
 	slices.Sort(added)
 	slices.Sort(removed)
-	return changed, added, removed
+	return changed, added, removed, util.SortedKeys(absentSet)
 }
 
 func inputDiffers(m *snapshot.Map, path string, k int) bool {
@@ -148,8 +162,8 @@ func UpToDate(snap, root string, modules, missing []project.Module) bool {
 			return false
 		}
 	}
-	c, a, r := staleInputs(m, root)
-	return len(c)+len(a)+len(r) == 0
+	c, a, r, absent := staleInputs(m, root) // classes not compiled: the map cannot be rebuilt as it is
+	return len(c)+len(a)+len(r)+len(absent) == 0
 }
 
 type missingModule struct {
@@ -202,8 +216,16 @@ type staleInfo struct {
 	config bool
 }
 
+// findStale: the stale inputs, nil when none; sets g.uncompiled.
 func (g *Graph) findStale() *staleInfo {
-	changed, added, removed := staleInputs(g.m, g.root)
+	changed, added, removed, absent := staleInputs(g.m, g.root)
+	g.uncompiled = []string{}
+	for _, d := range absent {
+		if md, ok := g.moduleDir(d + "/"); ok && !slices.Contains(g.uncompiled, md) {
+			g.uncompiled = append(g.uncompiled, md)
+		}
+	}
+	slices.Sort(g.uncompiled)
 	cfg := g.configChanged()
 	if len(changed)+len(added)+len(removed) == 0 && !cfg {
 		return nil

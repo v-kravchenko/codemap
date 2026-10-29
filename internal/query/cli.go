@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	schemaVersion = "4.3.0"
+	schemaVersion = "4.4.0"
 	exitOK        = 0
 	exitError     = 2
 )
@@ -356,9 +356,9 @@ func (g *Graph) printJSON(command string, result obj) {
 		commit = c
 	}
 	duration := float64(time.Since(started).Milliseconds()/10) / 100
-	var stale any
+	var stale, uncompiled any
 	if g.checked {
-		stale = g.stale != nil
+		stale, uncompiled = g.stale != nil, strs(g.uncompiled)
 	}
 	data := obj{
 		{"schema_version", schemaVersion},
@@ -367,7 +367,8 @@ func (g *Graph) printJSON(command string, result obj) {
 			{"tool_version", ToolVersion},
 			{"index", obj{{"version", m.MetaValue("index_version")}, {"variant", cmp.Or(config.Cfg.Variant, "debug")}, {"commit", commit},
 				{"dirty", m.MetaValue("dirty") == "1"}, {"inputs_sha1", m.MetaValue("inputs_sha1")},
-				{"stale", stale}, {"stale_inputs", g.staleJSON()}, {"missing_modules", strs(g.missingNames())}}},
+				{"stale", stale}, {"stale_inputs", g.staleJSON()}, {"uncompiled", uncompiled},
+				{"missing_modules", strs(g.missingNames())}}},
 			{"refs", g.refs},
 			{"run", obj{{"started_at", started.UTC().Format("2006-01-02T15:04:05Z")}, {"duration_s", duration}}},
 		}},

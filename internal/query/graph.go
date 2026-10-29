@@ -91,6 +91,7 @@ type Graph struct {
 	refs                       any                   // meta.refs of the --json (changes)
 	checked                    bool                  // whether the inputs were compared with the map's (not --no-check)
 	stale                      *staleInfo            // nil: up to date or not checked
+	uncompiled                 []string              // the modules whose class directories hold no class file now; nil: not checked
 	resChanges                 map[int32][]resChange // changes: the changed files of each resource seed
 	removed                    []removedScreen       // changes: the screens it removes, nil when nothing tells
 	base                       *Graph                // changes: the map of the base (--base-db), nil without

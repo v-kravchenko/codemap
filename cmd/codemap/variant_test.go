@@ -155,3 +155,36 @@ func TestConfigStale(t *testing.T) {
 		t.Errorf("rebuilt: still stale\n%.1500s", out)
 	}
 }
+
+// TestUncompiled: a map used where its classes are not compiled (a fresh checkout of its commit) is
+// checked by its sources: up to date while they are the same, stale with the module to compile once
+// one is edited.
+func TestUncompiled(t *testing.T) {
+	root := fixture.FixtureRoot(t)
+	run := func(args ...string) (string, error) {
+		cmd := exec.Command(os.Args[0], args...)
+		cmd.Dir, cmd.Env = root, append(os.Environ(), "CODEMAP_AS_MAIN=1")
+		out, err := cmd.CombinedOutput()
+		return string(out), err
+	}
+	if out, err := run("build"); err != nil {
+		t.Fatalf("build: %v\n%s", err, out)
+	}
+	os.RemoveAll(filepath.Join(root, "app/classes"))
+	out, err := run("screens", "--json", "--strict")
+	if err != nil || !strings.Contains(out, `"stale": false`) || !strings.Contains(out, `"uncompiled": [
+        "app"
+      ]`) || strings.Contains(out, "warning") {
+		t.Errorf("classes removed: %v\n%.1500s", err, out)
+	}
+	f, _ := os.OpenFile(filepath.Join(root, "app/src/main/java/navapp/MainActivity.kt"), os.O_APPEND|os.O_WRONLY, 0)
+	f.WriteString("\n// edited\n")
+	f.Close()
+	out, err = run("screens", "--strict")
+	if e, ok := err.(*exec.ExitError); !ok || e.ExitCode() != 3 || !strings.Contains(out, "compile the debug classes of app") {
+		t.Errorf("source edited: %v\n%.1500s", err, out)
+	}
+	if out, _ := run("build"); strings.Contains(out, "up to date") {
+		t.Errorf("build without classes: up to date\n%s", out)
+	}
+}
