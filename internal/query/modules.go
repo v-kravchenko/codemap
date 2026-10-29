@@ -101,7 +101,7 @@ func (g *Graph) moduleFilter(globs []string) *moduleFilter {
 			}
 		}
 		if !found {
-			panic(util.UserError(fmt.Sprintf("argument --module: %q matches no module of the code map", r.glob)))
+			panic(queryError{kind: "not_found", reason: "no_module", msg: fmt.Sprintf("argument --module: %q matches no module of the code map", r.glob)})
 		}
 	}
 	return f

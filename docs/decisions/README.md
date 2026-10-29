@@ -62,3 +62,4 @@ a stale file path) may be fixed directly in place; a changed decision gets a new
 | [0028](0028-push-entry.md) | A screen a push service opens has a push entry | accepted |
 | [0029](0029-crash-screens-by-the-narrowest-frame.md) | A crash's screens are those of its own frame reaching the fewest | accepted |
 | [0030](0030-uncompiled-classes-checked-by-sources.md) | Classes not compiled: the map is checked by its sources | accepted |
+| [0031](0031-errors-in-json.md) | A failed query names its kind in `--json`, exit 2 kept | accepted |

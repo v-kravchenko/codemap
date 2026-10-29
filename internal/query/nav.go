@@ -133,7 +133,7 @@ func (g *Graph) screensOf(text string, allowMany bool) []int32 {
 		}
 	}
 	if nearest < 0 {
-		panic(util.UserError(fmt.Sprintf("No screen runs %s (as far as the code map sees)", text)))
+		panic(queryErr("not_reached", fmt.Sprintf("No screen runs %s (as far as the code map sees)", text)))
 	}
 	for s, k := range w.Screens {
 		if screenKinds[g.screens[s][0].Kind] && w.Aff[k].Depth == nearest {

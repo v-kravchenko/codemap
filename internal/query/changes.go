@@ -45,7 +45,7 @@ func (g *Graph) git(args ...string) string {
 	cmd.Stderr = &stderr
 	out, err := cmd.Output()
 	if err != nil {
-		panic(util.UserError(fmt.Sprintf("%s: %s", strings.Join(args, " "), strings.TrimSpace(stderr.String()))))
+		panic(queryErr("git", fmt.Sprintf("%s: %s", strings.Join(args, " "), strings.TrimSpace(stderr.String()))))
 	}
 	return string(out)
 }
@@ -283,7 +283,7 @@ func readInput(name string) string {
 			msg = pe.Err.Error()
 			msg = strings.ToUpper(msg[:1]) + msg[1:]
 		}
-		panic(util.UserError(fmt.Sprintf("cannot read %s: %s", name, msg)))
+		panic(queryErr("input", fmt.Sprintf("cannot read %s: %s", name, msg)))
 	}
 	return string(data)
 }
@@ -296,11 +296,11 @@ func (g *Graph) headOfMap(head string) string {
 		built = "?"
 	}
 	if built != sha {
-		panic(util.UserError(fmt.Sprintf("the code map is built from %s, not from --head %s (%s): check it out, compile "+
+		panic(queryErr("map", fmt.Sprintf("the code map is built from %s, not from --head %s (%s): check it out, compile "+
 			"the debug classes and run `codemap build`", built[:min(10, len(built))], head, sha[:min(10, len(sha))])))
 	}
 	if g.m.MetaValue("dirty") == "1" {
-		panic(util.UserError(fmt.Sprintf("the code map is built from a working tree with uncommitted changes, not from "+
+		panic(queryErr("map", fmt.Sprintf("the code map is built from a working tree with uncommitted changes, not from "+
 			"--head %s: build it from a clean checkout", head)))
 	}
 	return sha
@@ -509,7 +509,7 @@ func (g *Graph) defaultBase(head string) string {
 			return strings.TrimSpace(out)
 		}
 	}
-	panic(util.UserError("No base: pass --base REF"))
+	panic(queryErr("git", "No base: pass --base REF"))
 }
 
 // mergeBase: an explicit --base is a branch the change forked from, as the default is, so what landed
@@ -520,7 +520,7 @@ func (g *Graph) mergeBase(ref, head string) string {
 	}
 	out, ok := g.gitOK("merge-base", ref, head)
 	if !ok {
-		panic(util.UserError(fmt.Sprintf("No common commit of %s and %s: pass another --base", ref, head)))
+		panic(queryErr("git", fmt.Sprintf("No common commit of %s and %s: pass another --base", ref, head)))
 	}
 	return strings.TrimSpace(out)
 }

@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/v-kravchenko/codemap/internal/stack"
-	"github.com/v-kravchenko/codemap/internal/util"
 )
 
 // frame statuses: in the map; not in it, though its package is (removed, or made by R8); generated
@@ -50,14 +49,14 @@ func (g *Graph) cmdCrash(o opts) int {
 		if input == "-" {
 			input = "stdin"
 		}
-		panic(util.UserError("No stack trace in " + input + ": no line `at Class.method(File:N)` under an exception"))
+		panic(queryErr("input", "No stack trace in "+input+": no line `at Class.method(File:N)` under an exception"))
 	}
 	c := &crashAnswer{trace: tr, crashedAt: -1, entry: -1, anchor: -1, mapping: o.mapping != ""}
 	var m *stack.Mapping
 	if c.mapping {
 		var err error
 		if m, err = stack.ReadMapping(strings.NewReader(readInput(o.mapping))); err != nil {
-			panic(util.UserError("cannot read " + o.mapping + ": " + err.Error()))
+			panic(queryErr("input", "cannot read "+o.mapping+": "+err.Error()))
 		}
 	}
 	walks := map[Seed]*Walk{}

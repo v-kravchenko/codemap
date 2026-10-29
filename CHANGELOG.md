@@ -7,6 +7,12 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Added
+
+- A query that fails with `--json` prints an `error` object on stdout: its kind (usage, map, input,
+  git, not found, ambiguous, not reached) and, for a symbol or file not found, why: a module not
+  compiled, a file that is no input of the map, or not in the map (schema 4.5.0).
+
 ## [0.10.2] - 2026-10-29
 
 ### Fixed

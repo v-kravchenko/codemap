@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"regexp"
 	"runtime/debug"
 	"slices"
@@ -22,7 +23,7 @@ import (
 )
 
 const (
-	schemaVersion = "4.4.0"
+	schemaVersion = "4.5.0"
 	exitOK        = 0
 	exitError     = 2
 )
@@ -34,6 +35,12 @@ var (
 	started        = time.Now()
 	ToolVersion    = "dev" // set by the command from the release build or the module version
 )
+
+// queryError: a user error (exit 2) of a kind --json names (docs/json.md, Errors); a util.UserError
+// is a usage error. reason and module: why a not_found names nothing.
+type queryError struct{ kind, reason, module, msg string }
+
+func queryErr(kind, msg string) queryError { return queryError{kind: kind, msg: msg} }
 
 type opts struct {
 	db, variant, to, base, baseDB, head, diff, files, from, entry, direction, host, mapping string
@@ -157,11 +164,17 @@ func (o *opts) check(spec *command) {
 func Query(cmd string, args []string) (code int) {
 	defer func() {
 		if r := recover(); r != nil {
-			msg, ok := r.(util.UserError)
+			e, ok := r.(queryError)
+			if msg, usage := r.(util.UserError); usage {
+				e, ok = queryErr("usage", string(msg)), true
+			}
 			if !ok {
 				panic(r)
 			}
-			fmt.Fprintln(os.Stderr, "error: "+string(msg))
+			fmt.Fprintln(os.Stderr, "error: "+e.msg)
+			if slices.Contains(args, "--json") { // a script tells what failed without parsing the message
+				printError(cmd, e)
+			}
 			code = exitError
 		}
 	}()
@@ -214,16 +227,16 @@ func Query(cmd string, args []string) (code int) {
 func loadMap(path, rebuild string) (*snapshot.Map, config.Config) {
 	m, err := snapshot.LoadSnapshot(path)
 	if os.IsNotExist(err) {
-		panic(util.UserError(fmt.Sprintf("No code map at %s: run `%s`.", path, rebuild)))
+		panic(queryErr("map", fmt.Sprintf("No code map at %s: run `%s`.", path, rebuild)))
 	} else if err != nil {
-		panic(util.UserError(err.Error()))
+		panic(queryErr("map", err.Error()))
 	}
 	if v := m.MetaValue("index_version"); v != snapshot.IndexVersion {
-		panic(util.UserError(fmt.Sprintf("The code map at %s is from another version of the tool: run `codemap build`.", path)))
+		panic(queryErr("map", fmt.Sprintf("The code map at %s is from another version of the tool: run `codemap build`.", path)))
 	}
 	var c config.Config
 	if err := json.Unmarshal([]byte(m.MetaValue("config")), &c); err != nil {
-		panic(util.UserError(fmt.Sprintf("The code map at %s has no settings: run `codemap build`.", path)))
+		panic(queryErr("map", fmt.Sprintf("The code map at %s has no settings: run `codemap build`.", path)))
 	}
 	return m, c
 }
@@ -269,8 +282,7 @@ func (g *Graph) run(cmd string, o opts) int {
 func (g *Graph) resolveOne(text string, allowMany bool) []Seed {
 	found := g.resolve(text)
 	if len(found) == 0 {
-		parts := strings.Split(text, ".")
-		panic(util.UserError(fmt.Sprintf("Not found: %s (try `codemap find %s`)", text, parts[len(parts)-1])))
+		panic(g.notFound(text))
 	}
 	tops := map[int32]bool{}
 	for _, s := range found {
@@ -284,7 +296,7 @@ func (g *Graph) resolveOne(text string, allowMany bool) []Seed {
 			}
 			lines = append(lines, fmt.Sprintf("  %-60s %s", g.qualified(s.N), g.location(s.N)))
 		}
-		panic(util.UserError(strings.Join(lines, "\n")))
+		panic(queryErr("ambiguous", strings.Join(lines, "\n")))
 	}
 	return found
 }
@@ -347,6 +359,56 @@ func (g *Graph) pkg(n int32) (string, bool) {
 		return "", true
 	}
 	return strings.ReplaceAll(name[:i], "/", "."), true
+}
+
+// notFound: why text names nothing of the map: a file of a module not compiled when the map was
+// built, a file that is no input of it (a test, a generated source), else nothing of the map.
+func (g *Graph) notFound(text string) queryError {
+	parts := strings.Split(text, ".")
+	e := queryError{kind: "not_found", reason: "not_in_map", msg: fmt.Sprintf("Not found: %s (try `codemap find %s`)", text, parts[len(parts)-1])}
+	path := text
+	if pm := fileLine.FindStringSubmatch(text); pm != nil {
+		path = pm[1]
+	}
+	abs, _ := filepath.Abs(path)
+	rel, _ := filepath.Rel(g.root, abs)
+	rel = filepath.ToSlash(rel)
+	if _, in := g.fileID[rel]; in || !util.IsFile(path) {
+		if n := len(g.missingNames()); n > 0 {
+			e.msg += fmt.Sprintf("; the code map misses %d modules not compiled, it may be in one", n)
+		}
+		return e
+	}
+	variant := cmp.Or(config.Cfg.Variant, "debug")
+	own, _ := g.moduleDir(rel)
+	for _, mm := range g.missingNames() { // the module names of the model are their directories
+		if strings.HasPrefix(rel, mm+"/") && len(mm) > len(own) {
+			own, e.module = mm, mm
+		}
+	}
+	if e.module != "" {
+		e.reason, e.msg = "not_compiled", fmt.Sprintf("Not in the code map: %s is in %s, not compiled when the map was built; "+
+			"compile its %s classes, then run `codemap build`", rel, e.module, variant)
+	} else {
+		e.reason, e.msg = "not_input", fmt.Sprintf("Not in the code map: %s is no source, resource or manifest of the %s variant", rel, variant)
+	}
+	return e
+}
+
+// printError: the --json of a failed query: no meta, the map may not have loaded.
+func printError(command string, e queryError) {
+	var reason, module any
+	if e.reason != "" {
+		reason = e.reason
+	}
+	if e.module != "" {
+		module = e.module
+	}
+	b := bufio.NewWriter(os.Stdout)
+	writeJSON(b, obj{{"schema_version", schemaVersion}, {"command", command},
+		{"error", obj{{"kind", e.kind}, {"reason", reason}, {"module", module}, {"message", e.msg}}}}, 0)
+	b.WriteString("\n")
+	b.Flush()
 }
 
 func (g *Graph) printJSON(command string, result obj) {
