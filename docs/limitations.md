@@ -38,6 +38,11 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   Workaround: keep shared bases `abstract` (the test fixture `testdata/navapp` does this
   deliberately, see `BaseActivity`/`BaseVmFragment` in `impact/Overrides.kt` and
   `impact/GenericDi.kt`).
+- `via` (docs/decisions/0032) tells shared code by the map alone: a screen that routes a push or
+  opens a flow by code of its own, not through a navigator other screens share, is `direct`; a
+  registry naming fewer classes than `impact.hub_subtypes`, or a base of fewer subclasses than
+  `impact.base_subclasses`, is not told; a way crossing several kinds of shared code takes the
+  weakest. The thresholds are not listed per node anywhere: `impact --to SCREEN` shows the way.
 - A shared resource or constant (`@string`, `@color`, a `const val` many screens read) reaches
   every reader, whether or not the reader's behaviour depends on the value, so `impact` on it is
   wide. Workaround: run `impact` on the code that uses the value when you can.

@@ -257,6 +257,22 @@
         }
       }
     },
+    "impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hub_subtypes": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Classes below one supertype a method names that make it a hub: impact marks the screens reached through it via hub."
+        },
+        "base_subclasses": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Subclasses that make a class a shared base: impact marks the screens reached only through code it shares via base."
+        }
+      }
+    },
     "graph": {
       "type": "object",
       "additionalProperties": false,

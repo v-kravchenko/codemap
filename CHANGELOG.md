@@ -7,6 +7,16 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Added
+
+- `impact`, `changes` and `crash` say for each screen what the change reaches it through, in
+  `--json` `via` and in the text: `direct`, `opener` (a navigator shared by many screens), `hub` (a
+  method naming many classes of one supertype) or `base` (code a base class runs for all its
+  subclasses); `--direct` keeps the direct ones (schema 4.6.0). The answer is otherwise the same.
+  New settings `impact.hub_subtypes` and `impact.base_subclasses`, set by the `android` preset: a map
+  built by an earlier version is out of date for its settings until rebuilt (the build hook or
+  `codemap build` does it).
+
 ## [0.11.0] - 2026-10-29
 
 ### Added

@@ -108,7 +108,7 @@ func (g *Graph) walkOpenedBy(sid int32) (ways map[int32]Way, bases map[int32][]i
 	baseSet, skip := map[int32]bool{}, map[int32]bool{}
 	for round := range hubRounds {
 		alt := map[Key][]Parent{}
-		w := g.walk(seeds, -1, nil, skip, baseSet, alt)
+		w := g.walk(seeds, -1, nil, skip, baseSet, alt, nil)
 		if round == 0 { // later rounds skip the hubs, not the code a push runs
 			for _, c := range w.ComponentOrder {
 				if g.pushComponents[c] {

@@ -82,6 +82,9 @@ type impactAnswer struct {
 	mf           *moduleFilter
 	byKind       map[string][]screenItem
 	hidden       map[string]int
+	via          map[int32]int  // screen -> viaDirect...viaBase
+	direct       bool           // --direct
+	hiddenVia    map[string]int // with --direct: the screens left out, by via
 	outScreens   int
 	components   []componentItem
 	outComps     int            // components outside --module
@@ -106,8 +109,9 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 	if len(seeds) > 0 {
 		a.w = g.impact(seeds, o.depth)
 	}
+	a.via = g.screenVia(seeds, o.depth, a.w)
 	a.elapsed = time.Since(t)
-	g.impactScreens(a, shownKinds(o), o.noPreview)
+	g.impactScreens(a, o)
 	g.impactComponents(a)
 	if command == "changes" {
 		a.qualifiers = g.screenQualifiers(seeds, o.depth)
@@ -138,13 +142,15 @@ func (g *Graph) reportImpactWith(seeds []Seed, o opts, command string, nc []notC
 
 // impactScreens: the screens reached, by kind, nearest first; those of a kind not shown and those
 // outside --module counted.
-func (g *Graph) impactScreens(a *impactAnswer, shown map[string]bool, noPreview bool) {
-	w := a.w
-	a.byKind, a.hidden = map[string][]screenItem{}, map[string]int{}
+func (g *Graph) impactScreens(a *impactAnswer, o opts) {
+	w, shown, noPreview := a.w, shownKinds(o), o.noPreview
+	a.byKind, a.hidden, a.hiddenVia, a.direct = map[string][]screenItem{}, map[string]int{}, map[string]int{}, o.direct
 	for _, n := range w.ScreenOrder {
 		r := g.screens[n][0]
 		if !a.mf.keeps(g.module(n)) {
 			a.outScreens++
+		} else if o.direct && a.via[n] != viaDirect {
+			a.hiddenVia[viaNames[a.via[n]]]++
 		} else if noPreview && (!screenKinds[r.Kind] || len(g.previews[n]) > 0) {
 			continue
 		} else if shown[r.Kind] {
@@ -297,6 +303,9 @@ func (g *Graph) impactJSON(a *impactAnswer, command string) {
 		{"not_covered", list(ncJSON)},
 		{"warnings", strs(a.warnings)},
 	}...)
+	if a.direct {
+		result = append(result, kv{"hidden_by_via", countsObj(a.hiddenVia)})
+	}
 	if a.mf != nil {
 		result = append(result, kv{"hidden_by_module", obj{{"screens", a.outScreens}, {"components", a.outComps}, {"affected", len(a.outSymbols)}}})
 	}
@@ -318,7 +327,7 @@ func (g *Graph) screensJSON(a *impactAnswer, command string) []any {
 				host = hostNames[0]
 			}
 			s := obj{{"kind", kind}, {"name", it.label}, {"target", it.target}, {"module", it.mod},
-				{"location", g.location(it.n)}, {"host", host}, {"hosts", strs(hostNames)}, {"depth", it.depth},
+				{"location", g.location(it.n)}, {"host", host}, {"hosts", strs(hostNames)}, {"depth", it.depth}, {"via", viaNames[a.via[it.n]]},
 				{"opened_from", strs(g.openedFromNames(it.n))}, {"previews", strs(g.previewNames(it.n))},
 				{"path", g.qualifiedPath(g.path(w, w.Screens[it.n]))}}
 			if nav, ok := a.navs[it.n]; ok {
@@ -427,6 +436,15 @@ func (g *Graph) screensText(a *impactAnswer, o opts) {
 	if len(a.hidden) > 0 {
 		fmt.Println("\n" + hiddenLine(a.hidden))
 	}
+	if len(a.hiddenVia) > 0 {
+		var parts []string
+		for _, v := range viaNames[1:] {
+			if c := a.hiddenVia[v]; c > 0 {
+				parts = append(parts, fmt.Sprintf("%s %d", v, c))
+			}
+		}
+		fmt.Printf("\nNot direct (--direct): %s\n", strings.Join(parts, ", "))
+	}
 	if len(a.components) > 0 {
 		fmt.Printf("\nComponents: %d\n", len(a.components))
 		for _, it := range a.components {
@@ -446,6 +464,9 @@ func (g *Graph) impactScreenText(a *impactAnswer, o opts, kind string, it screen
 			hl = append(hl, g.label(h))
 		}
 		extra = "  host " + strings.Join(hl, ", ")
+	}
+	if v := a.via[it.n]; v != viaDirect {
+		extra += "  via " + viaNames[v]
 	}
 	if g.isAdded(it.n) {
 		extra += "  new"

@@ -45,7 +45,7 @@ preset itself extends).
 
 | Preset | Adds | Use when |
 |---|---|---|
-| `android` | Activity/Fragment/DialogFragment base classes (AndroidX, AppCompat, Material, plain `android.app.Activity`); AGP 8/9 class dirs for `built_in_kotlinc` and `javac`; `main`/`{variant}` source sets; `changes.base: [origin/main, main]`; nav-path costs (`own:1 shared:3 push:30`, `branch_slack:4`, `path_limit:64`, `hub_min:10`); `graph.fanout:15`, `graph.max_edges:400` | Always — the default base screen/build settings for an Android app |
+| `android` | Activity/Fragment/DialogFragment base classes (AndroidX, AppCompat, Material, plain `android.app.Activity`); AGP 8/9 class dirs for `built_in_kotlinc` and `javac`; `main`/`{variant}` source sets; `changes.base: [origin/main, main]`; nav-path costs (`own:1 shared:3 push:30`, `branch_slack:4`, `path_limit:64`, `hub_min:10`); `impact.hub_subtypes:20`, `impact.base_subclasses:10`; `graph.fanout:15`, `graph.max_edges:400` | Always — the default base screen/build settings for an Android app |
 | `dagger-android` | Activity/Fragment/DialogFragment bases from the `dagger.android(.support)` package | The app still uses `dagger-android`'s own Activity/Fragment base classes |
 | `nav-events` | `navigation.open`: emitting on a `MutableSharedFlow`/`MutableStateFlow`/`MutableLiveData` opens the route it carries | Automatically pulled in by every `nav2-compose*`/`nav3` preset — a ViewModel's one-shot navigation event, collected by the screen, counts as opening the route |
 | `nav2-compose` | `navigation.typed_routes: true`; registers `composable<T>`/`dialog<T>`/the Compose `NavGraphBuilder` destination builders; `navigation<T>(startDestination = S)` and `NavGraphBuilder.<init>` as nested-graph registration; `navigate(Route)` and `NavHost` as open | Navigation Compose 2.8+ with type-safe (`@Serializable` class) routes |
@@ -384,6 +384,30 @@ nav_path:
 
 Type: integer, ≥ 1, default `10`. Screens below a node that make it a "hub" (shared navigator code
 drawn once instead of fanned out).
+
+### impact.hub_subtypes
+
+```yaml
+impact:
+  hub_subtypes: 20
+```
+
+Type: integer, ≥ 1, default `20`. A method naming this many classes below one supertype of the
+project (a registry of message types, a serializer module) is a hub: a screen the change to one of
+those classes reaches only through it gets `via: hub` in `impact` and `changes`
+(docs/decisions/0032). A change to the method itself is `direct`. Raise it when a plain class with
+many dependencies of one base counts as a hub; lower it to catch a smaller registry.
+
+### impact.base_subclasses
+
+```yaml
+impact:
+  base_subclasses: 10
+```
+
+Type: integer, ≥ 1, default `10`. A class with this many subclasses is a shared base: a screen the
+change reaches only through code of such a base run for no instance in particular (a base Activity
+observing a session) gets `via: base` (docs/decisions/0032). A change to the base itself is `direct`.
 
 ### graph.fanout
 

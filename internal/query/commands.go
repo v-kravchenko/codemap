@@ -26,6 +26,7 @@ var (
 	optAll      = flagSpec{name: "all", help: "every match of an ambiguous name instead of an error"}
 	optDepth    = flagSpec{name: "depth", arg: "N", help: "stop the walk after N steps (default: no limit)"}
 	optKind     = flagSpec{name: "kind", arg: "KIND", many: true, help: "list screens of this kind: activity, fragment, dialog, route, preview, layout or all (default: the first four)"}
+	optDirect   = flagSpec{name: "direct", help: "only the screens the change reaches through their own code, not through a navigator, a hub or a base class"}
 	optNoPrev   = flagSpec{name: "no-preview", help: "only the screens no preview draws (activities, fragments, dialogs, routes)"}
 	optNoPaths  = flagSpec{name: "no-paths", help: "leave out the way to each screen (text only; --json always has it)"}
 	optNav      = flagSpec{name: "nav", help: "add how the user reaches each affected screen"}
@@ -58,7 +59,7 @@ var commands = []command{
 	{name: "uses", args: "SYMBOL", query: true, about: "What a class, method or field uses directly.",
 		flags: []flagSpec{optAll, optModule}},
 	{name: "impact", args: "SYMBOL...", query: true, about: "What a change to the symbols reaches, up to the screens.",
-		flags: []flagSpec{optDepth, optKind, optNoPrev, optNoPaths,
+		flags: []flagSpec{optDepth, optKind, optNoPrev, optDirect, optNoPaths,
 			{name: "to", arg: "TARGET", help: "only the shortest way to this screen or symbol"},
 			optNav, optModule, optAll}},
 	{name: "changes", query: true, about: "The impact of a change: git against the base branch, a diff or a list of files.",
@@ -68,11 +69,11 @@ var commands = []command{
 			{name: "base-db", arg: "FILE", help: "the code map of the base: added and removed by the two maps, not by the base's text"},
 			{name: "diff", arg: "-|FILE", help: "a unified diff from stdin or a file instead of git diff"},
 			{name: "files", arg: "-|FILE", help: "lines of path, path:N or path:N-M instead of a diff"},
-			optNav, optDepth, optKind, optNoPrev, optNoPaths, optModule}},
+			optNav, optDepth, optKind, optNoPrev, optDirect, optNoPaths, optModule}},
 	{name: "crash", args: "[-|FILE]", query: true, about: "Where a crash's stack trace ran, and the screens and components it ran for.",
 		flags: []flagSpec{
 			{name: "mapping", arg: "FILE", help: "the R8/ProGuard mapping.txt of the build, for an obfuscated trace"},
-			optNav, optDepth, optKind, optNoPrev, optNoPaths, optModule}},
+			optNav, optDepth, optKind, optNoPrev, optDirect, optNoPaths, optModule}},
 	{name: "diff", query: true, about: "What this map has and another has not: screens, manifest entries, the screens that open them.",
 		flags: []flagSpec{
 			{name: "base", arg: "FILE", help: "the other code map: another variant's (build/codemap/release.snap) or another revision's"},

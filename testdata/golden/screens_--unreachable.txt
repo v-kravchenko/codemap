@@ -1,20 +1,26 @@
 
-Activities (11)
+Activities (18)
   AvatarActivity                                     app                          app/src/main/java/navapp/impact/DataClasses.kt:18
       ends at AvatarActivity: nothing opens it
   FirstActivity                                      app                          app/src/main/java/navapp/impact/Constructors.kt:12
       ends at FirstActivity: nothing opens it
+  FirstOpenerActivity                                app                          app/src/main/java/navapp/via/Via.kt:62
+      ends at FirstOpenerActivity: nothing opens it
   GuideActivity                                      app                          app/src/main/java/navapp/sections/GuideActivity.kt:18
       ends at GuideActivity: nothing opens it
   HelpActivity                                       app                          app/src/main/java/navapp/sections/HelpActivity.kt:10
       previews navapp.sections.HelpActivityKt.HelpPreview
       ends at HelpActivity: nothing opens it
+  InboxActivity                                      app                          app/src/main/java/navapp/via/Via.kt:28
+      ends at InboxActivity: nothing opens it
   LabelledCopyActivity                               app                          app/src/main/java/navapp/impact/Defaults.kt:23
       ends at LabelledCopyActivity: nothing opens it
   LimitActivity                                      app                          app/src/main/java/navapp/impact/Constants.kt:10
       ends at LimitActivity: nothing opens it
   LoudActivity                                       app                          app/src/main/java/navapp/impact/Overrides.kt:20
       ends at LoudActivity: nothing opens it
+  MessageActivity                                    app                          app/src/main/java/navapp/via/Via.kt:35
+      ends at MessageActivity: nothing opens it
   NicknameActivity                                   app                          app/src/main/java/navapp/impact/DataClasses.kt:11
       ends at NicknameActivity: nothing opens it
   PlainCopyActivity                                  app                          app/src/main/java/navapp/impact/Defaults.kt:16
@@ -23,6 +29,18 @@ Activities (11)
       ends at QuietActivity: nothing opens it
   SecondActivity                                     app                          app/src/main/java/navapp/impact/Constructors.kt:18
       ends at SecondActivity: nothing opens it
+  SecondOpenerActivity                               app                          app/src/main/java/navapp/via/Via.kt:69
+      ends at SecondOpenerActivity: nothing opens it
+  SlowActivity                                       app                          app/src/main/java/navapp/via/Via.kt:60
+      ends at FirstOpenerActivity: nothing opens it
+      ends at SecondOpenerActivity: nothing opens it
+      ends at ThirdOpenerActivity: nothing opens it
+  TargetActivity                                     app                          app/src/main/java/navapp/via/Via.kt:53
+      ends at FirstOpenerActivity: nothing opens it
+      ends at SecondOpenerActivity: nothing opens it
+      ends at ThirdOpenerActivity: nothing opens it
+  ThirdOpenerActivity                                app                          app/src/main/java/navapp/via/Via.kt:76
+      ends at ThirdOpenerActivity: nothing opens it
 
 Fragments (4)
   CartFragment                                       app                          app/src/main/java/navapp/impact/GenericDi.kt:29
@@ -46,4 +64,4 @@ Compose routes (2)
 
 Not shown: preview 10 (--kind KIND, --kind all)
 
-(17 screens no entry of the manifest reaches, as far as the code map sees)
+(24 screens no entry of the manifest reaches, as far as the code map sees)

@@ -92,7 +92,8 @@ func (g *Graph) cmdCrash(o opts) int {
 	if c.anchor >= 0 {
 		a.seeds, a.w = []Seed{c.frames[c.anchor].seed}, c.frames[c.anchor].walk
 	}
-	g.impactScreens(a, shownKinds(o), o.noPreview)
+	a.via = g.screenVia(a.seeds, o.depth, a.w)
+	g.impactScreens(a, o)
 	g.impactComponents(a)
 	if o.nav {
 		for _, items := range a.byKind {
@@ -337,6 +338,9 @@ func (g *Graph) crashJSON(c *crashAnswer) {
 		{"components", list(g.componentsJSON(a))},
 		{"hidden", countsObj(a.hidden)},
 		{"warnings", strs(c.warnings)},
+	}
+	if a.direct {
+		result = append(result, kv{"hidden_by_via", countsObj(a.hiddenVia)})
 	}
 	if a.mf != nil {
 		result = append(result, kv{"hidden_by_module", obj{{"screens", a.outScreens}, {"components", a.outComps}}})

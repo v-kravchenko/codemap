@@ -1,8 +1,8 @@
 {
-  "schema_version": "4.5.0",
+  "schema_version": "4.6.0",
   "command": "find",
   "pattern": "Activity",
-  "total": 23,
+  "total": 30,
   "synthetic": 2,
   "symbols": [
     {
@@ -16,6 +16,24 @@
       "kind": "resource",
       "module": "app",
       "location": "app/src/main/res/layout/activity_views.xml"
+    },
+    {
+      "symbol": "navapp.via.SlowActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:60"
+    },
+    {
+      "symbol": "navapp.via.InboxActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:28"
+    },
+    {
+      "symbol": "navapp.via.TargetActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:53"
     },
     {
       "symbol": "navapp.views.LinkActivity",
@@ -40,6 +58,12 @@
       "kind": "class",
       "module": "app",
       "location": "app/src/main/java/navapp/impact/Overrides.kt:20"
+    },
+    {
+      "symbol": "navapp.via.MessageActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:35"
     },
     {
       "symbol": "navapp.views.ViewsActivity",
@@ -114,6 +138,18 @@
       "location": "app/src/main/java/navapp/sections/HelpActivity.kt:19"
     },
     {
+      "symbol": "navapp.via.FirstOpenerActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:62"
+    },
+    {
+      "symbol": "navapp.via.ThirdOpenerActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:76"
+    },
+    {
       "symbol": "navapp.components.AlertActivity",
       "kind": "class",
       "module": "app",
@@ -124,6 +160,12 @@
       "kind": "class",
       "module": "app",
       "location": "app/src/main/java/navapp/impact/Defaults.kt:16"
+    },
+    {
+      "symbol": "navapp.via.SecondOpenerActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:69"
     },
     {
       "symbol": "navapp.impact.LabelledCopyActivity",

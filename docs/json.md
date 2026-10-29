@@ -11,7 +11,7 @@ strips it since `meta.run` is never reproducible).
 
 ```json
 {
-  "schema_version": "4.5.0",
+  "schema_version": "4.6.0",
   "command": "impact",
   "meta": {
     "tool_version": "0.3.0",
@@ -33,7 +33,7 @@ strips it since `meta.run` is never reproducible).
 }
 ```
 
-- `schema_version` — the shape of the JSON output (`"4.5.0"`, `internal/query/cli.go`). Independent
+- `schema_version` — the shape of the JSON output (`"4.6.0"`, `internal/query/cli.go`). Independent
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
   `"changes"`, `"diff"`, `"crash"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
@@ -98,7 +98,7 @@ stdout, an envelope with no `meta` (the map may not have loaded) and an `error` 
 
 ```json
 {
-  "schema_version": "4.5.0",
+  "schema_version": "4.6.0",
   "command": "impact",
   "error": {
     "kind": "not_found",
@@ -203,7 +203,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.5.0",
+  "schema_version": "4.6.0",
   "command": "used-by",
   "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
   "items": [
@@ -222,7 +222,7 @@ Result fields:
 ## impact
 
 ```
-codemap impact SYMBOL... [--depth N] [--kind KIND] [--no-paths] [--to TARGET] [--nav] [--module GLOB]... [--all] [--json]
+codemap impact SYMBOL... [--depth N] [--kind KIND] [--no-preview] [--direct] [--no-paths] [--to TARGET] [--nav] [--module GLOB]... [--all] [--json]
 ```
 
 - `SYMBOL...` (one or more, required) — the changed symbol(s); each resolved the same way as
@@ -231,6 +231,8 @@ codemap impact SYMBOL... [--depth N] [--kind KIND] [--no-paths] [--to TARGET] [-
 - `--kind KIND` — restrict which screen kinds are listed (repeatable; `all` lists every kind;
   valid kinds come from the screen titles: `activity`, `fragment`, `dialog`, `route`, `preview`,
   `layout`). Default: a fixed subset of "real" screen kinds (`screenKinds`).
+- `--direct` — only the screens whose `via` is `direct`; the others are counted in `hidden_by_via`
+  (since 4.6.0).
 - `--no-paths` — omit the dependency path in the text output (ignored for `--json`, which always
   includes `path`).
 - `--to TARGET` — instead of the full affected set, report only the shortest path from the changed
@@ -246,12 +248,19 @@ Result fields (full `impact`, no `--to`):
 - `affected` — every affected symbol **except** the seeds and screens already listed in `screens`,
   as `{symbol, kind, module, location, depth, path}`; `depth` is the walk distance, `path` the
   qualified names from a changed symbol down to this one.
-- `screens` — affected screens, as `{kind, name, target, module, location, host, hosts, depth,
+- `screens` — affected screens, as `{kind, name, target, module, location, host, hosts, depth, via,
   opened_from, previews, path[, nav]}`. `host`/`hosts`: the Activity/parent hosting a fragment/dialog (`host`
   is `hosts[0]` or `null`). `opened_from`: for a dialog, the screens observed to open it (by name);
   empty if none found. `previews`: as in `screens` (since 3.7.0); `--no-preview` keeps only the
   activities, fragments, dialogs and routes with none. `nav`: present only with `--nav`, `{entry, detail, cost, path}` (see
   `nav-path`) or `null` if no way was found.
+  `via` (since 4.6.0): what the change reaches the screen through, the strongest of its ways:
+  `direct` (code of its own and code it calls), `opener` (only through a navigator many screens open
+  others through: what it opens changes), `hub` (only through a method naming many classes of one
+  supertype, such as a registry of message types: `impact.hub_subtypes`), `base` (only through code a
+  base class of many screens runs for all of them: `impact.base_subclasses`). A way through several
+  of them takes the last in that order. It tells the kind of way, not whether the screen behaves
+  differently. A change to the navigator, the hub or the base itself is `direct`. docs/decisions/0032.
 - `components` — affected components, as `{kind, name, target, module, location, depth, path}`
   (since 4.2.0): `kind` is `application`, `service`, `receiver`, `provider` (a class the manifest
   of a module declares) or `worker` (a concrete class below `components.worker_bases`); `path` as
@@ -266,12 +275,13 @@ Result fields (full `impact`, no `--to`):
   `test_source`, `release_only`, `not_in_map`, `not_analysed`.
 - `warnings` — free-text warnings (e.g. a changed-but-unbuilt source edited after the map, from
   `changes`).
+- `hidden_by_via` — with `--direct` only: the screens left out, counted by `via` (since 4.6.0).
 - `hidden_by_module` — with `--module` only: `{screens, components, affected}`, the screens,
   components (since 4.2.0) and affected symbols (seeds aside) outside the modules; `modules` and `packages` count only the ones shown.
 
 ```json
 {
-  "schema_version": "4.5.0",
+  "schema_version": "4.6.0",
   "command": "impact",
   "changed": [
     {
@@ -292,7 +302,7 @@ Result fields (full `impact`, no `--to`):
     {
       "kind": "activity", "name": "FirstActivity", "target": "navapp.impact.FirstActivity",
       "module": "app", "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
-      "host": null, "hosts": [], "depth": 2, "opened_from": [],
+      "host": null, "hosts": [], "depth": 2, "via": "direct", "opened_from": [],
       "path": ["navapp.impact.CounterActivity.getCount", "navapp.impact.CounterActivity", "navapp.impact.FirstActivity"]
     }
   ],
@@ -311,7 +321,7 @@ previous one, `null` for the first step). Empty `steps` with no error means no p
 ## changes
 
 ```
-codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--nav] [--depth N] [--kind KIND] [--no-paths] [--module GLOB]... [--json]
+codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--nav] [--depth N] [--kind KIND] [--direct] [--no-paths] [--module GLOB]... [--json]
 ```
 
 - `--base REF` — the branch the change forked from: the diff starts at the merge-base of `REF` and
@@ -322,7 +332,7 @@ codemap changes [--base REF] [--head REF] [--diff -|FILE] [--files -|FILE] [--na
   have been built from exactly this commit, clean (no uncommitted changes), or the command fails.
 - `--diff -|FILE` — read a unified diff from stdin (`-`) or a file instead of running `git diff`.
 - `--files -|FILE` — read a list of `path`, `path:N` or `path:N-M` lines instead of a diff.
-- `--depth`, `--kind`, `--nav`, `--no-paths`, `--module`, `--json` — as in `impact`.
+- `--depth`, `--kind`, `--direct`, `--nav`, `--no-paths`, `--module`, `--json` — as in `impact`.
 - `--base-db FILE` — the code map of the base (`codemap build --out FILE` on a checkout of it):
   what the change adds and removes, by the two maps (docs/decisions/0022). Without it
   `changed[].status`, `screens[].added` and `removed` are `null`.
@@ -369,7 +379,7 @@ a dirty tree or of another variant than the head's adds and removes what the cha
 
 ```json
 {
-  "schema_version": "4.5.0",
+  "schema_version": "4.6.0",
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
@@ -417,7 +427,7 @@ Result: `screens`, `entries` and `opens`, each `{added, removed}`: `added` what 
 
 ```json
 {
-  "schema_version": "4.5.0",
+  "schema_version": "4.6.0",
   "command": "diff",
   "screens": {
     "added": [{ "name": "LinkActivity", "kind": "activity", "module": "app",
@@ -439,7 +449,7 @@ Result: `screens`, `entries` and `opens`, each `{added, removed}`: `added` what 
 ## crash
 
 ```
-codemap crash [-|FILE] [--mapping FILE] [--nav] [--depth N] [--kind KIND]... [--no-preview] [--no-paths] [--module GLOB]... [--json]
+codemap crash [-|FILE] [--mapping FILE] [--nav] [--depth N] [--kind KIND]... [--no-preview] [--direct] [--no-paths] [--module GLOB]... [--json]
 ```
 
 Where a crash's stack trace ran in the map, and the screens and components it ran for
@@ -449,7 +459,8 @@ included, `Suppressed` not). Since 4.3.0.
 
 - `--mapping FILE` — the R8/ProGuard `mapping.txt` of the build that crashed: frames it renames
   are read by their source names and lines; an inlined frame becomes the chain it stands for.
-- `--nav`, `--depth`, `--kind`, `--no-preview`, `--module` — as in `impact`, on the screens.
+- `--nav`, `--depth`, `--kind`, `--no-preview`, `--direct`, `--module` — as in `impact`, on the
+  screens (`via` from the frame the screens are of).
 
 Result:
 - `exceptions` — `{class, message}` of the exception and its causes, outermost first.
@@ -475,7 +486,7 @@ Result:
 
 ```json
 {
-  "schema_version": "4.5.0",
+  "schema_version": "4.6.0",
   "command": "crash",
   "exceptions": [{ "class": "java.lang.IllegalArgumentException", "message": "negative amount: -1" }],
   "crashed_at": { "frame": 0, "symbol": "navapp.crash.Money.format", "module": "app",
@@ -551,7 +562,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.5.0", "command": "nav-path",
+  "schema_version": "4.6.0", "command": "nav-path",
   "targets": [{ "name": "Login", "kind": "route", "module": "app",
     "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
   "screens": [
@@ -615,7 +626,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.5.0", "command": "graph",
+  "schema_version": "4.6.0", "command": "graph",
   "roots": ["Home"], "walk": "out", "to": [],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
@@ -674,7 +685,7 @@ where the walk back ends, as in `nav-path` (`{name, kind, module, location, host
 
 ```json
 {
-  "schema_version": "4.5.0", "command": "screens",
+  "schema_version": "4.6.0", "command": "screens",
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
@@ -716,7 +727,7 @@ module then location, truncated to `--limit`; `hidden_by_module` — with `--mod
 
 ```json
 {
-  "schema_version": "4.5.0", "command": "find", "pattern": "Activity",
+  "schema_version": "4.6.0", "command": "find", "pattern": "Activity",
   "total": 15, "synthetic": 0,
   "symbols": [
     { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",

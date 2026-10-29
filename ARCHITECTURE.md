@@ -102,6 +102,9 @@ records its depth, its parent and why (`calls`, `reads`, `extends`, ...), so eve
   never pass.
 - **Stops.** The walk stops at screens (a member of a screen class reports the screen), at routes, and
   does not walk through DI glue (Dagger/Hilt generated factories and components).
+- **Via.** Each screen says what the change reaches it through: the walk is rerun with the steps
+  into a shared navigator, a hub of many classes of one supertype, or a subclass from code its base
+  runs for all, cut; the fewest cuts a screen needs name it (`via.go`, docs/decisions/0032).
 - **Constants.** Kotlin inlines `const val`, so their users come from the sources in the map (files
   that name the constant and import it or share its package).
 

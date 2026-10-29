@@ -1,22 +1,29 @@
 
-Activities (17)
+Activities (24)
   AlertActivity                                      app                          app/src/main/java/navapp/components/Components.kt:84
   AvatarActivity                                     app                          app/src/main/java/navapp/impact/DataClasses.kt:18
   FirstActivity                                      app                          app/src/main/java/navapp/impact/Constructors.kt:12
+  FirstOpenerActivity                                app                          app/src/main/java/navapp/via/Via.kt:62
   GuideActivity                                      app                          app/src/main/java/navapp/sections/GuideActivity.kt:18
   HelpActivity                                       app                          app/src/main/java/navapp/sections/HelpActivity.kt:10
       previews navapp.sections.HelpActivityKt.HelpPreview
+  InboxActivity                                      app                          app/src/main/java/navapp/via/Via.kt:28
   LabelledCopyActivity                               app                          app/src/main/java/navapp/impact/Defaults.kt:23
   LicensesActivity                                   app                          app/src/main/java/navapp/views/ViewsActivity.kt:56
   LimitActivity                                      app                          app/src/main/java/navapp/impact/Constants.kt:10
   LinkActivity                                       app                          app/src/main/java/navapp/views/ViewsActivity.kt:59
   LoudActivity                                       app                          app/src/main/java/navapp/impact/Overrides.kt:20
   MainActivity                                       app                          app/src/main/java/navapp/MainActivity.kt:14
+  MessageActivity                                    app                          app/src/main/java/navapp/via/Via.kt:35
   NicknameActivity                                   app                          app/src/main/java/navapp/impact/DataClasses.kt:11
   PickActivity                                       app                          app/src/main/java/navapp/views/Contracts.kt:16
   PlainCopyActivity                                  app                          app/src/main/java/navapp/impact/Defaults.kt:16
   QuietActivity                                      app                          app/src/main/java/navapp/impact/Overrides.kt:22
   SecondActivity                                     app                          app/src/main/java/navapp/impact/Constructors.kt:18
+  SecondOpenerActivity                               app                          app/src/main/java/navapp/via/Via.kt:69
+  SlowActivity                                       app                          app/src/main/java/navapp/via/Via.kt:60
+  TargetActivity                                     app                          app/src/main/java/navapp/via/Via.kt:53
+  ThirdOpenerActivity                                app                          app/src/main/java/navapp/via/Via.kt:76
   ViewsActivity                                      app                          app/src/main/java/navapp/views/ViewsActivity.kt:16
 
 Fragments (8)

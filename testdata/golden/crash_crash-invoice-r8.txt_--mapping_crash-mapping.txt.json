@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.5.0",
+  "schema_version": "4.6.0",
   "command": "crash",
   "exceptions": [
     {
@@ -144,6 +144,7 @@
       "host": null,
       "hosts": [],
       "depth": 5,
+      "via": "direct",
       "opened_from": [],
       "previews": [],
       "path": [

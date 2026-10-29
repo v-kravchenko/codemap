@@ -35,6 +35,9 @@ nav_path:
   branch_slack: 4
   path_limit: 64
   hub_min: 10
+impact:
+  hub_subtypes: 20
+  base_subclasses: 10
 graph:
   fanout: 15
   max_edges: 400

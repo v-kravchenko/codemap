@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.5.0",
+  "schema_version": "4.6.0",
   "command": "screens",
   "screens": [
     {
@@ -38,6 +38,17 @@
     {
       "kind": "activity",
       "module": "app",
+      "name": "FirstOpenerActivity",
+      "target": "navapp.via.FirstOpenerActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/via/Via.kt:62",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
       "name": "GuideActivity",
       "target": "navapp.sections.GuideActivity",
       "host": null,
@@ -58,6 +69,17 @@
       "previews": [
         "navapp.sections.HelpActivityKt.HelpPreview"
       ]
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "InboxActivity",
+      "target": "navapp.via.InboxActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/via/Via.kt:28",
+      "content": [],
+      "previews": []
     },
     {
       "kind": "activity",
@@ -128,6 +150,17 @@
     {
       "kind": "activity",
       "module": "app",
+      "name": "MessageActivity",
+      "target": "navapp.via.MessageActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/via/Via.kt:35",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
       "name": "NicknameActivity",
       "target": "navapp.impact.NicknameActivity",
       "host": null,
@@ -177,6 +210,50 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/impact/Constructors.kt:18",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "SecondOpenerActivity",
+      "target": "navapp.via.SecondOpenerActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/via/Via.kt:69",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "SlowActivity",
+      "target": "navapp.via.SlowActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/via/Via.kt:60",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "TargetActivity",
+      "target": "navapp.via.TargetActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/via/Via.kt:53",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "ThirdOpenerActivity",
+      "target": "navapp.via.ThirdOpenerActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/via/Via.kt:76",
       "content": [],
       "previews": []
     },

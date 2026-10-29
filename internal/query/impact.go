@@ -105,6 +105,15 @@ func (g *Graph) isEnumEntry(n int32) bool {
 // impact: the walk runs twice; the second skips the calls the first shows cannot reach the change
 // (an enum entry switched on through a parameter, a default value of a passed argument).
 func (g *Graph) impact(seeds []Seed, maxDepth int) *Walk {
+	out := g.impactCut(seeds, maxDepth, nil)
+	for _, k := range out.Keys {
+		g.show(k.N)
+	}
+	return out
+}
+
+// impactCut: impact without the steps cut rejects (nil: none).
+func (g *Graph) impactCut(seeds []Seed, maxDepth int, cut func(parent Key, child int32) bool) *Walk {
 	var entries, rest []Seed
 	for _, s := range seeds {
 		if g.isEnumEntry(s.N) {
@@ -125,7 +134,7 @@ func (g *Graph) impact(seeds []Seed, maxDepth int) *Walk {
 	}
 	out := newWalk()
 	for _, group := range groups {
-		plain := g.walk(group, maxDepth, nil, nil, nil, nil)
+		plain := g.walk(group, maxDepth, nil, nil, nil, nil, cut)
 		blocked := g.blockedDefaults(group, plain)
 		if slices.Contains(entries, group[0]) {
 			for k := range g.blockedCalls(group[0].N, plain) {
@@ -134,7 +143,7 @@ func (g *Graph) impact(seeds []Seed, maxDepth int) *Walk {
 		}
 		res := plain
 		if len(blocked) > 0 {
-			res = g.walk(group, maxDepth, blocked, nil, nil, nil)
+			res = g.walk(group, maxDepth, blocked, nil, nil, nil, cut)
 		}
 		for _, k := range res.Keys {
 			if _, ok := out.Aff[k]; !ok {
@@ -148,9 +157,6 @@ func (g *Graph) impact(seeds []Seed, maxDepth int) *Walk {
 		for _, c := range res.ComponentOrder {
 			out.component(c, res.Components[c])
 		}
-	}
-	for _, k := range out.Keys {
-		g.show(k.N)
 	}
 	return out
 }
@@ -537,6 +543,7 @@ type walker struct {
 	skip     map[int32]bool
 	bases    map[int32]bool
 	alt      map[Key][]Parent
+	cut      func(parent Key, child int32) bool
 }
 
 // step: a reached key, its decoded context and the depth of what it reaches.
@@ -550,10 +557,10 @@ type step struct {
 }
 
 // walk: maxDepth < 0: no limit; nil maps: none. alt: the other parents of
-// a key at the depth of its first one.
+// a key at the depth of its first one; cut: the steps not taken.
 func (g *Graph) walk(seeds []Seed, maxDepth int, blocked map[[3]int32]bool,
-	skip map[int32]bool, bases map[int32]bool, alt map[Key][]Parent) *Walk {
-	wk := &walker{g: g, w: newWalk(), maxDepth: maxDepth, blocked: blocked, skip: skip, bases: bases, alt: alt}
+	skip map[int32]bool, bases map[int32]bool, alt map[Key][]Parent, cut func(Key, int32) bool) *Walk {
+	wk := &walker{g: g, w: newWalk(), maxDepth: maxDepth, blocked: blocked, skip: skip, bases: bases, alt: alt, cut: cut}
 	for _, s := range seeds {
 		wk.push(plainKey(s.N, s.Mode), 0, nil, "changed")
 	}
@@ -564,6 +571,9 @@ func (g *Graph) walk(seeds []Seed, maxDepth int, blocked map[[3]int32]bool,
 }
 
 func (wk *walker) push(k Key, depth int, parent *Key, why string) {
+	if wk.cut != nil && parent != nil && wk.cut(*parent, k.N) {
+		return
+	}
 	if a, ok := wk.w.Aff[k]; !ok {
 		v := &Aff{Depth: depth, Why: why}
 		if parent != nil {

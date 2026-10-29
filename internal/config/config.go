@@ -84,6 +84,10 @@ type Config struct {
 		PathLimit   int `yaml:"path_limit,omitempty" json:"path_limit,omitempty"`
 		HubMin      int `yaml:"hub_min,omitempty" json:"hub_min,omitempty"`
 	} `yaml:"nav_path,omitempty" json:"nav_path"`
+	Impact struct {
+		HubSubtypes    int `yaml:"hub_subtypes,omitempty" json:"hub_subtypes,omitempty"`
+		BaseSubclasses int `yaml:"base_subclasses,omitempty" json:"base_subclasses,omitempty"`
+	} `yaml:"impact,omitempty" json:"impact"`
 	Graph struct {
 		Fanout   int `yaml:"fanout,omitempty" json:"fanout,omitempty"`
 		MaxEdges int `yaml:"max_edges,omitempty" json:"max_edges,omitempty"`
@@ -414,6 +418,7 @@ func ApplyConfig(c *Config) {
 	StepOwn, StepShared, StepPush = pick(n.Costs.Own, 1), pick(n.Costs.Shared, 3), pick(n.Costs.Push, 30)
 	BranchSlack, PathLimit, HubMin = pick(n.BranchSlack, 4), pick(n.PathLimit, 64), pick(n.HubMin, 10)
 	GraphFanout, GraphEdges = pick(c.Graph.Fanout, 15), pick(c.Graph.MaxEdges, 400)
+	HubSubtypes, BaseSubclasses = pick(c.Impact.HubSubtypes, 20), pick(c.Impact.BaseSubclasses, 10)
 }
 
 // configCmd: codemap config check|print|schema.
@@ -477,6 +482,8 @@ var (
 	GraphFanout, GraphEdges       int
 	PathLimit                     int // the shortest ways opened_by tries for one pair
 	HubMin                        int // screens below a node that make it a hub
+	HubSubtypes                   int // classes below one supertype a method names that make it a hub of impact
+	BaseSubclasses                int // subclasses that make a class a shared base for impact's via
 )
 
 // screenTitles: the screen kinds in the order of the output, with their headings (a preview note set by applyConfig).
