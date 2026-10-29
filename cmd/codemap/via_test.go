@@ -56,8 +56,10 @@ func TestVia(t *testing.T) {
 		// a change to the hub itself reaches every screen reading it
 		{"navapp.via.MessageRegistry.decode", map[string]string{"InboxActivity": "direct"}},
 		{"navapp.via.Flags.getFast", map[string]string{"TargetActivity": "direct", "FirstOpenerActivity": "opener",
-			"SecondOpenerActivity": "opener", "ThirdOpenerActivity": "opener"}},
+			"SecondOpenerActivity": "opener", "ThirdOpenerActivity": "opener", "EntryActivity": "opener"}},
+		// a change to the navigator itself
 		{"navapp.via.Router.open", map[string]string{"FirstOpenerActivity": "direct"}},
+		{"navapp.via.Router.next", map[string]string{"FirstOpenerActivity": "direct", "EntryActivity": "direct"}},
 		// code a base runs for every subclass; a change to the base itself is direct
 		{"navapp.impact.Session.listen", map[string]string{"LoudActivity": "base"}},
 		{"navapp.impact.BaseActivity.observeLogout", map[string]string{"LoudActivity": "direct"}},
@@ -70,7 +72,7 @@ func TestVia(t *testing.T) {
 		}
 	}
 	got, hidden := vias("navapp.via.Flags.getFast", "--direct")
-	if len(got) != 1 || got["TargetActivity"] != "direct" || hidden["opener"] != 3 {
-		t.Errorf("impact --direct: %v, hidden %v; want TargetActivity alone, 3 openers hidden", got, hidden)
+	if len(got) != 1 || got["TargetActivity"] != "direct" || hidden["opener"] != 4 {
+		t.Errorf("impact --direct: %v, hidden %v; want TargetActivity alone, 4 openers hidden", got, hidden)
 	}
 }

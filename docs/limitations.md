@@ -39,7 +39,8 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   deliberately, see `BaseActivity`/`BaseVmFragment` in `impact/Overrides.kt` and
   `impact/GenericDi.kt`).
 - `via` (docs/decisions/0032) tells shared code by the map alone: a screen that routes a push or
-  opens a flow by code of its own, not through a navigator other screens share, is `direct`; a
+  opens a flow by code of its own, not through a navigator class other screens share, is `direct`;
+  a navigator made of top-level functions is told by its hub functions only; a
   registry naming fewer classes than `impact.hub_subtypes`, or a base of fewer subclasses than
   `impact.base_subclasses`, is not told; a way crossing several kinds of shared code takes the
   weakest. The thresholds are not listed per node anywhere: `impact --to SCREEN` shows the way.

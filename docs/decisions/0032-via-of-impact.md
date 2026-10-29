@@ -28,8 +28,10 @@ The label. Each screen of `impact`, `changes` and `crash` gets `via` (schema 4.6
 its ways, in this order:
 
 - `direct`: through code of its own and code it calls;
-- `opener`: only through a navigator many screens open others through (a hub of `opened_by`,
-  `nav_path.hub_min`): what the screen opens changes;
+- `opener`: only through a navigator many screens open others through, entered from another file: a
+  hub of `opened_by` (`nav_path.hub_min`), or any method of a class holding one, not of a file of
+  top-level functions (a method of the navigator only one screen calls routes like the rest): what
+  the screen opens changes;
 - `hub`: only through a method naming `impact.hub_subtypes` (20) or more classes below one supertype
   of the project, entered from one of those classes;
 - `base`: only through code of a class with `impact.base_subclasses` (10) or more subclasses, run for
@@ -47,7 +49,10 @@ is the same as before but for the field.
 - The walks cost three more runs of the impact walk; on a project of ~35k classes a query takes the
   same time, the walk being a small part of it.
 - `via` names a kind of way, not whether the screen behaves differently: a screen routing a push by
-  code of its own is `direct` even when it only opens the flow the change is in, and a screen whose
-  only way crosses a navigator and a base is `base`.
+  code of its own, not through a navigator other screens share, is `direct` even when it only opens
+  the flow the change is in, and a screen whose only way crosses a navigator and a base is `base`.
+- 0.12.1 widened the navigator from the hub method to its class: in 0.12.0 a screen calling a method
+  of the navigator no other screen calls (a splash routing a push) was `direct`, and a change inside
+  the navigator reaching its hub method made the screens behind it `opener`.
 - The thresholds are settings; `TestVia` checks the labels on the fixture with thresholds its few
   classes reach.

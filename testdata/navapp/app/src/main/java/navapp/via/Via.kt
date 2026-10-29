@@ -1,13 +1,12 @@
 package navapp.via
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 
 // How a change reaches a screen (impact's via): MessageA reaches MessageActivity directly and
 // InboxActivity only through MessageRegistry, a hub naming every Message; Flags.fast reaches
-// TargetActivity directly and the screens opening others through Router only as openers.
+// TargetActivity directly and the screens opening others through Router (Router.kt) only as
+// openers, EntryActivity too: it alone calls Router.restore, a method of the same navigator.
 
 interface Message
 
@@ -43,13 +42,6 @@ object Flags {
     var fast = false
 }
 
-object Router {
-    fun open(context: Context) {
-        val target = if (Flags.fast) TargetActivity::class.java else SlowActivity::class.java
-        context.startActivity(Intent(context, target))
-    }
-}
-
 class TargetActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,5 +69,12 @@ class ThirdOpenerActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Router.open(this)
+    }
+}
+
+class EntryActivity : FragmentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Router.restore(this)
     }
 }

@@ -256,7 +256,7 @@ Result fields (full `impact`, no `--to`):
   `nav-path`) or `null` if no way was found.
   `via` (since 4.6.0): what the change reaches the screen through, the strongest of its ways:
   `direct` (code of its own and code it calls), `opener` (only through a navigator many screens open
-  others through: what it opens changes), `hub` (only through a method naming many classes of one
+  others through, a class or its hub function, entered from another file: what it opens changes), `hub` (only through a method naming many classes of one
   supertype, such as a registry of message types: `impact.hub_subtypes`), `base` (only through code a
   base class of many screens runs for all of them: `impact.base_subclasses`). A way through several
   of them takes the last in that order. It tells the kind of way, not whether the screen behaves

@@ -27,6 +27,17 @@
     {
       "kind": "activity",
       "module": "app",
+      "name": "EntryActivity",
+      "target": "navapp.via.EntryActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/via/Via.kt:75",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
       "name": "FirstActivity",
       "target": "navapp.impact.FirstActivity",
       "host": null,
@@ -42,7 +53,7 @@
       "target": "navapp.via.FirstOpenerActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:62",
+      "location": "app/src/main/java/navapp/via/Via.kt:54",
       "content": [],
       "previews": []
     },
@@ -77,7 +88,7 @@
       "target": "navapp.via.InboxActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:28",
+      "location": "app/src/main/java/navapp/via/Via.kt:27",
       "content": [],
       "previews": []
     },
@@ -154,7 +165,7 @@
       "target": "navapp.via.MessageActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:35",
+      "location": "app/src/main/java/navapp/via/Via.kt:34",
       "content": [],
       "previews": []
     },
@@ -220,7 +231,7 @@
       "target": "navapp.via.SecondOpenerActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:69",
+      "location": "app/src/main/java/navapp/via/Via.kt:61",
       "content": [],
       "previews": []
     },
@@ -231,7 +242,7 @@
       "target": "navapp.via.SlowActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:60",
+      "location": "app/src/main/java/navapp/via/Via.kt:52",
       "content": [],
       "previews": []
     },
@@ -242,7 +253,7 @@
       "target": "navapp.via.TargetActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:53",
+      "location": "app/src/main/java/navapp/via/Via.kt:45",
       "content": [],
       "previews": []
     },
@@ -253,7 +264,7 @@
       "target": "navapp.via.ThirdOpenerActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:76",
+      "location": "app/src/main/java/navapp/via/Via.kt:68",
       "content": [],
       "previews": []
     },

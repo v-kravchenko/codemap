@@ -2,7 +2,7 @@
   "schema_version": "4.6.0",
   "command": "find",
   "pattern": "Activity",
-  "total": 30,
+  "total": 31,
   "synthetic": 2,
   "symbols": [
     {
@@ -21,19 +21,25 @@
       "symbol": "navapp.via.SlowActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:60"
+      "location": "app/src/main/java/navapp/via/Via.kt:52"
+    },
+    {
+      "symbol": "navapp.via.EntryActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:75"
     },
     {
       "symbol": "navapp.via.InboxActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:28"
+      "location": "app/src/main/java/navapp/via/Via.kt:27"
     },
     {
       "symbol": "navapp.via.TargetActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:53"
+      "location": "app/src/main/java/navapp/via/Via.kt:45"
     },
     {
       "symbol": "navapp.views.LinkActivity",
@@ -63,7 +69,7 @@
       "symbol": "navapp.via.MessageActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:35"
+      "location": "app/src/main/java/navapp/via/Via.kt:34"
     },
     {
       "symbol": "navapp.views.ViewsActivity",
@@ -141,13 +147,13 @@
       "symbol": "navapp.via.FirstOpenerActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:62"
+      "location": "app/src/main/java/navapp/via/Via.kt:54"
     },
     {
       "symbol": "navapp.via.ThirdOpenerActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:76"
+      "location": "app/src/main/java/navapp/via/Via.kt:68"
     },
     {
       "symbol": "navapp.components.AlertActivity",
@@ -165,7 +171,7 @@
       "symbol": "navapp.via.SecondOpenerActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:69"
+      "location": "app/src/main/java/navapp/via/Via.kt:61"
     },
     {
       "symbol": "navapp.impact.LabelledCopyActivity",

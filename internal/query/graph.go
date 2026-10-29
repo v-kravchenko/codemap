@@ -96,7 +96,7 @@ type Graph struct {
 	removed                    []removedScreen         // changes: the screens it removes, nil when nothing tells
 	base                       *Graph                  // changes: the map of the base (--base-db), nil without
 	moves                      *moves                  // moved(), nil not made yet
-	navHubs                    map[int32]bool          // isNavHub, nil not made yet
+	navHubs, navClasses        map[int32]bool          // isNavHub, nil not made yet
 	refSups                    map[int32]map[int32]int // isRegistry: method -> repo supertype -> classes it names below it
 }
 

@@ -7,6 +7,13 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Fixed
+
+- `via: opener` takes the whole navigator class, not only the method screens share: a screen calling
+  a method of the navigator no other screen calls (a splash routing a push) is `opener`, not
+  `direct`; a change inside the navigator itself is `direct` for the screens behind it, as a change
+  to a hub or a base is.
+
 ## [0.12.0] - 2026-10-29
 
 ### Added

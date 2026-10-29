@@ -32,6 +32,33 @@
     {
       "kind": "activity",
       "module": "app",
+      "name": "EntryActivity",
+      "target": "navapp.via.EntryActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/via/Via.kt:75",
+      "content": [],
+      "previews": [],
+      "entries": [
+        {
+          "name": "EntryActivity",
+          "kind": "activity",
+          "module": "app",
+          "location": "app/src/main/java/navapp/via/Via.kt:75",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "activity",
+      "module": "app",
       "name": "FirstActivity",
       "target": "navapp.impact.FirstActivity",
       "host": null,
@@ -63,7 +90,7 @@
       "target": "navapp.via.FirstOpenerActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:62",
+      "location": "app/src/main/java/navapp/via/Via.kt:54",
       "content": [],
       "previews": [],
       "entries": [
@@ -71,7 +98,7 @@
           "name": "FirstOpenerActivity",
           "kind": "activity",
           "module": "app",
-          "location": "app/src/main/java/navapp/via/Via.kt:62",
+          "location": "app/src/main/java/navapp/via/Via.kt:54",
           "host": null,
           "hosts": [],
           "entry": [
@@ -146,7 +173,7 @@
       "target": "navapp.via.InboxActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:28",
+      "location": "app/src/main/java/navapp/via/Via.kt:27",
       "content": [],
       "previews": [],
       "entries": [
@@ -154,7 +181,7 @@
           "name": "InboxActivity",
           "kind": "activity",
           "module": "app",
-          "location": "app/src/main/java/navapp/via/Via.kt:28",
+          "location": "app/src/main/java/navapp/via/Via.kt:27",
           "host": null,
           "hosts": [],
           "entry": [
@@ -254,7 +281,7 @@
       "target": "navapp.via.MessageActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:35",
+      "location": "app/src/main/java/navapp/via/Via.kt:34",
       "content": [],
       "previews": [],
       "entries": [
@@ -262,7 +289,7 @@
           "name": "MessageActivity",
           "kind": "activity",
           "module": "app",
-          "location": "app/src/main/java/navapp/via/Via.kt:35",
+          "location": "app/src/main/java/navapp/via/Via.kt:34",
           "host": null,
           "hosts": [],
           "entry": [
@@ -389,7 +416,7 @@
       "target": "navapp.via.SecondOpenerActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:69",
+      "location": "app/src/main/java/navapp/via/Via.kt:61",
       "content": [],
       "previews": [],
       "entries": [
@@ -397,7 +424,7 @@
           "name": "SecondOpenerActivity",
           "kind": "activity",
           "module": "app",
-          "location": "app/src/main/java/navapp/via/Via.kt:69",
+          "location": "app/src/main/java/navapp/via/Via.kt:61",
           "host": null,
           "hosts": [],
           "entry": [
@@ -416,15 +443,29 @@
       "target": "navapp.via.SlowActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:60",
+      "location": "app/src/main/java/navapp/via/Via.kt:52",
       "content": [],
       "previews": [],
       "entries": [
         {
+          "name": "EntryActivity",
+          "kind": "activity",
+          "module": "app",
+          "location": "app/src/main/java/navapp/via/Via.kt:75",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        },
+        {
           "name": "FirstOpenerActivity",
           "kind": "activity",
           "module": "app",
-          "location": "app/src/main/java/navapp/via/Via.kt:62",
+          "location": "app/src/main/java/navapp/via/Via.kt:54",
           "host": null,
           "hosts": [],
           "entry": [
@@ -438,7 +479,7 @@
           "name": "SecondOpenerActivity",
           "kind": "activity",
           "module": "app",
-          "location": "app/src/main/java/navapp/via/Via.kt:69",
+          "location": "app/src/main/java/navapp/via/Via.kt:61",
           "host": null,
           "hosts": [],
           "entry": [
@@ -452,7 +493,7 @@
           "name": "ThirdOpenerActivity",
           "kind": "activity",
           "module": "app",
-          "location": "app/src/main/java/navapp/via/Via.kt:76",
+          "location": "app/src/main/java/navapp/via/Via.kt:68",
           "host": null,
           "hosts": [],
           "entry": [
@@ -471,15 +512,29 @@
       "target": "navapp.via.TargetActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:53",
+      "location": "app/src/main/java/navapp/via/Via.kt:45",
       "content": [],
       "previews": [],
       "entries": [
         {
+          "name": "EntryActivity",
+          "kind": "activity",
+          "module": "app",
+          "location": "app/src/main/java/navapp/via/Via.kt:75",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        },
+        {
           "name": "FirstOpenerActivity",
           "kind": "activity",
           "module": "app",
-          "location": "app/src/main/java/navapp/via/Via.kt:62",
+          "location": "app/src/main/java/navapp/via/Via.kt:54",
           "host": null,
           "hosts": [],
           "entry": [
@@ -493,7 +548,7 @@
           "name": "SecondOpenerActivity",
           "kind": "activity",
           "module": "app",
-          "location": "app/src/main/java/navapp/via/Via.kt:69",
+          "location": "app/src/main/java/navapp/via/Via.kt:61",
           "host": null,
           "hosts": [],
           "entry": [
@@ -507,7 +562,7 @@
           "name": "ThirdOpenerActivity",
           "kind": "activity",
           "module": "app",
-          "location": "app/src/main/java/navapp/via/Via.kt:76",
+          "location": "app/src/main/java/navapp/via/Via.kt:68",
           "host": null,
           "hosts": [],
           "entry": [
@@ -526,7 +581,7 @@
       "target": "navapp.via.ThirdOpenerActivity",
       "host": null,
       "hosts": [],
-      "location": "app/src/main/java/navapp/via/Via.kt:76",
+      "location": "app/src/main/java/navapp/via/Via.kt:68",
       "content": [],
       "previews": [],
       "entries": [
@@ -534,7 +589,7 @@
           "name": "ThirdOpenerActivity",
           "kind": "activity",
           "module": "app",
-          "location": "app/src/main/java/navapp/via/Via.kt:76",
+          "location": "app/src/main/java/navapp/via/Via.kt:68",
           "host": null,
           "hosts": [],
           "entry": [

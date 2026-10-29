@@ -3,7 +3,11 @@ package query
 // via: how a change reaches each screen of impact, by the boundaries of shared code the walk
 // crosses on the way (docs/decisions/0032).
 
-import "github.com/v-kravchenko/codemap/internal/config"
+import (
+	"strings"
+
+	"github.com/v-kravchenko/codemap/internal/config"
+)
 
 // The ways a change reaches a screen, strongest first: its own code; a navigator it opens other
 // screens through; a hub naming many classes of one supertype; a base class it inherits.
@@ -44,10 +48,12 @@ func (g *Graph) screenVia(seeds []Seed, maxDepth int, w *Walk) map[int32]int {
 // boundary: the boundary a step from p to c crosses, viaDirect for none. A change to the shared code
 // itself (the navigator, the hub, the base class) crosses none.
 func (g *Graph) boundary(p Key, c int32, seedTops map[int32]bool) int {
-	if g.isNavHub(c) && !g.isNavHub(p.N) {
+	pt, ct := g.topOf(p.N), g.topOf(c)
+	// a hub method, or a navigator: a class with one (a method of it only one screen calls routes like
+	// the rest); entered from another file, a change to the navigator itself crossing none
+	if g.fileOf(p.N) != g.fileOf(c) && (g.isNavHub(c) && !g.isNavHub(p.N) || g.navClasses[ct] && !g.navClasses[pt]) {
 		return viaOpener
 	}
-	pt, ct := g.topOf(p.N), g.topOf(c)
 	if pt == ct {
 		return viaDirect
 	}
@@ -61,13 +67,17 @@ func (g *Graph) boundary(p Key, c int32, seedTops map[int32]bool) int {
 	return viaDirect
 }
 
-// isNavHub: a node many screens open others through (the hubs of opened_by).
+// isNavHub: a node many screens open others through (the hubs of opened_by); navClasses: the classes
+// with one, not a file of top-level functions (its functions share no navigator).
 func (g *Graph) isNavHub(n int32) bool {
 	if g.navHubs == nil {
-		g.navHubs = map[int32]bool{}
+		g.navHubs, g.navClasses = map[int32]bool{}, map[int32]bool{}
 		for _, h := range g.m.OpenedBy.Hub {
 			if h >= 0 {
 				g.navHubs[h] = true
+				if top := g.topOf(h); top >= 0 && g.kind(top) == "C" && !strings.HasSuffix(g.name(top), "Kt") {
+					g.navClasses[top] = true
+				}
 			}
 		}
 	}
