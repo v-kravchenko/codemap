@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.6.0",
+  "schema_version": "4.7.0",
   "command": "crash",
   "exceptions": [
     {
@@ -39,7 +39,7 @@
       "file": "Crash.kt",
       "line": 19,
       "obfuscated": {
-        "class": "jg0",
+        "class": "og0",
         "method": "a",
         "file": "SourceFile",
         "line": 40
@@ -57,7 +57,7 @@
       "file": "Crash.kt",
       "line": 28,
       "obfuscated": {
-        "class": "g80$a",
+        "class": "l80$a",
         "method": "r",
         "file": "SourceFile",
         "line": 17

@@ -64,3 +64,4 @@ a stale file path) may be fixed directly in place; a changed decision gets a new
 | [0030](0030-uncompiled-classes-checked-by-sources.md) | Classes not compiled: the map is checked by its sources | accepted |
 | [0031](0031-errors-in-json.md) | A failed query names its kind in `--json`, exit 2 kept | accepted |
 | [0032](0032-via-of-impact.md) | How a change reaches a screen: `via`, the walk unchanged | accepted |
+| [0033](0033-facts-of-a-use.md) | What a use is to its symbol: facts, not a caller kind | accepted |

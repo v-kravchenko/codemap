@@ -59,6 +59,13 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
   parameters moved at once, one also changing its parameters, or one in a facade renamed by
   `@file:JvmName` stay removed and added. `codemap diff` compares by node id: a move is a screen
   removed and one added there.
+- The facts of a use (`used-by` `source`, `constructor`, `supertype`, `screens`, and `find`
+  `visibility`, `overrides`; docs/decisions/0033) are the bytecode's: `visibility` is the JVM's (a
+  Kotlin `internal` member is `public`, a nested `private class` is not `private`); `overrides`
+  names repo methods only, not a framework's (`onCreate`); a lambda of a field initializer has no
+  `source`. A use reached through a lambda handed down as a parameter counts for the method creating
+  the lambda, not for the composable calling it, and the text of the button that calls an action
+  is not known (it needs the flow of values, which the map does not keep).
 - Dead code (a reachable-looking branch nobody actually triggers, e.g. a `when` branch keyed on
   a string your code never constructs) is not detected — the walk cannot tell statically
   unreachable branches from live ones.

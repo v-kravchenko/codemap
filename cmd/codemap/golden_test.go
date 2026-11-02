@@ -44,8 +44,11 @@ var goldenCalls = [][]string{
 	{"used-by", "navapp.impact.defaultLabel"},
 	{"used-by", "navapp.impact.defaultLabel", "--module", "!app"},
 	{"uses", "navapp.impact.PlainCopyActivity.onCreate"},
+	// what each use is to a ViewModel: its screen, its constructor, the base class calling a hook
+	{"used-by", "ContactsViewModel.search", "ContactsViewModel.getContacts", "SignViewModel.getDeepLink", "SignViewModel.openNextScreen"},
 	{"find", "Activity"},
 	{"find", "Count", "--type", "method", "--type", "field"},
+	{"find", ".", "--owner", "actions.*ViewModel", "--type", "method"}, // visibility and overrides
 	{"screens"},
 	{"screens", "--module", ":app"},
 	{"screens", "--host", "ViewsActivity"},
@@ -91,6 +94,7 @@ var goldenText = [][]string{
 	{"impact", "navapp.impact.Session.listen", "--to", "LoudActivity"},
 	{"used-by", "navapp.impact.defaultLabel"},
 	{"uses", "navapp.impact.PlainCopyActivity.onCreate"},
+	{"used-by", "ContactsViewModel.search", "ContactsViewModel.getContacts"},
 	{"find", "Activity"},
 	{"screens"},
 	{"screens", "--unreachable"},

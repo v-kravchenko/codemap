@@ -1,0 +1,94 @@
+{
+  "schema_version": "4.7.0",
+  "command": "find",
+  "pattern": ".",
+  "total": 9,
+  "synthetic": 6,
+  "symbols": [
+    {
+      "symbol": "navapp.actions.ContactsViewModel.search",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:41",
+      "visibility": "public",
+      "overrides": [],
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.actions.SignViewModel.getDeepLink",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:63",
+      "visibility": "protected",
+      "overrides": [
+        "navapp.actions.BaseSignViewModel.getDeepLink"
+      ],
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.actions.ContactsViewModel.getItems",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:34",
+      "visibility": "public",
+      "overrides": [],
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.actions.ContactsViewModel.validators",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:46",
+      "visibility": "private",
+      "overrides": [],
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.actions.SignViewModel.openNextScreen",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:66",
+      "visibility": "public",
+      "overrides": [
+        "navapp.actions.BaseSignViewModel.openNextScreen"
+      ],
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.actions.BaseSignViewModel.getDeepLink",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt",
+      "visibility": "protected",
+      "overrides": [],
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.actions.ContactsViewModel.getContacts",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:44",
+      "visibility": "public",
+      "overrides": [],
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.actions.BaseSignViewModel.openNextScreen",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:52",
+      "visibility": "public",
+      "overrides": [],
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.actions.BaseSignViewModel.onContinueClick",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:55",
+      "visibility": "public",
+      "overrides": [],
+      "synthetic": false
+    }
+  ]
+}

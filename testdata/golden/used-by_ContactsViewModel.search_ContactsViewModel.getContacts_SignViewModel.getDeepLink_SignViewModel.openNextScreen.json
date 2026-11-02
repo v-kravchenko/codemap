@@ -1,0 +1,107 @@
+{
+  "schema_version": "4.7.0",
+  "command": "used-by",
+  "symbols": [
+    "navapp.actions.ContactsViewModel.getContacts",
+    "navapp.actions.ContactsViewModel.search",
+    "navapp.actions.SignViewModel.getDeepLink",
+    "navapp.actions.SignViewModel.openNextScreen"
+  ],
+  "items": [
+    {
+      "symbol": "navapp.actions.ActionsKt.ContactsHeader$lambda$0$0",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:25",
+      "edges": [
+        "call"
+      ],
+      "target": "navapp.actions.ContactsViewModel.search",
+      "source": "navapp.actions.ActionsKt.ContactsHeader",
+      "constructor": false,
+      "supertype": false,
+      "screens": [
+        {
+          "kind": "route",
+          "name": "Contacts"
+        }
+      ]
+    },
+    {
+      "symbol": "navapp.actions.ActionsKt.ContactsScreen.1.1.invoke",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:20",
+      "edges": [
+        "call"
+      ],
+      "target": "navapp.actions.ContactsViewModel.search",
+      "source": "navapp.actions.ActionsKt.ContactsScreen",
+      "constructor": false,
+      "supertype": false,
+      "screens": [
+        {
+          "kind": "route",
+          "name": "Contacts"
+        }
+      ]
+    },
+    {
+      "symbol": "navapp.actions.BaseSignViewModel.onContinueClick.1.invokeSuspend",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:55",
+      "edges": [
+        "call getDeepLink()"
+      ],
+      "target": "navapp.actions.SignViewModel.getDeepLink",
+      "source": "navapp.actions.BaseSignViewModel.onContinueClick",
+      "constructor": false,
+      "supertype": true,
+      "screens": []
+    },
+    {
+      "symbol": "navapp.actions.BaseSignViewModel.onContinueClick.1.invokeSuspend",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:55",
+      "edges": [
+        "call openNextScreen()"
+      ],
+      "target": "navapp.actions.SignViewModel.openNextScreen",
+      "source": "navapp.actions.BaseSignViewModel.onContinueClick",
+      "constructor": false,
+      "supertype": true,
+      "screens": []
+    },
+    {
+      "symbol": "navapp.actions.ContactsViewModel.1.invokeSuspend",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:37",
+      "edges": [
+        "call"
+      ],
+      "target": "navapp.actions.ContactsViewModel.getContacts",
+      "source": "navapp.actions.ContactsViewModel.<init>",
+      "constructor": true,
+      "supertype": false,
+      "screens": []
+    },
+    {
+      "symbol": "navapp.actions.ContactsViewModel.search",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt:41",
+      "edges": [
+        "call"
+      ],
+      "target": "navapp.actions.ContactsViewModel.getContacts",
+      "source": "navapp.actions.ContactsViewModel.search",
+      "constructor": false,
+      "supertype": false,
+      "screens": []
+    }
+  ],
+  "generated_di": 0
+}

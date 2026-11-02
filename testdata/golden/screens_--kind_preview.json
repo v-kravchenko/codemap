@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.6.0",
+  "schema_version": "4.7.0",
   "command": "screens",
   "screens": [
     {
@@ -138,6 +138,6 @@
     "activity": 25,
     "dialog": 1,
     "fragment": 8,
-    "route": 19
+    "route": 20
   }
 }

@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.6.0",
+  "schema_version": "4.7.0",
   "command": "find",
   "pattern": "Count",
   "total": 4,
@@ -9,25 +9,36 @@
       "symbol": "navapp.impact.CounterActivity.count",
       "kind": "field",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Constructors.kt"
+      "location": "app/src/main/java/navapp/impact/Constructors.kt",
+      "visibility": "private",
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.OrdersViewModel.count",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/GenericDi.kt:26"
+      "location": "app/src/main/java/navapp/impact/GenericDi.kt:26",
+      "visibility": "public",
+      "overrides": [],
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.CounterActivity.getCount",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Constructors.kt:9"
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:9",
+      "visibility": "public",
+      "overrides": [],
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.CounterActivity.setCount",
       "kind": "method",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Constructors.kt:9"
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:9",
+      "visibility": "public",
+      "overrides": [],
+      "synthetic": false
     }
   ]
 }

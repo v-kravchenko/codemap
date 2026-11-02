@@ -51,6 +51,7 @@ func TestNavigationPresets(t *testing.T) {
 		"Settings": {"typed/SettingsViewModel$openSettings$1.invokeSuspend", "typed/TypedAppKt.TypedApp$lambda$0$0$0$1$0", "typed/TypedAppKt.TypedApp$lambda$0$0$1$0$0"},
 		"Confirm":  {"typed/TypedAppKt.TypedApp$lambda$0$0$2"},
 		"Login":    {"typed/TypedAppKt.TypedApp$lambda$0$0$0$2$0"},
+		"Contacts": {"typed/TypedAppKt.TypedApp$lambda$0$0$0$3$0"},
 		// nav2-compose-strings: {id} and $id match any segment, the query is left out; "account" is a
 		// nested graph that opens signin
 		"feed":              {"strings/StringAppKt.StringApp", "strings/StringAppKt.StringApp$lambda$0$0$3$0$0$0"},

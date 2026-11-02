@@ -2472,6 +2472,19 @@ func (b *Builder) otherColumns(m *snapshot.Map) {
 		m.ScreenRelated.Screen = append(m.ScreenRelated.Screen, p[0])
 		m.ScreenRelated.Related = append(m.ScreenRelated.Related, p[1])
 	}
+	encl := make([]string, 0, len(b.parsed)/4)
+	for name, p := range b.parsed {
+		if _, ok := b.classID[name]; ok && p.C.Enclosing[0] != "" {
+			encl = append(encl, name)
+		}
+	}
+	sort.Slice(encl, func(i, j int) bool { return b.classID[encl[i]] < b.classID[encl[j]] })
+	for _, name := range encl {
+		e := b.parsed[name].C.Enclosing
+		m.Enclosing.Cls = append(m.Enclosing.Cls, b.classID[name])
+		m.Enclosing.Outer.Add(e[0])
+		m.Enclosing.Method.Add(e[1])
+	}
 	for _, p := range snapshot.SortedPairs(b.content) {
 		m.ScreenContent.Screen = append(m.ScreenContent.Screen, p[0])
 		m.ScreenContent.Node = append(m.ScreenContent.Node, p[1])

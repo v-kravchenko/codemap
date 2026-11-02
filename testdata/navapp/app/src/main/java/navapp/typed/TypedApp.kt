@@ -11,6 +11,9 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import navapp.actions.Contacts
+import navapp.actions.ContactsScreen
+import navapp.actions.ContactsViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -38,12 +41,14 @@ fun TypedApp() {
                 onProfile = { nav.navigate(Profile("1")) },
                 onSettings = { nav.navigate(Settings) },
                 onAuth = { nav.navigate(AuthGraph) },
+                onContacts = { nav.navigate(Contacts) },
             )
         }
         composable<Profile> { entry ->
             ProfileScreen(entry.toRoute<Profile>().id, onSettings = { nav.navigate(Settings) })
         }
         composable<Settings> { Text("settings") }
+        composable<Contacts> { ContactsScreen(ContactsViewModel()) }
         dialog<Confirm> { Text("confirm") }
         authSection(onConfirm = { nav.navigate(Confirm) })
     }
@@ -56,10 +61,11 @@ fun androidx.navigation.NavGraphBuilder.authSection(onConfirm: () -> Unit) {
 }
 
 @Composable
-fun HomeScreen(onProfile: () -> Unit, onSettings: () -> Unit, onAuth: () -> Unit) {
+fun HomeScreen(onProfile: () -> Unit, onSettings: () -> Unit, onAuth: () -> Unit, onContacts: () -> Unit) {
     Button(onClick = onProfile) { Text("profile") }
     Button(onClick = onSettings) { Text("settings") }
     Button(onClick = onAuth) { Text("auth") }
+    Button(onClick = onContacts) { Text("contacts") }
 }
 
 @Composable

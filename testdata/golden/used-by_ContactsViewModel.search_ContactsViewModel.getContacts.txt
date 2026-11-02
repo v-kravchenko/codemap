@@ -1,0 +1,9 @@
+ContactsViewModel.search()  app  app/src/main/java/navapp/actions/Actions.kt:41
+ContactsViewModel.getContacts()  app  app/src/main/java/navapp/actions/Actions.kt:44
+Used by: 4 in 1 modules
+
+app
+  ActionsKt.ContactsScreen{λ}                             call                   app/src/main/java/navapp/actions/Actions.kt:20  -> ContactsViewModel.search()
+  ActionsKt.ContactsHeader{λ}                             call                   app/src/main/java/navapp/actions/Actions.kt:25  -> ContactsViewModel.search()
+  ContactsViewModel{λ}                                    call                   app/src/main/java/navapp/actions/Actions.kt:37  -> ContactsViewModel.getContacts()
+  ContactsViewModel.search()                              call                   app/src/main/java/navapp/actions/Actions.kt:41  -> ContactsViewModel.getContacts()

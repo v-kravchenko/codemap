@@ -9,6 +9,8 @@ import (
 	"sort"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/v-kravchenko/codemap/internal/util"
 )
 
 // likeMatch: SQLite LIKE (ASCII case-insensitive, % any run, _ any one byte) for a pattern that
@@ -56,7 +58,18 @@ func (g *Graph) cmdFind(o opts) int {
 			like = append(like, seg)
 		}
 	}
-	type row struct{ kind, q, module, loc string }
+	var owner *regexp.Regexp
+	if o.owner != "" {
+		var err error
+		if owner, err = regexp.Compile("(?i)" + o.owner); err != nil {
+			owner = regexp.MustCompile("(?i)" + regexp.QuoteMeta(o.owner))
+		}
+	}
+	// the facts of members: overloads differing in them are rows of their own
+	type row struct {
+		kind, q, module, loc, vis, overrides string
+		synthetic                            bool
+	}
 	mf, outside := g.moduleFilter(o.modules), 0
 	seen := map[row]bool{}
 	var out []row
@@ -82,11 +95,18 @@ func (g *Graph) cmdFind(o opts) int {
 		if k != "C" {
 			cls = g.owner(n)
 		}
+		if owner != nil && (k == "C" || cls < 0 || !owner.MatchString(util.Dotted(g.name(cls)))) {
+			continue
+		}
 		if !o.all && cls >= 0 && (isDIGlue(g.name(cls)) || syntheticClass.MatchString(g.name(cls))) {
 			synthetic[q] = true
 			continue
 		}
-		r := row{k, q, g.module(n), g.location(n)}
+		r := row{kind: k, q: q, module: g.module(n), loc: g.location(n)}
+		if k == "C" || k == "M" || k == "F" {
+			r.vis, r.synthetic = g.visibility(n), g.flags(n)&accSynthetic != 0
+			r.overrides = strings.Join(g.overridesOf(n), "\n")
+		}
 		if seen[r] {
 			continue
 		}
@@ -111,7 +131,16 @@ func (g *Graph) cmdFind(o opts) int {
 		if a.module != b.module {
 			return a.module < b.module
 		}
-		return a.loc < b.loc
+		if a.loc != b.loc {
+			return a.loc < b.loc
+		}
+		if a.vis != b.vis {
+			return a.vis < b.vis
+		}
+		if a.overrides != b.overrides {
+			return a.overrides < b.overrides
+		}
+		return !a.synthetic && b.synthetic
 	})
 	shownRows := out
 	if o.limit >= 0 && o.limit < len(out) {
@@ -120,7 +149,19 @@ func (g *Graph) cmdFind(o opts) int {
 	if o.json {
 		syms := make([]any, len(shownRows))
 		for i, r := range shownRows {
-			syms[i] = obj{{"symbol", r.q}, {"kind", kindName(r.kind)}, {"module", r.module}, {"location", r.loc}}
+			sym := obj{{"symbol", r.q}, {"kind", kindName(r.kind)}, {"module", r.module}, {"location", r.loc}}
+			if r.vis != "" {
+				sym = append(sym, kv{"visibility", r.vis})
+				if r.kind == "M" {
+					ov := []string{}
+					if r.overrides != "" {
+						ov = strings.Split(r.overrides, "\n")
+					}
+					sym = append(sym, kv{"overrides", strs(ov)})
+				}
+				sym = append(sym, kv{"synthetic", r.synthetic})
+			}
+			syms[i] = sym
 		}
 		result := obj{{"pattern", pattern}, {"total", len(out)}, {"synthetic", len(synthetic)}, {"symbols", syms}}
 		if mf != nil {

@@ -98,6 +98,8 @@ type Graph struct {
 	moves                      *moves                  // moved(), nil not made yet
 	navHubs, navClasses        map[int32]bool          // isNavHub, nil not made yet
 	refSups                    map[int32]map[int32]int // isRegistry: method -> repo supertype -> classes it names below it
+	enclosedIn                 map[int32]int           // sourceMethod: class -> its Enclosing row, nil not made yet
+	drawnBy                    map[int32][]int32       // codeScreens: composable -> the routes drawing it, nil not made yet
 }
 
 func NewGraph(m *snapshot.Map, root string) *Graph {
@@ -1038,9 +1040,10 @@ func (g *Graph) membersNamed(c int32, member string) []int32 {
 // ------------------------------------------------------------ direct users
 
 type EdgeRow struct {
-	Other int32
-	Kind  string
-	Via   int32
+	Other  int32
+	Kind   string
+	Via    int32
+	Target int32 // the resolved symbol the row is of (used-by, uses)
 }
 
 // directUsers: (user, edge kind, used node) of a node; for a whole class, of all its members.
@@ -1061,12 +1064,12 @@ func (g *Graph) directUsers(n int32, mode byte) []EdgeRow {
 			if u.Kind == snapshot.ROUTE_HOST || u.Kind == snapshot.INJECT || k == "C" && g.topOf(u.N) == g.m.Node.TopIx[n] {
 				continue
 			}
-			out = append(out, EdgeRow{u.N, edgeKinds[u.Kind], t})
+			out = append(out, EdgeRow{u.N, edgeKinds[u.Kind], t, n})
 		}
 	}
 	if k == "F" && g.flags(n)&snapshot.ConstantFlag != 0 {
 		for _, u := range g.constUsers(n) {
-			out = append(out, EdgeRow{u, "source", n})
+			out = append(out, EdgeRow{u, "source", n, n})
 		}
 	}
 	return out

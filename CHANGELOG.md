@@ -7,6 +7,17 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Added
+
+- `used-by` takes several symbols, and each item of its `--json` says which one it uses (`target`)
+  and what its code is to it: the method it was written in (`source`, a lambda or coroutine counting
+  as the method creating it), whether that is a constructor (`constructor`) or a supertype's code
+  calling a hook (`supertype`), and the screens whose own code it is (`screens`) (schema 4.7.0).
+- `find --owner REGEX` keeps the members of matching classes; `find --json` gives each class, method
+  and field its `visibility`, the repo methods it `overrides` and whether it is `synthetic`.
+- The map keeps the `EnclosingMethod` of lambdas (index version 13): a map built by an earlier
+  version must be rebuilt (`codemap build`, or the build hook).
+
 ## [0.12.1] - 2026-10-29
 
 ### Fixed

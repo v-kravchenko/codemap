@@ -40,13 +40,15 @@ Fragments (8)
 Dialog fragments (1)
   InfoDialog                                         app                          app/src/main/java/navapp/views/ViewsActivity.kt:54  host ViewsActivity
 
-Compose routes (19)
+Compose routes (20)
   About                                              app                          app/src/main/java/navapp/sections/SectionsApp.kt  host MainActivity
       content SectionsAppKt.AboutScreen()
       previews navapp.sections.AboutPreviewsKt.AboutPreview, navapp.sections.AboutScreenPreviewsKt.AboutPreview
   Catalog                                            app                          app/src/main/java/navapp/nav3when/Nav3WhenApp.kt  host MainActivity
   Compose                                            app                          app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt  host MainActivity
   Confirm                                            app                          app/src/main/java/navapp/typed/TypedApp.kt  host MainActivity
+  Contacts                                           app                          app/src/main/java/navapp/actions/Actions.kt  host MainActivity
+      content ActionsKt.ContactsScreen()
   DocsGuide                                          app                          app/src/main/java/navapp/sections/GuideActivity.kt  host GuideActivity
       content DocsGuideScreenKt.DocsGuideScreen()
       previews navapp.sections.DocsGuidePreviewsKt.DocsGuidePreview

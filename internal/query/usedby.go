@@ -12,11 +12,23 @@ import (
 )
 
 func (g *Graph) cmdEdges(cmd string, o opts) int {
-	found := g.resolveOne(o.pos[0], o.all)
+	var found []Seed
+	seen := map[int32]bool{}
+	for _, text := range o.pos {
+		for _, s := range g.resolveOne(text, o.all) {
+			if !seen[s.N] {
+				seen[s.N] = true
+				found = append(found, s)
+			}
+		}
+	}
 	var rows []EdgeRow
 	for _, s := range found {
 		if cmd == "used-by" {
-			rows = append(rows, g.directUsers(s.N, s.Mode)...)
+			for _, r := range g.directUsers(s.N, s.Mode) {
+				r.Target = s.N
+				rows = append(rows, r)
+			}
 			continue
 		}
 		targets := []int32{s.N}
@@ -34,7 +46,7 @@ func (g *Graph) cmdEdges(cmd string, o opts) int {
 				if g.label(u.N) == strings.TrimSuffix(g.label(t), "()")+"{λ}" {
 					continue // the method's own lambdas
 				}
-				rows = append(rows, EdgeRow{u.N, edgeKinds[u.Kind], t})
+				rows = append(rows, EdgeRow{u.N, edgeKinds[u.Kind], t, s.N})
 			}
 		}
 	}
@@ -82,10 +94,13 @@ func (g *Graph) printEdges(found []Seed, rows []EdgeRow, title string, asJSON bo
 		kept = append(kept, r)
 	}
 	rows = kept
-	groups := map[string]map[int32]map[string]bool{}
-	var modOrder []string               // first-seen order: ties of the sort below keep it
-	othersOrder := map[string][]int32{} // first-seen order
+	type use struct{ other, target int32 }
+	groups := map[string]map[use]map[string]bool{}
+	var modOrder []string             // first-seen order: ties of the sort below keep it
+	othersOrder := map[string][]use{} // first-seen order
+	targets := map[int32]bool{}
 	for _, r := range rows {
+		targets[r.Target] = true
 		name := r.Kind
 		if !isFound[r.Via] {
 			l := g.label(r.Via)
@@ -96,14 +111,15 @@ func (g *Graph) printEdges(found []Seed, rows []EdgeRow, title string, asJSON bo
 		}
 		mod := g.module(r.Other)
 		if groups[mod] == nil {
-			groups[mod] = map[int32]map[string]bool{}
+			groups[mod] = map[use]map[string]bool{}
 			modOrder = append(modOrder, mod)
 		}
-		if groups[mod][r.Other] == nil {
-			groups[mod][r.Other] = map[string]bool{}
-			othersOrder[mod] = append(othersOrder[mod], r.Other)
+		u := use{r.Other, r.Target}
+		if groups[mod][u] == nil {
+			groups[mod][u] = map[string]bool{}
+			othersOrder[mod] = append(othersOrder[mod], u)
 		}
-		groups[mod][r.Other][name] = true
+		groups[mod][u][name] = true
 	}
 	if asJSON {
 		var symbols []string
@@ -112,14 +128,21 @@ func (g *Graph) printEdges(found []Seed, rows []EdgeRow, title string, asJSON bo
 		}
 		sort.Strings(symbols)
 		type item struct {
-			o                        obj
-			module, symbol, location string
+			o                                obj
+			module, symbol, location, target string
 		}
 		var items []item
 		for _, mod := range modOrder {
-			for _, other := range othersOrder[mod] {
-				s := g.symbol(other)
-				items = append(items, item{append(s, kv{"edges", util.SortedKeys(groups[mod][other])}), s.get("module"), s.get("symbol"), s.get("location")})
+			for _, u := range othersOrder[mod] {
+				s := g.symbol(u.other)
+				t := g.qualified(u.target)
+				s = append(s, kv{"edges", util.SortedKeys(groups[mod][u])}, kv{"target", t})
+				if command == "used-by" {
+					if f := g.callerFacts(u.other, u.target); f != nil {
+						s = append(s, f...)
+					}
+				}
+				items = append(items, item{s, s.get("module"), s.get("symbol"), s.get("location"), t})
 			}
 		}
 		sort.SliceStable(items, func(i, j int) bool {
@@ -130,7 +153,10 @@ func (g *Graph) printEdges(found []Seed, rows []EdgeRow, title string, asJSON bo
 			if a.symbol != b.symbol {
 				return a.symbol < b.symbol
 			}
-			return a.location < b.location
+			if a.location != b.location {
+				return a.location < b.location
+			}
+			return a.target < b.target
 		})
 		out := make([]any, len(items))
 		for i, it := range items {
@@ -161,14 +187,21 @@ func (g *Graph) printEdges(found []Seed, rows []EdgeRow, title string, asJSON bo
 		fmt.Println("\n" + mod)
 		others := othersOrder[mod]
 		sort.SliceStable(others, func(i, j int) bool {
-			li, lj := g.location(others[i]), g.location(others[j])
+			li, lj := g.location(others[i].other), g.location(others[j].other)
 			if li != lj {
 				return li < lj
 			}
-			return g.label(others[i]) < g.label(others[j])
+			if a, b := g.label(others[i].other), g.label(others[j].other); a != b {
+				return a < b
+			}
+			return g.qualified(others[i].target) < g.qualified(others[j].target)
 		})
-		for _, o := range others {
-			fmt.Printf("  %-55s %-22s %s\n", g.label(o), strings.Join(util.SortedKeys(groups[mod][o]), ", "), g.location(o))
+		for _, u := range others {
+			to := ""
+			if len(targets) > 1 { // which of the symbols it uses
+				to = "  -> " + g.label(u.target)
+			}
+			fmt.Printf("  %-55s %-22s %s%s\n", g.label(u.other), strings.Join(util.SortedKeys(groups[mod][u]), ", "), g.location(u.other), to)
 		}
 	}
 	if outside > 0 {

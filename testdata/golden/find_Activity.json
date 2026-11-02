@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.6.0",
+  "schema_version": "4.7.0",
   "command": "find",
   "pattern": "Activity",
   "total": 31,
@@ -9,7 +9,9 @@
       "symbol": "navapp.MainActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/MainActivity.kt:14"
+      "location": "app/src/main/java/navapp/MainActivity.kt:14",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "@layout/activity_views",
@@ -21,175 +23,233 @@
       "symbol": "navapp.via.SlowActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:52"
+      "location": "app/src/main/java/navapp/via/Via.kt:52",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.via.EntryActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:75"
+      "location": "app/src/main/java/navapp/via/Via.kt:75",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.via.InboxActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:27"
+      "location": "app/src/main/java/navapp/via/Via.kt:27",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.via.TargetActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:45"
+      "location": "app/src/main/java/navapp/via/Via.kt:45",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.views.LinkActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:59"
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:59",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.views.PickActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/Contracts.kt:16"
+      "location": "app/src/main/java/navapp/views/Contracts.kt:16",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.BaseActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Overrides.kt:9"
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:9",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.LoudActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Overrides.kt:20"
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.via.MessageActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:34"
+      "location": "app/src/main/java/navapp/via/Via.kt:34",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.views.ViewsActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16"
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.FirstActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Constructors.kt:12"
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.LimitActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Constants.kt:10"
+      "location": "app/src/main/java/navapp/impact/Constants.kt:10",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.QuietActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Overrides.kt:22"
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:22",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.AvatarActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/DataClasses.kt:18"
+      "location": "app/src/main/java/navapp/impact/DataClasses.kt:18",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.SecondActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Constructors.kt:18"
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:18",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.sections.HelpActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/HelpActivity.kt:10"
+      "location": "app/src/main/java/navapp/sections/HelpActivity.kt:10",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.CounterActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Constructors.kt:8"
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:8",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.sections.GuideActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/GuideActivity.kt:18"
+      "location": "app/src/main/java/navapp/sections/GuideActivity.kt:18",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.views.LicensesActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:56"
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:56",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.NicknameActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/DataClasses.kt:11"
+      "location": "app/src/main/java/navapp/impact/DataClasses.kt:11",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.sections.HelpActivityKt",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/HelpActivity.kt:19"
+      "location": "app/src/main/java/navapp/sections/HelpActivity.kt:19",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.via.FirstOpenerActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:54"
+      "location": "app/src/main/java/navapp/via/Via.kt:54",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.via.ThirdOpenerActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:68"
+      "location": "app/src/main/java/navapp/via/Via.kt:68",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.components.AlertActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/components/Components.kt:84"
+      "location": "app/src/main/java/navapp/components/Components.kt:84",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.PlainCopyActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Defaults.kt:16"
+      "location": "app/src/main/java/navapp/impact/Defaults.kt:16",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.via.SecondOpenerActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/via/Via.kt:61"
+      "location": "app/src/main/java/navapp/via/Via.kt:61",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.impact.LabelledCopyActivity",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/impact/Defaults.kt:23"
+      "location": "app/src/main/java/navapp/impact/Defaults.kt:23",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.sections.ComposableSingletons.HelpActivityKt",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/HelpActivity.kt:13"
+      "location": "app/src/main/java/navapp/sections/HelpActivity.kt:13",
+      "visibility": "public",
+      "synthetic": false
     },
     {
       "symbol": "navapp.sections.ComposableSingletons.GuideActivityKt",
       "kind": "class",
       "module": "app",
-      "location": "app/src/main/java/navapp/sections/GuideActivity.kt:24"
+      "location": "app/src/main/java/navapp/sections/GuideActivity.kt:24",
+      "visibility": "public",
+      "synthetic": false
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.6.0",
+  "schema_version": "4.7.0",
   "command": "uses",
   "symbols": [
     "navapp.impact.PlainCopyActivity.onCreate"
@@ -12,7 +12,8 @@
       "location": "app/src/main/java/navapp/impact/Defaults.kt:10",
       "edges": [
         "call"
-      ]
+      ],
+      "target": "navapp.impact.PlainCopyActivity.onCreate"
     }
   ],
   "generated_di": 0

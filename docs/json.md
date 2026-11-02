@@ -11,7 +11,7 @@ strips it since `meta.run` is never reproducible).
 
 ```json
 {
-  "schema_version": "4.6.0",
+  "schema_version": "4.7.0",
   "command": "impact",
   "meta": {
     "tool_version": "0.3.0",
@@ -33,7 +33,7 @@ strips it since `meta.run` is never reproducible).
 }
 ```
 
-- `schema_version` — the shape of the JSON output (`"4.6.0"`, `internal/query/cli.go`). Independent
+- `schema_version` — the shape of the JSON output (`"4.7.0"`, `internal/query/cli.go`). Independent
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
   `"changes"`, `"diff"`, `"crash"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
@@ -98,7 +98,7 @@ stdout, an envelope with no `meta` (the map may not have loaded) and an `error` 
 
 ```json
 {
-  "schema_version": "4.6.0",
+  "schema_version": "4.7.0",
   "command": "impact",
   "error": {
     "kind": "not_found",
@@ -178,11 +178,13 @@ reaches a screen in `feature/cards` through `core/domain`. What it left out is c
 ## used-by / uses
 
 ```
-codemap used-by|uses SYMBOL [--all] [--no-self] [--no-di] [--module GLOB]... [--json]
+codemap used-by SYMBOL... [--all] [--no-self] [--no-di] [--module GLOB]... [--json]
+codemap uses SYMBOL [--all] [--module GLOB]... [--json]
 ```
 
-- `SYMBOL` (positional, required) — a class, method or field name; dotted, may be unqualified
-  (`"DefaultsKt.defaultLabel"` or just `"defaultLabel"` if unambiguous).
+- `SYMBOL` (positional, required; `used-by` takes several since 4.7.0) — a class, method or field
+  name; dotted, may be unqualified (`"DefaultsKt.defaultLabel"` or just `"defaultLabel"` if
+  unambiguous).
 - `--all` — do not fail on an ambiguous match across unrelated top-level classes; return/report all
   of them.
 - `--no-self` (`used-by` only) — drop edges from the same top-level class as the match itself.
@@ -198,12 +200,22 @@ Result fields:
   through (e.g. `["call"]`, or `"<kind> <via-member>"` when the edge passes through a member other
   than the resolved symbol, with `" (generated DI)"` appended when the user is Hilt/Dagger-generated
   glue).
+  Since 4.7.0 an item is per symbol it uses, sorted by module, symbol, location, then `target`:
+  - `target` — the resolved symbol it uses (for `uses`, the one it is used by).
+  - `used-by` only, when the method its code was written in is known (else these are left out;
+    docs/decisions/0033): `source`, that method, qualified (`Class.<init>` for a constructor or
+    `init` block): a lambda, function reference or coroutine counts as the method creating it;
+    `constructor` (bool), that method is a constructor or static initializer; `supertype` (bool),
+    its class is a supertype of the target's class (a base class calling a hook the target
+    overrides); `screens`, the screens whose own code it is, as `{kind, name}` sorted by name: the
+    screen's class, a composable a route draws, or a private function of the same file only those
+    call (`[]` for none).
 - `generated_di` — count of items that are generated DI glue (left out of `items` with `--no-di`).
 - `hidden_by_module` — with `--module` only: `{items}`, the items left out.
 
 ```json
 {
-  "schema_version": "4.6.0",
+  "schema_version": "4.7.0",
   "command": "used-by",
   "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
   "items": [
@@ -212,7 +224,12 @@ Result fields:
       "kind": "method",
       "module": "app",
       "location": "app/src/main/java/navapp/impact/Defaults.kt:10",
-      "edges": ["call"]
+      "edges": ["call"],
+      "target": "navapp.impact.DefaultsKt.defaultLabel",
+      "source": "navapp.impact.DefaultsKt.copyText",
+      "constructor": false,
+      "supertype": false,
+      "screens": []
     }
   ],
   "generated_di": 0
@@ -281,7 +298,7 @@ Result fields (full `impact`, no `--to`):
 
 ```json
 {
-  "schema_version": "4.6.0",
+  "schema_version": "4.7.0",
   "command": "impact",
   "changed": [
     {
@@ -379,7 +396,7 @@ a dirty tree or of another variant than the head's adds and removes what the cha
 
 ```json
 {
-  "schema_version": "4.6.0",
+  "schema_version": "4.7.0",
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
@@ -427,7 +444,7 @@ Result: `screens`, `entries` and `opens`, each `{added, removed}`: `added` what 
 
 ```json
 {
-  "schema_version": "4.6.0",
+  "schema_version": "4.7.0",
   "command": "diff",
   "screens": {
     "added": [{ "name": "LinkActivity", "kind": "activity", "module": "app",
@@ -486,7 +503,7 @@ Result:
 
 ```json
 {
-  "schema_version": "4.6.0",
+  "schema_version": "4.7.0",
   "command": "crash",
   "exceptions": [{ "class": "java.lang.IllegalArgumentException", "message": "negative amount: -1" }],
   "crashed_at": { "frame": 0, "symbol": "navapp.crash.Money.format", "module": "app",
@@ -562,7 +579,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.6.0", "command": "nav-path",
+  "schema_version": "4.7.0", "command": "nav-path",
   "targets": [{ "name": "Login", "kind": "route", "module": "app",
     "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
   "screens": [
@@ -626,7 +643,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.6.0", "command": "graph",
+  "schema_version": "4.7.0", "command": "graph",
   "roots": ["Home"], "walk": "out", "to": [],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
@@ -685,7 +702,7 @@ where the walk back ends, as in `nav-path` (`{name, kind, module, location, host
 
 ```json
 {
-  "schema_version": "4.6.0", "command": "screens",
+  "schema_version": "4.7.0", "command": "screens",
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
@@ -705,7 +722,7 @@ where the walk back ends, as in `nav-path` (`{name, kind, module, location, host
 ## find
 
 ```
-codemap find PATTERN [--all] [--limit N] [--type TYPE]... [--module GLOB]... [--json]
+codemap find PATTERN [--all] [--limit N] [--type TYPE]... [--owner REGEX] [--module GLOB]... [--json]
 ```
 
 - `PATTERN` (positional, required) — a regexp (falls back to a literal substring if invalid)
@@ -717,21 +734,29 @@ codemap find PATTERN [--all] [--limit N] [--type TYPE]... [--module GLOB]... [--
 - `--limit N` — cap the number of symbols shown (default: unlimited; `--limit` only affects the
   text/JSON `symbols` list, not `total`).
 - `--type TYPE` (repeatable) — only symbols of this `kind`: `class`, `method`, `field`, `resource`.
+- `--owner REGEX` (since 4.7.0) — only methods and fields of a class whose qualified name matches
+  (any case; a literal if invalid): `find . --owner 'ViewModel$' --type method` lists the methods of
+  every ViewModel.
 - `--module GLOB` — only symbols in a matching module (see Module globs).
 
 Result fields: `pattern` (as given), `total` (count of all matches before `--limit`), `synthetic`
 (count of matches hidden because they are synthetic, when `--all` is not given), `symbols` — array
 of `{symbol, kind, module, location}`, sorted by qualified-name length then kind then name then
-module then location, truncated to `--limit`; `hidden_by_module` — with `--module` only:
+module then location, truncated to `--limit`; since 4.7.0 a class, method or field also has
+`visibility` (`public`, `protected`, `package`, `private`: the JVM's, so a Kotlin `internal` member
+is `public`), a method `overrides` (the repo methods it overrides, qualified, sorted; a library's are
+not in the map) and `synthetic` (bool, made by the compiler); overloads differing in these are
+separate symbols; `hidden_by_module` — with `--module` only:
 `{symbols}`, the matches outside the modules (not in `total`).
 
 ```json
 {
-  "schema_version": "4.6.0", "command": "find", "pattern": "Activity",
+  "schema_version": "4.7.0", "command": "find", "pattern": "Activity",
   "total": 15, "synthetic": 0,
   "symbols": [
     { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",
-      "location": "app/src/main/java/navapp/MainActivity.kt:13" },
+      "location": "app/src/main/java/navapp/MainActivity.kt:13",
+      "visibility": "public", "synthetic": false },
     { "symbol": "@layout/activity_views", "kind": "resource", "module": "app",
       "location": "app/src/main/res/layout/activity_views.xml" }
   ]

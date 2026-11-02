@@ -114,6 +114,10 @@ type Map struct {
 		Kind, Detail Strs
 		File, Line   []int32
 	}
+	Enclosing struct { // a lambda or anonymous class -> its EnclosingMethod attribute (Method "": none)
+		Cls           []int64
+		Outer, Method Strs
+	}
 	Component struct { // application, service, receiver, provider (the manifest), worker (worker_bases)
 		Node          []int64
 		Kind, Actions Strs // Actions: of its intent filters, sorted, comma-separated
@@ -233,6 +237,9 @@ func (m *Map) columns(c codec) {
 	c.i64(&m.Component.Node)
 	c.strs(&m.Component.Kind)
 	c.strs(&m.Component.Actions)
+	c.i64(&m.Enclosing.Cls)
+	c.strs(&m.Enclosing.Outer)
+	c.strs(&m.Enclosing.Method)
 }
 
 func (m *Map) Nodes() int { return len(m.Node.ID) }
@@ -487,7 +494,7 @@ const (
 	ConstantFlag = 0x10000
 )
 
-const IndexVersion = "12"
+const IndexVersion = "13"
 
 func ToolSha1() string {
 	exe, err := os.Executable()

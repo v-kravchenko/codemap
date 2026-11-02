@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.6.0",
+  "schema_version": "4.7.0",
   "command": "graph",
   "roots": [
     "Home"
@@ -15,6 +15,11 @@
     {
       "name": "Home: TypedAppKt.TypedApp",
       "kind": "action",
+      "module": "app"
+    },
+    {
+      "name": "Contacts",
+      "kind": "route",
       "module": "app"
     },
     {
@@ -37,6 +42,13 @@
     {
       "from": "Home",
       "to": "Home: TypedAppKt.TypedApp",
+      "label": null,
+      "hint": "TypedAppKt.TypedApp",
+      "shared": null
+    },
+    {
+      "from": "Home: TypedAppKt.TypedApp",
+      "to": "Contacts",
       "label": null,
       "hint": "TypedAppKt.TypedApp",
       "shared": null
