@@ -11,3 +11,6 @@ testdata/**/gradle/gradle-daemon-jvm.properties
 
 # goreleaser output (release --snapshot)
 /dist/
+
+# IntelliJ / GoLand project files
+/.idea/
