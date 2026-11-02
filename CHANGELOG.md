@@ -7,6 +7,8 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-11-02
+
 ### Added
 
 - `used-by` takes several symbols, and each item of its `--json` says which one it uses (`target`)
@@ -223,7 +225,8 @@ The first public release.
   navigation events; anything project-specific goes into `codemap.yml`.
 - `codemap version`.
 
-[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.12.1...HEAD
+[Unreleased]: https://github.com/v-kravchenko/codemap/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/v-kravchenko/codemap/compare/v0.12.1...v0.13.0
 [0.12.1]: https://github.com/v-kravchenko/codemap/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/v-kravchenko/codemap/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/v-kravchenko/codemap/compare/v0.10.2...v0.11.0
