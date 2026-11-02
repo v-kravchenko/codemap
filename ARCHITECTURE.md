@@ -12,7 +12,8 @@ already resolved. codemap reads those classes plus the resources and manifests, 
 symbols, finds the screens in it, and walks the graph to answer:
 
 - `impact`, `changes`: what may behave differently after a change, down to the screens a tester opens;
-- `used-by`, `uses`, `find`: direct neighbours of a symbol;
+- `used-by`, `uses`, `find`: direct neighbours of a symbol, and what each use's code is to it (the
+  method it was written in, a constructor, a supertype, the screens whose own code it is);
 - `nav-path`: how a user gets to a screen from the launcher;
 - `graph`: what a screen opens;
 - `screens`: the screens and their hosts;
@@ -46,7 +47,7 @@ Each package imports only the ones above it in this list.
 | `internal/stack` | a crash's stack trace (Crashlytics, logcat, Java) and an R8/ProGuard `mapping.txt` that renames its frames back |
 | `internal/snapshot` | the map's format: columns, CSR edges, the binary snapshot, derived tables (overriders, hierarchy), edge kinds |
 | `internal/build` | classes + resources into a map: nodes, edges, screens, hosts, routes, navigation graphs |
-| `internal/query` | the `Graph` over a loaded map, the walks (impact, opened_by, nav-path, graph), the stale check, the commands and their output; a file per command (`usedby.go`, `impactreport.go`, `navpath.go`, `graphcmd.go`, `screens.go`, `find.go`, `changes.go`, `crash.go`) over the walks (`impact.go`, `opened.go`, `nav.go`) and the shared `cli.go`; `commands.go` lists each command's options for the usage, `--help` and the check that rejects an option the command does not take |
+| `internal/query` | the `Graph` over a loaded map, the walks (impact, opened_by, nav-path, graph), the stale check, the commands and their output; a file per command (`usedby.go`, `impactreport.go`, `navpath.go`, `graphcmd.go`, `screens.go`, `find.go`, `changes.go`, `crash.go`; `members.go` the facts of a member and of a use, docs/decisions/0033) over the walks (`impact.go`, `opened.go`, `nav.go`) and the shared `cli.go`; `commands.go` lists each command's options for the usage, `--help` and the check that rejects an option the command does not take |
 | `cmd/codemap` | the CLI: argument dispatch, `build`, `init`, `config` |
 | `internal/fixture` | tests only: a copy of `testdata/navapp` laid out as a built project |
 

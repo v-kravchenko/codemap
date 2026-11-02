@@ -91,8 +91,9 @@ some modules, as `.gitignore` takes directories: `feature/cards` with the module
 `'!feature/debug'` everything but, `**/impl` every `impl` (docs/json.md, Module globs).
 `screens --unreachable` lists the screens no entry of the manifest reaches, and where the way back
 ends; `screens --host X` the screens an Activity hosts; `screens CreateConfirmScreen` the route that
-draws a composable; `find --type class` one kind of symbol;
-`used-by --no-di` without generated DI code.
+draws a composable; `find --type class` one kind of symbol, `find . --owner 'ViewModel$'` the
+members of matching classes; `used-by A B` several symbols at once, `used-by --no-di` without
+generated DI code.
 
 `changes --base-db base.snap` tells what the change adds and removes, from the map of the base
 (`build --out base.snap` on a checkout of it): routes and nested screens included.
