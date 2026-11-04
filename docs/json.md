@@ -11,7 +11,7 @@ strips it since `meta.run` is never reproducible).
 
 ```json
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "impact",
   "meta": {
     "tool_version": "0.3.0",
@@ -33,14 +33,18 @@ strips it since `meta.run` is never reproducible).
 }
 ```
 
-- `schema_version` — the shape of the JSON output (`"4.8.0"`, `internal/query/cli.go`). Independent
+- `schema_version` — the shape of the JSON output (`"5.0.0"`, `internal/query/cli.go`). Independent
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
   `"changes"`, `"diff"`, `"crash"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
 - `meta.tool_version` — the codemap binary's own version (`"0.3.0"`, `codemap version`): the release's
   tag without `v`, `dev` for a build from a checkout.
-- `meta.index.version` — the snapshot format version the map was built with (`index_version`);
-  queries refuse to run against a map from a different one (see Exit codes).
+- `meta.index.version` — the index version the map was built with (`index_version`,
+  `MAJOR.MINOR` since 5.0.0): queries refuse a map of another major (see Exit codes) and read one of
+  another minor (docs/decisions/0036).
+- `meta.index.missing_columns` — the columns of the map a newer codemap adds that this map lacks
+  (built by an older one), sorted: what they hold is left out of the answer (`null` in the fields
+  they fill) and a query warns on stderr; `[]` for a map of this codemap; since 5.0.0.
 - `meta.index.variant` — the build variant whose classes the map was built from (`codemap build
   --variant`, else `variant` in codemap.yml); since 3.6.0.
 - `meta.index.commit` — the git HEAD the map was built from, or `null` when the project has no git
@@ -98,7 +102,7 @@ stdout, an envelope with no `meta` (the map may not have loaded) and an `error` 
 
 ```json
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "impact",
   "error": {
     "kind": "not_found",
@@ -215,7 +219,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "used-by",
   "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
   "items": [
@@ -298,7 +302,7 @@ Result fields (full `impact`, no `--to`):
 
 ```json
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "impact",
   "changed": [
     {
@@ -396,7 +400,7 @@ a dirty tree or of another variant than the head's adds and removes what the cha
 
 ```json
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
@@ -444,7 +448,7 @@ Result: `screens`, `entries` and `opens`, each `{added, removed}`: `added` what 
 
 ```json
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "diff",
   "screens": {
     "added": [{ "name": "LinkActivity", "kind": "activity", "module": "app",
@@ -503,7 +507,7 @@ Result:
 
 ```json
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "crash",
   "exceptions": [{ "class": "java.lang.IllegalArgumentException", "message": "negative amount: -1" }],
   "crashed_at": { "frame": 0, "symbol": "navapp.crash.Money.format", "module": "app",
@@ -579,7 +583,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.8.0", "command": "nav-path",
+  "schema_version": "5.0.0", "command": "nav-path",
   "targets": [{ "name": "Login", "kind": "route", "module": "app",
     "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
   "screens": [
@@ -602,12 +606,17 @@ Result fields:
 ## graph
 
 ```
-codemap graph SCREEN [--to SCREEN | --in] [--avoid GLOB]... [--module GLOB]... [--depth N]
+codemap graph [SCREEN] [--to SCREEN | --in] [--avoid GLOB]... [--module GLOB]... [--depth N]
               [--direction LR|RL|TB|TD|BT] [--all] [--json]
 ```
 
-- `SCREEN` (positional, required) — same resolution as `nav-path`'s `SCREEN`; can match more than
-  one screen (multiple roots).
+With `SCREEN`, what the screen opens (or with `--in` what opens it), as a Mermaid flowchart. Without
+it, the whole graph: every screen a user sees and every way one opens another, as `build` found them,
+no way merged, dropped or cut; the text is one line per way (`FROM -> TO  VIA LABEL`), then one per
+base class (since 5.0.0, docs/decisions/0035).
+
+- `SCREEN` (positional) — same resolution as `nav-path`'s `SCREEN`; can match more than one screen
+  (multiple roots).
 - `--depth N` — how many hops out from the root(s) to draw (default 1).
 - `--to SCREEN` — draw only the ways that reach this screen within `--depth` (default: the fewest
   steps from the root plus 2, so a detour or two shows); a way back into a root is a loop and is left
@@ -620,44 +629,108 @@ codemap graph SCREEN [--to SCREEN | --in] [--avoid GLOB]... [--module GLOB]... [
   characters), and what is reached only through them.
 - `--module GLOB` (repeatable) — walk on only from screens in a matching module (see Module globs;
   unlike the other commands it limits the walk); a screen elsewhere is drawn but not walked from (a
-  feature's map: `--module feature/cards`).
+  feature's map: `--module feature/cards`). Without `SCREEN`: only the ways from screens in a
+  matching module, and the screens of those modules.
 - `--direction` — how the Mermaid flowchart runs (text output only): `LR` (default), `RL`, `TB`
   (or `TD`), `BT`.
+- `--to`, `--in`, `--depth` and `--direction` need `SCREEN`.
 - `--all`, `--json`.
 
-Result fields:
-- `roots` — the root screen name(s).
+### Nodes
+
+Every node has the same keys:
+- `id` — stable across commits while the screen keeps its name: a screen's `target` (as in
+  `screens`: the qualified class or route), the qualified name of shared code, `<screen id>: <action>`
+  for an action. Unique in an answer: two screens of one name in two modules have two ids. `from`,
+  `to`, `roots`, `more`, `hubs`, `bases` and `entries` name nodes by it.
+- `name` — the name to show (a screen's `name` in `screens`).
+- `kind` — a screen kind, `"action"` (one method opening several screens, drawn as its own node,
+  focused graph only) or `"shared"` (code several screens open others through, focused graph only).
+- `module`, `location`, `host`, `hosts`, `content`, `previews` — as in `screens` (`null`/`[]` for
+  shared code and actions).
+- `debug` — the screen is in a debug source set (`screens.debug_source_sets`).
+
+### Edges
+
+- `from`, `to` — node ids.
+- `label` — the short action name shown on the arrow (`null` if none); `hint` — the methods of the
+  step (`null` if none).
+- `via` — how the way opens `to`, as `impact`'s `via` names it: `"direct"` (code of the screen or
+  code it calls), `"opener"` (through a navigator: `hub`), `"base"` (through inherited code of a base
+  of `impact.base_subclasses` or more classes: `base`). `null` for an edge of no single way (a screen
+  to its action node).
+- `hub` — the navigator (a hub of `opened_by`) the way runs through, else `null`.
+- `base` — the base class whose inherited code the way runs through, else `null`.
+- `shared` — the nodes every shortest way from `from` to the opening call passes (its dominators),
+  nearest `from` first, each listed where more source screens than at the one before share it:
+  `{id, sources}`, `sources` the number of screens all of whose shortest ways to `to` pass the node.
+  A fact of the code, not of the way codemap chose; the threshold that makes a way "global" (a badge
+  "opened from any screen") is the reader's. `[]` when nothing is shared.
+- `host` — the screen id of the Activity the way runs in when the screen it opens is a route several
+  Activities host, else `null`; `host_module` — the module whose screens must host it, else `null`.
+- `location` — `path:line` of the code opening `to` (the `navigate`/`startActivity`/`show` call or
+  the class literal), else of the first call on the way that has a line; `source_location` — the
+  first call on the way on the side of `from` (where a reader starts). `null` when the classes hold
+  no line (rare: under one in a hundred ways on a large project), or when the map was built by
+  codemap before 0.15.0 (it lacks `out.line`: `meta.index.missing_columns`).
+
+### Whole graph (no `SCREEN`)
+
+- `walk` — `"all"`.
+- `nodes` — every screen (route, fragment, activity, dialog) on a way or a base row, sorted by `id`.
+- `edges` — one per way `build` found (the `opened_by` rows), sorted by `from`, `to`.
+- `hubs` — the navigators on the ways: `{id, name, module, location, opens, opened_from}`, `opens`
+  the screens it opens, `opened_from` the screens opening them through it.
+- `bases` — base classes whose inherited code opens screens, one row per base instead of an edge for
+  each subclass (a hyperedge): `{id, name, module, location, screens, opens}`, `screens` the screen
+  ids extending it (`[]` for a base of non-screens, a ViewModel's: the code opens `opens` from any
+  screen using one), `opens` the screen ids its code opens. A screen in `opens` may also be the `to`
+  of an edge (a screen opening it by its own code too): count it once.
+- `entries` — how the system starts screens: `{screen, kind, detail, location}`, `kind`
+  `launcher`, `deeplink` (`detail` the URI pattern), `intent` (`detail` the action) or `push`
+  (`detail` the component taking the push), as `nav-path --entry` sees them.
+
+### Focused graph (`SCREEN`)
+
+- `roots` — the root screen ids.
 - `walk` — `"out"` (what the roots open) or `"in"` (what opens them, `--in`).
-- `to` — the `--to` screen name(s), `[]` without it.
-- `nodes` — `{name, kind, module}`; `kind` is a screen kind, `"action"` (one method opening several
-  screens, drawn as its own node), or `"shared"` (hub code).
-- `edges` — `{from, to, label, hint, shared}`; `label` is the short action name shown on the edge
-  (`null` if none), `hint` the full step hint, `shared` the target node's name again when the edge
-  goes through shared/hub code (else `null`).
-- `more` — object keyed by hub node name, each value the (alphabetized) list of screen names folded
-  into that hub's `+N` node because they exceeded `graph.fanout`.
-- `edges_left_out` — edges dropped once `graph.max_edges` was exceeded.
+- `to` — the `--to` screen ids, `[]` without it.
+- `nodes`, `edges` — as drawn: one edge per arrow (a screen to shared code, shared code to the
+  screens it opens, a screen to its action node), with the way the arrow stands for. Unlike the
+  Mermaid text, never cut at `graph.max_edges`.
+- `more` — object keyed by a shared node's id, each value the sorted screen ids folded into that
+  node's `+N` because they exceeded `graph.fanout`.
 - `ways_of_other_hosts` — ways not drawn because they need a host (Activity/module) not reachable
   from the root in this context.
 - `debug_left_out` — debug-only screens hidden because the root itself is not debug-only.
 
 ```json
 {
-  "schema_version": "4.8.0", "command": "graph",
-  "roots": ["Home"], "walk": "out", "to": [],
+  "schema_version": "5.0.0", "command": "graph",
+  "walk": "all",
   "nodes": [
-    { "name": "Home", "kind": "route", "module": "app" },
-    { "name": "Home: TypedAppKt.TypedApp", "kind": "action", "module": "app" },
-    { "name": "Login", "kind": "route", "module": "app" },
-    { "name": "Profile", "kind": "route", "module": "app" }
+    { "id": "navapp.graph.FlowTwoActivity", "name": "FlowTwoActivity", "kind": "activity",
+      "module": "app", "location": "app/src/main/java/navapp/graph/Flows.kt:36", "host": null,
+      "hosts": [], "content": [], "previews": [], "debug": false }
   ],
   "edges": [
-    { "from": "Home", "to": "Home: TypedAppKt.TypedApp", "label": null,
-      "hint": "TypedAppKt.TypedApp", "shared": null },
-    { "from": "Home: TypedAppKt.TypedApp", "to": "Login", "label": null,
-      "hint": "TypedAppKt.TypedApp", "shared": null }
+    { "from": "navapp.graph.FlowTwoActivity", "to": "navapp.graph.HelpActivity",
+      "label": "openHelp", "hint": "HelpNavigator.openHelp", "via": "opener",
+      "hub": "navapp.graph.HelpNavigator.openHelp", "base": null,
+      "shared": [{ "id": "navapp.graph.HelpNavigator.openHelp", "sources": 10 }],
+      "host": null, "host_module": null,
+      "location": "app/src/main/java/navapp/graph/Flows.kt:13",
+      "source_location": "app/src/main/java/navapp/graph/Flows.kt:39" }
   ],
-  "more": {}, "edges_left_out": 0, "ways_of_other_hosts": 0, "debug_left_out": 0
+  "hubs": [{ "id": "navapp.graph.HelpNavigator.openHelp", "name": "HelpNavigator.openHelp()",
+             "module": "app", "location": "app/src/main/java/navapp/graph/Flows.kt:13",
+             "opens": 1, "opened_from": 10 }],
+  "bases": [{ "id": "navapp.graph.BaseFlowActivity", "name": "BaseFlowActivity", "module": "app",
+              "location": "app/src/main/java/navapp/graph/Flows.kt:16",
+              "screens": ["navapp.graph.FlowEightActivity", "..."],
+              "opens": ["navapp.graph.SessionActivity"] }],
+  "entries": [{ "screen": "navapp.MainActivity", "kind": "launcher", "detail": null,
+                "location": "app/src/main/AndroidManifest.xml:4" }]
 }
 ```
 
@@ -706,7 +779,7 @@ where the walk back ends, as in `nav-path` (`{name, kind, module, location, host
 
 ```json
 {
-  "schema_version": "4.8.0", "command": "screens",
+  "schema_version": "5.0.0", "command": "screens",
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
@@ -755,7 +828,7 @@ separate symbols; `hidden_by_module` — with `--module` only:
 
 ```json
 {
-  "schema_version": "4.8.0", "command": "find", "pattern": "Activity",
+  "schema_version": "5.0.0", "command": "find", "pattern": "Activity",
   "total": 15, "synthetic": 0,
   "symbols": [
     { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",

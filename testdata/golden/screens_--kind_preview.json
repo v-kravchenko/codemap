@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "screens",
   "screens": [
     {
@@ -148,7 +148,7 @@
     }
   ],
   "hidden": {
-    "activity": 25,
+    "activity": 37,
     "dialog": 1,
     "fragment": 9,
     "route": 20

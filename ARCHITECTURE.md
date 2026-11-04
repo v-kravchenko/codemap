@@ -82,6 +82,8 @@ navigation graph that names it) to the Activities that reach it.
 resources, screens (routes, navigation graphs, entries, hosts). `cmd/codemap` writes the columns
 with `Builder.Map`, runs `query.PrecomputeOpenedBy` (one Graph per worker) and writes the snapshot.
 `build` does nothing when the map was built by the same binary from the same inputs (`--force`).
+The snapshot's columns have names: a map lacking a column (an older build) reads it empty, one with a
+column this binary does not know skips it ([0036](docs/decisions/0036-map-columns-by-name.md)).
 
 ## impact
 
@@ -120,7 +122,9 @@ what it keeps off; `--via` chains walks, from the target to the last screen aske
 entry; `--ways` runs `--via` once per screen that opens the fork, the first screen back from the
 target that several screens open ([0012](docs/decisions/0012-nav-path-via-and-ways.md)). `graph`
 walks the other way, from a screen to what it opens (`--in`: back, to what opens it); `--to` keeps
-the ways that reach a screen in time, by the fewest steps from each screen to it.
+the ways that reach a screen in time, by the fewest steps from each screen to it. Without a screen
+`graph` prints the `opened_by` rows as they are, with the dominators `build` found on each way
+(`shared`) and the line of each edge's code ([0035](docs/decisions/0035-the-whole-graph.md)).
 
 ## Settings
 

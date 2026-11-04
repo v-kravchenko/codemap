@@ -93,30 +93,28 @@ func (g *Graph) openers(sid int32) []int32 {
 	return out
 }
 
+// SharedStep: a node every shortest way from a source screen to the opener passes, and how many
+// source screens that holds for.
+type SharedStep struct{ Node, Sources int32 }
+
 // walkOpenedBy: ways = {screen: way}, bases = {class: [screens]}; capped:
 // the pairs left out after pathLimit shortest ways.
 // pushes: the components taking a push whose code reaches an opener without a screen on the way.
-func (g *Graph) walkOpenedBy(sid int32) (ways map[int32]Way, bases map[int32][]int32, pushes []int32, capped int) {
+// shared: by screen, the nodes all its shortest ways pass that more screens' ways all pass too.
+func (g *Graph) walkOpenedBy(sid int32) (ways map[int32]Way, bases map[int32][]int32, pushes []int32, capped int,
+	shared map[int32][]SharedStep) {
 	ways = map[int32]Way{}
 	var seeds []Seed
 	for _, src := range g.openers(sid) {
 		seeds = append(seeds, Seed{src, modeMember})
 	}
 	if len(seeds) == 0 {
-		return ways, map[int32][]int32{}, nil, 0
+		return ways, map[int32][]int32{}, nil, 0, nil
 	}
 	baseSet, skip := map[int32]bool{}, map[int32]bool{}
 	for round := range hubRounds {
 		alt := map[Key][]Parent{}
 		w := g.walk(seeds, -1, nil, skip, baseSet, alt, nil)
-		if round == 0 { // later rounds skip the hubs, not the code a push runs
-			for _, c := range w.ComponentOrder {
-				if g.pushComponents[c] {
-					pushes = append(pushes, c)
-				}
-			}
-			slices.Sort(pushes)
-		}
 		var screens []int32
 		inScreens := map[int32]bool{}
 		for _, s := range w.ScreenOrder {
@@ -124,6 +122,15 @@ func (g *Graph) walkOpenedBy(sid int32) (ways map[int32]Way, bases map[int32][]i
 				screens = append(screens, s)
 				inScreens[s] = true
 			}
+		}
+		if round == 0 { // later rounds skip the hubs, not the code a push runs
+			for _, c := range w.ComponentOrder {
+				if g.pushComponents[c] {
+					pushes = append(pushes, c)
+				}
+			}
+			slices.Sort(pushes)
+			shared = sharedSteps(w, alt, screens)
 		}
 		hubs, hubOrder := g.hubs(w, screens, inScreens)
 		under := map[int32]int32{}
@@ -181,7 +188,63 @@ func (g *Graph) walkOpenedBy(sid int32) (ways map[int32]Way, bases map[int32][]i
 			bases[b] = g.screenSubclasses(b)
 		}
 	}
-	return ways, bases, pushes, capped
+	return ways, bases, pushes, capped, shared
+}
+
+// sharedSteps: by screen, the dominators of its key in the walk's graph of shortest ways (every
+// way from an opener to the screen passes them), from the screen toward the openers, each kept
+// where more screens than at the one before share it: a fact of the graph, not of the way chosen
+// (docs/decisions/0035). Dominators as Cooper, Harvey and Kennedy, in one pass over the walk's
+// order: a parent is met before its child (a parent met later, at the same depth, is left out).
+func sharedSteps(w *Walk, alt map[Key][]Parent, screens []int32) map[int32][]SharedStep {
+	const root = -1
+	idom := make([]int32, len(w.Keys))
+	intersect := func(a, b int32) int32 {
+		for a != b && a != root && b != root {
+			if a > b {
+				a = idom[a]
+			} else {
+				b = idom[b]
+			}
+		}
+		if a != b {
+			return root
+		}
+		return a
+	}
+	for i, k := range w.Keys {
+		a := w.Aff[k]
+		if !a.HasParent {
+			idom[i] = root
+			continue
+		}
+		d := w.Aff[a.Parent].Ix
+		for _, p := range alt[k] {
+			if pa, ok := w.Aff[p.Key]; ok && pa.Ix < int32(i) {
+				d = intersect(d, pa.Ix)
+			}
+		}
+		idom[i] = d
+	}
+	count := make([]int32, len(w.Keys))
+	for _, s := range screens {
+		for d := idom[w.Aff[w.Screens[s]].Ix]; d >= 0; d = idom[d] {
+			count[d]++
+		}
+	}
+	out := map[int32][]SharedStep{}
+	for _, s := range screens {
+		var steps []SharedStep
+		last := int32(1)
+		for d := idom[w.Aff[w.Screens[s]].Ix]; d >= 0; d = idom[d] {
+			if count[d] > last {
+				steps = append(steps, SharedStep{w.Keys[d].N, count[d]})
+				last = count[d]
+			}
+		}
+		out[s] = steps
+	}
+	return out
 }
 
 // hubs: the lowest nodes of the walk tree with hubMin or more screens below, in first-met order.
@@ -405,6 +468,7 @@ func PrecomputeOpenedBy(m *snapshot.Map, root string, jobs int) (int, int) {
 		bases  map[int32][]int32
 		pushes []int32
 		capped int
+		shared map[int32][]SharedStep
 	}
 	results := make([]result, len(targets))
 	var next atomic.Int64
@@ -417,15 +481,15 @@ func PrecomputeOpenedBy(m *snapshot.Map, root string, jobs int) (int, int) {
 				if i >= len(targets) {
 					return
 				}
-				w, b, p, c := g.walkOpenedBy(targets[i])
-				results[i] = result{w, b, p, c}
+				w, b, p, c, sh := g.walkOpenedBy(targets[i])
+				results[i] = result{w, b, p, c, sh}
 			}
 		})
 	}
 	wg.Wait()
 	o, ob := &m.OpenedBy, &m.OpenedBase
 	*o, *ob = snapshot.OpenedRows{}, snapshot.BaseRows{}
-	o.Via.Start, ob.Below.Start = []int32{0}, []int32{0}
+	o.Via.Start, ob.Below.Start, o.Shared.Start = []int32{0}, []int32{0}, []int32{0}
 	capped := 0
 	for i, s := range targets {
 		r := results[i]
@@ -441,6 +505,10 @@ func PrecomputeOpenedBy(m *snapshot.Map, root string, jobs int) (int, int) {
 			o.HostModule.Add(w.HostModule)
 			o.Via.Node = append(o.Via.Node, w.Via...)
 			o.Via.Start = append(o.Via.Start, int32(len(o.Via.Node)))
+			for _, st := range r.shared[src] {
+				o.Shared.Node, o.Shared.Sources = append(o.Shared.Node, st.Node), append(o.Shared.Sources, st.Sources)
+			}
+			o.Shared.Start = append(o.Shared.Start, int32(len(o.Shared.Node)))
 		}
 		bs := make([]int32, 0, len(r.bases))
 		for b := range r.bases {

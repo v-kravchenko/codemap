@@ -1,82 +1,176 @@
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "graph",
   "roots": [
-    "Home"
+    "navapp.typed.Home"
   ],
   "walk": "out",
   "to": [],
   "nodes": [
     {
+      "id": "navapp.typed.Home",
       "name": "Home",
       "kind": "route",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [
+        "TypedAppKt.HomeScreen()"
+      ],
+      "previews": [],
+      "debug": false
     },
     {
+      "id": "navapp.typed.Home: TypedAppKt.TypedApp",
       "name": "Home: TypedAppKt.TypedApp",
       "kind": "action",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
     },
     {
+      "id": "navapp.actions.Contacts",
       "name": "Contacts",
       "kind": "route",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [
+        "ActionsKt.ContactsScreen()"
+      ],
+      "previews": [],
+      "debug": false
     },
     {
+      "id": "navapp.typed.Login",
       "name": "Login",
       "kind": "route",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [
+        "TypedAppKt.LoginScreen()"
+      ],
+      "previews": [],
+      "debug": false
     },
     {
+      "id": "navapp.typed.Profile",
       "name": "Profile",
       "kind": "route",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [
+        "TypedAppKt.ProfileScreen()"
+      ],
+      "previews": [],
+      "debug": false
     },
     {
+      "id": "navapp.typed.Settings",
       "name": "Settings",
       "kind": "route",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
     }
   ],
   "edges": [
     {
-      "from": "Home",
-      "to": "Home: TypedAppKt.TypedApp",
+      "from": "navapp.typed.Home",
+      "to": "navapp.typed.Home: TypedAppKt.TypedApp",
       "label": null,
       "hint": "TypedAppKt.TypedApp",
-      "shared": null
+      "via": null,
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": null,
+      "source_location": null
     },
     {
-      "from": "Home: TypedAppKt.TypedApp",
-      "to": "Contacts",
+      "from": "navapp.typed.Home: TypedAppKt.TypedApp",
+      "to": "navapp.actions.Contacts",
       "label": null,
       "hint": "TypedAppKt.TypedApp",
-      "shared": null
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:44",
+      "source_location": "app/src/main/java/navapp/typed/TypedApp.kt:44"
     },
     {
-      "from": "Home: TypedAppKt.TypedApp",
-      "to": "Login",
+      "from": "navapp.typed.Home: TypedAppKt.TypedApp",
+      "to": "navapp.typed.Login",
       "label": null,
       "hint": "TypedAppKt.TypedApp",
-      "shared": null
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:43",
+      "source_location": "app/src/main/java/navapp/typed/TypedApp.kt:43"
     },
     {
-      "from": "Home: TypedAppKt.TypedApp",
-      "to": "Profile",
+      "from": "navapp.typed.Home: TypedAppKt.TypedApp",
+      "to": "navapp.typed.Profile",
       "label": null,
       "hint": "TypedAppKt.TypedApp",
-      "shared": null
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:41",
+      "source_location": "app/src/main/java/navapp/typed/TypedApp.kt:41"
     },
     {
-      "from": "Home: TypedAppKt.TypedApp",
-      "to": "Settings",
+      "from": "navapp.typed.Home: TypedAppKt.TypedApp",
+      "to": "navapp.typed.Settings",
       "label": null,
       "hint": "TypedAppKt.TypedApp",
-      "shared": null
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:42",
+      "source_location": "app/src/main/java/navapp/typed/TypedApp.kt:42"
     }
   ],
   "more": {},
-  "edges_left_out": 0,
   "ways_of_other_hosts": 0,
   "debug_left_out": 0
 }

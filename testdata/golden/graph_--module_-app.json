@@ -1,0 +1,10 @@
+{
+  "schema_version": "5.0.0",
+  "command": "graph",
+  "walk": "all",
+  "nodes": [],
+  "edges": [],
+  "hubs": [],
+  "bases": [],
+  "entries": []
+}

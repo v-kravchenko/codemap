@@ -1,10 +1,14 @@
 package snapshot
 
 import (
+	"bufio"
+	"bytes"
 	"encoding/binary"
+	"maps"
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"testing"
 	"unsafe"
 )
@@ -20,7 +24,7 @@ func TestSnapshotRoundTrip(t *testing.T) {
 		m.Node.Name.Add("n" + s)
 		m.Node.Desc.Add("")
 	}
-	m.Out, m.In = EdgeCSR(edges, ids)
+	m.Out, m.In, _ = EdgeCSR(edges, ids, nil)
 	m.Meta.Key.Add("nodes")
 	m.Meta.Value.Add("3")
 
@@ -87,7 +91,7 @@ func FuzzLoad(f *testing.F) {
 	m.Node.Owner = []int64{0, 10}
 	m.Node.Kind.Add("c")
 	m.Node.Kind.Add("m")
-	m.Out, m.In = EdgeCSR(map[Edge]struct{}{{10, 20, 1}: {}}, m.Node.ID)
+	m.Out, m.In, m.OutLine = EdgeCSR(map[Edge]struct{}{{10, 20, 1}: {}}, m.Node.ID, map[Edge]int32{{10, 20, 1}: 7})
 	m.Meta.Key.Add("nodes")
 	m.Meta.Value.Add("2")
 	path := filepath.Join(f.TempDir(), "map.snap")
@@ -105,4 +109,47 @@ func FuzzLoad(f *testing.F) {
 		copy(buf, data)
 		loadBytes(buf)
 	})
+}
+
+// A map of an older build lacks a column, one of a newer build has a column this binary does not
+// know: both load, the lacking column empty and named in Missing.
+func TestColumnsByName(t *testing.T) {
+	m := &Map{}
+	m.Node.ID = []int64{10, 20}
+	m.Out, m.In, m.OutLine = EdgeCSR(map[Edge]struct{}{{10, 20, 1}: {}}, m.Node.ID, map[Edge]int32{{10, 20, 1}: 7})
+	path := filepath.Join(t.TempDir(), "map.snap")
+	if err := m.WriteSnapshot(path); err != nil {
+		t.Fatal(err)
+	}
+	buf, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cols, err := index(buf, binary.LittleEndian.Uint32(buf[12:]))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var out bytes.Buffer
+	w := &snapWriter{w: bufio.NewWriter(&out)}
+	w.w.Write(buf[:16])
+	for _, name := range slices.Sorted(maps.Keys(cols)) {
+		if name != "out.line" {
+			w.raw(name, cols[name].p, cols[name].size)
+		}
+	}
+	future := []int64{1, 2, 3}
+	w.i64("future.column", &future)
+	w.w.Flush()
+	b := out.Bytes()
+	binary.LittleEndian.PutUint32(b[12:], w.count)
+	aligned := unsafe.Slice((*byte)(unsafe.Pointer(unsafe.SliceData(make([]int64, len(b)/8+1)))), len(b))
+	copy(aligned, b)
+	got, err := loadBytes(aligned)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !slices.Equal(got.Missing, []string{"out.line"}) || got.OutLine != nil || !slices.Equal(got.Node.ID, m.Node.ID) ||
+		!reflect.DeepEqual(got.Out, m.Out) {
+		t.Fatalf("missing %v, out.line %v, node.id %v", got.Missing, got.OutLine, got.Node.ID)
+	}
 }

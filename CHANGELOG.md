@@ -7,6 +7,30 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Added
+
+- `graph` without a screen gives the whole graph: every way one screen opens another, as `build`
+  found them, none merged or cut, a line each; with `--json` the screens with the fields of
+  `screens`, the ways with `via` (`direct`, `opener`, `base`, as `impact` names them), `shared` (the
+  code every shortest way from the screen passes, with how many screens share it: a way every screen
+  inherits, such as a logout, tells itself apart), `location` (the line of the call opening the
+  screen) and `source_location`, the navigators, the base classes whose code opens screens (one row
+  each, not an edge per subclass) and the entries. 0.1 s for 969 screens and 6,325 ways.
+- A map of an older codemap of the same index major is read, not refused: what it lacks is left out
+  of the answer, named in `meta.index.missing_columns` and warned of on stderr; a newer one's
+  columns this binary does not know are skipped. A CI job using a map another job built no longer
+  fails on a release that only adds to the map.
+
+### Changed
+
+- `graph --json` names nodes by `id` (a screen's `target`: two screens of one name in two modules
+  differ) in `nodes`, `edges`, `roots`, `to` and `more`, gives each node the fields of `screens` and
+  each edge `via`, `hub`, `base`, `shared`, `host`, `host_module`, `location`, `source_location`, and
+  keeps every edge (`graph.max_edges` caps the Mermaid text only); `shared` (the target's name) and
+  `edges_left_out` are gone (schema 5.0.0). The Mermaid text is unchanged.
+- The map's format: columns by name, `index_version` 14.0, the line of each edge's code. A map of
+  0.14.0 or older is refused once: rebuild it (the build hook does). `build` takes about 10% longer.
+
 ## [0.14.0] - 2026-11-04
 
 ### Added

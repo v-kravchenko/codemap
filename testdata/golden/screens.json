@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "screens",
   "screens": [
     {
@@ -60,11 +60,132 @@
     {
       "kind": "activity",
       "module": "app",
+      "name": "FlowEightActivity",
+      "target": "navapp.graph.FlowEightActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/graph/Flows.kt:78",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FlowFiveActivity",
+      "target": "navapp.graph.FlowFiveActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/graph/Flows.kt:57",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FlowFourActivity",
+      "target": "navapp.graph.FlowFourActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/graph/Flows.kt:50",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FlowNineActivity",
+      "target": "navapp.graph.FlowNineActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/graph/Flows.kt:85",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FlowOneActivity",
+      "target": "navapp.graph.FlowOneActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/graph/Flows.kt:29",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FlowSevenActivity",
+      "target": "navapp.graph.FlowSevenActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/graph/Flows.kt:71",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FlowSixActivity",
+      "target": "navapp.graph.FlowSixActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/graph/Flows.kt:64",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FlowTenActivity",
+      "target": "navapp.graph.FlowTenActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/graph/Flows.kt:92",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FlowThreeActivity",
+      "target": "navapp.graph.FlowThreeActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/graph/Flows.kt:43",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FlowTwoActivity",
+      "target": "navapp.graph.FlowTwoActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/graph/Flows.kt:36",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
       "name": "GuideActivity",
       "target": "navapp.sections.GuideActivity",
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/sections/GuideActivity.kt:18",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "HelpActivity",
+      "target": "navapp.graph.HelpActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/graph/Flows.kt:25",
       "content": [],
       "previews": []
     },
@@ -240,6 +361,17 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/via/Via.kt:61",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "SessionActivity",
+      "target": "navapp.graph.SessionActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/graph/Flows.kt:27",
       "content": [],
       "previews": []
     },

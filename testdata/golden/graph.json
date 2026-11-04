@@ -1,0 +1,1762 @@
+{
+  "schema_version": "5.0.0",
+  "command": "graph",
+  "walk": "all",
+  "nodes": [
+    {
+      "id": "comments/{postId}",
+      "name": "comments/{postId}",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/strings/StringApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "feed",
+      "name": "feed",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/strings/StringApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.MainActivity",
+      "name": "MainActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/MainActivity.kt:14",
+      "host": null,
+      "hosts": [],
+      "content": [
+        "Nav3DslAppKt.Nav3DslApp()",
+        "Nav3WhenAppKt.Nav3WhenApp()",
+        "SectionsAppKt.SectionsApp()",
+        "StringAppKt.StringApp()",
+        "TypedAppKt.TypedApp()"
+      ],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.actions.Contacts",
+      "name": "Contacts",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/actions/Actions.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [
+        "ActionsKt.ContactsScreen()"
+      ],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.components.AlertActivity",
+      "name": "AlertActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/components/Components.kt:84",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.crash.InvoiceFragment",
+      "name": "InvoiceFragment",
+      "kind": "fragment",
+      "module": "app",
+      "location": "app/src/main/java/navapp/crash/Crash.kt:32",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.crash.ReceiptFragment",
+      "name": "ReceiptFragment",
+      "kind": "fragment",
+      "module": "app",
+      "location": "app/src/main/java/navapp/crash/Crash.kt:38",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.graph.FlowEightActivity",
+      "name": "FlowEightActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:78",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.graph.FlowFiveActivity",
+      "name": "FlowFiveActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:57",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.graph.FlowFourActivity",
+      "name": "FlowFourActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:50",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.graph.FlowNineActivity",
+      "name": "FlowNineActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:85",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.graph.FlowOneActivity",
+      "name": "FlowOneActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:29",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.graph.FlowSevenActivity",
+      "name": "FlowSevenActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:71",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.graph.FlowSixActivity",
+      "name": "FlowSixActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:64",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.graph.FlowTenActivity",
+      "name": "FlowTenActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:92",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.graph.FlowThreeActivity",
+      "name": "FlowThreeActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:43",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.graph.FlowTwoActivity",
+      "name": "FlowTwoActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:36",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.graph.HelpActivity",
+      "name": "HelpActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:25",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.graph.SessionActivity",
+      "name": "SessionActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:27",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.impact.AvatarActivity",
+      "name": "AvatarActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/DataClasses.kt:18",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.impact.CartFragment",
+      "name": "CartFragment",
+      "kind": "fragment",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/GenericDi.kt:29",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.impact.FirstActivity",
+      "name": "FirstActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:12",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.impact.LabelledCopyActivity",
+      "name": "LabelledCopyActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Defaults.kt:23",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.impact.LimitActivity",
+      "name": "LimitActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constants.kt:10",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.impact.LoudActivity",
+      "name": "LoudActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:20",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.impact.NicknameActivity",
+      "name": "NicknameActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/DataClasses.kt:11",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.impact.OrdersFragment",
+      "name": "OrdersFragment",
+      "kind": "fragment",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/GenericDi.kt:38",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.impact.PlainCopyActivity",
+      "name": "PlainCopyActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Defaults.kt:16",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.impact.QuietActivity",
+      "name": "QuietActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Overrides.kt:22",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.impact.SecondActivity",
+      "name": "SecondActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/impact/Constructors.kt:18",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.nav3dsl.Compose",
+      "name": "Compose",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.nav3dsl.Inbox",
+      "name": "Inbox",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.nav3dsl.Message",
+      "name": "Message",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.nav3when.Catalog",
+      "name": "Catalog",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/nav3when/Nav3WhenApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.nav3when.Item",
+      "name": "Item",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/nav3when/Nav3WhenApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.sections.About",
+      "name": "About",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [
+        "SectionsAppKt.AboutScreen()"
+      ],
+      "previews": [
+        "navapp.sections.AboutPreviewsKt.AboutPreview",
+        "navapp.sections.AboutScreenPreviewsKt.AboutPreview"
+      ],
+      "debug": false
+    },
+    {
+      "id": "navapp.sections.ContactsFragment",
+      "name": "ContactsFragment",
+      "kind": "fragment",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/ContactsFragment.kt:22",
+      "host": null,
+      "hosts": [],
+      "content": [
+        "ContactsFragment.ContactsScreen()"
+      ],
+      "previews": [
+        "navapp.sections.ContactsFragment.ContactsScreenPreview"
+      ],
+      "debug": false
+    },
+    {
+      "id": "navapp.sections.DocsGuide",
+      "name": "DocsGuide",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/GuideActivity.kt",
+      "host": "GuideActivity",
+      "hosts": [
+        "GuideActivity"
+      ],
+      "content": [
+        "DocsGuideScreenKt.DocsGuideScreen()"
+      ],
+      "previews": [
+        "navapp.sections.DocsGuidePreviewsKt.DocsGuidePreview"
+      ],
+      "debug": false
+    },
+    {
+      "id": "navapp.sections.GuideActivity",
+      "name": "GuideActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/GuideActivity.kt:18",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.sections.HelpActivity",
+      "name": "HelpActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/HelpActivity.kt:10",
+      "host": null,
+      "hosts": [],
+      "content": [
+        "HelpScreenKt.HelpScreen()"
+      ],
+      "previews": [
+        "navapp.sections.HelpActivityKt.HelpPreview"
+      ],
+      "debug": false
+    },
+    {
+      "id": "navapp.sections.PhotoGuide",
+      "name": "PhotoGuide",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/GuideActivity.kt",
+      "host": "GuideActivity",
+      "hosts": [
+        "GuideActivity"
+      ],
+      "content": [
+        "PhotoGuideScreenKt.PhotoGuideScreen()"
+      ],
+      "previews": [
+        "navapp.sections.PhotoGuideScreenKt.PhotoGuidePreview"
+      ],
+      "debug": false
+    },
+    {
+      "id": "navapp.sections.Terms",
+      "name": "Terms",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [
+        "SectionsAppKt.TermsScreen()"
+      ],
+      "previews": [
+        "navapp.sections.AboutScreenPreviewsKt.ScreenPreview",
+        "navapp.sections.SectionsAppKt.TermsScreenPreview",
+        "navapp.sections.TermsPreviewsKt.ScreenPreview"
+      ],
+      "debug": false
+    },
+    {
+      "id": "navapp.sections.Welcome",
+      "name": "Welcome",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [
+        "SectionsAppKt.WelcomeScreen()"
+      ],
+      "previews": [
+        "navapp.sections.SectionsAppKt.WelcomeScreenPreview",
+        "navapp.sections.WelcomePreviewsKt.ScreenPreview"
+      ],
+      "debug": false
+    },
+    {
+      "id": "navapp.typed.Confirm",
+      "name": "Confirm",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.typed.Home",
+      "name": "Home",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [
+        "TypedAppKt.HomeScreen()"
+      ],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.typed.Login",
+      "name": "Login",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [
+        "TypedAppKt.LoginScreen()"
+      ],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.typed.Profile",
+      "name": "Profile",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [
+        "TypedAppKt.ProfileScreen()"
+      ],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.typed.Settings",
+      "name": "Settings",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.via.EntryActivity",
+      "name": "EntryActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:75",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.via.FirstOpenerActivity",
+      "name": "FirstOpenerActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:54",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.via.InboxActivity",
+      "name": "InboxActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:27",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.via.MessageActivity",
+      "name": "MessageActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:34",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.via.SecondOpenerActivity",
+      "name": "SecondOpenerActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:61",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.via.SlowActivity",
+      "name": "SlowActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:52",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.via.TargetActivity",
+      "name": "TargetActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:45",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.via.ThirdOpenerActivity",
+      "name": "ThirdOpenerActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/via/Via.kt:68",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.views.AboutFragment",
+      "name": "AboutFragment",
+      "kind": "fragment",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:46",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.views.DetailFragment",
+      "name": "DetailFragment",
+      "kind": "fragment",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:24",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.views.InfoDialog",
+      "name": "InfoDialog",
+      "kind": "dialog",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:54",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.views.LicensesActivity",
+      "name": "LicensesActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:56",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.views.LinkActivity",
+      "name": "LinkActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:59",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.views.ListFragment",
+      "name": "ListFragment",
+      "kind": "fragment",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:18",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.views.PickActivity",
+      "name": "PickActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/Contracts.kt:16",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.views.SettingsFragment",
+      "name": "SettingsFragment",
+      "kind": "fragment",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:34",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.views.ViewsActivity",
+      "name": "ViewsActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "post/{id}",
+      "name": "post/{id}",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/strings/StringApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "signin",
+      "name": "signin",
+      "kind": "route",
+      "module": "app",
+      "location": "app/src/main/java/navapp/strings/StringApp.kt",
+      "host": "MainActivity",
+      "hosts": [
+        "MainActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "feed",
+      "to": "post/{id}",
+      "label": "StringApp",
+      "hint": "StringAppKt.StringApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/strings/StringApp.kt:22",
+      "source_location": "app/src/main/java/navapp/strings/StringApp.kt:22"
+    },
+    {
+      "from": "feed",
+      "to": "signin",
+      "label": "StringApp",
+      "hint": "StringAppKt.StringApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/strings/StringApp.kt:23",
+      "source_location": "app/src/main/java/navapp/strings/StringApp.kt:23"
+    },
+    {
+      "from": "navapp.MainActivity",
+      "to": "feed",
+      "label": "StringApp",
+      "hint": "StringAppKt.StringApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/strings/StringApp.kt:20",
+      "source_location": "app/src/main/java/navapp/MainActivity.kt:20"
+    },
+    {
+      "from": "navapp.MainActivity",
+      "to": "navapp.nav3dsl.Inbox",
+      "label": "Nav3DslApp",
+      "hint": "Nav3DslAppKt.Nav3DslApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt:22",
+      "source_location": "app/src/main/java/navapp/MainActivity.kt:21"
+    },
+    {
+      "from": "navapp.MainActivity",
+      "to": "navapp.nav3when.Catalog",
+      "label": "Nav3WhenApp",
+      "hint": "Nav3WhenAppKt.Nav3WhenApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/nav3when/Nav3WhenApp.kt:19",
+      "source_location": "app/src/main/java/navapp/MainActivity.kt:22"
+    },
+    {
+      "from": "navapp.MainActivity",
+      "to": "navapp.sections.About",
+      "label": "SectionsApp",
+      "hint": "SectionsAppKt.SectionsApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:40",
+      "source_location": "app/src/main/java/navapp/MainActivity.kt:23"
+    },
+    {
+      "from": "navapp.MainActivity",
+      "to": "navapp.sections.Terms",
+      "label": "SectionsApp",
+      "hint": "SectionsAppKt.SectionsApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:40",
+      "source_location": "app/src/main/java/navapp/MainActivity.kt:23"
+    },
+    {
+      "from": "navapp.MainActivity",
+      "to": "navapp.sections.Welcome",
+      "label": "SectionsApp",
+      "hint": "SectionsAppKt.SectionsApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/sections/SectionsApp.kt:38",
+      "source_location": "app/src/main/java/navapp/MainActivity.kt:23"
+    },
+    {
+      "from": "navapp.MainActivity",
+      "to": "navapp.typed.Confirm",
+      "label": "TypedApp",
+      "hint": "TypedAppKt.TypedApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:53",
+      "source_location": "app/src/main/java/navapp/MainActivity.kt:19"
+    },
+    {
+      "from": "navapp.MainActivity",
+      "to": "navapp.typed.Home",
+      "label": "TypedApp",
+      "hint": "TypedAppKt.TypedApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:38",
+      "source_location": "app/src/main/java/navapp/MainActivity.kt:19"
+    },
+    {
+      "from": "navapp.MainActivity",
+      "to": "navapp.views.ViewsActivity",
+      "label": "onCreate",
+      "hint": "MainActivity.onCreate",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/MainActivity.kt:24",
+      "source_location": "app/src/main/java/navapp/MainActivity.kt:24"
+    },
+    {
+      "from": "navapp.graph.FlowEightActivity",
+      "to": "navapp.graph.HelpActivity",
+      "label": "openHelp",
+      "hint": "HelpNavigator.openHelp",
+      "via": "opener",
+      "hub": "navapp.graph.HelpNavigator.openHelp",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.graph.HelpNavigator.openHelp",
+          "sources": 10
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/graph/Flows.kt:13",
+      "source_location": "app/src/main/java/navapp/graph/Flows.kt:81"
+    },
+    {
+      "from": "navapp.graph.FlowFiveActivity",
+      "to": "navapp.graph.HelpActivity",
+      "label": "openHelp",
+      "hint": "HelpNavigator.openHelp",
+      "via": "opener",
+      "hub": "navapp.graph.HelpNavigator.openHelp",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.graph.HelpNavigator.openHelp",
+          "sources": 10
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/graph/Flows.kt:13",
+      "source_location": "app/src/main/java/navapp/graph/Flows.kt:60"
+    },
+    {
+      "from": "navapp.graph.FlowFourActivity",
+      "to": "navapp.graph.HelpActivity",
+      "label": "openHelp",
+      "hint": "HelpNavigator.openHelp",
+      "via": "opener",
+      "hub": "navapp.graph.HelpNavigator.openHelp",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.graph.HelpNavigator.openHelp",
+          "sources": 10
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/graph/Flows.kt:13",
+      "source_location": "app/src/main/java/navapp/graph/Flows.kt:53"
+    },
+    {
+      "from": "navapp.graph.FlowNineActivity",
+      "to": "navapp.graph.HelpActivity",
+      "label": "openHelp",
+      "hint": "HelpNavigator.openHelp",
+      "via": "opener",
+      "hub": "navapp.graph.HelpNavigator.openHelp",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.graph.HelpNavigator.openHelp",
+          "sources": 10
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/graph/Flows.kt:13",
+      "source_location": "app/src/main/java/navapp/graph/Flows.kt:88"
+    },
+    {
+      "from": "navapp.graph.FlowOneActivity",
+      "to": "navapp.graph.HelpActivity",
+      "label": "openHelp",
+      "hint": "HelpNavigator.openHelp",
+      "via": "opener",
+      "hub": "navapp.graph.HelpNavigator.openHelp",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.graph.HelpNavigator.openHelp",
+          "sources": 10
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/graph/Flows.kt:13",
+      "source_location": "app/src/main/java/navapp/graph/Flows.kt:32"
+    },
+    {
+      "from": "navapp.graph.FlowSevenActivity",
+      "to": "navapp.graph.HelpActivity",
+      "label": "openHelp",
+      "hint": "HelpNavigator.openHelp",
+      "via": "opener",
+      "hub": "navapp.graph.HelpNavigator.openHelp",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.graph.HelpNavigator.openHelp",
+          "sources": 10
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/graph/Flows.kt:13",
+      "source_location": "app/src/main/java/navapp/graph/Flows.kt:74"
+    },
+    {
+      "from": "navapp.graph.FlowSixActivity",
+      "to": "navapp.graph.HelpActivity",
+      "label": "openHelp",
+      "hint": "HelpNavigator.openHelp",
+      "via": "opener",
+      "hub": "navapp.graph.HelpNavigator.openHelp",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.graph.HelpNavigator.openHelp",
+          "sources": 10
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/graph/Flows.kt:13",
+      "source_location": "app/src/main/java/navapp/graph/Flows.kt:67"
+    },
+    {
+      "from": "navapp.graph.FlowTenActivity",
+      "to": "navapp.graph.HelpActivity",
+      "label": "openHelp",
+      "hint": "HelpNavigator.openHelp",
+      "via": "opener",
+      "hub": "navapp.graph.HelpNavigator.openHelp",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.graph.HelpNavigator.openHelp",
+          "sources": 10
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/graph/Flows.kt:13",
+      "source_location": "app/src/main/java/navapp/graph/Flows.kt:95"
+    },
+    {
+      "from": "navapp.graph.FlowThreeActivity",
+      "to": "navapp.graph.HelpActivity",
+      "label": "openHelp",
+      "hint": "HelpNavigator.openHelp",
+      "via": "opener",
+      "hub": "navapp.graph.HelpNavigator.openHelp",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.graph.HelpNavigator.openHelp",
+          "sources": 10
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/graph/Flows.kt:13",
+      "source_location": "app/src/main/java/navapp/graph/Flows.kt:46"
+    },
+    {
+      "from": "navapp.graph.FlowTwoActivity",
+      "to": "navapp.graph.HelpActivity",
+      "label": "openHelp",
+      "hint": "HelpNavigator.openHelp",
+      "via": "opener",
+      "hub": "navapp.graph.HelpNavigator.openHelp",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.graph.HelpNavigator.openHelp",
+          "sources": 10
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/graph/Flows.kt:13",
+      "source_location": "app/src/main/java/navapp/graph/Flows.kt:39"
+    },
+    {
+      "from": "navapp.nav3dsl.Inbox",
+      "to": "navapp.nav3dsl.Message",
+      "label": "Nav3DslApp",
+      "hint": "Nav3DslAppKt.Nav3DslApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt:29",
+      "source_location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt:29"
+    },
+    {
+      "from": "navapp.nav3dsl.Message",
+      "to": "navapp.nav3dsl.Compose",
+      "label": "Nav3DslApp",
+      "hint": "Nav3DslAppKt.Nav3DslApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt:32",
+      "source_location": "app/src/main/java/navapp/nav3dsl/Nav3DslApp.kt:32"
+    },
+    {
+      "from": "navapp.nav3when.Catalog",
+      "to": "navapp.nav3when.Item",
+      "label": "Nav3WhenApp",
+      "hint": "Nav3WhenAppKt.Nav3WhenApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/nav3when/Nav3WhenApp.kt:27",
+      "source_location": "app/src/main/java/navapp/nav3when/Nav3WhenApp.kt:27"
+    },
+    {
+      "from": "navapp.sections.GuideActivity",
+      "to": "navapp.sections.DocsGuide",
+      "label": "onCreate",
+      "hint": "GuideActivity.onCreate",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/sections/GuideActivity.kt:23",
+      "source_location": "app/src/main/java/navapp/sections/GuideActivity.kt:23"
+    },
+    {
+      "from": "navapp.sections.GuideActivity",
+      "to": "navapp.sections.PhotoGuide",
+      "label": "onCreate",
+      "hint": "GuideActivity.onCreate",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/sections/GuideActivity.kt:23",
+      "source_location": "app/src/main/java/navapp/sections/GuideActivity.kt:23"
+    },
+    {
+      "from": "navapp.typed.Home",
+      "to": "navapp.actions.Contacts",
+      "label": "TypedApp",
+      "hint": "TypedAppKt.TypedApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:44",
+      "source_location": "app/src/main/java/navapp/typed/TypedApp.kt:44"
+    },
+    {
+      "from": "navapp.typed.Home",
+      "to": "navapp.typed.Login",
+      "label": "TypedApp",
+      "hint": "TypedAppKt.TypedApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:43",
+      "source_location": "app/src/main/java/navapp/typed/TypedApp.kt:43"
+    },
+    {
+      "from": "navapp.typed.Home",
+      "to": "navapp.typed.Profile",
+      "label": "TypedApp",
+      "hint": "TypedAppKt.TypedApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:41",
+      "source_location": "app/src/main/java/navapp/typed/TypedApp.kt:41"
+    },
+    {
+      "from": "navapp.typed.Home",
+      "to": "navapp.typed.Settings",
+      "label": "TypedApp",
+      "hint": "TypedAppKt.TypedApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:42",
+      "source_location": "app/src/main/java/navapp/typed/TypedApp.kt:42"
+    },
+    {
+      "from": "navapp.typed.Profile",
+      "to": "navapp.typed.Settings",
+      "label": "TypedApp",
+      "hint": "TypedAppKt.TypedApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/typed/TypedApp.kt:48",
+      "source_location": "app/src/main/java/navapp/typed/TypedApp.kt:48"
+    },
+    {
+      "from": "navapp.via.EntryActivity",
+      "to": "navapp.via.SlowActivity",
+      "label": "next",
+      "hint": "Router.restore > next",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.via.Router.next",
+          "sources": 4
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/via/Router.kt:9",
+      "source_location": "app/src/main/java/navapp/via/Via.kt:78"
+    },
+    {
+      "from": "navapp.via.EntryActivity",
+      "to": "navapp.via.TargetActivity",
+      "label": "next",
+      "hint": "Router.restore > next",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.via.Router.next",
+          "sources": 4
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/via/Router.kt:9",
+      "source_location": "app/src/main/java/navapp/via/Via.kt:78"
+    },
+    {
+      "from": "navapp.via.FirstOpenerActivity",
+      "to": "navapp.via.SlowActivity",
+      "label": "next",
+      "hint": "Router.open > next",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.via.Router.open",
+          "sources": 3
+        },
+        {
+          "id": "navapp.via.Router.next",
+          "sources": 4
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/via/Router.kt:9",
+      "source_location": "app/src/main/java/navapp/via/Via.kt:57"
+    },
+    {
+      "from": "navapp.via.FirstOpenerActivity",
+      "to": "navapp.via.TargetActivity",
+      "label": "next",
+      "hint": "Router.open > next",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.via.Router.open",
+          "sources": 3
+        },
+        {
+          "id": "navapp.via.Router.next",
+          "sources": 4
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/via/Router.kt:9",
+      "source_location": "app/src/main/java/navapp/via/Via.kt:57"
+    },
+    {
+      "from": "navapp.via.SecondOpenerActivity",
+      "to": "navapp.via.SlowActivity",
+      "label": "next",
+      "hint": "Router.open > next",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.via.Router.open",
+          "sources": 3
+        },
+        {
+          "id": "navapp.via.Router.next",
+          "sources": 4
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/via/Router.kt:9",
+      "source_location": "app/src/main/java/navapp/via/Via.kt:64"
+    },
+    {
+      "from": "navapp.via.SecondOpenerActivity",
+      "to": "navapp.via.TargetActivity",
+      "label": "next",
+      "hint": "Router.open > next",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.via.Router.open",
+          "sources": 3
+        },
+        {
+          "id": "navapp.via.Router.next",
+          "sources": 4
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/via/Router.kt:9",
+      "source_location": "app/src/main/java/navapp/via/Via.kt:64"
+    },
+    {
+      "from": "navapp.via.ThirdOpenerActivity",
+      "to": "navapp.via.SlowActivity",
+      "label": "next",
+      "hint": "Router.open > next",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.via.Router.open",
+          "sources": 3
+        },
+        {
+          "id": "navapp.via.Router.next",
+          "sources": 4
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/via/Router.kt:9",
+      "source_location": "app/src/main/java/navapp/via/Via.kt:71"
+    },
+    {
+      "from": "navapp.via.ThirdOpenerActivity",
+      "to": "navapp.via.TargetActivity",
+      "label": "next",
+      "hint": "Router.open > next",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.via.Router.open",
+          "sources": 3
+        },
+        {
+          "id": "navapp.via.Router.next",
+          "sources": 4
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/via/Router.kt:9",
+      "source_location": "app/src/main/java/navapp/via/Via.kt:71"
+    },
+    {
+      "from": "navapp.views.AboutFragment",
+      "to": "navapp.views.LicensesActivity",
+      "label": "onViewCreated",
+      "hint": "AboutFragment.onViewCreated",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:49",
+      "source_location": "app/src/main/java/navapp/views/ViewsActivity.kt:49"
+    },
+    {
+      "from": "navapp.views.DetailFragment",
+      "to": "navapp.views.InfoDialog",
+      "label": "onViewCreated",
+      "hint": "DetailFragment.onViewCreated",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:28",
+      "source_location": "app/src/main/java/navapp/views/ViewsActivity.kt:28"
+    },
+    {
+      "from": "navapp.views.DetailFragment",
+      "to": "navapp.views.SettingsFragment",
+      "label": "onViewCreated",
+      "hint": "DetailFragment.onViewCreated",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:26",
+      "source_location": "app/src/main/java/navapp/views/ViewsActivity.kt:26"
+    },
+    {
+      "from": "navapp.views.LinkActivity",
+      "to": "navapp.views.ViewsActivity",
+      "label": "onCreate",
+      "hint": "LinkActivity.onCreate",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:62",
+      "source_location": "app/src/main/java/navapp/views/ViewsActivity.kt:62"
+    },
+    {
+      "from": "navapp.views.ListFragment",
+      "to": "navapp.views.DetailFragment",
+      "label": "onViewCreated",
+      "hint": "ListFragment.onViewCreated",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:20",
+      "source_location": "app/src/main/java/navapp/views/ViewsActivity.kt:20"
+    },
+    {
+      "from": "navapp.views.SettingsFragment",
+      "to": "navapp.views.AboutFragment",
+      "label": "onViewCreated",
+      "hint": "SettingsFragment.onViewCreated",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:38",
+      "source_location": "app/src/main/java/navapp/views/ViewsActivity.kt:38"
+    },
+    {
+      "from": "navapp.views.SettingsFragment",
+      "to": "navapp.views.PickActivity",
+      "label": "createIntent",
+      "hint": "PickContract.createIntent",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/views/Contracts.kt:11",
+      "source_location": "app/src/main/java/navapp/views/ViewsActivity.kt:35"
+    },
+    {
+      "from": "navapp.views.ViewsActivity",
+      "to": "navapp.views.ListFragment",
+      "label": "@navigation/views_graph",
+      "hint": "@navigation/views_graph",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
+      "source_location": "app/src/main/java/navapp/views/ViewsActivity.kt:16"
+    },
+    {
+      "from": "post/{id}",
+      "to": "comments/{postId}",
+      "label": "StringApp",
+      "hint": "StringAppKt.StringApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/strings/StringApp.kt:30",
+      "source_location": "app/src/main/java/navapp/strings/StringApp.kt:30"
+    },
+    {
+      "from": "signin",
+      "to": "feed",
+      "label": "StringApp",
+      "hint": "StringAppKt.StringApp",
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/strings/StringApp.kt:36",
+      "source_location": "app/src/main/java/navapp/strings/StringApp.kt:36"
+    }
+  ],
+  "hubs": [
+    {
+      "id": "navapp.graph.HelpNavigator.openHelp",
+      "name": "HelpNavigator.openHelp()",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:13",
+      "opens": 1,
+      "opened_from": 10
+    }
+  ],
+  "bases": [
+    {
+      "id": "navapp.graph.BaseFlowActivity",
+      "name": "BaseFlowActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:16",
+      "screens": [
+        "navapp.graph.FlowEightActivity",
+        "navapp.graph.FlowFiveActivity",
+        "navapp.graph.FlowFourActivity",
+        "navapp.graph.FlowNineActivity",
+        "navapp.graph.FlowOneActivity",
+        "navapp.graph.FlowSevenActivity",
+        "navapp.graph.FlowSixActivity",
+        "navapp.graph.FlowTenActivity",
+        "navapp.graph.FlowThreeActivity",
+        "navapp.graph.FlowTwoActivity"
+      ],
+      "opens": [
+        "navapp.graph.SessionActivity"
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "screen": "navapp.MainActivity",
+      "kind": "launcher",
+      "detail": null,
+      "location": "app/src/main/AndroidManifest.xml:4"
+    },
+    {
+      "screen": "navapp.components.AlertActivity",
+      "kind": "push",
+      "detail": "PushService",
+      "location": "app/src/main/java/navapp/components/Components.kt"
+    },
+    {
+      "screen": "navapp.views.LinkActivity",
+      "kind": "deeplink",
+      "detail": "https://navapp.example/views",
+      "location": "app/src/main/AndroidManifest.xml:15"
+    }
+  ]
+}

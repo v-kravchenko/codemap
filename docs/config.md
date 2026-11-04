@@ -407,7 +407,8 @@ impact:
 
 Type: integer, ≥ 1, default `10`. A class with this many subclasses is a shared base: a screen the
 change reaches only through code of such a base run for no instance in particular (a base Activity
-observing a session) gets `via: base` (docs/decisions/0032). A change to the base itself is `direct`.
+observing a session) gets `via: base` (docs/decisions/0032). A change to the base itself is `direct`. `graph` names a way through
+inherited code of such a base `via: base` too (docs/decisions/0035).
 
 ### graph.fanout
 
@@ -426,8 +427,8 @@ graph:
   max_edges: 400
 ```
 
-Type: integer, ≥ 1, default `400`. Total edges `graph` draws before cutting the rest off
-(`edges_left_out` in the JSON result counts what was cut).
+Type: integer, ≥ 1, default `400`. Total arrows the Mermaid text of `graph` draws before cutting
+the rest off (a `%%` comment counts what was cut); `--json` keeps every edge (since schema 5.0.0).
 
 ## Class.member glob syntax
 

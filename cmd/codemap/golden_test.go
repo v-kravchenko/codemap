@@ -77,6 +77,8 @@ var goldenCalls = [][]string{
 	{"graph", "MainActivity", "--depth", "3", "--avoid", "Home"},
 	{"graph", "MainActivity", "--depth", "2", "--module", "!app"},
 	{"graph", "InfoDialog", "--in", "--depth", "5"},
+	{"graph"}, // the whole graph: every way, the navigators, the bases, the entries
+	{"graph", "--module", "!app"},
 	{"changes", "--files", "changed.txt"},
 	{"screens", "--kind", "preview"},
 	{"screens", "Screen", "--kind", "route", "--no-preview"},
@@ -104,6 +106,7 @@ var goldenText = [][]string{
 	{"nav-path", "InfoDialog", "--verbose"},
 	{"nav-path", "Settings", "--via", "Profile"},
 	{"graph", "MainActivity", "--to", "InfoDialog"},
+	{"graph"},
 	{"changes", "--files", "changed.txt"},
 	{"crash", "crash/invoice.txt"},
 }

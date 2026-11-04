@@ -39,6 +39,7 @@ func (w Way) host() hostKey { return hostKey{w.HostNode, w.HostModule} }
 type srcWay struct {
 	Src int32
 	Way
+	shared []SharedStep // of the build's rows
 }
 
 type baseBelow struct {
@@ -64,8 +65,14 @@ func (g *Graph) openedBy(sid int32) ([]srcWay, []baseBelow) {
 		o := &g.m.OpenedBy
 		lo := sort.Search(len(o.Screen), func(i int) bool { return o.Screen[i] >= sid })
 		for i := lo; i < len(o.Screen) && o.Screen[i] == sid; i++ {
-			r.ways = append(r.ways, srcWay{o.Src[i], Way{o.Hub[i], o.Via.Node[o.Via.Start[i]:o.Via.Start[i+1]],
-				o.HostNode[i], o.HostModule.At(i)}})
+			w := srcWay{Src: o.Src[i], Way: Way{o.Hub[i], o.Via.Node[o.Via.Start[i]:o.Via.Start[i+1]],
+				o.HostNode[i], o.HostModule.At(i)}}
+			if sh := &o.Shared; len(sh.Start) > i+1 {
+				for j := sh.Start[i]; j < sh.Start[i+1]; j++ {
+					w.shared = append(w.shared, SharedStep{sh.Node[j], sh.Sources[j]})
+				}
+			}
+			r.ways = append(r.ways, w)
 		}
 		b := &g.m.OpenedBase
 		lo = sort.Search(len(b.Screen), func(i int) bool { return b.Screen[i] >= sid })
@@ -73,9 +80,9 @@ func (g *Graph) openedBy(sid int32) ([]srcWay, []baseBelow) {
 			r.bases = append(r.bases, baseBelow{b.Base[i], b.Below.Node[b.Below.Start[i]:b.Below.Start[i+1]]})
 		}
 	} else {
-		ways, bases, _, _ := g.walkOpenedBy(sid)
+		ways, bases, _, _, shared := g.walkOpenedBy(sid)
 		for _, src := range util.SortedKeys(ways) {
-			r.ways = append(r.ways, srcWay{src, ways[src]})
+			r.ways = append(r.ways, srcWay{src, ways[src], shared[src]})
 		}
 		for _, b := range util.SortedKeys(bases) {
 			r.bases = append(r.bases, baseBelow{b, bases[b]})

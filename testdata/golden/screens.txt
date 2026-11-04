@@ -1,11 +1,22 @@
 
-Activities (25)
+Activities (37)
   AlertActivity                                      app                          app/src/main/java/navapp/components/Components.kt:84
   AvatarActivity                                     app                          app/src/main/java/navapp/impact/DataClasses.kt:18
   EntryActivity                                      app                          app/src/main/java/navapp/via/Via.kt:75
   FirstActivity                                      app                          app/src/main/java/navapp/impact/Constructors.kt:12
   FirstOpenerActivity                                app                          app/src/main/java/navapp/via/Via.kt:54
+  FlowEightActivity                                  app                          app/src/main/java/navapp/graph/Flows.kt:78
+  FlowFiveActivity                                   app                          app/src/main/java/navapp/graph/Flows.kt:57
+  FlowFourActivity                                   app                          app/src/main/java/navapp/graph/Flows.kt:50
+  FlowNineActivity                                   app                          app/src/main/java/navapp/graph/Flows.kt:85
+  FlowOneActivity                                    app                          app/src/main/java/navapp/graph/Flows.kt:29
+  FlowSevenActivity                                  app                          app/src/main/java/navapp/graph/Flows.kt:71
+  FlowSixActivity                                    app                          app/src/main/java/navapp/graph/Flows.kt:64
+  FlowTenActivity                                    app                          app/src/main/java/navapp/graph/Flows.kt:92
+  FlowThreeActivity                                  app                          app/src/main/java/navapp/graph/Flows.kt:43
+  FlowTwoActivity                                    app                          app/src/main/java/navapp/graph/Flows.kt:36
   GuideActivity                                      app                          app/src/main/java/navapp/sections/GuideActivity.kt:18
+  HelpActivity                                       app                          app/src/main/java/navapp/graph/Flows.kt:25
   HelpActivity                                       app                          app/src/main/java/navapp/sections/HelpActivity.kt:10
       content HelpScreenKt.HelpScreen()
       previews navapp.sections.HelpActivityKt.HelpPreview
@@ -24,6 +35,7 @@ Activities (25)
   QuietActivity                                      app                          app/src/main/java/navapp/impact/Overrides.kt:22
   SecondActivity                                     app                          app/src/main/java/navapp/impact/Constructors.kt:18
   SecondOpenerActivity                               app                          app/src/main/java/navapp/via/Via.kt:61
+  SessionActivity                                    app                          app/src/main/java/navapp/graph/Flows.kt:27
   SlowActivity                                       app                          app/src/main/java/navapp/via/Via.kt:52
   TargetActivity                                     app                          app/src/main/java/navapp/via/Via.kt:45
   ThirdOpenerActivity                                app                          app/src/main/java/navapp/via/Via.kt:68

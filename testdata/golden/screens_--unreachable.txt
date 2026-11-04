@@ -1,5 +1,5 @@
 
-Activities (19)
+Activities (30)
   AvatarActivity                                     app                          app/src/main/java/navapp/impact/DataClasses.kt:18
       ends at AvatarActivity: nothing opens it
   EntryActivity                                      app                          app/src/main/java/navapp/via/Via.kt:75
@@ -8,8 +8,39 @@ Activities (19)
       ends at FirstActivity: nothing opens it
   FirstOpenerActivity                                app                          app/src/main/java/navapp/via/Via.kt:54
       ends at FirstOpenerActivity: nothing opens it
+  FlowEightActivity                                  app                          app/src/main/java/navapp/graph/Flows.kt:78
+      ends at FlowEightActivity: nothing opens it
+  FlowFiveActivity                                   app                          app/src/main/java/navapp/graph/Flows.kt:57
+      ends at FlowFiveActivity: nothing opens it
+  FlowFourActivity                                   app                          app/src/main/java/navapp/graph/Flows.kt:50
+      ends at FlowFourActivity: nothing opens it
+  FlowNineActivity                                   app                          app/src/main/java/navapp/graph/Flows.kt:85
+      ends at FlowNineActivity: nothing opens it
+  FlowOneActivity                                    app                          app/src/main/java/navapp/graph/Flows.kt:29
+      ends at FlowOneActivity: nothing opens it
+  FlowSevenActivity                                  app                          app/src/main/java/navapp/graph/Flows.kt:71
+      ends at FlowSevenActivity: nothing opens it
+  FlowSixActivity                                    app                          app/src/main/java/navapp/graph/Flows.kt:64
+      ends at FlowSixActivity: nothing opens it
+  FlowTenActivity                                    app                          app/src/main/java/navapp/graph/Flows.kt:92
+      ends at FlowTenActivity: nothing opens it
+  FlowThreeActivity                                  app                          app/src/main/java/navapp/graph/Flows.kt:43
+      ends at FlowThreeActivity: nothing opens it
+  FlowTwoActivity                                    app                          app/src/main/java/navapp/graph/Flows.kt:36
+      ends at FlowTwoActivity: nothing opens it
   GuideActivity                                      app                          app/src/main/java/navapp/sections/GuideActivity.kt:18
       ends at GuideActivity: nothing opens it
+  HelpActivity                                       app                          app/src/main/java/navapp/graph/Flows.kt:25
+      ends at FlowEightActivity: nothing opens it
+      ends at FlowFiveActivity: nothing opens it
+      ends at FlowFourActivity: nothing opens it
+      ends at FlowNineActivity: nothing opens it
+      ends at FlowOneActivity: nothing opens it
+      ends at FlowSevenActivity: nothing opens it
+      ends at FlowSixActivity: nothing opens it
+      ends at FlowTenActivity: nothing opens it
+      ends at FlowThreeActivity: nothing opens it
+      ends at FlowTwoActivity: nothing opens it
   HelpActivity                                       app                          app/src/main/java/navapp/sections/HelpActivity.kt:10
       content HelpScreenKt.HelpScreen()
       previews navapp.sections.HelpActivityKt.HelpPreview
@@ -73,4 +104,4 @@ Compose routes (2)
 
 Not shown: preview 11 (--kind KIND, --kind all)
 
-(26 screens no entry of the manifest reaches, as far as the code map sees)
+(37 screens no entry of the manifest reaches, as far as the code map sees)

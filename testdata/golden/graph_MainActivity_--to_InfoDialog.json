@@ -1,72 +1,146 @@
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "graph",
   "roots": [
-    "MainActivity"
+    "navapp.MainActivity"
   ],
   "walk": "out",
   "to": [
-    "InfoDialog"
+    "navapp.views.InfoDialog"
   ],
   "nodes": [
     {
+      "id": "navapp.MainActivity",
       "name": "MainActivity",
       "kind": "activity",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/MainActivity.kt:14",
+      "host": null,
+      "hosts": [],
+      "content": [
+        "Nav3DslAppKt.Nav3DslApp()",
+        "Nav3WhenAppKt.Nav3WhenApp()",
+        "SectionsAppKt.SectionsApp()",
+        "StringAppKt.StringApp()",
+        "TypedAppKt.TypedApp()"
+      ],
+      "previews": [],
+      "debug": false
     },
     {
+      "id": "navapp.views.ViewsActivity",
       "name": "ViewsActivity",
       "kind": "activity",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
     },
     {
+      "id": "navapp.views.ListFragment",
       "name": "ListFragment",
       "kind": "fragment",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:18",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
     },
     {
+      "id": "navapp.views.DetailFragment",
       "name": "DetailFragment",
       "kind": "fragment",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:24",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
     },
     {
+      "id": "navapp.views.InfoDialog",
       "name": "InfoDialog",
       "kind": "dialog",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:54",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
     }
   ],
   "edges": [
     {
-      "from": "MainActivity",
-      "to": "ViewsActivity",
+      "from": "navapp.MainActivity",
+      "to": "navapp.views.ViewsActivity",
       "label": "onCreate",
       "hint": "MainActivity.onCreate",
-      "shared": null
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/MainActivity.kt:24",
+      "source_location": "app/src/main/java/navapp/MainActivity.kt:24"
     },
     {
-      "from": "ViewsActivity",
-      "to": "ListFragment",
+      "from": "navapp.views.ViewsActivity",
+      "to": "navapp.views.ListFragment",
       "label": "@navigation/views_graph",
       "hint": "@navigation/views_graph",
-      "shared": null
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
+      "source_location": "app/src/main/java/navapp/views/ViewsActivity.kt:16"
     },
     {
-      "from": "ListFragment",
-      "to": "DetailFragment",
+      "from": "navapp.views.ListFragment",
+      "to": "navapp.views.DetailFragment",
       "label": "onViewCreated",
       "hint": "ListFragment.onViewCreated",
-      "shared": null
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:20",
+      "source_location": "app/src/main/java/navapp/views/ViewsActivity.kt:20"
     },
     {
-      "from": "DetailFragment",
-      "to": "InfoDialog",
+      "from": "navapp.views.DetailFragment",
+      "to": "navapp.views.InfoDialog",
       "label": "onViewCreated",
       "hint": "DetailFragment.onViewCreated",
-      "shared": null
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:28",
+      "source_location": "app/src/main/java/navapp/views/ViewsActivity.kt:28"
     }
   ],
   "more": {},
-  "edges_left_out": 0,
   "ways_of_other_hosts": 0,
   "debug_left_out": 0
 }

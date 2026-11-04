@@ -1,23 +1,35 @@
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "graph",
   "roots": [
-    "MainActivity"
+    "navapp.MainActivity"
   ],
   "walk": "out",
   "to": [
-    "Settings"
+    "navapp.typed.Settings"
   ],
   "nodes": [
     {
+      "id": "navapp.MainActivity",
       "name": "MainActivity",
       "kind": "activity",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/MainActivity.kt:14",
+      "host": null,
+      "hosts": [],
+      "content": [
+        "Nav3DslAppKt.Nav3DslApp()",
+        "Nav3WhenAppKt.Nav3WhenApp()",
+        "SectionsAppKt.SectionsApp()",
+        "StringAppKt.StringApp()",
+        "TypedAppKt.TypedApp()"
+      ],
+      "previews": [],
+      "debug": false
     }
   ],
   "edges": [],
   "more": {},
-  "edges_left_out": 0,
   "ways_of_other_hosts": 0,
   "debug_left_out": 0
 }

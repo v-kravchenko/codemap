@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	schemaVersion = "4.8.0"
+	schemaVersion = "5.0.0"
 	exitOK        = 0
 	exitError     = 2
 )
@@ -217,6 +217,10 @@ func Query(cmd string, args []string) (code int) {
 		}()
 	}
 	code = g.run(cmd, o)
+	if len(m.Missing) > 0 && cmd != "build" { // a map of an older minor index: read, without what it lacks
+		fmt.Fprintf(os.Stderr, "warning: the code map lacks %s (built by an older codemap): the answer leaves out what "+
+			"they hold; run `%s`\n", strings.Join(m.Missing, ", "), rebuild)
+	}
 	if missing {
 		code = g.reportMissing(o.strict, code)
 	}
@@ -231,7 +235,7 @@ func loadMap(path, rebuild string) (*snapshot.Map, config.Config) {
 	} else if err != nil {
 		panic(queryErr("map", err.Error()))
 	}
-	if v := m.MetaValue("index_version"); v != snapshot.IndexVersion {
+	if v := m.MetaValue("index_version"); !snapshot.IndexCompatible(v) {
 		panic(queryErr("map", fmt.Sprintf("The code map at %s is from another version of the tool: run `codemap build`.", path)))
 	}
 	var c config.Config
@@ -267,7 +271,9 @@ func (g *Graph) run(cmd string, o opts) int {
 		need(1, "SCREEN")
 		return g.cmdNavPath(o)
 	case "graph":
-		need(1, "SCREEN")
+		if len(o.pos) == 0 {
+			return g.graphAll(o)
+		}
 		return g.cmdGraph(o)
 	case "screens":
 		return g.cmdScreens(o)
@@ -430,7 +436,7 @@ func (g *Graph) printJSON(command string, result obj) {
 			{"index", obj{{"version", m.MetaValue("index_version")}, {"variant", cmp.Or(config.Cfg.Variant, "debug")}, {"commit", commit},
 				{"dirty", m.MetaValue("dirty") == "1"}, {"inputs_sha1", m.MetaValue("inputs_sha1")},
 				{"stale", stale}, {"stale_inputs", g.staleJSON()}, {"uncompiled", uncompiled},
-				{"missing_modules", strs(g.missingNames())}}},
+				{"missing_modules", strs(g.missingNames())}, {"missing_columns", strs(m.Missing)}}},
 			{"refs", g.refs},
 			{"run", obj{{"started_at", started.UTC().Format("2006-01-02T15:04:05Z")}, {"duration_s", duration}}},
 		}},

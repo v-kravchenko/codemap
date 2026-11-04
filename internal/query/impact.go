@@ -61,6 +61,7 @@ func addRun(runs string, m int32) string { return encodeRuns(append(decodeRuns(r
 
 type Aff struct {
 	Depth     int
+	Ix        int32 // in Keys
 	Parent    Key
 	HasParent bool
 	Why       string
@@ -575,7 +576,7 @@ func (wk *walker) push(k Key, depth int, parent *Key, why string) {
 		return
 	}
 	if a, ok := wk.w.Aff[k]; !ok {
-		v := &Aff{Depth: depth, Why: why}
+		v := &Aff{Depth: depth, Ix: int32(len(wk.w.Keys)), Why: why}
 		if parent != nil {
 			v.Parent, v.HasParent = *parent, true
 		}

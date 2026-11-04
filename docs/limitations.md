@@ -123,6 +123,15 @@ workaround if there is one. Items with an open fix are also in `ROADMAP.md`.
 - The rendered graph is capped at `graph.max_edges` (default 400) arrows; a wide `--depth`
   from a large hub truncates silently past that, in the text output (JSON always has the full,
   uncapped edge list for what was walked).
+- `graph` without a screen: `location` is the first line of the code naming the opened screen in the
+  method opening it (a method opening one screen twice gives the first call), and a call inlined from
+  another file has the line of the inline call; `null` when no step of the way has a line (4 of
+  6,325 ways on a large project, a class literal compared in a lambda). `shared` counts the screens
+  all of whose shortest ways pass a node, over the shortest ways only (a longer way around it does
+  not count), and a parent the walk met later at the same depth (a member of the same class) is left
+  out of the dominators. A base row lists the screens extending the base, `[]` for a base of
+  ViewModels (its code opens screens from any screen using one: which ones, the map knows only by
+  their ways).
 - The "known modules/hosts" heuristic that labels a step "in <module>" (so an impossible
   cross-host jump isn't shown as a direct arrow) takes a screen's host from whichever single
   path first reached it during the walk, not from every possible host of that screen.

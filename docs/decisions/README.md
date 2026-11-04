@@ -66,3 +66,5 @@ a stale file path) may be fixed directly in place; a changed decision gets a new
 | [0032](0032-via-of-impact.md) | How a change reaches a screen: `via`, the walk unchanged | accepted |
 | [0033](0033-facts-of-a-use.md) | What a use is to its symbol: facts, not a caller kind | accepted |
 | [0034](0034-content-of-a-screen-is-a-fact.md) | What an Activity or fragment draws is a fact, not its own code | accepted |
+| [0035](0035-the-whole-graph.md) | The whole graph: the build's ways, with facts of the code on each | accepted |
+| [0036](0036-map-columns-by-name.md) | The map's columns by name: an older or a newer map still reads | accepted |

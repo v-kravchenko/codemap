@@ -1,34 +1,56 @@
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "graph",
   "roots": [
-    "ViewsActivity"
+    "navapp.views.ViewsActivity"
   ],
   "walk": "out",
   "to": [],
   "nodes": [
     {
+      "id": "navapp.views.ViewsActivity",
       "name": "ViewsActivity",
       "kind": "activity",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
     },
     {
+      "id": "navapp.views.ListFragment",
       "name": "ListFragment",
       "kind": "fragment",
-      "module": "app"
+      "module": "app",
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:18",
+      "host": "ViewsActivity",
+      "hosts": [
+        "ViewsActivity"
+      ],
+      "content": [],
+      "previews": [],
+      "debug": false
     }
   ],
   "edges": [
     {
-      "from": "ViewsActivity",
-      "to": "ListFragment",
+      "from": "navapp.views.ViewsActivity",
+      "to": "navapp.views.ListFragment",
       "label": "@navigation/views_graph",
       "hint": "@navigation/views_graph",
-      "shared": null
+      "via": "direct",
+      "hub": null,
+      "base": null,
+      "shared": [],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
+      "source_location": "app/src/main/java/navapp/views/ViewsActivity.kt:16"
     }
   ],
   "more": {},
-  "edges_left_out": 0,
   "ways_of_other_hosts": 0,
   "debug_left_out": 0
 }

@@ -352,6 +352,7 @@ func Parse(d []byte) (c *Class, err error) {
 type SmapRange struct {
 	From, To int
 	Class    string
+	In, Inc  int // the source line of From, and the output lines per source line
 }
 
 // SourceOf: the class whose source holds `line` of the class file: the class itself unless the
@@ -363,6 +364,16 @@ func (c *Class) SourceOf(line int) string {
 		}
 	}
 	return c.Name
+}
+
+// SourceLine: the class whose source holds `line` of the class file, and the line there.
+func (c *Class) SourceLine(line int) (string, int) {
+	for _, r := range c.SmapLines {
+		if line >= r.From && line <= r.To {
+			return r.Class, r.In + (line-r.From)/max(r.Inc, 1)
+		}
+	}
+	return c.Name, line
 }
 
 func smapRanges(text string) ([]SmapRange, string) {
@@ -396,17 +407,19 @@ func smapRanges(text string) ([]SmapRange, string) {
 				continue
 			}
 			in, repeat, _ := strings.Cut(in, ",")
-			if _, id, ok := strings.Cut(in, "#"); ok {
+			in, id, hasID := strings.Cut(in, "#")
+			if hasID {
 				file = id
 			}
+			inLine, err0 := strconv.Atoi(in)
 			start, inc, _ := strings.Cut(outs, ",")
 			from, err1 := strconv.Atoi(start)
 			n, err2 := atoiOr(repeat, 1)
 			k, err3 := atoiOr(inc, 1)
-			if err1 != nil || err2 != nil || err3 != nil || files[file] == "" {
+			if err0 != nil || err1 != nil || err2 != nil || err3 != nil || files[file] == "" {
 				continue
 			}
-			out = append(out, SmapRange{from, from + max(n*k, 1) - 1, files[file]})
+			out = append(out, SmapRange{from, from + max(n*k, 1) - 1, files[file], inLine, k})
 		}
 	}
 	return out, origin

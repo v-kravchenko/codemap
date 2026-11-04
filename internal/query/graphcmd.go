@@ -24,12 +24,14 @@ type gnode struct {
 type gedge struct {
 	from, to           string
 	label, hint, style string
+	w                  edgeWay
 }
 
 type fwdWay struct {
 	t, hub int32
 	via    []int32
 	need   hostKey
+	ew     edgeWay
 }
 
 type gway struct {
@@ -38,6 +40,7 @@ type gway struct {
 	hint  string
 	style string
 	cond  string
+	ew    edgeWay
 }
 
 func (g *Graph) isDebug(sid int32) bool {
@@ -131,7 +134,7 @@ func (g *Graph) forwardWays(roots []int32, avoid map[int32]bool) (map[int32][]fw
 		}
 		ways, _ := g.openedBy(t)
 		for _, w := range ways {
-			forward[w.Src] = append(forward[w.Src], fwdWay{t, w.Hub, w.Via, w.host()})
+			forward[w.Src] = append(forward[w.Src], fwdWay{t, w.Hub, w.Via, w.host(), edgeWay{w.Src, t, w.Way, w.shared, true}})
 		}
 	}
 	return forward, hiddenDebug
@@ -228,6 +231,7 @@ type graphTarget struct {
 	t    int32
 	via  []int32
 	cond string
+	ew   edgeWay
 }
 
 type graphFan struct {
@@ -250,7 +254,7 @@ func (gw *graphOut) expand(src int32, step int) []int32 {
 			if _, has := byHub[w.hub]; !has {
 				hubs = append(hubs, w.hub)
 			}
-			byHub[w.hub] = append(byHub[w.hub], graphTarget{w.t, w.via, cond})
+			byHub[w.hub] = append(byHub[w.hub], graphTarget{w.t, w.via, cond, w.ew})
 		}
 	}
 	sort.SliceStable(hubs, func(i, j int) bool {
@@ -269,12 +273,12 @@ func (gw *graphOut) expand(src int32, step int) []int32 {
 		if hub < 0 {
 			for _, x := range byHub[hub] {
 				h := g.stepHint(x.via)
-				ways = append(ways, gway{g.stepAction(h, -1), x.t, h, "own", x.cond})
+				ways = append(ways, gway{g.stepAction(h, -1), x.t, h, "own", x.cond, x.ew})
 			}
 			continue
 		}
 		h := g.stepHint(byHub[hub][0].via)
-		ways = append(ways, gway{g.stepAction(h, hub), hub, h, "shared", ""})
+		ways = append(ways, gway{g.stepAction(h, hub), hub, h, "shared", "", byHub[hub][0].ew})
 		if gw.fanned[hub] {
 			continue // the navigator's screens are drawn once
 		}
@@ -325,13 +329,13 @@ func (gw *graphOut) drawWays(src int32, ways []gway) []int32 {
 		}
 		if len(group) > 1 && act != "" {
 			a := gw.node(gnode{src, act, true})
-			d.edges = append(d.edges, gedge{gw.node(gnode{n: src}), a, "", act, "act"})
+			d.edges = append(d.edges, gedge{gw.node(gnode{n: src}), a, "", act, "act", edgeWay{}})
 			for _, w := range group {
-				d.edges = append(d.edges, gedge{a, gw.node(gnode{n: w.t}), inHost("", w.cond), w.hint, w.style})
+				d.edges = append(d.edges, gedge{a, gw.node(gnode{n: w.t}), inHost("", w.cond), w.hint, w.style, w.ew})
 			}
 		} else {
 			for _, w := range group {
-				d.edges = append(d.edges, gedge{gw.node(gnode{n: src}), gw.node(gnode{n: w.t}), inHost(short, w.cond), w.hint, w.style})
+				d.edges = append(d.edges, gedge{gw.node(gnode{n: src}), gw.node(gnode{n: w.t}), inHost(short, w.cond), w.hint, w.style, w.ew})
 			}
 		}
 		for _, w := range group {
@@ -358,7 +362,7 @@ func (gw *graphOut) drawFan(src int32, f graphFan) []int32 {
 		return nil
 	}
 	for _, x := range f.opened {
-		d.edges = append(d.edges, gedge{gw.node(gnode{n: f.hub}), gw.node(gnode{n: x.t}), inHost("", x.cond), "", "fan"})
+		d.edges = append(d.edges, gedge{gw.node(gnode{n: f.hub}), gw.node(gnode{n: x.t}), inHost("", x.cond), "", "fan", x.ew})
 	}
 	for _, x := range f.opened {
 		gw.reach(src, x.t)
@@ -419,10 +423,10 @@ func (g *Graph) graphIn(o opts, roots []int32) int {
 	depth := max(o.depth, 1)
 	hiddenDebug := 0
 	drawn := map[[2]int32]bool{} // from, to
-	edge := func(from, to int32, label, hint, style string) {
+	edge := func(from, to int32, label, hint, style string, ew edgeWay) {
 		if !drawn[[2]int32{from, to}] {
 			drawn[[2]int32{from, to}] = true
-			edges = append(edges, gedge{node(gnode{n: from}), node(gnode{n: to}), label, hint, style})
+			edges = append(edges, gedge{node(gnode{n: from}), node(gnode{n: to}), label, hint, style, ew})
 		}
 	}
 	level := append([]int32(nil), roots...)
@@ -460,12 +464,13 @@ func (g *Graph) graphIn(o opts, roots []int32) int {
 				if act := g.stepAction(hint, -1); act != "" {
 					label = shortAction(act)
 				}
-				edge(w.Src, t, label, hint, "own")
+				edge(w.Src, t, label, hint, "own", edgeWay{w.Src, t, w.Way, w.shared, true})
 				reach(w.Src)
 			}
 			sort.SliceStable(hubs, func(i, j int) bool { return g.label(hubs[i]) < g.label(hubs[j]) })
 			for _, hub := range hubs {
-				edge(hub, t, "", "", "fan")
+				w0 := byHub[hub][0]
+				edge(hub, t, "", "", "fan", edgeWay{w0.Src, t, w0.Way, w0.shared, true})
 				var srcs []int32
 				for _, w := range byHub[hub] {
 					if !containsInt(srcs, w.Src) {
@@ -486,7 +491,7 @@ func (g *Graph) graphIn(o opts, roots []int32) int {
 					if act := g.stepAction(hint, hub); act != "" {
 						label = shortAction(act)
 					}
-					edge(w.Src, hub, label, hint, "shared")
+					edge(w.Src, hub, label, hint, "shared", edgeWay{w.Src, t, w.Way, w.shared, true})
 					reach(w.Src)
 				}
 			}
@@ -516,7 +521,7 @@ func (g *Graph) printGraph(o opts, d *gdraw) {
 	roots, isRoot, order, ids, edges, more, dropped, hiddenDebug := d.roots, d.isRoot, d.order, d.ids, d.edges, d.more,
 		d.dropped, d.hiddenDebug
 	cut := 0
-	if len(edges) > config.GraphEdges {
+	if len(edges) > config.GraphEdges && !o.json { // what Mermaid draws; the JSON keeps every edge
 		cut = len(edges) - config.GraphEdges
 		edges = edges[:config.GraphEdges]
 	}
@@ -535,14 +540,19 @@ func (g *Graph) printGraph(o opts, d *gdraw) {
 	}
 	if o.json {
 		var nodes, es []any
+		jsonID := map[string]string{} // diagram id -> node id
 		for _, n := range order {
-			kind := "shared"
-			if n.isAct {
-				kind = "action"
-			} else if rows, ok := g.screens[n.n]; ok {
-				kind = rows[0].Kind
+			var item obj
+			switch {
+			case n.isAct:
+				item = g.otherNodeJSON(g.nodeID(n.n)+": "+n.action, names[ids[n]], "action", n.n)
+			case g.screens[n.n] != nil:
+				item = g.screenNodeJSON(n.n)
+			default:
+				item = g.otherNodeJSON(g.nodeID(n.n), g.label(n.n), "shared", n.n)
 			}
-			nodes = append(nodes, obj{{"name", names[ids[n]]}, {"kind", kind}, {"module", g.module(n.n)}})
+			jsonID[ids[n]] = item[0].v.(string)
+			nodes = append(nodes, item)
 		}
 		orNil := func(s string) any {
 			if s == "" {
@@ -551,22 +561,18 @@ func (g *Graph) printGraph(o opts, d *gdraw) {
 			return s
 		}
 		for _, e := range edges {
-			var shared any
-			if e.style == "shared" {
-				shared = names[e.to]
-			}
-			es = append(es, obj{{"from", names[e.from]}, {"to", names[e.to]}, {"label", orNil(e.label)},
-				{"hint", orNil(e.hint)}, {"shared", shared}})
+			es = append(es, append(obj{{"from", jsonID[e.from]}, {"to", jsonID[e.to]}, {"label", orNil(e.label)},
+				{"hint", orNil(e.hint)}}, g.edgeWayJSON(e.w)...))
 		}
 		moreObj := obj{}
 		at := map[string]int{}
 		for _, h := range util.SortedKeys(more) {
 			ts := make([]string, len(more[h]))
 			for i, t := range more[h] {
-				ts[i] = g.screenName(t)
+				ts[i] = g.nodeID(t)
 			}
 			sort.Strings(ts)
-			k := names[ids[gnode{n: h}]]
+			k := jsonID[ids[gnode{n: h}]]
 			if i, ok := at[k]; ok {
 				moreObj[i].v = strs(ts)
 				continue
@@ -574,20 +580,20 @@ func (g *Graph) printGraph(o opts, d *gdraw) {
 			at[k] = len(moreObj)
 			moreObj = append(moreObj, kv{k, strs(ts)})
 		}
-		rootNames := make([]string, len(roots))
+		rootIDs := make([]string, len(roots))
 		for i, r := range roots {
-			rootNames[i] = g.screenName(r)
+			rootIDs[i] = g.nodeID(r)
 		}
 		walk := "out"
 		if d.in {
 			walk = "in"
 		}
-		toNames := make([]string, len(d.to))
+		toIDs := make([]string, len(d.to))
 		for i, t := range d.to {
-			toNames[i] = g.screenName(t)
+			toIDs[i] = g.nodeID(t)
 		}
-		g.printJSON("graph", obj{{"roots", strs(rootNames)}, {"walk", walk}, {"to", strs(toNames)},
-			{"nodes", list(nodes)}, {"edges", list(es)}, {"more", moreObj}, {"edges_left_out", cut},
+		g.printJSON("graph", obj{{"roots", strs(rootIDs)}, {"walk", walk}, {"to", strs(toIDs)},
+			{"nodes", list(nodes)}, {"edges", list(es)}, {"more", moreObj},
 			{"ways_of_other_hosts", dropped}, {"debug_left_out", hiddenDebug}})
 		return
 	}

@@ -85,6 +85,9 @@ one way through each screen that opens it, `--from SCREEN` a way from a screen t
 `graph` draws what a screen opens as a Mermaid flowchart; `--to SCREEN` only the ways to a screen,
 `--in` what opens it, `--module feature/cards` one feature's map, `--avoid GLOB` without some screens;
 `--direction TB` draws it top to bottom (`LR`, `RL`, `TB`/`TD`, `BT`).
+`graph` without a screen gives the whole graph: every way one screen opens another, a line each;
+with `--json` each way's ids, `via`, the code it shares with other screens and its lines, plus the
+navigators, the base classes whose code opens screens and the entries (docs/json.md).
 
 `--module GLOB` keeps the answer of `impact`, `changes`, `used-by`, `uses`, `screens` and `find` to
 some modules, as `.gitignore` takes directories: `feature/cards` with the modules under it,

@@ -295,9 +295,10 @@ type Builder struct {
 	lineCache                                         map[string]int
 
 	childStart    map[string]string
-	routeOpens    map[[2]any]struct{}
+	routeOpens    map[[2]any]int32 // method, route -> the line of the call opening it (0: none)
 	routeOpenList []routeOpen
-	classLiterals map[[2]int64]struct{}
+	classLiterals map[[2]int64]int32 // method, class -> the line of the literal
+	edgeLines     map[snapshot.Edge]int32
 	registrations []registration
 	screenCls     map[int64]string
 	inits         map[int64][]int64
@@ -316,6 +317,7 @@ type tableMap struct {
 type routeOpen struct {
 	method int64
 	route  string
+	line   int32
 }
 
 type registration struct {
@@ -754,11 +756,13 @@ func (b *Builder) subclassesOf(bases map[string]bool) map[string]bool {
 
 type part struct {
 	edges         []snapshot.Edge
+	edgeLines     []int32 // the first line of each edge's code, 0: none
 	callVia       []CallVia
 	paramSwitches []Triple
 	directReads   [][2]int64
 	routeOpens    []routeOpen
 	classLiterals [][2]int64
+	literalLines  []int32
 	resKeys       []string
 	defaultGuards []Guarded
 	callSites     []CallSite
@@ -830,8 +834,9 @@ func (b *Builder) edgesAll() {
 		}
 	})
 	b.childStart = map[string]string{}
-	b.routeOpens = map[[2]any]struct{}{}
-	b.classLiterals = map[[2]int64]struct{}{}
+	b.routeOpens = map[[2]any]int32{}
+	b.classLiterals = map[[2]int64]int32{}
+	b.edgeLines = map[snapshot.Edge]int32{}
 	for _, p := range parts {
 		b.mergeEdges(p)
 	}
@@ -858,8 +863,10 @@ func (b *Builder) mergeEdges(p *part) {
 		}
 		return n
 	}
-	for _, e := range p.edges {
-		b.Edges[snapshot.Edge{Src: e.Src, Dst: fix(e.Dst), Kind: e.Kind}] = struct{}{}
+	for i, e := range p.edges {
+		e.Dst = fix(e.Dst)
+		b.Edges[e] = struct{}{}
+		b.edgeLines[e] = minLine(b.edgeLines[e], p.edgeLines[i])
 	}
 	for _, g := range p.defaultGuards {
 		g.Dst = fix(g.Dst)
@@ -877,13 +884,14 @@ func (b *Builder) mergeEdges(p *part) {
 	}
 	for _, v := range p.routeOpens {
 		k := [2]any{v.method, v.route}
-		if _, ok := b.routeOpens[k]; !ok {
-			b.routeOpens[k] = struct{}{}
+		line, ok := b.routeOpens[k]
+		if !ok {
 			b.routeOpenList = append(b.routeOpenList, v)
 		}
+		b.routeOpens[k] = minLine(line, v.line)
 	}
-	for _, v := range p.classLiterals {
-		b.classLiterals[v] = struct{}{}
+	for i, v := range p.classLiterals {
+		b.classLiterals[v] = minLine(b.classLiterals[v], p.literalLines[i])
 	}
 	b.registrations = append(b.registrations, p.registrations...)
 	for _, v := range p.childStart {
@@ -914,6 +922,20 @@ func (s *oset[K]) add(k K) {
 
 type pb struct{ p, b int }
 
+// outerClass: the top-level class of a class name: its file's.
+func outerClass(name string) string {
+	top, _, _ := strings.Cut(name, "$")
+	return top
+}
+
+// minLine: the smaller known line of a and b, 0 for none.
+func minLine(a, b int32) int32 {
+	if a == 0 || b != 0 && b < a {
+		return b
+	}
+	return a
+}
+
 // classEdges gathers the edges of one class and what its code tells about routes.
 type classEdges struct {
 	*edgeWorker
@@ -926,6 +948,9 @@ type classEdges struct {
 	directReads   oset[[2]int64]
 	routeOpens    oset[routeOpen]
 	classLiterals oset[[2]int64]
+	lines         map[snapshot.Edge]int32 // the first line of each edge's code
+	literalLines  map[[2]int64]int32
+	line          int32 // of the reference being read; in code inlined from another file, the call's own line
 	resKeys       map[string]int64
 	resOrder      []string
 	smap          []string // the classes of the SMAP within the map: whose functions were inlined here
@@ -947,6 +972,7 @@ type methodEdges struct {
 	route       string
 	cont        []content
 	routeReads  []string
+	routeLines  []int32 // the line each of routeReads was read on
 	named       []string
 	strs        []string
 	reified     bool // the next class literal is a type parameter of an inline function's own body
@@ -954,7 +980,8 @@ type methodEdges struct {
 
 func (w *edgeWorker) edgesOf(name string) *part {
 	info := w.b.parsed[name].C
-	c := &classEdges{edgeWorker: w, name: name, info: info, out: &part{}, resKeys: map[string]int64{}}
+	c := &classEdges{edgeWorker: w, name: name, info: info, out: &part{}, resKeys: map[string]int64{},
+		lines: map[snapshot.Edge]int32{}, literalLines: map[[2]int64]int32{}}
 	c.supers()
 	c.fields()
 	for _, s := range info.Smap {
@@ -967,17 +994,27 @@ func (w *edgeWorker) edgesOf(name string) *part {
 	}
 	out := c.out
 	out.edges = c.edges.keys
+	out.edgeLines = make([]int32, len(out.edges))
+	for i, e := range out.edges {
+		out.edgeLines[i] = c.lines[e]
+	}
 	out.callVia = c.callVia.keys
 	out.paramSwitches = c.paramSwitches.keys
 	out.directReads = c.directReads.keys
 	out.routeOpens = c.routeOpens.keys
 	out.classLiterals = c.classLiterals.keys
+	for _, k := range out.classLiterals {
+		out.literalLines = append(out.literalLines, c.literalLines[k])
+	}
 	out.resKeys = c.resOrder
 	return out
 }
 
 func (c *classEdges) add(e snapshot.Edge) {
 	c.edges.add(e)
+	if c.line != 0 {
+		c.lines[e] = minLine(c.lines[e], c.line)
+	}
 	if !c.hasGuards || e.Src != c.mid {
 		return
 	}
@@ -1045,6 +1082,7 @@ func (c *classEdges) fields() {
 func (c *classEdges) method(m *classfile.Method) {
 	b, name := c.b, c.name
 	c.mid = b.memberID[[3]string{name, m.Name, m.Desc}]
+	c.line = 0
 	c.hasGuards = len(m.Guards) > 0
 	c.edgeGuards, c.egOrder, c.guard = nil, nil, nil
 	if c.hasGuards {
@@ -1071,8 +1109,14 @@ func (c *classEdges) method(m *classfile.Method) {
 		if generated || ref.Kind == classfile.RTableSet {
 			continue
 		}
+		// a line of this class's file, through the SMAP for code an inline function copied (a lambda
+		// of `screen {}`); else, inlined from another file, the line of the inline call stays
+		if cls, l := c.info.SourceLine(ref.Line); ref.Line > 0 && outerClass(cls) == outerClass(name) {
+			c.line = int32(l)
+		}
 		s.ref(ref)
 	}
+	c.line = 0
 	s.finish()
 }
 
@@ -1099,8 +1143,8 @@ func (s *methodEdges) ref(ref *classfile.Ref) {
 
 func (s *methodEdges) finish() {
 	s.guard = nil
-	for _, r := range s.routeReads {
-		s.routeOpens.add(routeOpen{s.mid, r})
+	for i, r := range s.routeReads {
+		s.routeOpens.add(routeOpen{s.mid, r, s.routeLines[i]})
 	}
 	for _, pc := range s.pending {
 		s.add(snapshot.Edge{Src: s.mid, Dst: pc.target, Kind: pc.kind})
@@ -1147,6 +1191,7 @@ func (s *methodEdges) typeRef(ref *classfile.Ref) {
 	}
 	if ref.Kind == classfile.RClassLit && !strings.HasSuffix(s.m.Desc, ")Z") {
 		s.classLiterals.add([2]int64{s.mid, tid})
+		s.literalLines[[2]int64{s.mid, tid}] = minLine(s.literalLines[[2]int64{s.mid, tid}], s.line)
 	}
 	if ref.Kind == classfile.RClassLit && s.reified {
 		s.reified = false
@@ -1188,7 +1233,7 @@ func (s *methodEdges) member(ref *classfile.Ref) {
 	// serializer lists the subclasses) makes the route without opening it
 	typedOpen := config.TypedRoutes && owner != name && !strings.HasPrefix(name, owner+"$") && !b.ancestorOf(name, owner)
 	if typedOpen && call && n == "<init>" && !(s.m.Name == "<init>" && owner == s.info.Super) && b.routeCandidate(owner) {
-		s.routeReads = append(s.routeReads, owner)
+		s.routeReads, s.routeLines = append(s.routeReads, owner), append(s.routeLines, s.line)
 	}
 	if rtype := rClassType(owner); rtype != "" && ref.Kind == classfile.RRead {
 		s.add(snapshot.Edge{Src: s.mid, Dst: s.resRef(android.ResKey(rtype, n)), Kind: snapshot.RES})
@@ -1201,7 +1246,7 @@ func (s *methodEdges) member(ref *classfile.Ref) {
 		s.route = owner
 	}
 	if ref.Kind == classfile.RRead && n == "INSTANCE" && (b.navTypes[owner] || typedOpen && b.routeCandidate(owner)) {
-		s.routeReads = append(s.routeReads, owner)
+		s.routeReads, s.routeLines = append(s.routeReads, owner), append(s.routeLines, s.line)
 	}
 	target := b.resolveMember(owner, n, d, !call)
 	if target == 0 {
@@ -1277,14 +1322,14 @@ func (s *methodEdges) routeCall(owner, n, d string) {
 	if len(s.named) > 0 && n != "getRoute" && !routeNamePass.MatchString(full) {
 		if config.RouteByName.MatchString(full) {
 			for _, r := range s.named {
-				s.routeOpens.add(routeOpen{s.mid, r})
+				s.routeOpens.add(routeOpen{s.mid, r, s.line})
 			}
 		}
 		s.named = nil
 	}
 	if len(popped) > 0 && config.RouteByName.MatchString(full) && opensRoute(owner, n, s.m.Name) {
 		for _, p := range popped {
-			s.routeOpens.add(routeOpen{s.mid, `"` + p})
+			s.routeOpens.add(routeOpen{s.mid, `"` + p, s.line})
 		}
 	}
 	if len(s.routeReads) > 0 && config.TypedRoutes && (n == "areEqual" || n == "equals" ||
@@ -1336,7 +1381,7 @@ func (s *methodEdges) handRouteReads(owner, n, d, full string) {
 		s.out.childStart = append(s.out.childStart, [2]string{s.name, tk[len(tk)-1]})
 	} else if opensRoute(owner, n, s.m.Name) {
 		for _, r := range tk {
-			s.routeOpens.add(routeOpen{s.mid, r})
+			s.routeOpens.add(routeOpen{s.mid, r, s.line})
 		}
 	} else if n == "getRoute" {
 		s.named = append(s.named, tk...)
@@ -1346,7 +1391,7 @@ func (s *methodEdges) handRouteReads(owner, n, d, full string) {
 // popRouteReads: the last k route objects read, taken off the stack.
 func (s *methodEdges) popRouteReads(k int) []string {
 	tk := append([]string(nil), s.routeReads[len(s.routeReads)-k:]...)
-	s.routeReads = s.routeReads[:len(s.routeReads)-k]
+	s.routeReads, s.routeLines = s.routeReads[:len(s.routeReads)-k], s.routeLines[:len(s.routeLines)-k]
 	return tk
 }
 
@@ -1648,7 +1693,7 @@ func (b *Builder) screensAll() {
 					k = s
 				}
 				if rn, ok := routeNodes[k]; ok {
-					b.Edges[snapshot.Edge{Src: ro.method, Dst: rn, Kind: snapshot.OPENS}] = struct{}{}
+					b.opens(snapshot.Edge{Src: ro.method, Dst: rn, Kind: snapshot.OPENS}, b.routeOpens[[2]any{ro.method, ro.route}])
 				}
 			}
 			continue
@@ -1657,18 +1702,24 @@ func (b *Builder) screensAll() {
 			rc = s
 		}
 		if rn, ok := routeNodes[rc]; ok {
-			b.Edges[snapshot.Edge{Src: ro.method, Dst: rn, Kind: snapshot.OPENS}] = struct{}{}
+			b.opens(snapshot.Edge{Src: ro.method, Dst: rn, Kind: snapshot.OPENS}, b.routeOpens[[2]any{ro.method, ro.route}])
 		}
 	}
-	for cl := range b.classLiterals {
+	for cl, line := range b.classLiterals {
 		if b.screenCls[cl[1]] == "activity" {
-			b.Edges[snapshot.Edge{Src: cl[0], Dst: cl[1], Kind: snapshot.OPENS}] = struct{}{}
+			b.opens(snapshot.Edge{Src: cl[0], Dst: cl[1], Kind: snapshot.OPENS}, line)
 		}
 	}
 	b.navGraphs()
 	b.hosts()
 	b.relatedAll()
 	b.entriesAll()
+}
+
+// opens: an edge opening a screen, with the line of the code opening it.
+func (b *Builder) opens(e snapshot.Edge, line int32) {
+	b.Edges[e] = struct{}{}
+	b.edgeLines[e] = minLine(b.edgeLines[e], line)
 }
 
 // routeSegments: the path of a string route without its query, "*" for a {placeholder} or a part
@@ -2416,7 +2467,7 @@ func (b *Builder) Map(meta map[string]string) *snapshot.Map {
 	}
 	slices.Sort(ids)
 	var wg sync.WaitGroup
-	wg.Go(func() { m.Out, m.In = snapshot.EdgeCSR(b.Edges, ids) })
+	wg.Go(func() { m.Out, m.In, m.OutLine = snapshot.EdgeCSR(b.Edges, ids, b.edgeLines) })
 	wg.Go(func() { b.otherColumns(m) })
 	n := &m.Node
 	k := len(ids)

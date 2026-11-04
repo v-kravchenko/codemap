@@ -1,8 +1,8 @@
 {
-  "schema_version": "4.8.0",
+  "schema_version": "5.0.0",
   "command": "find",
   "pattern": "Activity",
-  "total": 31,
+  "total": 44,
   "synthetic": 2,
   "symbols": [
     {
@@ -40,6 +40,14 @@
       "kind": "class",
       "module": "app",
       "location": "app/src/main/java/navapp/via/Via.kt:27",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.graph.HelpActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:25",
       "visibility": "public",
       "synthetic": false
     },
@@ -124,6 +132,46 @@
       "synthetic": false
     },
     {
+      "symbol": "navapp.graph.FlowOneActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:29",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.graph.FlowSixActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:64",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.graph.FlowTenActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:92",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.graph.FlowTwoActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:36",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.graph.SessionActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:27",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
       "symbol": "navapp.impact.AvatarActivity",
       "kind": "class",
       "module": "app",
@@ -148,6 +196,38 @@
       "synthetic": false
     },
     {
+      "symbol": "navapp.graph.BaseFlowActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:16",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.graph.FlowFiveActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:57",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.graph.FlowFourActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:50",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.graph.FlowNineActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:85",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
       "symbol": "navapp.impact.CounterActivity",
       "kind": "class",
       "module": "app",
@@ -168,6 +248,30 @@
       "kind": "class",
       "module": "app",
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:56",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.graph.FlowEightActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:78",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.graph.FlowSevenActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:71",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.graph.FlowThreeActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/graph/Flows.kt:43",
       "visibility": "public",
       "synthetic": false
     },
