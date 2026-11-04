@@ -7,6 +7,8 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+## [0.13.1] - 2026-11-04
+
 ### Fixed
 
 - `screens` gives an Activity or fragment the previews of the composables written in its own class
