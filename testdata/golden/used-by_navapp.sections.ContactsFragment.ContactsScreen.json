@@ -1,0 +1,62 @@
+{
+  "schema_version": "5.0.0",
+  "command": "used-by",
+  "symbols": [
+    "navapp.sections.ContactsFragment.ContactsScreen"
+  ],
+  "items": [
+    {
+      "symbol": "navapp.sections.ContactsFragment.ContactsScreen$lambda$0",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/ContactsFragment.kt",
+      "edges": [
+        "call"
+      ],
+      "target": "navapp.sections.ContactsFragment.ContactsScreen",
+      "source": "navapp.sections.ContactsFragment.ContactsScreen",
+      "constructor": false,
+      "supertype": false,
+      "screens": [
+        {
+          "kind": "fragment",
+          "name": "ContactsFragment"
+        }
+      ]
+    },
+    {
+      "symbol": "navapp.sections.ContactsFragment.ContactsScreenPreview",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/ContactsFragment.kt:40",
+      "edges": [
+        "call"
+      ],
+      "target": "navapp.sections.ContactsFragment.ContactsScreen",
+      "source": "navapp.sections.ContactsFragment.ContactsScreenPreview",
+      "constructor": false,
+      "supertype": false,
+      "screens": []
+    },
+    {
+      "symbol": "navapp.sections.ContactsFragment.SetContent",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/sections/ContactsFragment.kt:24",
+      "edges": [
+        "call"
+      ],
+      "target": "navapp.sections.ContactsFragment.ContactsScreen",
+      "source": "navapp.sections.ContactsFragment.SetContent",
+      "constructor": false,
+      "supertype": false,
+      "screens": [
+        {
+          "kind": "fragment",
+          "name": "ContactsFragment"
+        }
+      ]
+    }
+  ],
+  "generated_di": 0
+}

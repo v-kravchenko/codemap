@@ -36,6 +36,8 @@ notes from its section here (`tools/release-notes.sh`).
 - `impact` and `changes` reach a preview declared in the screen's own class: a change to a member
   composable of a fragment or Activity lists the preview drawing it (`--kind preview`), as one of a
   top-level composable did; the walk goes on inside that class only.
+- `used-by` no longer counts a preview declared in a screen's class as that screen's code (`screens`
+  is empty, as for a top-level preview).
 
 ## [0.14.0] - 2026-11-04
 

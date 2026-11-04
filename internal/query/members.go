@@ -148,14 +148,18 @@ func (g *Graph) codeScreens(cls int32, method string) []obj {
 		}
 	}
 	set := map[int32]bool{}
-	if top := g.topOf(cls); g.screenTops[top] {
-		set[top] = true
-	}
 	var stack []int32
+	preview := false
 	for _, m := range g.members(cls) {
 		if g.name(m) == method {
 			stack = append(stack, m)
+			if rows := g.screens[m]; len(rows) > 0 && rows[0].Kind == "preview" {
+				preview = true
+			}
 		}
+	}
+	if top := g.topOf(cls); g.screenTops[top] && !preview {
+		set[top] = true // a preview declared in the screen's class is not its code, as a top-level one is not
 	}
 	seen := map[int32]bool{}
 	for len(stack) > 0 {
