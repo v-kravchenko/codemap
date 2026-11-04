@@ -330,7 +330,11 @@ nav_path:
 
 Type: array of strings, add up. Parts of method names that mark push/deep-link handling along a
 `nav-path` way (a step whose code runs through one of these is a "push" step, costed at
-`nav_path.costs.push`).
+`nav_path.costs.push`). A marker matches the method's own name, case-sensitive, not its class:
+`Push` does not mark `SomePushExecutor.start` or `pushNextTask`. A screen a server task opens on
+its own (a queue of tasks run when the app starts) is no way a user takes either: a marker for
+the queue's method keeps `nav-path` off it, as a short way through it otherwise wins over the
+flow a user taps through.
 
 ### nav_path.push_actions
 
