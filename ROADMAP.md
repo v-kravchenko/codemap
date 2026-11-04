@@ -52,11 +52,6 @@ itself.
   logging out) is no hub when a few navigators below it are: its ways stay `direct` for `nav-path`,
   `graph` and `impact`. The dominators `build` now finds for `graph`'s `shared` would make a hub
   exact (all ways pass it); it changes the answers of three commands, so it waits for its own check.
-- **A screen's human title** (`screens.title`, `screens.tags` in codemap.yml): the string resource a
-  configured composable parameter or property gets in the screen's own code, its text from
-  `strings.xml` per locale, `null` with a reason for none or several; tags as given (an annotation's
-  value, a property's constant). Needs the arguments of calls tracked to a `stringResource` and the
-  texts of strings in the map.
 - **nav-path through a DI multibinding** (a Hilt `@IntoSet`/map-multibinding of navigation
   destinations, a Navigation-3-style scene registry) — currently reported as "No way" because
   there's no static call edge from the registering code to the host that reads the set/map at
