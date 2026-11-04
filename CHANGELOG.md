@@ -7,6 +7,8 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+## [0.15.1] - 2026-11-04
+
 ### Changed
 
 - `graph` and `impact` take a way's navigator from its dominators: the nearest node every way
