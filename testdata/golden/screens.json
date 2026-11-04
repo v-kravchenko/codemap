@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.7.0",
+  "schema_version": "4.8.0",
   "command": "screens",
   "screens": [
     {
@@ -76,7 +76,9 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/sections/HelpActivity.kt:10",
-      "content": [],
+      "content": [
+        "HelpScreenKt.HelpScreen()"
+      ],
       "previews": [
         "navapp.sections.HelpActivityKt.HelpPreview"
       ]
@@ -155,7 +157,13 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/MainActivity.kt:14",
-      "content": [],
+      "content": [
+        "Nav3DslAppKt.Nav3DslApp()",
+        "Nav3WhenAppKt.Nav3WhenApp()",
+        "SectionsAppKt.SectionsApp()",
+        "StringAppKt.StringApp()",
+        "TypedAppKt.TypedApp()"
+      ],
       "previews": []
     },
     {
@@ -324,7 +332,9 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/sections/ContactsFragment.kt:22",
-      "content": [],
+      "content": [
+        "ContactsFragment.ContactsScreen()"
+      ],
       "previews": [
         "navapp.sections.ContactsFragment.ContactsScreenPreview"
       ]

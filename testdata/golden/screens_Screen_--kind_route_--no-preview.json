@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.7.0",
+  "schema_version": "4.8.0",
   "command": "screens",
   "screens": [
     {
@@ -64,6 +64,8 @@
     }
   ],
   "hidden": {
+    "activity": 1,
+    "fragment": 1,
     "preview": 10
   }
 }

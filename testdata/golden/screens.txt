@@ -7,6 +7,7 @@ Activities (25)
   FirstOpenerActivity                                app                          app/src/main/java/navapp/via/Via.kt:54
   GuideActivity                                      app                          app/src/main/java/navapp/sections/GuideActivity.kt:18
   HelpActivity                                       app                          app/src/main/java/navapp/sections/HelpActivity.kt:10
+      content HelpScreenKt.HelpScreen()
       previews navapp.sections.HelpActivityKt.HelpPreview
   InboxActivity                                      app                          app/src/main/java/navapp/via/Via.kt:27
   LabelledCopyActivity                               app                          app/src/main/java/navapp/impact/Defaults.kt:23
@@ -15,6 +16,7 @@ Activities (25)
   LinkActivity                                       app                          app/src/main/java/navapp/views/ViewsActivity.kt:59
   LoudActivity                                       app                          app/src/main/java/navapp/impact/Overrides.kt:20
   MainActivity                                       app                          app/src/main/java/navapp/MainActivity.kt:14
+      content Nav3DslAppKt.Nav3DslApp(), Nav3WhenAppKt.Nav3WhenApp(), SectionsAppKt.SectionsApp(), StringAppKt.StringApp(), TypedAppKt.TypedApp()
   MessageActivity                                    app                          app/src/main/java/navapp/via/Via.kt:34
   NicknameActivity                                   app                          app/src/main/java/navapp/impact/DataClasses.kt:11
   PickActivity                                       app                          app/src/main/java/navapp/views/Contracts.kt:16
@@ -31,6 +33,7 @@ Fragments (9)
   AboutFragment                                      app                          app/src/main/java/navapp/views/ViewsActivity.kt:46  host ViewsActivity
   CartFragment                                       app                          app/src/main/java/navapp/impact/GenericDi.kt:29
   ContactsFragment                                   app                          app/src/main/java/navapp/sections/ContactsFragment.kt:22
+      content ContactsFragment.ContactsScreen()
       previews navapp.sections.ContactsFragment.ContactsScreenPreview
   DetailFragment                                     app                          app/src/main/java/navapp/views/ViewsActivity.kt:24  host ViewsActivity
   InvoiceFragment                                    app                          app/src/main/java/navapp/crash/Crash.kt:32

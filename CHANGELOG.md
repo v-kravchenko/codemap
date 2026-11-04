@@ -7,6 +7,13 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Added
+
+- `screens` gives an Activity, fragment or dialog its `content`: the repo composables its own code
+  calls (`setContent { }`, an overridden composable its base class calls), of any module, those its
+  routes draw left out (schema 4.8.0). It is what the screen calls, not a claim that a shared body is
+  the screen's: `previews` and `used-by` `screens` are unchanged. Rebuild the map to see it.
+
 ## [0.13.1] - 2026-11-04
 
 ### Fixed

@@ -11,7 +11,7 @@ strips it since `meta.run` is never reproducible).
 
 ```json
 {
-  "schema_version": "4.7.0",
+  "schema_version": "4.8.0",
   "command": "impact",
   "meta": {
     "tool_version": "0.3.0",
@@ -33,7 +33,7 @@ strips it since `meta.run` is never reproducible).
 }
 ```
 
-- `schema_version` — the shape of the JSON output (`"4.7.0"`, `internal/query/cli.go`). Independent
+- `schema_version` — the shape of the JSON output (`"4.8.0"`, `internal/query/cli.go`). Independent
   of `tool_version`.
 - `command` — the command name that produced the result (`"used-by"`, `"uses"`, `"impact"`,
   `"changes"`, `"diff"`, `"crash"`, `"nav-path"`, `"graph"`, `"screens"`, `"find"`, `"build"`).
@@ -98,7 +98,7 @@ stdout, an envelope with no `meta` (the map may not have loaded) and an `error` 
 
 ```json
 {
-  "schema_version": "4.7.0",
+  "schema_version": "4.8.0",
   "command": "impact",
   "error": {
     "kind": "not_found",
@@ -215,7 +215,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.7.0",
+  "schema_version": "4.8.0",
   "command": "used-by",
   "symbols": ["navapp.impact.DefaultsKt.defaultLabel"],
   "items": [
@@ -298,7 +298,7 @@ Result fields (full `impact`, no `--to`):
 
 ```json
 {
-  "schema_version": "4.7.0",
+  "schema_version": "4.8.0",
   "command": "impact",
   "changed": [
     {
@@ -396,7 +396,7 @@ a dirty tree or of another variant than the head's adds and removes what the cha
 
 ```json
 {
-  "schema_version": "4.7.0",
+  "schema_version": "4.8.0",
   "command": "changes",
   "changed": [
     { "symbol": "@navigation/views_graph", "kind": "resource", "module": "app",
@@ -444,7 +444,7 @@ Result: `screens`, `entries` and `opens`, each `{added, removed}`: `added` what 
 
 ```json
 {
-  "schema_version": "4.7.0",
+  "schema_version": "4.8.0",
   "command": "diff",
   "screens": {
     "added": [{ "name": "LinkActivity", "kind": "activity", "module": "app",
@@ -503,7 +503,7 @@ Result:
 
 ```json
 {
-  "schema_version": "4.7.0",
+  "schema_version": "4.8.0",
   "command": "crash",
   "exceptions": [{ "class": "java.lang.IllegalArgumentException", "message": "negative amount: -1" }],
   "crashed_at": { "frame": 0, "symbol": "navapp.crash.Money.format", "module": "app",
@@ -579,7 +579,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.7.0", "command": "nav-path",
+  "schema_version": "4.8.0", "command": "nav-path",
   "targets": [{ "name": "Login", "kind": "route", "module": "app",
     "location": "app/src/main/java/navapp/typed/TypedApp.kt", "host": null, "hosts": [] }],
   "screens": [
@@ -643,7 +643,7 @@ Result fields:
 
 ```json
 {
-  "schema_version": "4.7.0", "command": "graph",
+  "schema_version": "4.8.0", "command": "graph",
   "roots": ["Home"], "walk": "out", "to": [],
   "nodes": [
     { "name": "Home", "kind": "route", "module": "app" },
@@ -668,7 +668,7 @@ codemap screens [FILTER] [--kind KIND] [--no-preview] [--module GLOB]... [--host
 ```
 
 - `FILTER` (optional positional) — case-insensitive substring match against name/target/module/host
-  and the composables a route draws (`content`): `screens CreateConfirmScreen` finds its route.
+  and the composables a screen draws (`content`): `screens CreateConfirmScreen` finds its route.
 - `--module GLOB` — only screens in a matching module (see Module globs).
 - `--host SCREEN` — only screens whose `hosts` hold this screen (an Activity hosting fragments and
   dialogs, the screen hosting routes); the direct host, not the host of the host.
@@ -685,9 +685,13 @@ Result fields: `screens` — every matching screen, `{kind, module, name, target
 location, content, previews}`, sorted by kind, module, name, target, host, location; `content` — for a route,
 the repo composables its registration draws, by label (`CreateConfirmScreenKt.CreateConfirmScreen()`:
 those called from the code written at the registration, not from an inlined wrapper such as
-`screen<VM> {}`), sorted; for a preview, the repo composables it draws, through its lambdas (since 3.7.0); a
+`screen<VM> {}`), sorted; for a preview, the repo composables it draws, through its lambdas (since 3.7.0); for
+an Activity, fragment or dialog, the repo composables called by the methods of its class its own code
+does not call (`onCreate`, an overridden composable its base calls), through their lambdas, those its
+routes draw left out, a preview of the class not counted (since 4.8.0): what the screen calls, of
+whatever module, not what those call (docs/decisions/0034); a
 composable returning a value (a theme getter, `remember*`) is not drawn; empty for
-other kinds and for a route drawing only library composables; `previews` — the targets of the
+previews and layouts and for a screen drawing only library composables; `previews` — the targets of the
 previews drawing the screen's own composables, sorted (since 3.7.0): a preview goes with the screens
 drawing a composable of its own file (else module) that the screen draws itself or through a
 composable of its own module calling it, those the fewest screens draw when there are several, of
@@ -702,7 +706,7 @@ where the walk back ends, as in `nav-path` (`{name, kind, module, location, host
 
 ```json
 {
-  "schema_version": "4.7.0", "command": "screens",
+  "schema_version": "4.8.0", "command": "screens",
   "screens": [
     { "kind": "activity", "module": "app", "name": "AvatarActivity",
       "target": "navapp.impact.AvatarActivity", "host": null, "hosts": [],
@@ -751,7 +755,7 @@ separate symbols; `hidden_by_module` — with `--module` only:
 
 ```json
 {
-  "schema_version": "4.7.0", "command": "find", "pattern": "Activity",
+  "schema_version": "4.8.0", "command": "find", "pattern": "Activity",
   "total": 15, "synthetic": 0,
   "symbols": [
     { "symbol": "navapp.MainActivity", "kind": "class", "module": "app",

@@ -1957,6 +1957,26 @@ func (b *Builder) relatedAll() {
 			}
 		}
 	}
+	// the content of an Activity, fragment or dialog: what its entries draw, not what its routes do
+	ofRoute := map[int64]bool{}
+	for _, s := range b.Screens {
+		if s.Kind == "route" {
+			for _, c := range drawnBy[s.Node] {
+				ofRoute[c] = true
+			}
+		}
+	}
+	for _, s := range b.Screens {
+		switch s.Kind {
+		case "activity", "fragment", "dialog":
+			methods := nested(b.Nodes[s.Node].Name)
+			for _, c := range b.composablesDrawn(b.entryMethods(methods, previews, outEdges, nested), outEdges, nested) {
+				if !ofRoute[c] {
+					b.content[[2]int64{s.Node, c}] = struct{}{}
+				}
+			}
+		}
+	}
 	b.previewsOfScreens(drawnBy, outEdges, nested)
 }
 
@@ -2056,22 +2076,68 @@ func (b *Builder) previewsOfScreens(drawnBy map[int64][]int64, outEdges map[int6
 	}
 }
 
+// made: whether node id is code the compiler made for a lambda (a class of a function,
+// ComposableSingletons) or a method of it.
+func (b *Builder) made(id int64) bool {
+	n := b.Nodes[id]
+	cls := n.Name
+	if n.Kind != "C" {
+		if n.Owner == 0 {
+			return false // a resource, a route
+		}
+		cls = b.Nodes[n.Owner].Name
+	}
+	p, ok := b.parsed[cls]
+	return ok && p.C.Enclosing[0] != "" || strings.HasPrefix(shortName(cls), "ComposableSingletons$") ||
+		strings.Contains(n.Name, "lambda")
+}
+
+// entryMethods: the methods of a screen's class its own code does not call (onCreate, an overridden
+// composable the base calls), its lambdas counting as the method writing them; a preview's calls
+// count, a preview is not one.
+func (b *Builder) entryMethods(methods []int64, previews map[int64]bool, outEdges map[int64][]snapshot.Edge, nested func(string) []int64) []int64 {
+	own := map[int64]bool{}
+	for _, m := range methods {
+		if !b.made(m) {
+			own[m] = true
+		}
+	}
+	called := map[int64]bool{}
+	for m := range own {
+		seen, queue := map[int64]bool{m: true}, []int64{m}
+		for len(queue) > 0 {
+			x := queue[0]
+			queue = queue[1:]
+			for _, e := range outEdges[x] {
+				d := e.Dst
+				switch {
+				case seen[d]:
+				case own[d]:
+					called[d] = true
+				case b.made(d) && b.Nodes[d].File == b.Nodes[x].File:
+					seen[d] = true
+					if b.Nodes[d].Kind == "C" {
+						queue = append(queue, nested(b.Nodes[d].Name)...)
+					} else {
+						queue = append(queue, d)
+					}
+				}
+			}
+		}
+	}
+	var out []int64
+	for _, m := range methods {
+		if own[m] && !called[m] && !previews[m] {
+			out = append(out, m)
+		}
+	}
+	return out
+}
+
 // composablesDrawn: the repo composables `methods` call, through the code the compiler made for
 // their lambdas (classes of a function, ComposableSingletons) in the same file.
 func (b *Builder) composablesDrawn(methods []int64, outEdges map[int64][]snapshot.Edge, nested func(string) []int64) []int64 {
-	made := func(id int64) bool {
-		n := b.Nodes[id]
-		cls := n.Name
-		if n.Kind != "C" {
-			if n.Owner == 0 {
-				return false // a resource, a route
-			}
-			cls = b.Nodes[n.Owner].Name
-		}
-		p, ok := b.parsed[cls]
-		return ok && p.C.Enclosing[0] != "" || strings.HasPrefix(shortName(cls), "ComposableSingletons$") ||
-			strings.Contains(n.Name, "lambda")
-	}
+	made := b.made
 	seen, out := map[int64]bool{}, []int64{}
 	// origin: the given method whose code a node is, its lambdas' included
 	origin, drawn := map[int64]int64{}, map[int64]bool{}

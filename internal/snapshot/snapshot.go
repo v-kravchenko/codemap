@@ -108,7 +108,7 @@ type Map struct {
 		Kind, Label, Target Strs
 	}
 	ScreenRelated struct{ Screen, Related []int64 }
-	ScreenContent struct{ Screen, Node []int64 } // route -> the composables its own source code draws
+	ScreenContent struct{ Screen, Node []int64 } // screen -> the composables its own source code draws
 	Entry         struct {
 		Node         []int64
 		Kind, Detail Strs

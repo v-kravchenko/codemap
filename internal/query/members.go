@@ -139,6 +139,9 @@ func (g *Graph) codeScreens(cls int32, method string) []obj {
 	if g.drawnBy == nil {
 		g.drawnBy = map[int32][]int32{}
 		for r, ns := range g.drawn {
+			if k := g.screens[r][0].Kind; k != "route" && k != "preview" {
+				continue // what an Activity or fragment calls is a fact, not its own code: a shared body is not (ADR 0034)
+			}
 			for _, n := range ns {
 				g.drawnBy[n] = append(g.drawnBy[n], r)
 			}

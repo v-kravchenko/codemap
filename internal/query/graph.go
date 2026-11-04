@@ -63,7 +63,7 @@ type Graph struct {
 	pushComponents    map[int32]bool   // the components taking a push (nav_path.push_actions)
 	routeOf           map[int32]int32
 	routeContentNames map[string]int32
-	drawn             map[int32][]int32         // route, preview -> the composables its content draws (ScreenContent)
+	drawn             map[int32][]int32         // screen -> the composables its content draws (ScreenContent)
 	previews          map[int32][]int32         // screen -> the previews drawing its own composables (ScreenRelated)
 	callVia           map[int32]map[int32]int32 // callee -> caller -> class the call names
 	diGlue            map[int32]bool

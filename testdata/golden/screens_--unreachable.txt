@@ -11,6 +11,7 @@ Activities (19)
   GuideActivity                                      app                          app/src/main/java/navapp/sections/GuideActivity.kt:18
       ends at GuideActivity: nothing opens it
   HelpActivity                                       app                          app/src/main/java/navapp/sections/HelpActivity.kt:10
+      content HelpScreenKt.HelpScreen()
       previews navapp.sections.HelpActivityKt.HelpPreview
       ends at HelpActivity: nothing opens it
   InboxActivity                                      app                          app/src/main/java/navapp/via/Via.kt:27
@@ -50,6 +51,7 @@ Fragments (5)
   CartFragment                                       app                          app/src/main/java/navapp/impact/GenericDi.kt:29
       ends at CartFragment: nothing opens it
   ContactsFragment                                   app                          app/src/main/java/navapp/sections/ContactsFragment.kt:22
+      content ContactsFragment.ContactsScreen()
       previews navapp.sections.ContactsFragment.ContactsScreenPreview
       ends at ContactsFragment: nothing opens it
   InvoiceFragment                                    app                          app/src/main/java/navapp/crash/Crash.kt:32
