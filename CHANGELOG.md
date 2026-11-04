@@ -7,6 +7,8 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-11-04
+
 ### Added
 
 - `graph` without a screen gives the whole graph: every way one screen opens another, as `build`
