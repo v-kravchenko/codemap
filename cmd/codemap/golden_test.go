@@ -39,8 +39,9 @@ var goldenCalls = [][]string{
 	{"impact", "navapp.impact.Profile.getNickname"}, // generated copy/equals do not spread it
 	{"impact", "navapp.impact.Session.listen"},
 	{"impact", "navapp.typed.SettingsViewModel.openSettings"},
-	{"impact", "navapp.components.Tracker.track"},                  // the manifest's components and a worker, not its abstract base
-	{"impact", "navapp.impact.Session.listen", "--module", "!app"}, // the fixture's one module: all outside
+	{"impact", "navapp.components.Tracker.track"},                               // the manifest's components and a worker, not its abstract base
+	{"impact", "navapp.impact.Session.listen", "--module", "!app"},              // the fixture's one module: all outside
+	{"impact", "navapp.sections.ContactsFragment.ContactsRow", "--kind", "all"}, // the preview in the screen's class
 	{"used-by", "navapp.impact.defaultLabel"},
 	{"used-by", "navapp.impact.defaultLabel", "--module", "!app"},
 	{"uses", "navapp.impact.PlainCopyActivity.onCreate"},

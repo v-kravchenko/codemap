@@ -628,6 +628,15 @@ func (wk *walker) visit(key Key) {
 			return
 		}
 		w.screen(top, key)
+		if len(g.previews[top]) > 0 && kind == "M" {
+			// a preview declared in the screen's class draws its member composables: the walk goes on
+			// inside the class only, so the preview calling the change is reached, nothing outside it
+			for _, u := range g.users(nid, snapshot.CALL, snapshot.LAMBDA, snapshot.INLINE) {
+				if g.topOf(u.N) == top {
+					wk.push(g.key(u.N, Ctx{g.callerCtx(u.N, s.ctx), ""}), s.nd, &s.key, edgeKinds[u.Kind])
+				}
+			}
+		}
 		return
 	}
 	if g.diGlue[top] && s.depth > 0 {

@@ -31,6 +31,12 @@ notes from its section here (`tools/release-notes.sh`).
 - The map's format: columns by name, `index_version` 14.0, the line of each edge's code. A map of
   0.14.0 or older is refused once: rebuild it (the build hook does). `build` takes about 10% longer.
 
+### Fixed
+
+- `impact` and `changes` reach a preview declared in the screen's own class: a change to a member
+  composable of a fragment or Activity lists the preview drawing it (`--kind preview`), as one of a
+  top-level composable did; the walk goes on inside that class only.
+
 ## [0.14.0] - 2026-11-04
 
 ### Added
