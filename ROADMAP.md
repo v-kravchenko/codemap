@@ -47,11 +47,10 @@ itself.
   singleton** (e.g. `Application.getInstance()` read from a base class's lifecycle callback) —
   today it fans out to every screen reachable from that lifecycle callback, which is correct
   but maximally unhelpful.
-- **Hubs by dominators.** `opened_by` takes as a hub the lowest node with `navigation.hub_min`
-  screens below it on one shortest way each, so a composable every screen calls (a state observer
-  logging out) is no hub when a few navigators below it are: its ways stay `direct` for `nav-path`,
-  `graph` and `impact`. The dominators `build` now finds for `graph`'s `shared` would make a hub
-  exact (all ways pass it); it changes the answers of three commands, so it waits for its own check.
+- **nav-path's costs checked against known ways.** A step through a navigator costs `shared`, one a
+  server task or an automatic start opens costs as little as a tap; dominators as hubs made the
+  cheapest way worse on 6 of 10 screens checked by hand (docs/decisions/0037). A set of screens with
+  the ways users take, kept as a check, would let the costs be tuned by matches, not by eye.
 - **nav-path through a DI multibinding** (a Hilt `@IntoSet`/map-multibinding of navigation
   destinations, a Navigation-3-style scene registry) — currently reported as "No way" because
   there's no static call edge from the registering code to the host that reads the set/map at

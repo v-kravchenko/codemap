@@ -115,7 +115,8 @@ records its depth, its parent and why (`calls`, `reads`, `extends`, ...), so eve
 
 `opened_by` (precomputed) lists, for each screen, the screens that open it and the way: the code
 from the opener to the screen, the hub it went through (a navigator many screens share), and the
-host it needs. `nav-path` is a Dijkstra walk over states (screen, host) from the target back to entry
+host it needs. `graph` and `impact` take a way's navigator from its dominators instead (`shared`:
+the nearest node `hub_min` screens' ways all pass, docs/decisions/0037); `nav-path` keeps the hub. `nav-path` is a Dijkstra walk over states (screen, host) from the target back to entry
 screens (launcher, deep link, intent filter), with step costs: own code, shared code, push or deep
 link handling (`nav_path.costs`). `--from`, `--entry` and `--avoid` change where the walk ends and
 what it keeps off; `--via` chains walks, from the target to the last screen asked for and on to an

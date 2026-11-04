@@ -1,0 +1,429 @@
+{
+  "schema_version": "5.0.0",
+  "command": "impact",
+  "changed": [
+    {
+      "symbol": "navapp.watch.SessionNavigator.signOut",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:13"
+    }
+  ],
+  "affected": [
+    {
+      "symbol": "navapp.watch.StateWatcher.observe",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/StateWatcher.kt:7",
+      "depth": 1,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe"
+      ]
+    },
+    {
+      "symbol": "navapp.watch.FormBinder.bind",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/FormBinder.kt:7",
+      "depth": 2,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind"
+      ]
+    },
+    {
+      "symbol": "navapp.watch.WatchedOneActivity.onResume",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:7",
+      "depth": 2,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.WatchedOneActivity.onResume"
+      ]
+    },
+    {
+      "symbol": "navapp.watch.WatchedTwoActivity.onResume",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:14",
+      "depth": 2,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.WatchedTwoActivity.onResume"
+      ]
+    },
+    {
+      "symbol": "navapp.watch.FormEightActivity.onResume",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:70",
+      "depth": 3,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormEightActivity.onResume"
+      ]
+    },
+    {
+      "symbol": "navapp.watch.FormFiveActivity.onResume",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:49",
+      "depth": 3,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormFiveActivity.onResume"
+      ]
+    },
+    {
+      "symbol": "navapp.watch.FormFourActivity.onResume",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:42",
+      "depth": 3,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormFourActivity.onResume"
+      ]
+    },
+    {
+      "symbol": "navapp.watch.FormNineActivity.onResume",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:77",
+      "depth": 3,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormNineActivity.onResume"
+      ]
+    },
+    {
+      "symbol": "navapp.watch.FormOneActivity.onResume",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:21",
+      "depth": 3,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormOneActivity.onResume"
+      ]
+    },
+    {
+      "symbol": "navapp.watch.FormSevenActivity.onResume",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:63",
+      "depth": 3,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormSevenActivity.onResume"
+      ]
+    },
+    {
+      "symbol": "navapp.watch.FormSixActivity.onResume",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:56",
+      "depth": 3,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormSixActivity.onResume"
+      ]
+    },
+    {
+      "symbol": "navapp.watch.FormTenActivity.onResume",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:84",
+      "depth": 3,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormTenActivity.onResume"
+      ]
+    },
+    {
+      "symbol": "navapp.watch.FormThreeActivity.onResume",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:35",
+      "depth": 3,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormThreeActivity.onResume"
+      ]
+    },
+    {
+      "symbol": "navapp.watch.FormTwoActivity.onResume",
+      "kind": "method",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:28",
+      "depth": 3,
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormTwoActivity.onResume"
+      ]
+    }
+  ],
+  "screens": [
+    {
+      "kind": "activity",
+      "name": "WatchedOneActivity",
+      "target": "navapp.watch.WatchedOneActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:5",
+      "host": null,
+      "hosts": [],
+      "depth": 2,
+      "via": "opener",
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.WatchedOneActivity.onResume"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "WatchedTwoActivity",
+      "target": "navapp.watch.WatchedTwoActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:12",
+      "host": null,
+      "hosts": [],
+      "depth": 2,
+      "via": "opener",
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.WatchedTwoActivity.onResume"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "FormEightActivity",
+      "target": "navapp.watch.FormEightActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:68",
+      "host": null,
+      "hosts": [],
+      "depth": 3,
+      "via": "opener",
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormEightActivity.onResume"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "FormFiveActivity",
+      "target": "navapp.watch.FormFiveActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:47",
+      "host": null,
+      "hosts": [],
+      "depth": 3,
+      "via": "opener",
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormFiveActivity.onResume"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "FormFourActivity",
+      "target": "navapp.watch.FormFourActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:40",
+      "host": null,
+      "hosts": [],
+      "depth": 3,
+      "via": "opener",
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormFourActivity.onResume"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "FormNineActivity",
+      "target": "navapp.watch.FormNineActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:75",
+      "host": null,
+      "hosts": [],
+      "depth": 3,
+      "via": "opener",
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormNineActivity.onResume"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "FormOneActivity",
+      "target": "navapp.watch.FormOneActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:19",
+      "host": null,
+      "hosts": [],
+      "depth": 3,
+      "via": "opener",
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormOneActivity.onResume"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "FormSevenActivity",
+      "target": "navapp.watch.FormSevenActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:61",
+      "host": null,
+      "hosts": [],
+      "depth": 3,
+      "via": "opener",
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormSevenActivity.onResume"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "FormSixActivity",
+      "target": "navapp.watch.FormSixActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:54",
+      "host": null,
+      "hosts": [],
+      "depth": 3,
+      "via": "opener",
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormSixActivity.onResume"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "FormTenActivity",
+      "target": "navapp.watch.FormTenActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:82",
+      "host": null,
+      "hosts": [],
+      "depth": 3,
+      "via": "opener",
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormTenActivity.onResume"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "FormThreeActivity",
+      "target": "navapp.watch.FormThreeActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:33",
+      "host": null,
+      "hosts": [],
+      "depth": 3,
+      "via": "opener",
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormThreeActivity.onResume"
+      ]
+    },
+    {
+      "kind": "activity",
+      "name": "FormTwoActivity",
+      "target": "navapp.watch.FormTwoActivity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:26",
+      "host": null,
+      "hosts": [],
+      "depth": 3,
+      "via": "opener",
+      "opened_from": [],
+      "previews": [],
+      "path": [
+        "navapp.watch.SessionNavigator.signOut",
+        "navapp.watch.StateWatcher.observe",
+        "navapp.watch.FormBinder.bind",
+        "navapp.watch.FormTwoActivity.onResume"
+      ]
+    }
+  ],
+  "components": [],
+  "hidden": {},
+  "modules": {
+    "app": 15
+  },
+  "packages": {
+    "navapp.watch": 15
+  },
+  "not_covered": [],
+  "warnings": []
+}

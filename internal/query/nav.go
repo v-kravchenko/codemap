@@ -52,6 +52,33 @@ type openedRows struct {
 	bases []baseBelow
 }
 
+// sharedHub: the navigator of a way for graph and impact: the nearest node all its shortest ways
+// pass that hub_min or more screens' ways all pass too, a screen being none; -1 for none. nav-path
+// keeps the hub build chose: its costs rank the steps a user takes (docs/decisions/0037).
+func (g *Graph) sharedHub(shared []SharedStep) int32 {
+	for _, st := range shared {
+		if st.Sources < int32(config.HubMin) {
+			continue
+		}
+		if rows := g.screens[st.Node]; len(rows) > 0 && screenKinds[rows[0].Kind] {
+			continue
+		}
+		return st.Node
+	}
+	return -1
+}
+
+// graphWays: the ways of openedBy, each with its sharedHub.
+func (g *Graph) graphWays(sid int32) []srcWay {
+	ways, _ := g.openedBy(sid)
+	out := make([]srcWay, len(ways))
+	for i, w := range ways {
+		w.Hub = g.sharedHub(w.shared)
+		out[i] = w
+	}
+	return out
+}
+
 // openedBy: the rows build wrote for the screens a user sees, a walk for others.
 func (g *Graph) openedBy(sid int32) ([]srcWay, []baseBelow) {
 	if g.opened == nil {

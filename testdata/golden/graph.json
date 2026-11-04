@@ -876,6 +876,162 @@
       "debug": false
     },
     {
+      "id": "navapp.watch.FormEightActivity",
+      "name": "FormEightActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:68",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.watch.FormFiveActivity",
+      "name": "FormFiveActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:47",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.watch.FormFourActivity",
+      "name": "FormFourActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:40",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.watch.FormNineActivity",
+      "name": "FormNineActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:75",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.watch.FormOneActivity",
+      "name": "FormOneActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:19",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.watch.FormSevenActivity",
+      "name": "FormSevenActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:61",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.watch.FormSixActivity",
+      "name": "FormSixActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:54",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.watch.FormTenActivity",
+      "name": "FormTenActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:82",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.watch.FormThreeActivity",
+      "name": "FormThreeActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:33",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.watch.FormTwoActivity",
+      "name": "FormTwoActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:26",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.watch.SignOutActivity",
+      "name": "SignOutActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:16",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.watch.WatchedOneActivity",
+      "name": "WatchedOneActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:5",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
+      "id": "navapp.watch.WatchedTwoActivity",
+      "name": "WatchedTwoActivity",
+      "kind": "activity",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:12",
+      "host": null,
+      "hosts": [],
+      "content": [],
+      "previews": [],
+      "debug": false
+    },
+    {
       "id": "post/{id}",
       "name": "post/{id}",
       "kind": "route",
@@ -1678,6 +1834,274 @@
       "source_location": "app/src/main/java/navapp/views/ViewsActivity.kt:16"
     },
     {
+      "from": "navapp.watch.FormEightActivity",
+      "to": "navapp.watch.SignOutActivity",
+      "label": "observe",
+      "hint": "FormBinder.bind > StateWatcher.observe",
+      "via": "opener",
+      "hub": "navapp.watch.FormBinder.bind",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.watch.FormBinder.bind",
+          "sources": 10
+        },
+        {
+          "id": "navapp.watch.StateWatcher.observe",
+          "sources": 12
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:13",
+      "source_location": "app/src/main/java/navapp/watch/Screens.kt:71"
+    },
+    {
+      "from": "navapp.watch.FormFiveActivity",
+      "to": "navapp.watch.SignOutActivity",
+      "label": "observe",
+      "hint": "FormBinder.bind > StateWatcher.observe",
+      "via": "opener",
+      "hub": "navapp.watch.FormBinder.bind",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.watch.FormBinder.bind",
+          "sources": 10
+        },
+        {
+          "id": "navapp.watch.StateWatcher.observe",
+          "sources": 12
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:13",
+      "source_location": "app/src/main/java/navapp/watch/Screens.kt:50"
+    },
+    {
+      "from": "navapp.watch.FormFourActivity",
+      "to": "navapp.watch.SignOutActivity",
+      "label": "observe",
+      "hint": "FormBinder.bind > StateWatcher.observe",
+      "via": "opener",
+      "hub": "navapp.watch.FormBinder.bind",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.watch.FormBinder.bind",
+          "sources": 10
+        },
+        {
+          "id": "navapp.watch.StateWatcher.observe",
+          "sources": 12
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:13",
+      "source_location": "app/src/main/java/navapp/watch/Screens.kt:43"
+    },
+    {
+      "from": "navapp.watch.FormNineActivity",
+      "to": "navapp.watch.SignOutActivity",
+      "label": "observe",
+      "hint": "FormBinder.bind > StateWatcher.observe",
+      "via": "opener",
+      "hub": "navapp.watch.FormBinder.bind",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.watch.FormBinder.bind",
+          "sources": 10
+        },
+        {
+          "id": "navapp.watch.StateWatcher.observe",
+          "sources": 12
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:13",
+      "source_location": "app/src/main/java/navapp/watch/Screens.kt:78"
+    },
+    {
+      "from": "navapp.watch.FormOneActivity",
+      "to": "navapp.watch.SignOutActivity",
+      "label": "observe",
+      "hint": "FormBinder.bind > StateWatcher.observe",
+      "via": "opener",
+      "hub": "navapp.watch.FormBinder.bind",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.watch.FormBinder.bind",
+          "sources": 10
+        },
+        {
+          "id": "navapp.watch.StateWatcher.observe",
+          "sources": 12
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:13",
+      "source_location": "app/src/main/java/navapp/watch/Screens.kt:22"
+    },
+    {
+      "from": "navapp.watch.FormSevenActivity",
+      "to": "navapp.watch.SignOutActivity",
+      "label": "observe",
+      "hint": "FormBinder.bind > StateWatcher.observe",
+      "via": "opener",
+      "hub": "navapp.watch.FormBinder.bind",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.watch.FormBinder.bind",
+          "sources": 10
+        },
+        {
+          "id": "navapp.watch.StateWatcher.observe",
+          "sources": 12
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:13",
+      "source_location": "app/src/main/java/navapp/watch/Screens.kt:64"
+    },
+    {
+      "from": "navapp.watch.FormSixActivity",
+      "to": "navapp.watch.SignOutActivity",
+      "label": "observe",
+      "hint": "FormBinder.bind > StateWatcher.observe",
+      "via": "opener",
+      "hub": "navapp.watch.FormBinder.bind",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.watch.FormBinder.bind",
+          "sources": 10
+        },
+        {
+          "id": "navapp.watch.StateWatcher.observe",
+          "sources": 12
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:13",
+      "source_location": "app/src/main/java/navapp/watch/Screens.kt:57"
+    },
+    {
+      "from": "navapp.watch.FormTenActivity",
+      "to": "navapp.watch.SignOutActivity",
+      "label": "observe",
+      "hint": "FormBinder.bind > StateWatcher.observe",
+      "via": "opener",
+      "hub": "navapp.watch.FormBinder.bind",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.watch.FormBinder.bind",
+          "sources": 10
+        },
+        {
+          "id": "navapp.watch.StateWatcher.observe",
+          "sources": 12
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:13",
+      "source_location": "app/src/main/java/navapp/watch/Screens.kt:85"
+    },
+    {
+      "from": "navapp.watch.FormThreeActivity",
+      "to": "navapp.watch.SignOutActivity",
+      "label": "observe",
+      "hint": "FormBinder.bind > StateWatcher.observe",
+      "via": "opener",
+      "hub": "navapp.watch.FormBinder.bind",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.watch.FormBinder.bind",
+          "sources": 10
+        },
+        {
+          "id": "navapp.watch.StateWatcher.observe",
+          "sources": 12
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:13",
+      "source_location": "app/src/main/java/navapp/watch/Screens.kt:36"
+    },
+    {
+      "from": "navapp.watch.FormTwoActivity",
+      "to": "navapp.watch.SignOutActivity",
+      "label": "observe",
+      "hint": "FormBinder.bind > StateWatcher.observe",
+      "via": "opener",
+      "hub": "navapp.watch.FormBinder.bind",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.watch.FormBinder.bind",
+          "sources": 10
+        },
+        {
+          "id": "navapp.watch.StateWatcher.observe",
+          "sources": 12
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:13",
+      "source_location": "app/src/main/java/navapp/watch/Screens.kt:29"
+    },
+    {
+      "from": "navapp.watch.WatchedOneActivity",
+      "to": "navapp.watch.SignOutActivity",
+      "label": "signOut",
+      "hint": "StateWatcher.observe > SessionNavigator.signOut",
+      "via": "opener",
+      "hub": "navapp.watch.StateWatcher.observe",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.watch.StateWatcher.observe",
+          "sources": 12
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:13",
+      "source_location": "app/src/main/java/navapp/watch/Screens.kt:8"
+    },
+    {
+      "from": "navapp.watch.WatchedTwoActivity",
+      "to": "navapp.watch.SignOutActivity",
+      "label": "signOut",
+      "hint": "StateWatcher.observe > SessionNavigator.signOut",
+      "via": "opener",
+      "hub": "navapp.watch.StateWatcher.observe",
+      "base": null,
+      "shared": [
+        {
+          "id": "navapp.watch.StateWatcher.observe",
+          "sources": 12
+        }
+      ],
+      "host": null,
+      "host_module": null,
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:13",
+      "source_location": "app/src/main/java/navapp/watch/Screens.kt:15"
+    },
+    {
       "from": "post/{id}",
       "to": "comments/{postId}",
       "label": "StringApp",
@@ -1714,6 +2138,22 @@
       "location": "app/src/main/java/navapp/graph/Flows.kt:13",
       "opens": 1,
       "opened_from": 10
+    },
+    {
+      "id": "navapp.watch.FormBinder.bind",
+      "name": "FormBinder.bind()",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/FormBinder.kt:7",
+      "opens": 1,
+      "opened_from": 10
+    },
+    {
+      "id": "navapp.watch.StateWatcher.observe",
+      "name": "StateWatcher.observe()",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/StateWatcher.kt:7",
+      "opens": 1,
+      "opened_from": 2
     }
   ],
   "bases": [

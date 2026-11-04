@@ -50,8 +50,9 @@ func (g *Graph) screenVia(seeds []Seed, maxDepth int, w *Walk) map[int32]int {
 func (g *Graph) boundary(p Key, c int32, seedTops map[int32]bool) int {
 	pt, ct := g.topOf(p.N), g.topOf(c)
 	// a hub method, or a navigator: a class with one (a method of it only one screen calls routes like
-	// the rest); entered from another file, a change to the navigator itself crossing none
-	if g.fileOf(p.N) != g.fileOf(c) && (g.isNavHub(c) && !g.isNavHub(p.N) || g.navClasses[ct] && !g.navClasses[pt]) {
+	// the rest); entered from another file, a change to the navigator itself crossing none, one
+	// navigator calling another (a logout a state observer of every screen calls) crossing it
+	if g.fileOf(p.N) != g.fileOf(c) && (g.isNavHub(c) || g.navClasses[ct]) {
 		return viaOpener
 	}
 	if pt == ct {
@@ -67,17 +68,25 @@ func (g *Graph) boundary(p Key, c int32, seedTops map[int32]bool) int {
 	return viaDirect
 }
 
-// isNavHub: a node many screens open others through (the hubs of opened_by); navClasses: the classes
+// isNavHub: a node many screens open others through (the sharedHub of an opened_by row); navClasses: the classes
 // with one, not a file of top-level functions (its functions share no navigator).
 func (g *Graph) isNavHub(n int32) bool {
 	if g.navHubs == nil {
 		g.navHubs, g.navClasses = map[int32]bool{}, map[int32]bool{}
-		for _, h := range g.m.OpenedBy.Hub {
-			if h >= 0 {
-				g.navHubs[h] = true
-				if top := g.topOf(h); top >= 0 && g.kind(top) == "C" && !strings.HasSuffix(g.name(top), "Kt") {
-					g.navClasses[top] = true
-				}
+		sh := &g.m.OpenedBy.Shared
+		var steps []SharedStep
+		for i := 0; i+1 < len(sh.Start); i++ {
+			steps = steps[:0]
+			for j := sh.Start[i]; j < sh.Start[i+1]; j++ {
+				steps = append(steps, SharedStep{sh.Node[j], sh.Sources[j]})
+			}
+			h := g.sharedHub(steps)
+			if h < 0 {
+				continue
+			}
+			g.navHubs[h] = true
+			if top := g.topOf(h); top >= 0 && g.kind(top) == "C" && !strings.HasSuffix(g.name(top), "Kt") {
+				g.navClasses[top] = true
 			}
 		}
 	}

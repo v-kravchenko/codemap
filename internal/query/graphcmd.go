@@ -132,7 +132,7 @@ func (g *Graph) forwardWays(roots []int32, avoid map[int32]bool) (map[int32][]fw
 		if avoid[t] && !slices.Contains(roots, t) {
 			continue
 		}
-		ways, _ := g.openedBy(t)
+		ways := g.graphWays(t)
 		for _, w := range ways {
 			forward[w.Src] = append(forward[w.Src], fwdWay{t, w.Hub, w.Via, w.host(), edgeWay{w.Src, t, w.Way, w.shared, true}})
 		}
@@ -439,7 +439,7 @@ func (g *Graph) graphIn(o opts, roots []int32) int {
 			seen[src] = true
 		}
 		for _, t := range level {
-			ways, _ := g.openedBy(t)
+			ways := g.graphWays(t)
 			ways = append([]srcWay(nil), ways...)
 			sort.SliceStable(ways, func(i, j int) bool { return g.screenName(ways[i].Src) < g.screenName(ways[j].Src) })
 			byHub := map[int32][]srcWay{}

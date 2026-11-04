@@ -49,4 +49,4 @@ as JSON Graph Format v2 has them: 9 rows instead of 9,039 edges on a large proje
   more memory (dominators, lines), the map 3% more.
 - A way through shared code is still `direct` for `via` (as for `impact`): `shared` tells it apart.
 - The rule for hubs (the lowest node with `hub_min` screens below, on one shortest way) is
-  untouched; dominators could make it exact for `nav-path` and `impact` too (ROADMAP).
+  untouched; `graph` and `impact` take their navigators from the dominators since 0037.

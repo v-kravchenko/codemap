@@ -7,6 +7,15 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Changed
+
+- `graph` and `impact` take a way's navigator from its dominators: the nearest node every way
+  passes that `nav_path.hub_min` or more screens share. A way through code every screen calls (a
+  state observer signing out) is `opener`, not `direct`, though a navigator some screens pass sits
+  below it; and a change to one navigator reaches the screens behind another calling it as `opener`.
+  On a large project 1,697 of 6,325 ways of `graph` turn `opener`; `nav-path` is unchanged. No
+  rebuild needed.
+
 ## [0.15.0] - 2026-11-04
 
 ### Added

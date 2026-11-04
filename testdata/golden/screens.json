@@ -170,6 +170,116 @@
     {
       "kind": "activity",
       "module": "app",
+      "name": "FormEightActivity",
+      "target": "navapp.watch.FormEightActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/watch/Screens.kt:68",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FormFiveActivity",
+      "target": "navapp.watch.FormFiveActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/watch/Screens.kt:47",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FormFourActivity",
+      "target": "navapp.watch.FormFourActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/watch/Screens.kt:40",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FormNineActivity",
+      "target": "navapp.watch.FormNineActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/watch/Screens.kt:75",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FormOneActivity",
+      "target": "navapp.watch.FormOneActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/watch/Screens.kt:19",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FormSevenActivity",
+      "target": "navapp.watch.FormSevenActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/watch/Screens.kt:61",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FormSixActivity",
+      "target": "navapp.watch.FormSixActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/watch/Screens.kt:54",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FormTenActivity",
+      "target": "navapp.watch.FormTenActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/watch/Screens.kt:82",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FormThreeActivity",
+      "target": "navapp.watch.FormThreeActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/watch/Screens.kt:33",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "FormTwoActivity",
+      "target": "navapp.watch.FormTwoActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/watch/Screens.kt:26",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
       "name": "GuideActivity",
       "target": "navapp.sections.GuideActivity",
       "host": null,
@@ -378,6 +488,17 @@
     {
       "kind": "activity",
       "module": "app",
+      "name": "SignOutActivity",
+      "target": "navapp.watch.SignOutActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:16",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
       "name": "SlowActivity",
       "target": "navapp.via.SlowActivity",
       "host": null,
@@ -416,6 +537,28 @@
       "host": null,
       "hosts": [],
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:16",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "WatchedOneActivity",
+      "target": "navapp.watch.WatchedOneActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/watch/Screens.kt:5",
+      "content": [],
+      "previews": []
+    },
+    {
+      "kind": "activity",
+      "module": "app",
+      "name": "WatchedTwoActivity",
+      "target": "navapp.watch.WatchedTwoActivity",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/watch/Screens.kt:12",
       "content": [],
       "previews": []
     },

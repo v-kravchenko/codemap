@@ -1,5 +1,5 @@
 
-Activities (30)
+Activities (43)
   AvatarActivity                                     app                          app/src/main/java/navapp/impact/DataClasses.kt:18
       ends at AvatarActivity: nothing opens it
   EntryActivity                                      app                          app/src/main/java/navapp/via/Via.kt:75
@@ -28,6 +28,26 @@ Activities (30)
       ends at FlowThreeActivity: nothing opens it
   FlowTwoActivity                                    app                          app/src/main/java/navapp/graph/Flows.kt:36
       ends at FlowTwoActivity: nothing opens it
+  FormEightActivity                                  app                          app/src/main/java/navapp/watch/Screens.kt:68
+      ends at FormEightActivity: nothing opens it
+  FormFiveActivity                                   app                          app/src/main/java/navapp/watch/Screens.kt:47
+      ends at FormFiveActivity: nothing opens it
+  FormFourActivity                                   app                          app/src/main/java/navapp/watch/Screens.kt:40
+      ends at FormFourActivity: nothing opens it
+  FormNineActivity                                   app                          app/src/main/java/navapp/watch/Screens.kt:75
+      ends at FormNineActivity: nothing opens it
+  FormOneActivity                                    app                          app/src/main/java/navapp/watch/Screens.kt:19
+      ends at FormOneActivity: nothing opens it
+  FormSevenActivity                                  app                          app/src/main/java/navapp/watch/Screens.kt:61
+      ends at FormSevenActivity: nothing opens it
+  FormSixActivity                                    app                          app/src/main/java/navapp/watch/Screens.kt:54
+      ends at FormSixActivity: nothing opens it
+  FormTenActivity                                    app                          app/src/main/java/navapp/watch/Screens.kt:82
+      ends at FormTenActivity: nothing opens it
+  FormThreeActivity                                  app                          app/src/main/java/navapp/watch/Screens.kt:33
+      ends at FormThreeActivity: nothing opens it
+  FormTwoActivity                                    app                          app/src/main/java/navapp/watch/Screens.kt:26
+      ends at FormTwoActivity: nothing opens it
   GuideActivity                                      app                          app/src/main/java/navapp/sections/GuideActivity.kt:18
       ends at GuideActivity: nothing opens it
   HelpActivity                                       app                          app/src/main/java/navapp/graph/Flows.kt:25
@@ -65,6 +85,19 @@ Activities (30)
       ends at SecondActivity: nothing opens it
   SecondOpenerActivity                               app                          app/src/main/java/navapp/via/Via.kt:61
       ends at SecondOpenerActivity: nothing opens it
+  SignOutActivity                                    app                          app/src/main/java/navapp/watch/SessionNavigator.kt:16
+      ends at WatchedOneActivity: nothing opens it
+      ends at WatchedTwoActivity: nothing opens it
+      ends at FormEightActivity: nothing opens it
+      ends at FormFiveActivity: nothing opens it
+      ends at FormFourActivity: nothing opens it
+      ends at FormNineActivity: nothing opens it
+      ends at FormOneActivity: nothing opens it
+      ends at FormSevenActivity: nothing opens it
+      ends at FormSixActivity: nothing opens it
+      ends at FormTenActivity: nothing opens it
+      ends at FormThreeActivity: nothing opens it
+      ends at FormTwoActivity: nothing opens it
   SlowActivity                                       app                          app/src/main/java/navapp/via/Via.kt:52
       ends at EntryActivity: nothing opens it
       ends at FirstOpenerActivity: nothing opens it
@@ -77,6 +110,10 @@ Activities (30)
       ends at ThirdOpenerActivity: nothing opens it
   ThirdOpenerActivity                                app                          app/src/main/java/navapp/via/Via.kt:68
       ends at ThirdOpenerActivity: nothing opens it
+  WatchedOneActivity                                 app                          app/src/main/java/navapp/watch/Screens.kt:5
+      ends at WatchedOneActivity: nothing opens it
+  WatchedTwoActivity                                 app                          app/src/main/java/navapp/watch/Screens.kt:12
+      ends at WatchedTwoActivity: nothing opens it
 
 Fragments (5)
   CartFragment                                       app                          app/src/main/java/navapp/impact/GenericDi.kt:29
@@ -104,4 +141,4 @@ Compose routes (2)
 
 Not shown: preview 11 (--kind KIND, --kind all)
 
-(37 screens no entry of the manifest reaches, as far as the code map sees)
+(50 screens no entry of the manifest reaches, as far as the code map sees)

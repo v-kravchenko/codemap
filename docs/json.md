@@ -281,7 +281,9 @@ Result fields (full `impact`, no `--to`):
   supertype, such as a registry of message types: `impact.hub_subtypes`), `base` (only through code a
   base class of many screens runs for all of them: `impact.base_subclasses`). A way through several
   of them takes the last in that order. It tells the kind of way, not whether the screen behaves
-  differently. A change to the navigator, the hub or the base itself is `direct`. docs/decisions/0032.
+  differently. A change to the navigator, the hub or the base itself is `direct`; one navigator
+  calling another crosses it. A navigator is the `hub` of a way of `graph` (docs/decisions/0037).
+  docs/decisions/0032.
 - `components` — affected components, as `{kind, name, target, module, location, depth, path}`
   (since 4.2.0): `kind` is `application`, `service`, `receiver`, `provider` (a class the manifest
   of a module declares) or `worker` (a concrete class below `components.worker_bases`); `path` as
@@ -659,7 +661,8 @@ Every node has the same keys:
   code it calls), `"opener"` (through a navigator: `hub`), `"base"` (through inherited code of a base
   of `impact.base_subclasses` or more classes: `base`). `null` for an edge of no single way (a screen
   to its action node).
-- `hub` — the navigator (a hub of `opened_by`) the way runs through, else `null`.
+- `hub` — the navigator the way runs through: the nearest of `shared` that `nav_path.hub_min` or more
+  screens share, a screen being none (docs/decisions/0037), else `null`.
 - `base` — the base class whose inherited code the way runs through, else `null`.
 - `shared` — the nodes every shortest way from `from` to the opening call passes (its dominators),
   nearest `from` first, each listed where more source screens than at the one before share it:

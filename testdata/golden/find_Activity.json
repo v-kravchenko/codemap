@@ -2,7 +2,7 @@
   "schema_version": "5.0.0",
   "command": "find",
   "pattern": "Activity",
-  "total": 44,
+  "total": 57,
   "synthetic": 2,
   "symbols": [
     {
@@ -196,6 +196,46 @@
       "synthetic": false
     },
     {
+      "symbol": "navapp.watch.FormOneActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:19",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.watch.FormSixActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:54",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.watch.FormTenActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:82",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.watch.FormTwoActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:26",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.watch.SignOutActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/SessionNavigator.kt:16",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
       "symbol": "navapp.graph.BaseFlowActivity",
       "kind": "class",
       "module": "app",
@@ -248,6 +288,30 @@
       "kind": "class",
       "module": "app",
       "location": "app/src/main/java/navapp/views/ViewsActivity.kt:56",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.watch.FormFiveActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:47",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.watch.FormFourActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:40",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.watch.FormNineActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:75",
       "visibility": "public",
       "synthetic": false
     },
@@ -308,6 +372,30 @@
       "synthetic": false
     },
     {
+      "symbol": "navapp.watch.FormEightActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:68",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.watch.FormSevenActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:61",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.watch.FormThreeActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:33",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
       "symbol": "navapp.components.AlertActivity",
       "kind": "class",
       "module": "app",
@@ -328,6 +416,22 @@
       "kind": "class",
       "module": "app",
       "location": "app/src/main/java/navapp/via/Via.kt:61",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.watch.WatchedOneActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:5",
+      "visibility": "public",
+      "synthetic": false
+    },
+    {
+      "symbol": "navapp.watch.WatchedTwoActivity",
+      "kind": "class",
+      "module": "app",
+      "location": "app/src/main/java/navapp/watch/Screens.kt:12",
       "visibility": "public",
       "synthetic": false
     },

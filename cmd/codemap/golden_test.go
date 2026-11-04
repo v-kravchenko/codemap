@@ -41,6 +41,7 @@ var goldenCalls = [][]string{
 	{"impact", "navapp.typed.SettingsViewModel.openSettings"},
 	{"impact", "navapp.components.Tracker.track"},                               // the manifest's components and a worker, not its abstract base
 	{"impact", "navapp.impact.Session.listen", "--module", "!app"},              // the fixture's one module: all outside
+	{"impact", "navapp.watch.SessionNavigator.signOut"},                         // one navigator calling another crosses it
 	{"impact", "navapp.sections.ContactsFragment.ContactsRow", "--kind", "all"}, // the preview in the screen's class
 	{"used-by", "navapp.sections.ContactsFragment.ContactsScreen"},              // its preview is not the screen's code
 	{"used-by", "navapp.impact.defaultLabel"},

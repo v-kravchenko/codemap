@@ -197,7 +197,8 @@ func (g *Graph) graphAll(o opts) int {
 		if inside(t) {
 			nodes[t] = true
 		}
-		ways, bases := g.openedBy(t)
+		_, bases := g.openedBy(t)
+		ways := g.graphWays(t)
 		for _, b := range bases {
 			var below []int32
 			for _, s := range b.Below {

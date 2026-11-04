@@ -45,7 +45,19 @@ navapp.views.ListFragment -> navapp.views.DetailFragment  direct onViewCreated
 navapp.views.SettingsFragment -> navapp.views.AboutFragment  direct onViewCreated
 navapp.views.SettingsFragment -> navapp.views.PickActivity  direct createIntent
 navapp.views.ViewsActivity -> navapp.views.ListFragment  direct @navigation/views_graph
+navapp.watch.FormEightActivity -> navapp.watch.SignOutActivity  opener observe
+navapp.watch.FormFiveActivity -> navapp.watch.SignOutActivity  opener observe
+navapp.watch.FormFourActivity -> navapp.watch.SignOutActivity  opener observe
+navapp.watch.FormNineActivity -> navapp.watch.SignOutActivity  opener observe
+navapp.watch.FormOneActivity -> navapp.watch.SignOutActivity  opener observe
+navapp.watch.FormSevenActivity -> navapp.watch.SignOutActivity  opener observe
+navapp.watch.FormSixActivity -> navapp.watch.SignOutActivity  opener observe
+navapp.watch.FormTenActivity -> navapp.watch.SignOutActivity  opener observe
+navapp.watch.FormThreeActivity -> navapp.watch.SignOutActivity  opener observe
+navapp.watch.FormTwoActivity -> navapp.watch.SignOutActivity  opener observe
+navapp.watch.WatchedOneActivity -> navapp.watch.SignOutActivity  opener signOut
+navapp.watch.WatchedTwoActivity -> navapp.watch.SignOutActivity  opener signOut
 post/{id} -> comments/{postId}  direct StringApp
 signin -> feed  direct StringApp
 10 screens of navapp.graph.BaseFlowActivity -> 1 screens  base
-(67 screens, 49 ways, 1 navigators, 1 bases, 3 entries)
+(80 screens, 61 ways, 3 navigators, 1 bases, 3 entries)

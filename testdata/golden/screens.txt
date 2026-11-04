@@ -1,5 +1,5 @@
 
-Activities (37)
+Activities (50)
   AlertActivity                                      app                          app/src/main/java/navapp/components/Components.kt:84
   AvatarActivity                                     app                          app/src/main/java/navapp/impact/DataClasses.kt:18
   EntryActivity                                      app                          app/src/main/java/navapp/via/Via.kt:75
@@ -15,6 +15,16 @@ Activities (37)
   FlowTenActivity                                    app                          app/src/main/java/navapp/graph/Flows.kt:92
   FlowThreeActivity                                  app                          app/src/main/java/navapp/graph/Flows.kt:43
   FlowTwoActivity                                    app                          app/src/main/java/navapp/graph/Flows.kt:36
+  FormEightActivity                                  app                          app/src/main/java/navapp/watch/Screens.kt:68
+  FormFiveActivity                                   app                          app/src/main/java/navapp/watch/Screens.kt:47
+  FormFourActivity                                   app                          app/src/main/java/navapp/watch/Screens.kt:40
+  FormNineActivity                                   app                          app/src/main/java/navapp/watch/Screens.kt:75
+  FormOneActivity                                    app                          app/src/main/java/navapp/watch/Screens.kt:19
+  FormSevenActivity                                  app                          app/src/main/java/navapp/watch/Screens.kt:61
+  FormSixActivity                                    app                          app/src/main/java/navapp/watch/Screens.kt:54
+  FormTenActivity                                    app                          app/src/main/java/navapp/watch/Screens.kt:82
+  FormThreeActivity                                  app                          app/src/main/java/navapp/watch/Screens.kt:33
+  FormTwoActivity                                    app                          app/src/main/java/navapp/watch/Screens.kt:26
   GuideActivity                                      app                          app/src/main/java/navapp/sections/GuideActivity.kt:18
   HelpActivity                                       app                          app/src/main/java/navapp/graph/Flows.kt:25
   HelpActivity                                       app                          app/src/main/java/navapp/sections/HelpActivity.kt:10
@@ -36,10 +46,13 @@ Activities (37)
   SecondActivity                                     app                          app/src/main/java/navapp/impact/Constructors.kt:18
   SecondOpenerActivity                               app                          app/src/main/java/navapp/via/Via.kt:61
   SessionActivity                                    app                          app/src/main/java/navapp/graph/Flows.kt:27
+  SignOutActivity                                    app                          app/src/main/java/navapp/watch/SessionNavigator.kt:16
   SlowActivity                                       app                          app/src/main/java/navapp/via/Via.kt:52
   TargetActivity                                     app                          app/src/main/java/navapp/via/Via.kt:45
   ThirdOpenerActivity                                app                          app/src/main/java/navapp/via/Via.kt:68
   ViewsActivity                                      app                          app/src/main/java/navapp/views/ViewsActivity.kt:16
+  WatchedOneActivity                                 app                          app/src/main/java/navapp/watch/Screens.kt:5
+  WatchedTwoActivity                                 app                          app/src/main/java/navapp/watch/Screens.kt:12
 
 Fragments (9)
   AboutFragment                                      app                          app/src/main/java/navapp/views/ViewsActivity.kt:46  host ViewsActivity
