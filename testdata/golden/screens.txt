@@ -27,9 +27,11 @@ Activities (25)
   ThirdOpenerActivity                                app                          app/src/main/java/navapp/via/Via.kt:68
   ViewsActivity                                      app                          app/src/main/java/navapp/views/ViewsActivity.kt:16
 
-Fragments (8)
+Fragments (9)
   AboutFragment                                      app                          app/src/main/java/navapp/views/ViewsActivity.kt:46  host ViewsActivity
   CartFragment                                       app                          app/src/main/java/navapp/impact/GenericDi.kt:29
+  ContactsFragment                                   app                          app/src/main/java/navapp/sections/ContactsFragment.kt:22
+      previews navapp.sections.ContactsFragment.ContactsScreenPreview
   DetailFragment                                     app                          app/src/main/java/navapp/views/ViewsActivity.kt:24  host ViewsActivity
   InvoiceFragment                                    app                          app/src/main/java/navapp/crash/Crash.kt:32
   ListFragment                                       app                          app/src/main/java/navapp/views/ViewsActivity.kt:18  host ViewsActivity
@@ -76,4 +78,4 @@ Compose routes (20)
   post/{id}                                          app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
   signin                                             app                          app/src/main/java/navapp/strings/StringApp.kt  host MainActivity
 
-Not shown: preview 10 (--kind KIND, --kind all)
+Not shown: preview 11 (--kind KIND, --kind all)

@@ -319,6 +319,19 @@
     {
       "kind": "fragment",
       "module": "app",
+      "name": "ContactsFragment",
+      "target": "navapp.sections.ContactsFragment",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/ContactsFragment.kt:22",
+      "content": [],
+      "previews": [
+        "navapp.sections.ContactsFragment.ContactsScreenPreview"
+      ]
+    },
+    {
+      "kind": "fragment",
+      "module": "app",
       "name": "DetailFragment",
       "target": "navapp.views.DetailFragment",
       "host": "ViewsActivity",
@@ -682,7 +695,7 @@
     }
   ],
   "hidden": {
-    "preview": 10
+    "preview": 11
   },
   "hidden_by_module": {
     "screens": 0

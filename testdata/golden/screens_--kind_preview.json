@@ -44,6 +44,19 @@
     {
       "kind": "preview",
       "module": "app",
+      "name": "ContactsFragment.ContactsScreenPreview",
+      "target": "navapp.sections.ContactsFragment.ContactsScreenPreview",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/ContactsFragment.kt:40",
+      "content": [
+        "ContactsFragment.ContactsScreen()"
+      ],
+      "previews": []
+    },
+    {
+      "kind": "preview",
+      "module": "app",
       "name": "DocsGuidePreviews.DocsGuidePreview",
       "target": "navapp.sections.DocsGuidePreviewsKt.DocsGuidePreview",
       "host": null,
@@ -137,7 +150,7 @@
   "hidden": {
     "activity": 25,
     "dialog": 1,
-    "fragment": 8,
+    "fragment": 9,
     "route": 20
   }
 }

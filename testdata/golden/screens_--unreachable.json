@@ -631,6 +631,35 @@
     {
       "kind": "fragment",
       "module": "app",
+      "name": "ContactsFragment",
+      "target": "navapp.sections.ContactsFragment",
+      "host": null,
+      "hosts": [],
+      "location": "app/src/main/java/navapp/sections/ContactsFragment.kt:22",
+      "content": [],
+      "previews": [
+        "navapp.sections.ContactsFragment.ContactsScreenPreview"
+      ],
+      "entries": [
+        {
+          "name": "ContactsFragment",
+          "kind": "fragment",
+          "module": "app",
+          "location": "app/src/main/java/navapp/sections/ContactsFragment.kt:22",
+          "host": null,
+          "hosts": [],
+          "entry": [
+            {
+              "kind": "unknown",
+              "detail": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "fragment",
+      "module": "app",
       "name": "InvoiceFragment",
       "target": "navapp.crash.InvoiceFragment",
       "host": null,
@@ -777,6 +806,6 @@
     }
   ],
   "hidden": {
-    "preview": 10
+    "preview": 11
   }
 }

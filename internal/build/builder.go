@@ -1902,11 +1902,19 @@ func (b *Builder) relatedAll() {
 		}
 	}
 	drawnBy := map[int64][]int64{} // activity, fragment, dialog -> the repo composables it calls
+	previews := map[int64]bool{}
+	for _, s := range b.Screens {
+		if s.Kind == "preview" {
+			previews[s.Node] = true
+		}
+	}
 	for _, s := range b.Screens {
 		switch s.Kind {
 		case "activity", "fragment", "dialog":
 			collect(s.Node, nested(b.Nodes[s.Node].Name))
-			drawnBy[s.Node] = b.composablesDrawn(nested(b.Nodes[s.Node].Name), outEdges, nested)
+			// a preview written in the screen's class draws for the IDE, not for the screen
+			own := slices.DeleteFunc(slices.Clone(nested(b.Nodes[s.Node].Name)), func(m int64) bool { return previews[m] })
+			drawnBy[s.Node] = b.composablesDrawn(own, outEdges, nested)
 		case "route":
 			var methods []int64
 			from := map[int]bool{} // the files registering the route
@@ -2065,9 +2073,11 @@ func (b *Builder) composablesDrawn(methods []int64, outEdges map[int64][]snapsho
 			strings.Contains(n.Name, "lambda")
 	}
 	seen, out := map[int64]bool{}, []int64{}
+	// origin: the given method whose code a node is, its lambdas' included
+	origin, drawn := map[int64]int64{}, map[int64]bool{}
 	queue := slices.Clone(methods)
 	for _, m := range methods {
-		seen[m] = true
+		seen[m], origin[m] = true, m
 	}
 	for len(queue) > 0 {
 		x := queue[0]
@@ -2076,18 +2086,31 @@ func (b *Builder) composablesDrawn(methods []int64, outEdges map[int64][]snapsho
 		for _, e := range outEdges[x] {
 			d := e.Dst
 			dn := b.Nodes[d]
+			// one returning a value (a theme's colors, remember*) draws nothing
+			composable := (e.Kind == snapshot.CALL || e.Kind == snapshot.LAMBDA) && dn.Kind == "M" && dn.Module != 0 &&
+				strings.Contains(dn.Desc, "Landroidx/compose/runtime/Composer;") && strings.HasSuffix(dn.Desc, ")V")
 			switch {
+			case origin[d] == d && seen[d]:
+				// a composable of the screen's own class (its private body) is drawn by the code calling
+				// it; its own lambda calling it again on recomposition is not
+				if composable && origin[x] != d && !drawn[d] && !made(d) {
+					drawn[d] = true
+					out = append(out, d)
+				}
 			case seen[d]:
 			case made(d) && dn.File == file:
 				seen[d] = true
+				next := []int64{d}
 				if dn.Kind == "C" {
-					queue = append(queue, nested(dn.Name)...)
-				} else {
-					queue = append(queue, d)
+					next = nested(dn.Name)
 				}
-			// one returning a value (a theme's colors, remember*) draws nothing
-			case (e.Kind == snapshot.CALL || e.Kind == snapshot.LAMBDA) && dn.Kind == "M" && dn.Module != 0 &&
-				strings.Contains(dn.Desc, "Landroidx/compose/runtime/Composer;") && strings.HasSuffix(dn.Desc, ")V"):
+				for _, n := range next {
+					if _, ok := origin[n]; !ok {
+						origin[n] = origin[x]
+					}
+				}
+				queue = append(queue, next...)
+			case composable:
 				seen[d] = true
 				out = append(out, d)
 			}

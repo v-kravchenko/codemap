@@ -7,6 +7,12 @@ notes from its section here (`tools/release-notes.sh`).
 
 ## [Unreleased]
 
+### Fixed
+
+- `screens` gives an Activity or fragment the previews of the composables written in its own class
+  (a private `@Composable` its `setContent` or an overridden composable calls, a preview declared
+  beside it): they were left out, so such a screen had no `previews`. Rebuild the map to see them.
+
 ## [0.13.0] - 2026-11-02
 
 ### Added

@@ -46,9 +46,12 @@ Activities (19)
   ThirdOpenerActivity                                app                          app/src/main/java/navapp/via/Via.kt:68
       ends at ThirdOpenerActivity: nothing opens it
 
-Fragments (4)
+Fragments (5)
   CartFragment                                       app                          app/src/main/java/navapp/impact/GenericDi.kt:29
       ends at CartFragment: nothing opens it
+  ContactsFragment                                   app                          app/src/main/java/navapp/sections/ContactsFragment.kt:22
+      previews navapp.sections.ContactsFragment.ContactsScreenPreview
+      ends at ContactsFragment: nothing opens it
   InvoiceFragment                                    app                          app/src/main/java/navapp/crash/Crash.kt:32
       ends at InvoiceFragment: nothing opens it
   OrdersFragment                                     app                          app/src/main/java/navapp/impact/GenericDi.kt:38
@@ -66,6 +69,6 @@ Compose routes (2)
       previews navapp.sections.PhotoGuideScreenKt.PhotoGuidePreview
       ends at GuideActivity: nothing opens it
 
-Not shown: preview 10 (--kind KIND, --kind all)
+Not shown: preview 11 (--kind KIND, --kind all)
 
-(25 screens no entry of the manifest reaches, as far as the code map sees)
+(26 screens no entry of the manifest reaches, as far as the code map sees)
