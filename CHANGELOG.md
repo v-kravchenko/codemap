@@ -14,6 +14,12 @@ notes from its section here (`tools/release-notes.sh`).
   routes draw left out (schema 4.8.0). It is what the screen calls, not a claim that a shared body is
   the screen's: `previews` and `used-by` `screens` are unchanged. Rebuild the map to see it.
 
+### Changed
+
+- `install.sh` says each step on stderr (looking up the release, downloading, checking, installing)
+  and shows curl's progress bar when stderr is a terminal, not in a CI log; `CODEMAP_QUIET=1` keeps
+  it to errors.
+
 ## [0.13.1] - 2026-11-04
 
 ### Fixed
